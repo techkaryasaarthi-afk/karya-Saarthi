@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback, Suspense } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useSearchParams, useRouter } from 'next/navigation'
+import DepartmentHubs from '@/components/admin/DepartmentHubs'
 
 interface StaffMember {
   id: number
@@ -378,6 +379,8 @@ function StaffContent() {
         </div>
         <button onClick={loadData} className="px-4 py-2 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 cursor-pointer transition-all">↻ Refresh</button>
       </div>
+
+      <DepartmentHubs />
 
       {/* Tab Strip */}
       <div className="bg-white rounded-2xl p-2 shadow-sm border border-slate-100 flex overflow-x-auto" style={{ scrollbarWidth: 'thin' }}>

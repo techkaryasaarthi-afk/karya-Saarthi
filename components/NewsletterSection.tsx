@@ -122,22 +122,7 @@ export default function NewsletterSection() {
           No spam. Unsubscribe anytime. Your data is safe with us. 🔒
         </p>
 
-        {/* Social pills */}
-        <div className="flex flex-wrap justify-center gap-3 mt-8">
-          {[
-            { icon: '📱', label: 'WhatsApp', href: 'https://wa.me/918595025753' },
-            { icon: '📘', label: 'Facebook', href: '#' },
-            { icon: '📸', label: 'Instagram', href: '#' },
-            { icon: '💼', label: 'LinkedIn', href: '#' },
-            { icon: '🐦', label: 'Twitter', href: '#' },
-          ].map(s => (
-            <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer"
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium text-white/50 hover:text-white transition-colors"
-              style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)' }}>
-              {s.icon} {s.label}
-            </a>
-          ))}
-        </div>
+
       </div>
     </section>
   )

@@ -21,22 +21,52 @@ export default function Chatbot() {
     { role: 'bot', text: "Hi! I'm Saarthi 🤝\nHow can I help you today?" },
   ])
   const [input, setInput] = useState('')
+  const [typing, setTyping] = useState(false)
   const msgEndRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     msgEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages])
+  }, [messages, typing])
 
-  const send = (text: string) => {
+  const send = async (text: string) => {
     if (!text.trim()) return
     setMessages(prev => [...prev, { role: 'user', text }])
     setInput('')
-    setTimeout(() => {
+    setTyping(true)
+
+    try {
+      const history = messages.map(m => ({
+        role: m.role,
+        text: m.text,
+      }))
+
+      const response = await fetch('/api/chat/ai', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message: text, history }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Meta AI request failed')
+      }
+
+      const data = await response.json()
+      if (data.text) {
+        setMessages(prev => [...prev, { role: 'bot', text: data.text }])
+      } else {
+        throw new Error('Empty response from AI')
+      }
+    } catch (error) {
+      console.error('AI Chat Error in Chatbot, falling back:', error)
       setMessages(prev => [...prev, {
         role: 'bot',
         text: `Thanks for reaching out about "${text}"! 🙏\n\nOur team will get back to you shortly. Meanwhile, you can:\n\n📱 WhatsApp: +91 8595025753\n📧 Email: support@karyasaarthi.com`,
       }])
-    }, 800)
+    } finally {
+      setTyping(false)
+    }
   }
 
   return (
@@ -84,6 +114,15 @@ export default function Chatbot() {
                   </div>
                 </div>
               ))}
+              {typing && (
+                <div className="flex justify-start">
+                  <div className="bg-white rounded-2xl rounded-bl-md px-4 py-2 border border-slate-100 shadow-sm flex gap-1">
+                    {[0, 1, 2].map(i => (
+                      <div key={i} className="w-1.5 h-1.5 rounded-full bg-slate-300 animate-bounce" style={{ animationDelay: `${i * 0.15}s` }} />
+                    ))}
+                  </div>
+                </div>
+              )}
               <div ref={msgEndRef} />
             </div>
 

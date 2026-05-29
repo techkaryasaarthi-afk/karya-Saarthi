@@ -23,7 +23,7 @@ const WhatsAppWidget = dynamic(() => import('@/components/WhatsAppWidget'))
 
 export const metadata = {
   title: 'Karya Saarthi — Hum Hai Aapke Saathi | Academic, Technical & Business Services',
-  description: 'Karya Saarthi provides expert academic writing, technical, business, and government services across India. Get free quotes, track your project, and connect with our 5-pillar support system.',
+  description: 'Karya Saarthi provides expert academic writing, technical, business, and government services across India. Get free quotes, track your project, and connect with our dedicated Saarthi support system.',
 }
 
 export default function Home() {

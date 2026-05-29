@@ -19,7 +19,7 @@ const pillars = [
     id: 'digital',
     name: 'Digital Saarthi',
     tagline: 'Content & Presence',
-    description: 'Full-stack digital solutions — websites, SEO, content creation, social media and brand building.',
+    description: 'Full-stack digital solutions for websites, SEO, content creation, social media and brand building.',
     icon: '💻',
     gradient: 'from-violet-600 to-purple-700',
     glow: 'rgba(139,92,246,0.3)',
@@ -63,107 +63,110 @@ const pillars = [
 
 export default function PillarsSection() {
   return (
-    <section className="py-20 bg-[#080d1a] relative overflow-hidden">
-      {/* Background pattern */}
-      <div className="absolute inset-0 opacity-5"
-        style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)', backgroundSize: '32px 32px' }} />
+    <section className="relative overflow-hidden bg-[#080d1a] py-20">
+      <div
+        className="absolute inset-0 opacity-5"
+        style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)', backgroundSize: '32px 32px' }}
+      />
+      <div className="absolute left-0 right-0 top-0 h-16 bg-gradient-to-b from-white/5 to-transparent" />
 
-      {/* Top gradient fade from white */}
-      <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-white/5 to-transparent" />
-
-      <div className="max-w-7xl mx-auto px-4 relative z-10">
-        {/* Header */}
+      <div className="relative z-10 mx-auto max-w-7xl px-4">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-14"
+          className="mb-14 text-center"
         >
-          <span className="inline-block px-4 py-1.5 rounded-full text-xs font-semibold tracking-wider uppercase mb-4"
-            style={{ background: 'rgba(255,107,53,0.15)', color: '#FF6B35', border: '1px solid rgba(255,107,53,0.3)' }}>
-            🏗️ Our 5 Pillars
+          <span
+            className="mb-4 inline-block rounded-full px-4 py-1.5 text-xs font-semibold uppercase tracking-wider"
+            style={{ background: 'rgba(255,107,53,0.15)', color: '#FF6B35', border: '1px solid rgba(255,107,53,0.3)' }}
+          >
+            Our Saarthi
           </span>
-          <h2 className="text-4xl md:text-5xl font-extrabold text-white font-heading mb-4">
-            The <span style={{ color: '#FF6B35' }}>5 Saarthi</span> Pillars
+          <h2 className="mb-4 text-4xl font-extrabold text-white font-heading md:text-5xl">
+            Our <span style={{ color: '#FF6B35' }}>Saarthi Pillars</span>
           </h2>
-          <p className="text-white/50 max-w-2xl mx-auto text-lg">
-            Five specialised verticals working together to deliver comprehensive solutions across every domain of student and business success.
+          <p className="mx-auto max-w-2xl text-lg text-white/50">
+            Specialised verticals working together to deliver comprehensive solutions across student and business success.
           </p>
         </motion.div>
 
-        {/* Pillars grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
           {pillars.map((pillar, i) => (
             <motion.div
               key={pillar.id}
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
+              transition={{ delay: i * 0.08 }}
               whileHover={{ y: -6 }}
-              className={`relative rounded-2xl overflow-hidden group cursor-pointer ${i === 4 ? 'md:col-span-2 lg:col-span-1' : ''}`}
+              className={`group relative flex flex-col justify-between overflow-hidden rounded-2xl h-full ${i === 4 ? 'sm:col-span-2 lg:col-span-1' : ''}`}
               style={{
                 background: 'rgba(255,255,255,0.03)',
                 border: '1px solid rgba(255,255,255,0.08)',
               }}
             >
-              {/* Glow on hover */}
               <motion.div
-                className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                className="absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-500 group-hover:opacity-100"
                 style={{ boxShadow: `inset 0 0 60px ${pillar.glow}` }}
               />
 
-              {/* Top gradient bar */}
               <div className={`h-1 bg-gradient-to-r ${pillar.gradient}`} />
 
-              <div className="p-6">
-                {/* Icon + title */}
-                <div className="flex items-start justify-between mb-4">
-                  <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${pillar.gradient} flex items-center justify-center text-2xl shadow-lg`}>
-                    {pillar.icon}
+              <div className="p-3.5 flex flex-col justify-between flex-grow h-full">
+                <div>
+                  <div className="mb-3 flex items-start justify-between gap-2">
+                    <div className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br text-lg shadow-md ${pillar.gradient}`}>
+                      {pillar.icon}
+                    </div>
+                    <span
+                      className="rounded-full px-2 py-0.5 text-[9px] font-bold text-white/60"
+                      style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}
+                    >
+                      {pillar.stat}
+                    </span>
                   </div>
-                  <span className="text-xs font-bold px-2.5 py-1 rounded-full text-white/60"
-                    style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}>
-                    {pillar.stat}
-                  </span>
+
+                  <h3 className="mb-0.5 text-base font-bold leading-snug text-white font-heading">{pillar.name}</h3>
+                  <p className="mb-1.5 text-[10px] font-medium uppercase tracking-wider text-white/40">{pillar.tagline}</p>
+                  <p className="mb-3 text-[11px] leading-relaxed text-white/50">{pillar.description}</p>
+
+                  <ul className="mb-3 space-y-1">
+                    {pillar.features.map(feat => (
+                      <li key={feat} className="flex items-center gap-1.5 text-[10px] text-white/40">
+                        <div className={`h-1 w-1 flex-shrink-0 rounded-full bg-gradient-to-br ${pillar.gradient}`} />
+                        {feat}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
 
-                <h3 className="text-xl font-bold text-white font-heading mb-1">{pillar.name}</h3>
-                <p className="text-white/40 text-xs mb-3 font-medium uppercase tracking-wider">{pillar.tagline}</p>
-                <p className="text-white/50 text-sm mb-5 leading-relaxed">{pillar.description}</p>
-
-                {/* Features list */}
-                <ul className="space-y-1.5 mb-5">
-                  {pillar.features.map(feat => (
-                    <li key={feat} className="flex items-center gap-2 text-xs text-white/40">
-                      <div className={`w-1.5 h-1.5 rounded-full bg-gradient-to-br ${pillar.gradient} flex-shrink-0`} />
-                      {feat}
-                    </li>
-                  ))}
-                </ul>
-
-                {/* CTA */}
-                <Link href={`/contact?pillar=${pillar.id}`}
-                  className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white bg-gradient-to-r ${pillar.gradient} hover:opacity-90 transition-opacity shadow-lg`}>
-                  Connect with {pillar.name.split(' ')[0]} →
-                </Link>
+                <div className="mt-auto pt-2">
+                  <Link
+                    href={`/contact?pillar=${pillar.id}`}
+                    className={`inline-flex w-full justify-center items-center gap-1 rounded-lg bg-gradient-to-r px-2.5 py-1.5 text-[10px] font-semibold text-white shadow-md transition-opacity hover:opacity-90 ${pillar.gradient}`}
+                  >
+                    Connect →
+                  </Link>
+                </div>
               </div>
             </motion.div>
           ))}
         </div>
 
-        {/* Bottom CTA */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mt-12"
+          className="mt-12 text-center"
         >
-          <p className="text-white/30 text-sm mb-4">All pillars work together under one platform — Karya Saarthi</p>
-          <Link href="/contact"
-            className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl font-bold text-white"
-            style={{ background: 'linear-gradient(135deg, #FF6B35, #e0551f)', boxShadow: '0 8px 24px rgba(255,107,53,0.3)' }}>
-            Start Your Journey with Us 🚀
+          <p className="mb-4 text-sm text-white/30">All Saarthi teams work together under one platform: Karya Saarthi</p>
+          <Link
+            href="/contact"
+            className="inline-flex items-center gap-2 rounded-xl px-8 py-3.5 font-bold text-white"
+            style={{ background: 'linear-gradient(135deg, #FF6B35, #e0551f)', boxShadow: '0 8px 24px rgba(255,107,53,0.3)' }}
+          >
+            Start Your Journey with Us
           </Link>
         </motion.div>
       </div>

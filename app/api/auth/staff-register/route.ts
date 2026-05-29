@@ -2,14 +2,7 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import bcrypt from 'bcryptjs'
 import { sendEmail, adminApprovalEmail } from '@/lib/email'
-
-// Maps staff_role to database role + department + pillar_role
-const STAFF_ROLE_MAP: Record<string, { role: string; department: string; pillar_role: string | null; title: string }> = {
-  digital_marketing_head: { role: 'admin', department: 'digital', pillar_role: null, title: 'Digital Marketing Head' },
-  marketing_head:         { role: 'admin', department: 'marketing', pillar_role: null, title: 'Marketing Head' },
-  operation_head:         { role: 'admin', department: 'operations', pillar_role: null, title: 'Operation Head' },
-  project_manager:        { role: 'admin', department: 'operations', pillar_role: 'project_manager', title: 'Project Manager' },
-}
+import { STAFF_ROLE_MAP } from '@/lib/org'
 
 export async function POST(req: Request) {
   try {

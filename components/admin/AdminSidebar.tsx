@@ -120,6 +120,7 @@ function buildNavGroups(user: UserData): NavGroup[] {
         { icon: '📣', label: 'Campaign Planner', href: '/admin/marketing?tab=campaigns' },
         { icon: '📊', label: 'Lead Source Analytics', href: '/admin/marketing?tab=leads' },
         { icon: '📅', label: 'Content Calendar', href: '/admin/marketing?tab=calendar' },
+        { icon: '📨', label: 'Bulk Outreach', href: '/admin/marketing/outreach' },
         { icon: '🤝', label: 'Referral Manager', href: '/admin/marketing?tab=referral' },
         { icon: '🎪', label: 'Event Creation', href: '/admin/marketing?tab=events' },
         { icon: '🔍', label: 'Competitor Intel', href: '/admin/marketing?tab=competitor' },
@@ -164,7 +165,7 @@ function buildNavGroups(user: UserData): NavGroup[] {
       { icon: '🌟', label: `${pillar?.charAt(0).toUpperCase()}${pillar?.slice(1)} Saarthi`, href: `/admin/pillars/${pillar}` },
     ]
 
-    all.push({ title: '5 Saarthi Pillars', items: pillarItems })
+    all.push({ title: 'Saarthi Pillars', items: pillarItems })
   }
 
   // ── Operations ──────────────────────────────────────

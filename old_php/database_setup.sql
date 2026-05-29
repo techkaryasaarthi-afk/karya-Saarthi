@@ -65,4 +65,4 @@ CREATE TABLE activity_logs (
 
 -- Insert a test admin user (password: admin123)
 INSERT INTO users (fullname, email, phone, password, user_type, status, email_verified)
-VALUES ('Admin', 'admin@karyasaarthi.com', '9999999999', '$2y$10$YourHashedPasswordHere', 'professional', 'active', TRUE);
+VALUES ('Admin', 'founder@karyasaarthi.com', '9999999999', '$2y$10$YourHashedPasswordHere', 'professional', 'active', TRUE);

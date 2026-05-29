@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import AdminSidebar from '@/components/admin/AdminSidebar'
+import SessionInactivityGuard from '@/components/SessionInactivityGuard'
 
 interface UserData {
   id: number
@@ -159,6 +160,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <div className="min-h-screen" style={{ background: '#f0f4f8' }}>
+      <SessionInactivityGuard redirectTo="/staff-login?timeout=1" />
       <AdminSidebar user={user} />
       <main className="lg:ml-64 min-h-screen">
         <TopBar user={user} />

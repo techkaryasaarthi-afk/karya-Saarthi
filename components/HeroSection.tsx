@@ -47,9 +47,14 @@ export default function HeroSection() {
               ✅ Trusted by 500+ Clients
             </motion.span>
 
-            <h1 className="text-5xl sm:text-6xl lg:text-[4.5rem] xl:text-[5.5rem] font-extrabold text-white leading-[1.1] font-heading">
-              <span className="whitespace-nowrap">Karya <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-accent-light">Saarthi</span></span>
-            </h1>
+            <div className="inline-flex items-center rounded-[2rem] border border-white/15 bg-white/5 px-5 py-3 sm:px-7 sm:py-4 backdrop-blur-sm">
+              <h1 className="whitespace-nowrap text-[2rem] sm:text-5xl lg:text-[4rem] xl:text-[4.8rem] font-extrabold leading-none font-heading">
+                <span className="text-white">Karya</span>{' '}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-accent-light">
+                  Saarthi
+                </span>
+              </h1>
+            </div>
 
             <h2 className="mt-3 text-2xl sm:text-3xl lg:text-4xl font-bold text-white/90 leading-tight">
               Your Trusted Work Companion

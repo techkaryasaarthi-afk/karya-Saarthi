@@ -44,6 +44,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
       if (body.role) updates.role = body.role
       if (body.department !== undefined) updates.department = body.department
       if (body.pillar_role !== undefined) updates.pillar_role = body.pillar_role
+      if (body.designation !== undefined) updates.designation = body.designation
       if (body.is_approved !== undefined) updates.is_approved = body.is_approved
     }
 
@@ -55,7 +56,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
       .from('users')
       .update(updates)
       .eq('id', id)
-      .select('id, fullname, email, role, department, is_approved, status')
+      .select('id, fullname, email, role, department, designation, is_approved, status')
       .single()
 
     if (error) throw error

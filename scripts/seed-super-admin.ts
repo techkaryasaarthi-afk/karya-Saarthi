@@ -29,7 +29,7 @@ try {
 
 const SUPER_ADMIN = {
   fullname: 'Super Admin',
-  email: 'admin@karyasaarthi.com',
+  email: 'founder@karyasaarthi.com',
   phone: '8595025753',
   password: 'KaryaSaarthi@2025',
 }

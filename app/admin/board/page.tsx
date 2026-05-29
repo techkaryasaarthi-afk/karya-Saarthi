@@ -476,7 +476,7 @@ function BoardDashboard() {
       {/* ── PILLARS TAB ── */}
       {activeTab === 'pillars' && (
         <div className="space-y-6">
-          <h2 className="text-xl font-bold text-navy font-heading">🌟 5 Pillar Performance Comparison</h2>
+          <h2 className="text-xl font-bold text-navy font-heading">🌟 Pillar Performance Comparison</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {Object.entries(PILLAR_CONFIG).map(([pillar, cfg], i) => {
               const headcount = d?.headcountByPillar?.[pillar] || 0

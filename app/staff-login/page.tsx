@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
+import { STAFF_ROLE_CONFIGS, getDepartmentRoute } from '@/lib/org'
 
 const ROLE_ROUTES: Record<string, string> = {
   super_admin: '/admin',
@@ -21,12 +22,10 @@ const ROLE_ROUTES: Record<string, string> = {
   'pillar-market': '/admin/pillars/market',
 }
 
-const STAFF_ROLES = [
-  { value: 'digital_marketing_head', label: '💻 Digital Marketing Head' },
-  { value: 'marketing_head', label: '📢 Marketing Head' },
-  { value: 'operation_head', label: '⚙️ Operation Head' },
-  { value: 'project_manager', label: '📋 Project Manager' },
-]
+const STAFF_ROLES = STAFF_ROLE_CONFIGS.map(role => ({
+  value: role.value,
+  label: role.title,
+}))
 
 type RegisterStep = 'form' | 'otp' | 'success'
 
@@ -322,12 +321,8 @@ export default function StaffLoginPage() {
         router.push('/admin/board')
       } else if (role === 'pillar_member' && pillarRole) {
         router.push(`/admin/pillars/${pillarRole}`)
-      } else if (role === 'admin' && pillarRole === 'digital') {
-        router.push('/admin/digital')
-      } else if (role === 'admin' && pillarRole === 'project_manager') {
-        router.push('/admin/projects')
       } else if (role === 'admin' && dept) {
-        router.push(`/admin/${dept}`)
+        router.push(getDepartmentRoute(dept, pillarRole))
       } else if (role === 'admin') {
         router.push('/admin')
       } else {
@@ -540,3 +535,5 @@ export default function StaffLoginPage() {
     </div>
   )
 }
+
+

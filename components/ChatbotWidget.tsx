@@ -68,7 +68,7 @@ function now() {
 export default function ChatbotWidget() {
   const [open, setOpen] = useState(false)
   const [messages, setMessages] = useState<Message[]>([
-    { id: '0', type: 'bot', text: '👋 Hi! I\'m Karya, your virtual assistant. Ask me anything about our services, pricing, or delivery!', time: now() }
+    { id: '0', type: 'bot', text: '👋 Hi! I\'m Karya, your virtual assistant. Ask me anything about our services, pricing, or delivery!', time: 'Just now' }
   ])
   const [input, setInput] = useState('')
   const [typing, setTyping] = useState(false)
@@ -78,7 +78,7 @@ export default function ChatbotWidget() {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, typing])
 
-  const sendMessage = () => {
+  const sendMessage = async () => {
     const text = input.trim()
     if (!text) return
 
@@ -87,11 +87,56 @@ export default function ChatbotWidget() {
     setInput('')
     setTyping(true)
 
-    setTimeout(() => {
-      const response = getResponse(text)
-      setMessages(prev => [...prev, { id: (Date.now() + 1).toString(), type: 'bot', text: response, time: now() }])
+    // Check if the query is a simple match in FAQ responses locally for instant response
+    const lower = text.toLowerCase().trim()
+    let faqMatch = null
+    for (const [key, response] of Object.entries(FAQ_RESPONSES)) {
+      // Check for exact word or clean substring match to prevent accidental overrides
+      if (lower === key || lower.startsWith(key + ' ') || lower.endsWith(' ' + key) || lower.includes(' ' + key + ' ')) {
+        faqMatch = response
+        break
+      }
+    }
+
+    if (faqMatch) {
+      setTimeout(() => {
+        setMessages(prev => [...prev, { id: (Date.now() + 1).toString(), type: 'bot', text: faqMatch, time: now() }])
+        setTyping(false)
+      }, 500 + Math.random() * 300)
+      return
+    }
+
+    try {
+      const history = messages.map(m => ({
+        role: m.type === 'user' ? ('user' as const) : ('bot' as const),
+        text: m.text,
+      }))
+
+      const response = await fetch('/api/chat/ai', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message: text, history }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Meta AI request failed')
+      }
+
+      const data = await response.json()
+      if (data.text) {
+        setMessages(prev => [...prev, { id: (Date.now() + 1).toString(), type: 'bot', text: data.text, time: now() }])
+      } else {
+        throw new Error('Empty response from AI')
+      }
+    } catch (error) {
+      console.error('AI Chat Error, falling back to local FAQs:', error)
+      const fallbackResponse = getResponse(text)
+      setMessages(prev => [...prev, { id: (Date.now() + 1).toString(), type: 'bot', text: fallbackResponse, time: now() }])
+    } finally {
       setTyping(false)
-    }, 800 + Math.random() * 600)
+    }
   }
 
   return (

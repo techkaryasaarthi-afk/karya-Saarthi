@@ -95,7 +95,7 @@ CREATE TABLE contact_submissions (
 -- Password hash for 'admin123': $2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi
 INSERT INTO users (fullname, email, phone, password, user_type, status, email_verified)
 VALUES
-('Admin User', 'admin@karyasaarthi.com', '9999999999', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'professional', 'active', TRUE);
+('Admin User', 'founder@karyasaarthi.com', '9999999999', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'professional', 'active', TRUE);
 
 -- Check if tables created successfully
 SHOW TABLES;

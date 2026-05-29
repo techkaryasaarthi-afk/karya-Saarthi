@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
+import SessionInactivityGuard from '@/components/SessionInactivityGuard'
 
 interface UserData {
   id: number
@@ -76,6 +77,7 @@ export default function VendorLayout({ children }: { children: React.ReactNode }
 
   return (
     <div className="min-h-screen bg-surface">
+      <SessionInactivityGuard redirectTo="/login?timeout=1" />
       {/* Mobile hamburger */}
       <button onClick={() => setMobileOpen(true)}
         className="lg:hidden fixed top-4 left-4 z-50 w-10 h-10 bg-navy rounded-xl flex items-center justify-center text-white shadow-lg cursor-pointer"

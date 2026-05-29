@@ -19,6 +19,8 @@ interface EarningsData {
 interface EarningsMonth { month: string; amount: number; count: number }
 interface Payment { id: number; amount: number; status: string; created_at: string; razorpay_payment_id: string; description: string }
 
+const VIDEO_FILE_TYPES = ['video/mp4', 'video/webm', 'video/quicktime']
+
 const statusColors: Record<string, string> = {
   assigned: 'bg-blue-100 text-blue-700', in_progress: 'bg-cyan-100 text-cyan-700',
   review: 'bg-purple-100 text-purple-700', delivered: 'bg-teal-100 text-teal-700',
@@ -39,6 +41,7 @@ export default function VendorDashboard() {
   const [tasks, setTasks] = useState<Task[]>([])
   const [newMsg, setNewMsg] = useState('')
   const [uploading, setUploading] = useState(false)
+  const [uploadSummary, setUploadSummary] = useState('')
   const [deletingMsg, setDeletingMsg] = useState<number | null>(null)
   const fileRef = useRef<HTMLInputElement>(null)
   const [uploadingProject, setUploadingProject] = useState<number | null>(null)
@@ -103,11 +106,50 @@ export default function VendorDashboard() {
   const refreshChat = async () => { if (!chatProject) return; const r = await fetch(`/api/projects/${chatProject}/messages`); const d = await r.json(); setMessages(d.messages || []) }
   useEffect(() => { if (!chatProject) return; const i = setInterval(refreshChat, 5000); return () => clearInterval(i) }, [chatProject])
   const sendMessage = async (aUrl?: string, fType?: string) => { if (!newMsg.trim() && !aUrl) return; if (!chatProject) return; await fetch(`/api/projects/${chatProject}/messages`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ content: newMsg, attachment_url: aUrl, file_type: fType }) }); setNewMsg(''); refreshChat() }
+  const uploadFiles = async (files: FileList | null) => {
+    if (!files || !chatProject) return
+    const selectedFiles = Array.from(files)
+    const videoCount = selectedFiles.filter(file => VIDEO_FILE_TYPES.includes(file.type)).length
+
+    if (videoCount > 3) {
+      setUploadSummary('You can upload up to 3 videos at a time.')
+      return
+    }
+
+    setUploading(true)
+    setUploadSummary('')
+
+    try {
+      for (const file of selectedFiles) {
+        const fd = new FormData()
+        fd.append('file', file)
+        const r = await fetch('/api/upload', { method: 'POST', body: fd })
+        const d = await r.json()
+        if (d.url) {
+          await fetch(`/api/projects/${chatProject}/messages`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              content: newMsg.trim() || `Attachment uploaded: ${file.name}`,
+              attachment_url: d.url,
+              file_type: d.file_type,
+            }),
+          })
+        }
+      }
+
+      setNewMsg('')
+      setUploadSummary(`${selectedFiles.length} attachment${selectedFiles.length > 1 ? 's' : ''} uploaded`)
+      refreshChat()
+    } catch {
+      setUploadSummary('Attachment upload failed')
+    }
+
+    setUploading(false)
+    if (fileRef.current) fileRef.current.value = ''
+  }
   const handleChatFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]; if (!file || !chatProject) return; setUploading(true)
-    const fd = new FormData(); fd.append('file', file)
-    try { const r = await fetch('/api/upload', { method: 'POST', body: fd }); const d = await r.json(); if (d.url) await sendMessage(d.url, d.file_type) } catch {}
-    setUploading(false); if (fileRef.current) fileRef.current.value = ''
+    await uploadFiles(e.target.files)
   }
   const deleteMessage = async (msgId: number) => { if (!chatProject) return; setDeletingMsg(msgId); await fetch(`/api/projects/${chatProject}/messages`, { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ messageId: msgId }) }); setDeletingMsg(null); refreshChat() }
 
@@ -290,18 +332,19 @@ export default function VendorDashboard() {
                         <div className={`p-3 rounded-xl text-sm max-w-[80%] ${m.sender?.role === 'vendor' ? 'bg-accent/10 text-navy ml-auto' : 'bg-white text-slate-700'}`}>
                           <p className="text-xs font-bold text-slate-500 mb-1">{m.sender?.fullname} <span className="text-[10px] text-slate-400 ml-2">{new Date(m.created_at).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}</span></p>
                           <p>{m.content}</p>
-                          {m.attachment_url && <div className="mt-2">{m.file_type === 'image' ? <a href={m.attachment_url} target="_blank" rel="noopener noreferrer"><img src={m.attachment_url} alt="" className="max-w-[180px] rounded-lg border border-slate-200" /></a> : <a href={m.attachment_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-white border border-slate-200 text-xs font-medium text-accent hover:bg-slate-50">📎 Download</a>}</div>}
+                          {m.attachment_url && <div className="mt-2">{m.file_type === 'image' ? <a href={m.attachment_url} target="_blank" rel="noopener noreferrer"><img src={m.attachment_url} alt="" className="max-w-[180px] rounded-lg border border-slate-200" /></a> : m.file_type === 'video' ? <video controls className="max-w-[220px] rounded-lg border border-slate-200"><source src={m.attachment_url} /></video> : <a href={m.attachment_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-white border border-slate-200 text-xs font-medium text-accent hover:bg-slate-50">📎 Download</a>}</div>}
                         </div>
                         <button onClick={() => deleteMessage(m.id)} disabled={deletingMsg === m.id} className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 text-xs text-red-400 hover:text-red-600 cursor-pointer transition-opacity bg-white rounded-full w-5 h-5 flex items-center justify-center shadow">{deletingMsg === m.id ? '·' : '✕'}</button>
                       </div>
                     ))}
                   </div>
                     <div className="flex gap-2 shrink-0">
-                      <input type="file" ref={fileRef} onChange={handleChatFileUpload} className="hidden" accept="image/*,.pdf,.doc,.docx,.txt,.xls,.xlsx,.zip,.rar" />
+                      <input type="file" ref={fileRef} onChange={handleChatFileUpload} className="hidden" multiple accept="image/*,video/mp4,video/webm,video/quicktime,.pdf,.doc,.docx,.txt,.xls,.xlsx,.zip,.rar" />
                       <button onClick={() => fileRef.current?.click()} disabled={uploading} className="px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-500 hover:bg-slate-100 cursor-pointer text-lg flex-shrink-0">{uploading ? '⏳' : '📎'}</button>
                       <input value={newMsg} onChange={e => setNewMsg(e.target.value)} placeholder="Type a message..." onKeyDown={e => e.key === 'Enter' && sendMessage()} className="flex-1 px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:outline-none focus:border-navy" />
                       <button onClick={() => sendMessage()} disabled={!newMsg.trim() && !uploading} className="px-4 py-2.5 rounded-xl bg-accent text-white text-sm font-bold cursor-pointer hover:bg-accent-dark disabled:opacity-50">Send</button>
                     </div>
+                    {uploadSummary && <p className="mt-2 text-[11px] text-slate-400">{uploadSummary}</p>}
                   </div>
                 </motion.div>
               )}

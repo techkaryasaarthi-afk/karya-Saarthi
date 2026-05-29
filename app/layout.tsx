@@ -161,6 +161,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body
         className={`${inter.variable} ${poppins.variable} font-sans antialiased text-slate-900 bg-white`}
+        suppressHydrationWarning
       >
         <SilenceWarnings />
         {children}

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import CustomerProfileModal from '@/components/admin/CustomerProfileModal'
 import VendorProfileModal from '@/components/admin/VendorProfileModal'
+import { STAFF_ROLE_CONFIGS, formatDepartmentLabel } from '@/lib/org'
 
 interface User {
   id: number
@@ -36,7 +37,7 @@ const roleLabel = (user: User) => {
     if (user.department === 'operations') return 'Operation Head'
     if (user.department === 'digital') return 'Digital Marketing Head'
     if (user.department === 'marketing') return 'Marketing Head'
-    return `${user.department} Head`
+    return `${formatDepartmentLabel(user.department)} Head`
   }
   if (user.role === 'pillar_member' && user.pillar_role)
     return `${user.pillar_role.replace('_', ' ')} Saarthi`
@@ -282,12 +283,18 @@ export default function UsersPage() {
                             }
                             onChange={e => {
                               const val = e.target.value
-                              if (val === 'digital_head') updateUser(user.id, { role: 'admin', department: null, pillar_role: 'digital' })
-                              else if (val === 'ops_head') updateUser(user.id, { role: 'admin', department: 'operations', pillar_role: 'operation_head' })
+                              if (val === 'digital_head') updateUser(user.id, { role: 'admin', department: 'digital', pillar_role: 'digital', designation: 'Digital Saarthi Head' })
+                              else if (val === 'ops_head') updateUser(user.id, { role: 'admin', department: 'operations', pillar_role: null, designation: 'Operation Head' })
                               else if (val === 'pm') updateUser(user.id, { role: 'admin', department: 'operations', pillar_role: 'project_manager' })
-                              else if (val === 'marketing_head') updateUser(user.id, { role: 'admin', department: 'marketing', pillar_role: null })
-                              else if (val.startsWith('pillar_')) updateUser(user.id, { role: 'pillar_member', department: null, pillar_role: val.split('_')[1] })
-                              else updateUser(user.id, { role: val, department: null, pillar_role: null })
+                              else if (val === 'marketing_head') updateUser(user.id, { role: 'admin', department: 'marketing', pillar_role: null, designation: 'Marketing Head' })
+                              else if (val.startsWith('staff_')) {
+                                const config = STAFF_ROLE_CONFIGS.find(role => role.value === val.replace('staff_', ''))
+                                if (config) {
+                                  updateUser(user.id, { role: 'admin', department: config.department, pillar_role: config.pillarRole, designation: config.title })
+                                }
+                              }
+                              else if (val.startsWith('pillar_')) updateUser(user.id, { role: 'pillar_member', department: null, pillar_role: val.split('_')[1], designation: null })
+                              else updateUser(user.id, { role: val, department: null, pillar_role: null, designation: null })
                             }}
                             className="px-2 py-1.5 rounded-lg text-xs border border-slate-200 bg-white focus:outline-none cursor-pointer"
                           >
@@ -300,7 +307,11 @@ export default function UsersPage() {
                             <option value="ops_head">Operation Head</option>
                             <option value="pm">Project Manager</option>
                             <option value="marketing_head">Marketing Head</option>
-                            <option disabled>── 5 Pillars ──</option>
+                            <option disabled>── Expanded Departments ──</option>
+                            {STAFF_ROLE_CONFIGS.filter(role => !['digital_marketing_head', 'marketing_head', 'operation_head', 'project_manager'].includes(role.value)).map(role => (
+                              <option key={role.value} value={`staff_${role.value}`}>{role.title}</option>
+                            ))}
+                            <option disabled>── Saarthi Pillars ──</option>
                             <option value="pillar_campus">Campus Saarthi</option>
                             <option value="pillar_digital">Digital Saarthi</option>
                             <option value="pillar_calling">Calling Saarthi</option>

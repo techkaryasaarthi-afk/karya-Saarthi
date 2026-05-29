@@ -1,8 +1,8 @@
 import { cookies } from 'next/headers'
-import { verifyAccessToken, type TokenPayload } from './jwt'
+import { verifyAccessToken, verifyRefreshToken, type TokenPayload } from './jwt'
 
 export type Role = 'super_admin' | 'admin' | 'vendor' | 'customer' | 'pending_admin' | 'pillar_member' | 'board_member'
-export type Department = 'hr' | 'finance' | 'operations' | 'marketing' | null
+export type Department = 'hr' | 'finance' | 'operations' | 'marketing' | 'digital' | 'campus' | 'calling' | 'government' | 'management' | 'legal' | 'analytics' | 'tech' | 'customer_service' | 'rnd' | null
 
 /**
  * Get current authenticated user from JWT cookie.
@@ -11,8 +11,14 @@ export type Department = 'hr' | 'finance' | 'operations' | 'marketing' | null
 export async function getCurrentUser(): Promise<TokenPayload | null> {
   const cookieStore = await cookies()
   const token = cookieStore.get('access_token')?.value
-  if (!token) return null
-  return verifyAccessToken(token)
+  if (token) {
+    const accessPayload = await verifyAccessToken(token)
+    if (accessPayload) return accessPayload
+  }
+
+  const refreshToken = cookieStore.get('refresh_token')?.value
+  if (!refreshToken) return null
+  return verifyRefreshToken(refreshToken)
 }
 
 /**

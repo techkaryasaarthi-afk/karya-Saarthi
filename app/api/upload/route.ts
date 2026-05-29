@@ -19,13 +19,16 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 })
     }
 
-    // Validate file size (max 10MB)
-    if (file.size > 10 * 1024 * 1024) {
-      return NextResponse.json({ error: 'File too large. Max 10MB' }, { status: 400 })
+    const isVideo = file.type.startsWith('video/')
+    const maxFileSize = isVideo ? 50 * 1024 * 1024 : 10 * 1024 * 1024
+
+    if (file.size > maxFileSize) {
+      return NextResponse.json({ error: `File too large. Max ${isVideo ? '50MB' : '10MB'}` }, { status: 400 })
     }
 
     // Validate file type
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'application/pdf', 'application/msword',
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'video/mp4', 'video/webm', 'video/quicktime',
+      'application/pdf', 'application/msword',
       'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'text/plain',
       'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
       'application/zip', 'application/x-rar-compressed']
@@ -52,7 +55,7 @@ export async function POST(request: Request) {
 
     const { data: urlData } = supabase.storage.from('chat-attachments').getPublicUrl(data.path)
 
-    const fileType = file.type.startsWith('image/') ? 'image' : 'file'
+    const fileType = file.type.startsWith('image/') ? 'image' : file.type.startsWith('video/') ? 'video' : 'file'
 
     return NextResponse.json({
       url: urlData.publicUrl,

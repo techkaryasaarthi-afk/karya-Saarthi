@@ -40,11 +40,12 @@ const PodcastWidget = () => {
         <p className="text-xl font-bold text-navy font-heading leading-tight">{data.title}</p>
         <p className="text-sm text-slate-500 mt-2">Guest: <span className="font-semibold">{data.guest}</span></p>
         <p className="text-xs text-slate-400 mt-1">{new Date(data.date).toLocaleDateString('en-IN')}</p>
-        {/* Mock Audio Visualizer UI since actual iframe might break hydration if not careful, but we can embed safely if needed. A stylized block is nice. */}
+        {/* Mock Audio Visualizer UI — deterministic heights to avoid SSR hydration mismatch */}
         <div className="my-4 h-16 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 gap-1 overflow-hidden">
-          {Array.from({ length: 20 }).map((_, i) => (
-             <div key={i} className="w-1.5 bg-purple-200 rounded-full animate-pulse" style={{ height: `${Math.max(20, Math.random() * 100)}%`, animationDelay: `${i * 0.1}s` }} />
-          ))}
+          {Array.from({ length: 20 }).map((_, i) => {
+             const h = 20 + ((i * 37 + 13) % 80) // deterministic pseudo-random height
+             return <div key={i} className="w-1.5 bg-purple-200 rounded-full animate-pulse" style={{ height: `${h}%`, animationDelay: `${i * 0.1}s` }} />
+          })}
         </div>
       </div>
       <div className="mt-auto pt-4 flex gap-2 border-t border-slate-50">

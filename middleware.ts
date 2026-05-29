@@ -1,29 +1,8 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { jwtVerify } from 'jose'
+import { verifyAccessToken, verifyRefreshToken, signAccessToken, type TokenPayload } from '@/lib/auth/jwt'
+import { createServerClient } from '@supabase/ssr'
 import { rateLimit, buildKey } from '@/lib/security/rateLimit'
-
-const ACCESS_SECRET = new TextEncoder().encode(
-  process.env.JWT_ACCESS_SECRET || 'karyasaarthi-access-secret-change-me'
-)
-
-interface TokenPayload {
-  userId: number
-  email: string
-  role: string
-  department: string | null
-  pillarRole?: string | null
-  isApproved: boolean
-}
-
-async function verifyToken(token: string): Promise<TokenPayload | null> {
-  try {
-    const { payload } = await jwtVerify(token, ACCESS_SECRET)
-    return payload as unknown as TokenPayload
-  } catch {
-    return null
-  }
-}
 
 /** Extract real IP — works on Vercel, Cloudflare, and local */
 function getIP(req: NextRequest): string {
@@ -55,9 +34,18 @@ function isSuspicious(pathname: string, req: NextRequest): boolean {
   return false
 }
 
+// Web Crypto SHA-256 helper compatible with Next.js Edge middleware runtime
+async function sha256(message: string): Promise<string> {
+  const encoder = new TextEncoder()
+  const data = encoder.encode(message)
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data)
+  const hashArray = Array.from(new Uint8Array(hashBuffer))
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
+}
+
 const INTERNAL_ROLES = ['super_admin', 'board_member', 'admin', 'pending_admin', 'pillar_member']
 
-export async function proxy(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
   const ip = getIP(request)
 
@@ -135,7 +123,7 @@ export async function proxy(request: NextRequest) {
     '/api/auth/forgot-password', '/api/auth/verify-otp',
     '/api/auth/reset-password', '/api/auth/send-signup-otp',
     '/api/services', '/api/events', '/api/newsletter',
-    '/api/public',
+    '/api/public', '/api/chat/ai',
   ]
 
   const isPublic = publicPaths.some(p =>
@@ -152,12 +140,100 @@ export async function proxy(request: NextRequest) {
 
   if (isPublic) return NextResponse.next()
 
-  // ─── Auth verification ───────────────────────────────────────────────────
+  // ─── Auth verification & refresh ─────────────────────────────────────────
   const accessToken = request.cookies.get('access_token')?.value
   let user: TokenPayload | null = null
+  let newAccessTokenToSet: string | null = null
 
   if (accessToken) {
-    user = await verifyToken(accessToken)
+    user = await verifyAccessToken(accessToken)
+  }
+
+  // Transparent session token refresh
+  if (!user) {
+    const refreshToken = request.cookies.get('refresh_token')?.value
+    if (refreshToken) {
+      try {
+        const payload = await verifyRefreshToken(refreshToken)
+        if (payload) {
+          const tokenHash = await sha256(refreshToken)
+          
+          // Dummy response to initialize Supabase SSR client
+          let mockResponse = NextResponse.next()
+          const supabase = createServerClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+            {
+              cookies: {
+                get(name) { return request.cookies.get(name)?.value },
+                set(name, value, options) {
+                  request.cookies.set({ name, value, ...options })
+                  mockResponse = NextResponse.next({ request: { headers: request.headers } })
+                  mockResponse.cookies.set({ name, value, ...options })
+                },
+                remove(name, options) {
+                  request.cookies.set({ name, value: '', ...options })
+                  mockResponse = NextResponse.next({ request: { headers: request.headers } })
+                  mockResponse.cookies.set({ name, value: '', ...options })
+                }
+              }
+            }
+          )
+
+          const { data: storedToken } = await supabase
+            .from('refresh_tokens')
+            .select('*')
+            .eq('token_hash', tokenHash)
+            .eq('revoked', false)
+            .single()
+
+          if (storedToken) {
+            const { data: userData } = await supabase
+              .from('users')
+              .select('id, email, role, department, pillar_role, is_approved')
+              .eq('id', payload.userId)
+              .single()
+
+            if (userData) {
+              const newAccessToken = await signAccessToken({
+                userId: userData.id,
+                email: userData.email,
+                role: userData.role,
+                department: userData.department || null,
+                pillarRole: userData.pillar_role || null,
+                isApproved: userData.is_approved || false,
+              })
+
+              newAccessTokenToSet = newAccessToken
+              user = {
+                userId: userData.id,
+                email: userData.email,
+                role: userData.role,
+                department: userData.department || null,
+                pillarRole: userData.pillar_role || null,
+                isApproved: userData.is_approved || false,
+              }
+            }
+          }
+        }
+      } catch (err) {
+        console.error('Middleware transparent refresh error:', err)
+      }
+    }
+  }
+
+  // Helper function to attach refreshed token cookie to final response
+  const withRefresh = (res: NextResponse): NextResponse => {
+    if (newAccessTokenToSet) {
+      res.cookies.set('access_token', newAccessTokenToSet, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 60 * 60, // 1 hour
+        path: '/',
+      })
+    }
+    return res
   }
 
   if (!user) {
@@ -172,22 +248,22 @@ export async function proxy(request: NextRequest) {
         const loginUrl = INTERNAL_ROLES.some(r => pathname.includes(r)) || pathname.startsWith('/admin')
           ? '/staff-login'
           : '/login'
-        return NextResponse.redirect(new URL(loginUrl, request.url))
+        return withRefresh(NextResponse.redirect(new URL(loginUrl, request.url)))
       }
-      return NextResponse.next()
+      return withRefresh(NextResponse.next())
     }
     if (pathname.startsWith('/dashboard') || pathname.startsWith('/vendor')) {
-      return NextResponse.next()
+      return withRefresh(NextResponse.next())
     }
     if (pathname.startsWith('/admin')) {
-      return NextResponse.redirect(new URL('/staff-login', request.url))
+      return withRefresh(NextResponse.redirect(new URL('/staff-login', request.url)))
     }
-    return NextResponse.next()
+    return withRefresh(NextResponse.next())
   }
 
   // ─── Admin / Internal routes ─────────────────────────────────────────────
   if (pathname.startsWith('/admin') || pathname.startsWith('/api/admin')) {
-    if (user.role === 'super_admin') return NextResponse.next()
+    if (user.role === 'super_admin') return withRefresh(NextResponse.next())
 
     if (user.role === 'board_member') {
       if (
@@ -200,9 +276,9 @@ export async function proxy(request: NextRequest) {
         pathname.startsWith('/api/admin/announcements') ||
         pathname === '/admin'
       ) {
-        return NextResponse.next()
+        return withRefresh(NextResponse.next())
       }
-      return NextResponse.redirect(new URL('/admin/board', request.url))
+      return withRefresh(NextResponse.redirect(new URL('/admin/board', request.url)))
     }
 
     if (user.role === 'pillar_member' && user.pillarRole) {
@@ -213,62 +289,62 @@ export async function proxy(request: NextRequest) {
         pathname.startsWith(allowedPage) ||
         pathname.startsWith(allowedApi1) ||
         pathname.startsWith(allowedApi2)
-      ) return NextResponse.next()
+      ) return withRefresh(NextResponse.next())
 
       if (pathname.startsWith('/api/')) {
-        return NextResponse.json({ error: 'Unauthorized pillar access' }, { status: 403 })
+        return withRefresh(NextResponse.json({ error: 'Unauthorized pillar access' }, { status: 403 }))
       }
-      return NextResponse.redirect(new URL(allowedPage, request.url))
+      return withRefresh(NextResponse.redirect(new URL(allowedPage, request.url)))
     }
 
     if (user.role === 'admin' && user.isApproved) {
       const effectiveDept = user.pillarRole === 'digital' ? 'digital' : user.department
       if (pathname === '/admin' && effectiveDept) {
-        return NextResponse.redirect(new URL(`/admin/${effectiveDept}`, request.url))
+        return withRefresh(NextResponse.redirect(new URL(`/admin/${effectiveDept}`, request.url)))
       }
       if (effectiveDept) {
         const restrictedDepts = ['hr', 'finance', 'operations', 'marketing', 'digital']
         const targetDept = restrictedDepts.find(d => pathname.startsWith(`/admin/${d}`))
         if (targetDept && targetDept !== effectiveDept) {
-          return NextResponse.redirect(new URL(`/admin/${effectiveDept}`, request.url))
+          return withRefresh(NextResponse.redirect(new URL(`/admin/${effectiveDept}`, request.url)))
         }
       }
-      return NextResponse.next()
+      return withRefresh(NextResponse.next())
     }
 
     if (user.role === 'pending_admin' || (user.role === 'admin' && !user.isApproved)) {
       if (pathname.startsWith('/api/')) {
-        return NextResponse.json({ error: 'Admin account pending approval' }, { status: 403 })
+        return withRefresh(NextResponse.json({ error: 'Admin account pending approval' }, { status: 403 }))
       }
-      return NextResponse.redirect(new URL('/dashboard?pending=1', request.url))
+      return withRefresh(NextResponse.redirect(new URL('/dashboard?pending=1', request.url)))
     }
 
     if (pathname.startsWith('/api/')) {
-      if (pathname.startsWith('/api/admin/projects/tasks')) return NextResponse.next()
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
+      if (pathname.startsWith('/api/admin/projects/tasks')) return withRefresh(NextResponse.next())
+      return withRefresh(NextResponse.json({ error: 'Unauthorized' }, { status: 403 }))
     }
     const fallback = user.role === 'vendor' ? '/vendor' : '/dashboard'
-    return NextResponse.redirect(new URL(fallback, request.url))
+    return withRefresh(NextResponse.redirect(new URL(fallback, request.url)))
   }
 
   // ─── Vendor routes ────────────────────────────────────────────────────────
   if (pathname.startsWith('/vendor')) {
     if (user.role !== 'vendor' && user.role !== 'super_admin') {
-      return NextResponse.redirect(new URL('/dashboard', request.url))
+      return withRefresh(NextResponse.redirect(new URL('/dashboard', request.url)))
     }
   }
 
   // ─── Dashboard (customer only) ────────────────────────────────────────────
   if (pathname.startsWith('/dashboard')) {
     if (INTERNAL_ROLES.includes(user.role) && user.role !== 'pending_admin') {
-      return NextResponse.redirect(new URL('/admin', request.url))
+      return withRefresh(NextResponse.redirect(new URL('/admin', request.url)))
     }
     if (user.role === 'vendor') {
-      return NextResponse.redirect(new URL('/vendor', request.url))
+      return withRefresh(NextResponse.redirect(new URL('/vendor', request.url)))
     }
   }
 
-  return NextResponse.next()
+  return withRefresh(NextResponse.next())
 }
 
 export const config = {
