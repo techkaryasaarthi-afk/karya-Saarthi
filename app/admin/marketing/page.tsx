@@ -866,7 +866,7 @@ export default function MarketingPage() {
         </div>
       )}
 
-      {/* ── PARTNERED COMPANIES ── */
+      {/* ── PARTNERED COMPANIES ── */}
       {activeTab === 'partners' && (
         <div className="space-y-6">
           {partners.length > 0 && (
