@@ -44,12 +44,21 @@ export default async function Home() {
   }
 
   const defaultPartners = [
-    { name: 'Google' },
-    { name: 'Microsoft' },
-    { name: 'Amazon' },
-    { name: 'Meta' },
-    { name: 'Netflix' },
-    { name: 'Adobe' },
+    {
+      name: 'AMD',
+      logo_url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/AMD_Logo.svg/320px-AMD_Logo.svg.png',
+      website: 'https://www.amd.com',
+    },
+    {
+      name: 'VibCare',
+      logo_url: 'https://vibcare.in/wp-content/uploads/2023/10/vibcare-logo.png',
+      website: 'https://vibcare.in',
+    },
+    {
+      name: 'Amazon',
+      logo_url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Amazon_logo.svg/320px-Amazon_logo.svg.png',
+      website: 'https://www.amazon.in',
+    },
   ]
 
   const displayPartners = partners.length > 0 ? partners : defaultPartners

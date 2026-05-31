@@ -36,7 +36,7 @@ const securityHeaders = [
       // Fonts
       "font-src 'self' https://fonts.gstatic.com data:",
       // Images: self + data URIs + Supabase storage + common image hosts
-      "img-src 'self' data: blob: https://*.supabase.co https://*.supabase.in https://images.unsplash.com https://picsum.photos https://placehold.co https://i.pravatar.cc https://via.placeholder.com",
+      "img-src 'self' data: blob: https://*.supabase.co https://*.supabase.in https://images.unsplash.com https://picsum.photos https://placehold.co https://i.pravatar.cc https://via.placeholder.com https://upload.wikimedia.org https://vibcare.in https://logo.clearbit.com https://*.cloudinary.com",
       // API connections: self + Supabase + Razorpay + Google Analytics
       "connect-src 'self' https://*.supabase.co https://*.supabase.in https://api.razorpay.com https://lumberjack.razorpay.com wss://*.supabase.co https://www.google-analytics.com",
       // Iframes: Razorpay checkout + Google Maps
@@ -99,6 +99,10 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: 'picsum.photos' },
       { protocol: 'https', hostname: 'i.pravatar.cc' },
       { protocol: 'https', hostname: 'lh3.googleusercontent.com' },
+      { protocol: 'https', hostname: 'upload.wikimedia.org' },
+      { protocol: 'https', hostname: 'vibcare.in' },
+      { protocol: 'https', hostname: 'logo.clearbit.com' },
+      { protocol: 'https', hostname: '**.cloudinary.com' },
     ],
     // Vercel free plan: minimize transforms to save bandwidth
     formats: ['image/avif', 'image/webp'],
