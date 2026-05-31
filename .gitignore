@@ -41,7 +41,9 @@ yarn-error.log*
 next-env.d.ts
 
 # Large media files (exceed GitHub 100MB limit — host on CDN/cloud storage instead)
-public/images/*.mp4
+# Allow the compressed platform tour video (≤25MB)
+!public/images/karyasaarthi.mp4
 public/images/*.mov
 public/videos/*.mp4
 public/videos/*.mov
+
