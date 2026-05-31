@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback, Suspense } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import DepartmentMeetings from '@/components/admin/DepartmentMeetings'
 
 interface Doc { id: number; title: string; doc_type: string; content?: string; doc_url?: string; tags: string[]; department?: string; is_pinned: boolean; created_at: string; author?: { fullname: string } }
 
@@ -87,7 +88,8 @@ function WorkspaceContent() {
   const regular = filtered.filter(d => !d.is_pinned)
 
   return (
-    <div className="space-y-5 max-w-6xl">
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 max-w-7xl">
+      <div className="lg:col-span-8 xl:col-span-9 space-y-5">
       {/* Header */}
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div>
@@ -186,6 +188,13 @@ function WorkspaceContent() {
           )}
         </div>
       )}
+      </div>
+
+      <div className="lg:col-span-4 xl:col-span-3">
+        <div className="sticky top-5 bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
+          <DepartmentMeetings />
+        </div>
+      </div>
     </div>
   )
 }

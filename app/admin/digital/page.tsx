@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ResponsiveContainer, AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, LineChart, Line, PieChart, Pie, Cell } from 'recharts'
 import InterdeptTaskInbox from '@/components/admin/InterdeptTaskInbox'
+import DepartmentMeetings from '@/components/admin/DepartmentMeetings'
 
 // ── Types ──────────────────────────────────────────────
 interface Creator { id: number; name: string; email?: string; phone?: string; platforms: string[]; categories: string[]; status: string; rate_per_post: number; notes?: string }
@@ -341,7 +342,8 @@ export default function DigitalPage() {
   const calGrid = buildCalGrid()
 
   return (
-    <div className="space-y-5 max-w-7xl">
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 max-w-7xl">
+      <div className="lg:col-span-8 xl:col-span-9 space-y-5">
       <div>
         <h1 className="text-2xl font-bold text-navy font-heading">🖥️ Digital Saarthi</h1>
         <p className="text-slate-500 text-sm">Online marketing · Creator roster · Ad creatives · Lead gen · Revenue attribution · Content calendar</p>
@@ -1140,6 +1142,13 @@ export default function DigitalPage() {
       )}
 
       <div className="mt-8"><InterdeptTaskInbox /></div>
+      </div>
+
+      <div className="lg:col-span-4 xl:col-span-3">
+        <div className="sticky top-5 bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
+          <DepartmentMeetings />
+        </div>
+      </div>
     </div>
   )
 }

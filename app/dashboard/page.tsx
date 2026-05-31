@@ -20,6 +20,46 @@ interface Task { id: number; title: string; assignee: string | null; deadline: s
 
 const VIDEO_FILE_TYPES = ['video/mp4', 'video/webm', 'video/quicktime']
 
+const formatFileSize = (bytes: number) => {
+  if (bytes === 0) return '0 Bytes'
+  const k = 1024
+  const sizes = ['Bytes', 'KB', 'MB', 'GB']
+  const i = Math.floor(Math.log(bytes) / Math.log(k))
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
+}
+
+const uploadFileWithProgress = (file: File, onProgress: (progress: number) => void): Promise<{ url?: string; file_type?: string }> => {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest()
+    const fd = new FormData()
+    fd.append('file', file)
+
+    xhr.open('POST', '/api/upload', true)
+
+    xhr.upload.onprogress = (event) => {
+      if (event.lengthComputable) {
+        const percentage = Math.round((event.loaded / event.total) * 100)
+        onProgress(percentage)
+      }
+    }
+
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        try {
+          resolve(JSON.parse(xhr.responseText))
+        } catch {
+          reject(new Error('Failed to parse response'))
+        }
+      } else {
+        reject(new Error(`Upload failed with status ${xhr.status}`))
+      }
+    }
+
+    xhr.onerror = () => reject(new Error('Network error'))
+    xhr.send(fd)
+  })
+}
+
 function DashboardLoading() { return <div className="min-h-screen flex items-center justify-center"><div className="w-10 h-10 border-4 border-navy/20 border-t-navy rounded-full animate-spin" /></div> }
 export default function DashboardWrapper() { return <Suspense fallback={<DashboardLoading />}><DashboardPage /></Suspense> }
 
@@ -82,6 +122,7 @@ function DashboardPage() {
   const [showDMPanel, setShowDMPanel] = useState(false)
   const [invoices, setInvoices] = useState<Invoice[]>([])
   const [invoicesLoaded, setInvoicesLoaded] = useState(false)
+  const [pendingFiles, setPendingFiles] = useState<{ file: File; id: string; progress: number; status: 'pending' | 'uploading' | 'completed' | 'failed' }[]>([])
 
   const fetchProjects = useCallback(async () => {
     const res = await fetch('/api/projects')
@@ -154,56 +195,92 @@ function DashboardPage() {
   const refreshChat = async () => { if (!chatProject) return; const r = await fetch(`/api/projects/${chatProject}/messages`); const d = await r.json(); setMessages(d.messages || []) }
   useEffect(() => { if (!chatProject) return; const i = setInterval(refreshChat, 5000); return () => clearInterval(i) }, [chatProject])
 
-  const sendMessage = async (aUrl?: string, fType?: string) => {
-    if (!newMsg.trim() && !aUrl) return; if (!chatProject) return
-    await fetch(`/api/projects/${chatProject}/messages`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ content: newMsg, attachment_url: aUrl, file_type: fType }) })
-    setNewMsg(''); refreshChat()
-  }
-  const uploadFiles = async (files: FileList | null) => {
-    if (!files || !chatProject) return
-    const selectedFiles = Array.from(files)
-    const videoCount = selectedFiles.filter(file => VIDEO_FILE_TYPES.includes(file.type)).length
-
-    if (videoCount > 3) {
-      setUploadSummary('You can upload up to 3 videos at a time.')
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) return
+    const selected = Array.from(e.target.files)
+    
+    // Check if adding these would exceed 3 videos limit
+    const existingVideos = pendingFiles.filter(pf => VIDEO_FILE_TYPES.includes(pf.file.type)).length
+    const newVideos = selected.filter(file => VIDEO_FILE_TYPES.includes(file.type)).length
+    
+    if (existingVideos + newVideos > 3) {
+      setUploadSummary('You can attach a maximum of 3 videos at a time.')
       return
     }
+    
+    const newPending = selected.map(file => ({
+      file,
+      id: Math.random().toString(36).substring(7),
+      progress: 0,
+      status: 'pending' as const
+    }))
+    
+    setPendingFiles(prev => [...prev, ...newPending])
+    setUploadSummary('')
+    if (e.target.value) e.target.value = ''
+  }
 
+  const sendMessage = async () => {
+    if (!chatProject) return
+    const text = newMsg.trim()
+    if (!text && pendingFiles.length === 0) return
+    
     setUploading(true)
     setUploadSummary('')
-
+    
     try {
-      for (const file of selectedFiles) {
-        const fd = new FormData()
-        fd.append('file', file)
-        const r = await fetch('/api/upload', { method: 'POST', body: fd })
-        const d = await r.json()
-
-        if (d.url) {
-          await fetch(`/api/projects/${chatProject}/messages`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              content: newMsg.trim() || `Attachment uploaded: ${file.name}`,
-              attachment_url: d.url,
-              file_type: d.file_type,
-            }),
-          })
+      if (pendingFiles.length > 0) {
+        // Mark all as uploading
+        setPendingFiles(prev => prev.map(f => f.status === 'pending' ? { ...f, status: 'uploading' } : f))
+        
+        for (const pf of pendingFiles) {
+          if (pf.status === 'completed') continue
+          
+          try {
+            const result = await uploadFileWithProgress(pf.file, (pct) => {
+              setPendingFiles(prev => prev.map(f => f.id === pf.id ? { ...f, progress: pct } : f))
+            })
+            
+            if (result.url) {
+              setPendingFiles(prev => prev.map(f => f.id === pf.id ? { ...f, status: 'completed', progress: 100 } : f))
+              
+              // Send message with this attachment
+              await fetch(`/api/projects/${chatProject}/messages`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  content: text ? `Sent attachment: ${pf.file.name}\n\n${text}` : `Attachment: ${pf.file.name}`,
+                  attachment_url: result.url,
+                  file_type: result.file_type,
+                }),
+              })
+            } else {
+              throw new Error('Upload failed')
+            }
+          } catch (err) {
+            setPendingFiles(prev => prev.map(f => f.id === pf.id ? { ...f, status: 'failed' } : f))
+            throw err
+          }
         }
+        
+        setPendingFiles([])
+      } else {
+        // Standard text message
+        await fetch(`/api/projects/${chatProject}/messages`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ content: text, attachment_url: null, file_type: null })
+        })
       }
-
+      
       setNewMsg('')
-      setUploadSummary(`${selectedFiles.length} attachment${selectedFiles.length > 1 ? 's' : ''} uploaded`)
+      setUploadSummary('Sent successfully')
       refreshChat()
-    } catch {
-      setUploadSummary('Attachment upload failed')
+    } catch (err) {
+      setUploadSummary('Failed to send some attachments')
+    } finally {
+      setUploading(false)
     }
-
-    setUploading(false)
-    if (fileRef.current) fileRef.current.value = ''
-  }
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    await uploadFiles(e.target.files)
   }
   const deleteMessage = async (msgId: number) => { if (!chatProject) return; setDeletingMsg(msgId); await fetch(`/api/projects/${chatProject}/messages`, { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ messageId: msgId }) }); setDeletingMsg(null); refreshChat() }
 
@@ -501,11 +578,45 @@ function DashboardPage() {
                               </div>
                             ))}
                           </div>
-                            <div className="flex gap-2 shrink-0">
+                            {/* Pending Attachments Tray */}
+                            {pendingFiles.length > 0 && (
+                              <div className="p-3 bg-slate-50 border-t border-slate-100 rounded-t-xl flex flex-wrap gap-2 max-h-40 overflow-y-auto w-full">
+                                {pendingFiles.map(pf => {
+                                  const isVideo = VIDEO_FILE_TYPES.includes(pf.file.type)
+                                  const fileExt = pf.file.name.split('.').pop()?.toUpperCase() || 'FILE'
+                                  return (
+                                    <div key={pf.id} className="relative flex items-center gap-2 p-2 bg-white border border-slate-200 rounded-lg shadow-sm group min-w-[200px] max-w-[250px]">
+                                      <div className="text-xl">{isVideo ? '🎥' : '📎'}</div>
+                                      <div className="flex-1 min-w-0">
+                                        <p className="text-xs font-semibold text-navy truncate">{pf.file.name}</p>
+                                        <p className="text-[10px] text-slate-400">{formatFileSize(pf.file.size)} • {fileExt}</p>
+                                        {pf.status === 'uploading' && (
+                                          <div className="w-full bg-slate-100 h-1 rounded-full overflow-hidden mt-1">
+                                            <div className="bg-accent h-full transition-all duration-300" style={{ width: `${pf.progress}%` }} />
+                                          </div>
+                                        )}
+                                        {pf.status === 'completed' && <span className="text-[9px] text-green-500 font-bold">Uploaded</span>}
+                                        {pf.status === 'failed' && <span className="text-[9px] text-red-500 font-bold">Failed</span>}
+                                      </div>
+                                      {!uploading && (
+                                        <button
+                                          type="button"
+                                          onClick={() => setPendingFiles(prev => prev.filter(f => f.id !== pf.id))}
+                                          className="absolute -top-1 -right-1 bg-red-100 text-red-500 rounded-full w-4 h-4 flex items-center justify-center text-[10px] font-bold shadow hover:bg-red-200 transition-colors cursor-pointer"
+                                        >
+                                          ✕
+                                        </button>
+                                      )}
+                                    </div>
+                                  )
+                                })}
+                              </div>
+                            )}
+                            <div className="flex gap-2 shrink-0 w-full">
                               <input type="file" ref={fileRef} onChange={handleFileUpload} className="hidden" multiple accept="image/*,video/mp4,video/webm,video/quicktime,.pdf,.doc,.docx,.txt,.xls,.xlsx,.zip,.rar" />
-                              <button onClick={() => fileRef.current?.click()} disabled={uploading} className="px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-500 hover:bg-slate-100 cursor-pointer text-lg flex-shrink-0">{uploading ? '⏳' : '📎'}</button>
-                              <input value={newMsg} onChange={e => setNewMsg(e.target.value)} placeholder="Type a message..." onKeyDown={e => e.key === 'Enter' && sendMessage()} className="flex-1 px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:outline-none focus:border-navy" />
-                              <button type="button" onClick={() => sendMessage()} disabled={!newMsg.trim()} className="px-4 py-2.5 rounded-xl bg-accent text-white text-sm font-bold cursor-pointer disabled:opacity-50">Send</button>
+                              <button type="button" onClick={() => fileRef.current?.click()} disabled={uploading} className="px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-500 hover:bg-slate-100 cursor-pointer text-lg flex-shrink-0">{uploading ? '⏳' : '📎'}</button>
+                              <input value={newMsg} onChange={e => setNewMsg(e.target.value)} placeholder="Type a message..." onKeyDown={e => e.key === 'Enter' && !uploading && sendMessage()} className="flex-1 px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:outline-none focus:border-navy" />
+                              <button type="button" onClick={() => sendMessage()} disabled={uploading || (!newMsg.trim() && pendingFiles.length === 0)} className="px-4 py-2.5 rounded-xl bg-accent text-white text-sm font-bold cursor-pointer disabled:opacity-50">Send</button>
                             </div>
                             {uploadSummary && <p className="mt-2 text-[11px] text-slate-400">{uploadSummary}</p>}
                           </div>

@@ -39,8 +39,8 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
 
     // Admins can only update status (block/unblock)
     if (body.status) updates.status = body.status
-    // Only super_admin can change roles and departments
-    if (user.role === 'super_admin') {
+    // Only super_admin or all_saarthi head can change roles, departments and approvals
+    if (user.role === 'super_admin' || user.department === 'all_saarthi') {
       if (body.role) updates.role = body.role
       if (body.department !== undefined) updates.department = body.department
       if (body.pillar_role !== undefined) updates.pillar_role = body.pillar_role
@@ -70,7 +70,10 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
 
 export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    await requireRole('super_admin')
+    const user = await requireRole('super_admin', 'admin')
+    if (user.role !== 'super_admin' && user.department !== 'all_saarthi') {
+      return NextResponse.json({ error: 'You do not have permission to perform this action' }, { status: 403 })
+    }
     const { id } = await params
     const supabase = await createClient()
 

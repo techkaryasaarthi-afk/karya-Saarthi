@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import DepartmentMeetings from '@/components/admin/DepartmentMeetings'
 
 interface Vendor { id: number; fullname: string; email: string; phone: string; activeJobs: number }
 interface SOP { id: number; title: string; content: string | null; category: string; version: string; is_published: boolean; updated_at: string }
@@ -205,7 +206,8 @@ export default function OperationsPage() {
   const expiringItems = inventory.filter(i => i.renewal_date && new Date(i.renewal_date).getTime() - Date.now() < 30 * 86400000)
 
   return (
-    <div className="space-y-5 max-w-7xl">
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 max-w-7xl">
+      <div className="lg:col-span-8 xl:col-span-9 space-y-5">
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
@@ -852,6 +854,13 @@ export default function OperationsPage() {
         {showDMChat && DMComp && meId > 0 && <DMComp currentUserId={meId} mode="ops" onClose={() => setShowDMChat(false)} />}
         {showMeetings && MeetComp && meId > 0 && <MeetComp currentUserId={meId} onClose={() => setShowMeetings(false)} />}
       </AnimatePresence>
+      </div>
+
+      <div className="lg:col-span-4 xl:col-span-3">
+        <div className="sticky top-5 bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
+          <DepartmentMeetings />
+        </div>
+      </div>
     </div>
   )
 

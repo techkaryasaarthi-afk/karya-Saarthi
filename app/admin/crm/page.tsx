@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import DepartmentMeetings from '@/components/admin/DepartmentMeetings'
 
 // ─── Types ────────────────────────────────────────────────────
 interface Lead {
@@ -293,7 +294,8 @@ export default function CRMPage() {
   const overdueInvoices = invoices.filter(i => i.status === 'sent' && i.due_date && new Date(i.due_date) < new Date())
 
   return (
-    <div className="space-y-5 max-w-7xl">
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 max-w-7xl">
+      <div className="lg:col-span-8 xl:col-span-9 space-y-5">
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-navy font-heading">🔗 CRM — Customer Relations</h1>
@@ -1030,6 +1032,13 @@ export default function CRMPage() {
           </motion.div>
         )}
       </AnimatePresence>
+      </div>
+
+      <div className="lg:col-span-4 xl:col-span-3">
+        <div className="sticky top-5 bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
+          <DepartmentMeetings />
+        </div>
+      </div>
     </div>
   )
 }

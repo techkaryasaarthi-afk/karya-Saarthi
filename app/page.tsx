@@ -2,6 +2,8 @@ import Navbar from '@/components/Navbar'
 import HeroSection from '@/components/HeroSection'
 import LiveStatsBar from '@/components/LiveStatsBar'
 import dynamic from 'next/dynamic'
+import { createClient } from '@/lib/supabase/server'
+import PartnersMarquee from '@/components/PartnersMarquee'
 
 // Lazy load below-the-fold components to improve initial load performance
 const ServiceTiles = dynamic(() => import('@/components/ServiceTiles'), { ssr: true })
@@ -26,7 +28,32 @@ export const metadata = {
   description: 'Karya Saarthi provides expert academic writing, technical, business, and government services across India. Get free quotes, track your project, and connect with our dedicated Saarthi support system.',
 }
 
-export default function Home() {
+export default async function Home() {
+  let partners: any[] = []
+  try {
+    const supabase = await createClient()
+    const { data } = await supabase
+      .from('marketing_partnered_companies')
+      .select('id, name, logo_url, website')
+      .order('created_at', { ascending: false })
+    if (data) {
+      partners = data
+    }
+  } catch (e) {
+    console.error('Error fetching partnered companies:', e)
+  }
+
+  const defaultPartners = [
+    { name: 'Google' },
+    { name: 'Microsoft' },
+    { name: 'Amazon' },
+    { name: 'Meta' },
+    { name: 'Netflix' },
+    { name: 'Adobe' },
+  ]
+
+  const displayPartners = partners.length > 0 ? partners : defaultPartners
+
   return (
     <>
       <Navbar />
@@ -43,6 +70,7 @@ export default function Home() {
       <QuickAccessDashboard />
       <CTABanner />
       <NewsletterSection />
+      <PartnersMarquee partners={displayPartners} />
       <Footer />
       <Chatbot />
       <WhatsAppWidget />

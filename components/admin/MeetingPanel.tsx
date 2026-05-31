@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback, useRef } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 interface Meeting {
@@ -39,7 +39,6 @@ export default function MeetingPanel({ currentUserId, onClose }: Props) {
     scheduled_at: '',
     duration_min: 60,
   })
-  const jitsiRef = useRef<HTMLIFrameElement>(null)
 
   const fetchMeetings = useCallback(async () => {
     setLoading(true)
@@ -130,14 +129,30 @@ export default function MeetingPanel({ currentUserId, onClose }: Props) {
           </div>
         </div>
 
-        {/* Jitsi iframe */}
-        <iframe
-          ref={jitsiRef}
-          src={jitsiUrl}
-          allow="camera; microphone; fullscreen; display-capture; autoplay"
-          className="flex-1 w-full border-0"
-          title={`Video Meeting: ${activeMeeting.title}`}
-        />
+        {/* Jitsi meeting launch card */}
+        <div className="flex-1 w-full bg-slate-900 flex flex-col items-center justify-center p-8 text-center">
+          <span className="text-6xl mb-4">🎥</span>
+          <h3 className="text-xl font-bold text-white font-heading mb-2">Ready to join &ldquo;{activeMeeting.title}&rdquo;?</h3>
+          {activeMeeting.creator && (
+            <p className="text-xs text-accent font-bold mb-2">👑 Host/Owner: {activeMeeting.creator.fullname}</p>
+          )}
+          <p className="text-slate-400 text-xs max-w-md mb-6 leading-relaxed">
+            To guarantee microphone and camera access with full security, Jitsi meetings must be launched in a secure external tab.
+            <br />
+            <span className="text-amber-500 font-semibold mt-2.5 block">
+              ⚠️ Host Note: The meeting host should join the room first to obtain Jitsi moderator privileges. Guests joining before the host may gain moderator status automatically.
+            </span>
+          </p>
+          <a
+            href={jitsiUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => setActiveMeeting(null)}
+            className="px-8 py-3.5 bg-green-500 hover:bg-green-600 text-white font-bold text-sm rounded-xl transition-all shadow-lg shadow-green-500/20"
+          >
+            🚀 Launch Jitsi Meeting Room
+          </a>
+        </div>
       </motion.div>
     )
   }
@@ -365,6 +380,9 @@ function MeetingCard({
               )}
               <span>⏱ {meeting.duration_min} min</span>
               <span className="font-mono truncate max-w-[140px]">🔗 {meeting.jitsi_room}</span>
+              {meeting.creator?.fullname && (
+                <span className="text-accent font-semibold">👑 Host: {meeting.creator.fullname}</span>
+              )}
             </div>
           </div>
         </div>

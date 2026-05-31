@@ -36,6 +36,7 @@ function buildNavGroups(user: UserData): NavGroup[] {
   const isSuperAdmin = user.role === 'super_admin'
   const isBoard = user.role === 'board_member'
   const isPillar = user.role === 'pillar_member'
+  const isAllSaarthi = user.role === 'admin' && user.department === 'all_saarthi'
   const dept = user.department
   const pillar = user.pillar_role
 
@@ -53,6 +54,17 @@ function buildNavGroups(user: UserData): NavGroup[] {
     })
   }
 
+  // ── All Saarthi Head: Overview ──────────────────────
+  if (isSuperAdmin || isAllSaarthi) {
+    all.push({
+      title: 'All Saarthi Head',
+      items: [
+        { icon: '🏰', label: 'All Saarthi Hub', href: '/admin/all-saarthi' },
+        { icon: '👤', label: 'User Directory', href: '/admin/users' },
+      ],
+    })
+  }
+
   // ── Board of Directors ─────────────────────────────
   if (isSuperAdmin || isBoard) {
     all.push({
@@ -64,6 +76,7 @@ function buildNavGroups(user: UserData): NavGroup[] {
         { icon: '📄', label: 'Investor Reports', href: '/admin/board?tab=reports' },
         { icon: '⚖️', label: 'Legal & Policy', href: '/admin/board?tab=mou' },
         { icon: '🗓️', label: 'Board Meetings', href: '/admin/board/meetings' },
+        { icon: '🌐', label: 'About Us Page', href: '/admin/board?tab=about' },
       ],
     })
   }
@@ -194,6 +207,7 @@ function buildNavGroups(user: UserData): NavGroup[] {
     title: 'Shared Tools',
     items: [
       { icon: '📁', label: 'Team Workspace', href: '/admin/workspace' },
+      { icon: '🤖', label: 'Internal AI Chatbot', href: '/admin/chatbot' },
     ],
   })
 
@@ -270,6 +284,7 @@ export default function AdminSidebar({ user }: { user: UserData }) {
     if (user.role === 'super_admin') return { label: '👑 Super Admin', color: '#FF6B35' }
     if (user.role === 'board_member') return { label: '🏦 Board Member', color: '#8B5CF6' }
     if (user.role === 'pillar_member') return { label: `🌟 ${user.pillar_role} Saarthi`, color: '#10B981' }
+    if (user.role === 'admin' && user.department === 'all_saarthi') return { label: '👑 All Saarthi Head', color: '#FF6B35' }
     if (user.role === 'admin') return { label: `⚙️ ${user.department?.toUpperCase()} Admin`, color: '#3B82F6' }
     return { label: user.role, color: '#6B7280' }
   }

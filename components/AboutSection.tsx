@@ -21,6 +21,32 @@ export default function AboutSection() {
           <h2 className="text-3xl lg:text-5xl font-bold text-navy font-heading">About Karya Saarthi</h2>
         </motion.div>
 
+        {/* Featured Video */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="mb-20 max-w-4xl mx-auto w-full px-2"
+        >
+          <div className="relative rounded-[2rem] p-1.5 bg-gradient-to-br from-navy/20 to-navy/5 border border-navy/10 backdrop-blur-md shadow-xl overflow-hidden">
+            <div className="relative aspect-video rounded-[1.8rem] overflow-hidden bg-slate-950">
+              <video
+                src="/images/karyasaarthi.mp4"
+                autoPlay
+                muted
+                loop
+                playsInline
+                controls
+                preload="metadata"
+                className="w-full h-full object-cover"
+              />
+            </div>
+          </div>
+          <p className="text-center text-slate-500 text-sm mt-4 italic">
+            Watch our journey: Discover how Karya Saarthi empowers individuals and businesses.
+          </p>
+        </motion.div>
+
         {/* Vision & Mission */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-20">
           <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="glass rounded-2xl p-8 lg:p-10">

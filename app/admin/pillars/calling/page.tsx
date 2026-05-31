@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { motion } from 'framer-motion'
+import DepartmentMeetings from '@/components/admin/DepartmentMeetings'
 
 interface Caller { id: number; fullname: string; email: string; phone: string; shift: string; calls_today: number; leads_today: number; conversion_rate: number; revenue: number; target_calls: number }
 interface CallLog { id: number; caller_name: string; prospect_name: string; prospect_phone: string | null; duration: string | null; outcome: string; notes: string | null; created_at: string }
@@ -107,7 +108,8 @@ export default function CallingSaarthiPage() {
   const totalConverted = callLogs.filter(l => l.outcome === 'converted').length
 
   return (
-    <div className="space-y-5 max-w-7xl">
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 max-w-7xl">
+      <div className="lg:col-span-8 xl:col-span-9 space-y-5">
       <div><h1 className="text-2xl font-bold text-navy font-heading">📞 Calling Saarthi</h1><p className="text-slate-500 text-sm">Caller roster · Call logs · Scripts · Performance · Schedules</p></div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -298,6 +300,13 @@ export default function CallingSaarthiPage() {
           </div>
         </div>
       )}
+      </div>
+
+      <div className="lg:col-span-4 xl:col-span-3">
+        <div className="sticky top-5 bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
+          <DepartmentMeetings />
+        </div>
+      </div>
     </div>
   )
 }

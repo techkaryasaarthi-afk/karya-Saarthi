@@ -101,17 +101,34 @@ export default function HeroSection() {
             </div>
           </motion.div>
 
-          {/* Right — decorative */}
+          {/* Right — Video Showcase */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.4, duration: 0.8 }}
-            className="hidden lg:flex justify-center"
+            className="flex justify-center w-full mt-10 lg:mt-0"
           >
-            <div className="relative w-80 h-80">
-              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-accent/20 to-navy-light/20 blur-3xl" />
-              <div className="absolute inset-8 rounded-full bg-gradient-to-br from-accent/30 to-transparent border border-white/10 backdrop-blur-sm flex items-center justify-center">
-                <span className="text-6xl">🤝</span>
+            <div className="relative w-full max-w-lg lg:max-w-none">
+              {/* Decorative background glow */}
+              <div className="absolute -inset-4 rounded-3xl bg-gradient-to-br from-accent/20 to-navy-light/20 blur-2xl opacity-70" />
+              
+              <div className="relative rounded-2xl p-1 bg-gradient-to-br from-white/20 to-white/5 border border-white/10 backdrop-blur-md shadow-2xl overflow-hidden">
+                <div className="relative aspect-video rounded-xl overflow-hidden bg-black/40">
+                  <video
+                    src="/images/karyasaarthi.mp4"
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    controls
+                    preload="metadata"
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-black/60 backdrop-blur-sm text-xs font-semibold text-white flex items-center gap-1.5 pointer-events-none">
+                    <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
+                    Platform Tour
+                  </div>
+                </div>
               </div>
             </div>
           </motion.div>

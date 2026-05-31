@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
+import DepartmentMeetings from '@/components/admin/DepartmentMeetings'
 
 interface Stats {
   totalRevenue: number
@@ -76,7 +77,8 @@ export default function AnalyticsPage() {
   ] : []
 
   return (
-    <div className="space-y-6 max-w-7xl">
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 max-w-7xl">
+      <div className="lg:col-span-8 xl:col-span-9 space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
@@ -190,6 +192,13 @@ export default function AnalyticsPage() {
           )}
         </>
       )}
+      </div>
+
+      <div className="lg:col-span-4 xl:col-span-3">
+        <div className="sticky top-5 bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
+          <DepartmentMeetings />
+        </div>
+      </div>
     </div>
   )
 }

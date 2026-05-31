@@ -119,7 +119,7 @@ export default function AboutPage() {
       <Navbar />
       <main className="pt-20 lg:pt-24 pb-20 bg-white min-h-screen">
         {/* Hero */}
-        <section className="bg-gradient-to-br from-navy to-navy-dark text-white py-16 lg:py-24">
+        <section className="bg-gradient-to-br from-navy to-navy-dark text-white pt-16 pb-28 lg:pt-24 lg:pb-36">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
               <span className="inline-block px-4 py-1.5 rounded-full bg-accent/20 text-accent text-sm font-semibold mb-4">Our Story</span>
@@ -129,6 +129,29 @@ export default function AboutPage() {
               </p>
             </motion.div>
           </div>
+        </section>
+
+        {/* Overlapping Featured Video */}
+        <section className="relative z-20 max-w-4xl mx-auto px-4 -mt-16 lg:-mt-24 mb-16">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.8 }}
+            className="rounded-[2rem] p-2 bg-white shadow-2xl border border-slate-100 overflow-hidden"
+          >
+            <div className="relative aspect-video rounded-[1.8rem] overflow-hidden bg-slate-950">
+              <video
+                src="/images/karyasaarthi.mp4"
+                autoPlay
+                muted
+                loop
+                playsInline
+                controls
+                preload="metadata"
+                className="w-full h-full object-cover"
+              />
+            </div>
+          </motion.div>
         </section>
 
         {loading ? (

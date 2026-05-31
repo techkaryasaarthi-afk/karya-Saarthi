@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback, Suspense } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useSearchParams, useRouter } from 'next/navigation'
 import AboutPageManager from '@/components/admin/AboutPageManager'
+import DepartmentMeetings from '@/components/admin/DepartmentMeetings'
 
 interface BoardData {
   revenue: { total: number; thisMonth: number; pending: number; overdueCount: number }
@@ -213,7 +214,8 @@ function BoardDashboard() {
   const d = data
 
   return (
-    <div className="space-y-6 max-w-7xl">
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 max-w-7xl">
+      <div className="lg:col-span-8 xl:col-span-9 space-y-6">
       {/* Header */}
       <div className="flex items-start justify-between flex-wrap gap-4">
         <div>
@@ -948,6 +950,13 @@ function BoardDashboard() {
           )}
         </div>
       )}
+      </div>
+
+      <div className="lg:col-span-4 xl:col-span-3">
+        <div className="sticky top-5 bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
+          <DepartmentMeetings />
+        </div>
+      </div>
     </div>
   )
 }

@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import InterdeptTaskInbox from '@/components/admin/InterdeptTaskInbox'
 import dynamic from 'next/dynamic'
+import DepartmentMeetings from '@/components/admin/DepartmentMeetings'
 
 const RichTextEditor = dynamic(() => import('@/components/RichTextEditor'), { ssr: false, loading: () => <div className="h-64 bg-slate-50 rounded-xl animate-pulse border border-slate-200 flex items-center justify-center text-slate-400 text-sm">Loading editor...</div> })
 
@@ -22,6 +23,7 @@ const TABS = [
   { key: 'events', label: '🎪 All Events' },
   { key: 'competitor', label: '🔍 Competitor Intel' },
   { key: 'brand', label: '🎨 Brand Assets' },
+  { key: 'partners', label: '🤝 Partnered Companies' },
 ] as const
 type Tab = typeof TABS[number]['key']
 
@@ -56,6 +58,9 @@ export default function MarketingPage() {
   // Brand assets
   const [brandAssets, setBrandAssets] = useState<{ id: string; name: string; type: string; url: string; description: string }[]>([])
   const [newAsset, setNewAsset] = useState({ name: '', type: 'Logo', url: '', description: '' })
+  // Partnered companies
+  const [partners, setPartners] = useState<{ id: string; name: string; logo_url: string; website: string }[]>([])
+  const [newPartner, setNewPartner] = useState({ name: '', logo_url: '', website: '' })
   // Blogs
   const [blogs, setBlogs] = useState<any[]>([])
   const [blogCategories, setBlogCategories] = useState<{ id: number; name: string }[]>([])
@@ -79,7 +84,7 @@ export default function MarketingPage() {
 
   const loadSubData = useCallback(async () => {
     try {
-      const routes = ['calendar', 'referrals', 'events', 'competitor', 'brand']
+      const routes = ['calendar', 'referrals', 'competitor', 'brand', 'partners']
       const promises = routes.map(r => fetch(`/api/admin/marketing/sub?type=${r}`).then(res => res.json()))
       const globalEventsRes = await fetch('/api/events?limit=50').then(res => res.json())
       const results = await Promise.all(promises)
@@ -87,6 +92,7 @@ export default function MarketingPage() {
       setReferrals(results[1].referrals || [])
       setCompNotes(results[2].competitor || [])
       setBrandAssets(results[3].brand || [])
+      setPartners(results[4].partners || [])
       setEvents(globalEventsRes.events || [])
       // Load filtered event types
       const [podRes, hackRes, schedRes, blogRes, catRes] = await Promise.all([
@@ -342,7 +348,8 @@ export default function MarketingPage() {
   }, [campaigns])
 
   return (
-    <div className="space-y-5 max-w-7xl">
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 max-w-7xl">
+      <div className="lg:col-span-8 xl:col-span-9 space-y-5">
       <div>
         <h1 className="text-2xl font-bold text-navy font-heading">📣 Marketing Head</h1>
         <p className="text-slate-500 text-sm">Campaigns · Lead analytics · Content calendar · Referrals · Events · Brand</p>
@@ -859,8 +866,119 @@ export default function MarketingPage() {
         </div>
       )}
 
+      {/* ── PARTNERED COMPANIES ── */}
+      {activeTab === 'partners' && (
+        <div className="space-y-4">
+          <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm space-y-3">
+            <h4 className="font-bold text-navy text-sm">Add Partnered Company</h4>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <input
+                required
+                value={newPartner.name}
+                onChange={e => setNewPartner(p => ({ ...p, name: e.target.value }))}
+                placeholder="Company Name *"
+                className="px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none focus:border-blue-400"
+              />
+              <input
+                value={newPartner.logo_url}
+                onChange={e => setNewPartner(p => ({ ...p, logo_url: e.target.value }))}
+                placeholder="Logo URL (optional)"
+                className="px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none focus:border-blue-400"
+              />
+              <input
+                value={newPartner.website}
+                onChange={e => setNewPartner(p => ({ ...p, website: e.target.value }))}
+                placeholder="Website URL (optional)"
+                className="px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none focus:border-blue-400"
+              />
+            </div>
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={async () => {
+                  if (!newPartner.name.trim()) return
+                  const res = await fetch('/api/admin/marketing/sub', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ routeType: 'partners', ...newPartner })
+                  })
+                  if (res.ok) {
+                    const { record } = await res.json()
+                    setPartners(p => [record, ...p])
+                    setNewPartner({ name: '', logo_url: '', website: '' })
+                  }
+                }}
+                className="px-5 py-2.5 rounded-xl font-bold text-white text-sm cursor-pointer bg-navy"
+              >
+                + Add Partner
+              </button>
+            </div>
+          </div>
+
+          {partners.length === 0 ? (
+            <div className="bg-white rounded-2xl p-12 text-center border border-slate-100 text-slate-400">
+              <span className="text-4xl block mb-3">🤝</span>
+              <p>No partnered companies added yet.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {partners.map((p, i) => (
+                <motion.div
+                  key={p.id}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: i * 0.05 }}
+                  className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 hover:shadow-md transition-shadow"
+                >
+                  <div className="flex items-start justify-between gap-3 mb-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center font-bold text-navy shrink-0 overflow-hidden">
+                        {p.logo_url ? (
+                          <img src={p.logo_url} alt={p.name} className="w-full h-full object-contain rounded-xl" onError={(e) => { e.currentTarget.style.display = 'none' }} />
+                        ) : null}
+                        <span>{p.name.charAt(0)}</span>
+                      </div>
+                      <div className="min-w-0">
+                        <p className="font-bold text-navy truncate text-sm">{p.name}</p>
+                        {p.website && (
+                          <a href={p.website} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-500 hover:underline truncate block">
+                            {p.website}
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                    <button
+                      onClick={async () => {
+                        if (!confirm('Are you sure you want to delete this partner?')) return
+                        const res = await fetch('/api/admin/marketing/sub', {
+                          method: 'DELETE',
+                          body: JSON.stringify({ routeType: 'partners', id: p.id })
+                        })
+                        if (res.ok) {
+                          setPartners(prev => prev.filter(x => x.id !== p.id))
+                        }
+                      }}
+                      className="text-slate-300 hover:text-red-500 transition-colors"
+                    >
+                      🗑️
+                    </button>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
       <div className="mt-8">
         <InterdeptTaskInbox />
+      </div>
+      </div>
+
+      <div className="lg:col-span-4 xl:col-span-3">
+        <div className="sticky top-5 bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
+          <DepartmentMeetings />
+        </div>
       </div>
     </div>
   )

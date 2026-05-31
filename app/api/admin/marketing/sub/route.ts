@@ -19,6 +19,7 @@ export async function GET(req: Request) {
       events: 'marketing_events',
       competitor: 'marketing_competitors',
       brand: 'marketing_brand_assets',
+      partners: 'marketing_partnered_companies',
     }
     const table = tableMap[routeType]
     if (!table) return NextResponse.json({ error: 'Invalid type' }, { status: 400 })
@@ -53,6 +54,7 @@ export async function POST(req: Request) {
     events: 'marketing_events',
     competitor: 'marketing_competitors',
     brand: 'marketing_brand_assets',
+    partners: 'marketing_partnered_companies',
   }
   const table = tableMap[_type]
   if (!table) return NextResponse.json({ error: 'Invalid type' }, { status: 400 })
@@ -82,6 +84,7 @@ export async function PATCH(req: Request) {
     events: 'marketing_events',
     competitor: 'marketing_competitors',
     brand: 'marketing_brand_assets',
+    partners: 'marketing_partnered_companies',
   }
   const table = tableMap[_type]
   if (!table) return NextResponse.json({ error: 'Invalid type' }, { status: 400 })
@@ -106,6 +109,7 @@ export async function DELETE(req: Request) {
     events: 'marketing_events',
     competitor: 'marketing_competitors',
     brand: 'marketing_brand_assets',
+    partners: 'marketing_partnered_companies',
   }
   const table = tableMap[_type]
   if (!table) return NextResponse.json({ error: 'Invalid type' }, { status: 400 })

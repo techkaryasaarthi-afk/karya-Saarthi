@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback, useMemo, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer, Legend } from 'recharts'
+import DepartmentMeetings from '@/components/admin/DepartmentMeetings'
 
 /* ─── Types ─── */
 interface Ambassador {
@@ -235,7 +236,8 @@ export default function CampusSaarthiPage() {
 
   /* ─── Render ─── */
   return (
-    <div className="space-y-5 max-w-7xl">
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 max-w-7xl">
+      <div className="lg:col-span-8 xl:col-span-9 space-y-5">
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-navy font-heading">🎓 Campus Saarthi</h1>
@@ -718,6 +720,13 @@ export default function CampusSaarthiPage() {
           )}
         </div>
       )}
+      </div>
+
+      <div className="lg:col-span-4 xl:col-span-3">
+        <div className="sticky top-5 bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
+          <DepartmentMeetings />
+        </div>
+      </div>
 
       {/* ═══ DIRECT CHAT OVERLAY ═══ */}
       <AnimatePresence>

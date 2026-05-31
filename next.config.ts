@@ -39,8 +39,8 @@ const securityHeaders = [
       "img-src 'self' data: blob: https://*.supabase.co https://*.supabase.in https://images.unsplash.com https://picsum.photos https://placehold.co https://i.pravatar.cc https://via.placeholder.com",
       // API connections: self + Supabase + Razorpay + Google Analytics
       "connect-src 'self' https://*.supabase.co https://*.supabase.in https://api.razorpay.com https://lumberjack.razorpay.com wss://*.supabase.co https://www.google-analytics.com",
-      // Iframes: Razorpay checkout
-      "frame-src 'self' https://api.razorpay.com https://checkout.razorpay.com",
+      // Iframes: Razorpay checkout + Google Maps
+      "frame-src 'self' https://api.razorpay.com https://checkout.razorpay.com https://www.google.com https://google.com",
       // Workers: only self + blob (for Turbopack)
       "worker-src 'self' blob:",
       // Objects: block Flash and plugins
