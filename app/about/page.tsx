@@ -119,7 +119,7 @@ export default function AboutPage() {
       <Navbar />
       <main className="pt-20 lg:pt-24 pb-20 bg-white min-h-screen">
         {/* Hero */}
-        <section className="bg-gradient-to-br from-navy to-navy-dark text-white pt-16 pb-28 lg:pt-24 lg:pb-36">
+        <section className="bg-gradient-to-br from-navy to-navy-dark text-white pt-16 pb-16 lg:pt-24 lg:pb-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
               <span className="inline-block px-4 py-1.5 rounded-full bg-accent/20 text-accent text-sm font-semibold mb-4">Our Story</span>
@@ -131,28 +131,56 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* Overlapping Featured Video */}
-        <section className="relative z-20 max-w-4xl mx-auto px-4 -mt-16 lg:-mt-24 mb-16">
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.8 }}
-            className="rounded-[2rem] p-2 bg-white shadow-2xl border border-slate-100 overflow-hidden"
-          >
-            <div className="relative aspect-video rounded-[1.8rem] overflow-hidden bg-slate-950">
-              <video
-                src="/images/karyasaarthi.mp4"
-                autoPlay
-                muted
-                loop
-                playsInline
-                controls
-                preload="metadata"
-                className="w-full h-full object-cover"
-              />
+        {/* ── Behind the Scenes: 2-col text + video ── */}
+        <section className="py-16 lg:py-20 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+
+              {/* Left — text */}
+              <motion.div
+                initial={{ opacity: 0, x: -30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.7 }}
+              >
+                <span className="inline-block px-3 py-1 rounded-full bg-accent/10 text-accent text-xs font-bold uppercase tracking-widest mb-4">
+                  Behind the Scenes
+                </span>
+                <h2 className="text-2xl lg:text-4xl font-bold text-navy font-heading leading-snug mb-5">
+                  Life at Karya Saarthi
+                </h2>
+                <p className="text-slate-600 leading-relaxed mb-4">
+                  At Karya Saarthi, we are building a collaborative ecosystem where passion meets execution. Our work culture revolves around rapid learning, creative freedom, and delivering impact for our clients.
+                </p>
+                <p className="text-slate-500 leading-relaxed text-sm">
+                  From brainstorm sessions in digital design to coding workflows and hyperlocal outreach management, get an insider view of our daily workspaces, R&amp;D labs, and the teams driving student and business success.
+                </p>
+              </motion.div>
+
+              {/* Right — video */}
+              <motion.div
+                initial={{ opacity: 0, x: 30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.7, delay: 0.15 }}
+              >
+                <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-slate-100 bg-slate-950">
+                  <video
+                    src="/images/karyasaarthi.mp4"
+                    muted
+                    loop
+                    playsInline
+                    controls
+                    preload="metadata"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </motion.div>
+
             </div>
-          </motion.div>
+          </div>
         </section>
+
 
         {loading ? (
           <div className="max-w-7xl mx-auto px-4 py-20 space-y-12">
