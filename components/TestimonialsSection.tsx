@@ -53,8 +53,10 @@ function ReviewCard({ review, active }: { review: GoogleReview; active: boolean 
       display: 'flex', flexDirection: 'column', gap: 14,
       flexShrink: 0,
       width: undefined,
-      transition: 'border-color 0.3s, box-shadow 0.3s, opacity 0.3s',
-      boxShadow: active ? '0 0 0 1px rgba(0,153,255,0.12), 0 8px 32px rgba(0,0,0,0.2)' : 'none',
+      /* Use opacity transition (GPU-composited) instead of box-shadow/border-color (non-composited) */
+      opacity: active ? 1 : 0.75,
+      transition: 'opacity 0.3s',
+      willChange: 'opacity',
     }}>
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>

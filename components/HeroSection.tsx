@@ -83,7 +83,7 @@ export default function HeroSection() {
             {/* Headline */}
             <h1
               className="text-display-xxl hero-headline hero-reveal"
-              style={{ color: 'var(--color-ink)', marginBottom: 'var(--space-md)', animationDelay: '60ms' }}
+              style={{ color: 'var(--color-ink)', marginBottom: 'var(--space-md)' }}
             >
               Your Trusted<br />Work Companion
             </h1>
@@ -97,7 +97,6 @@ export default function HeroSection() {
                 fontWeight: 600,
                 fontStyle: 'italic',
                 marginBottom: 'var(--space-lg)',
-                animationDelay: '90ms',
               }}
             >
               Hum Hai Aapke Saathi — Your Trusted Partner
@@ -110,7 +109,6 @@ export default function HeroSection() {
                 color: 'var(--color-ink-muted)',
                 maxWidth: 520,
                 marginBottom: 'var(--space-lg)',
-                animationDelay: '120ms',
               }}
             >
               Struggling with your thesis? Can&apos;t complete your project? Need a website built? Karya Saarthi is your one-stop solution. We don&apos;t just complete projects — we teach you everything. So when you submit or present, you do it with confidence.
@@ -125,7 +123,6 @@ export default function HeroSection() {
                 display: 'flex', gap: 'var(--space-xs)',
                 flexWrap: 'wrap', alignItems: 'center',
                 marginBottom: 'var(--space-xxl)',
-                animationDelay: '180ms',
               }}
             >
               <Link href="/contact" className="btn-primary" style={{ minWidth: 148 }}>
@@ -212,12 +209,10 @@ export default function HeroSection() {
                   muted
                   loop
                   playsInline
-                  preload="metadata"
-                  poster="/images/karyasaarthi.png"
+                  preload="none"
                   aria-label="Karya Saarthi platform demo"
                   style={{ width: '100%', height: '100%', display: 'block', objectFit: 'cover' }}
                   onError={(e) => {
-                    // Gracefully hide broken video — space is already reserved by aspect-ratio
                     const el = e.currentTarget as HTMLVideoElement
                     el.style.opacity = '0'
                   }}
@@ -287,9 +282,10 @@ export default function HeroSection() {
         .hero-reveal { opacity: 1; }
 
         /* Apply animation only when user has no motion preference */
+        /* fill-mode: forwards (NOT both) so elements stay visible during delay */
         @media (prefers-reduced-motion: no-preference) {
           .hero-reveal {
-            animation: hero-fade-up 0.5s var(--ease-out) both;
+            animation: hero-fade-up 0.4s var(--ease-out) forwards;
           }
         }
 
