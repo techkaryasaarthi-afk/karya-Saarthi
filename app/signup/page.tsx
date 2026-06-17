@@ -145,6 +145,13 @@ function SignupContent() {
 
         {step === 'form' && (
           <>
+            <div className="mobile-logo">
+              <Link href="/" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, textDecoration: 'none', marginBottom: 32 }}>
+                <Image src="/images/karyasaarthi.png" alt="Karya Saarthi" width={24} height={24} style={{ borderRadius: 4 }} />
+                <span style={{ fontFamily: 'var(--font-display)', fontSize: 15, fontWeight: 600, color: 'var(--color-ink)', letterSpacing: '-0.4px' }}>Karya Saarthi</span>
+              </Link>
+            </div>
+            
             <div style={{ marginBottom: 28 }}>
               <h2 className="text-display-md" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-ink)', marginBottom: 8 }}>Create account</h2>
               <p className="text-body" style={{ color: 'var(--color-ink-muted)' }}>
@@ -278,7 +285,8 @@ function SignupContent() {
       </div>
 
       <style>{`
-        @media (max-width: 900px) { .signup-left { display: none !important; } .signup-right { width: 100% !important; max-width: 520px; margin: 0 auto; padding: 40px 24px !important; } }
+        .mobile-logo { display: none; }
+        @media (max-width: 900px) { .signup-left { display: none !important; } .signup-right { width: 100% !important; max-width: 520px; margin: 0 auto; padding: 40px 24px !important; } .mobile-logo { display: block; } }
         select option { background-color: #1c1c1c; color: #ffffff; }
       `}</style>
     </div>

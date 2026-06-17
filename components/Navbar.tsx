@@ -267,35 +267,12 @@ export default function Navbar() {
           backgroundColor: 'var(--color-surface-1)',
           zIndex: 49,
           overflowY: 'auto',
-          paddingTop: 'var(--space-xxl)',
+          paddingTop: '80px',
         }}
         aria-label="Mobile menu"
         role="dialog"
         aria-modal="true"
       >
-        {/* Close button */}
-        <button
-          onClick={() => setMobileOpen(false)}
-          className="btn-icon"
-          style={{ position: 'absolute', top: 16, right: 16 }}
-          aria-label="Close menu"
-        >
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-            <line x1="2" y1="2" x2="16" y2="16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-            <line x1="16" y1="2" x2="2" y2="16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-          </svg>
-        </button>
-
-        {/* Logo inside drawer */}
-        <div style={{ padding: '0 var(--space-lg) var(--space-lg)' }}>
-          <Link href="/" onClick={() => setMobileOpen(false)}
-            style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none' }}>
-            <span style={{ fontFamily: 'var(--font-display)', fontSize: 17, fontWeight: 600, color: 'var(--color-ink)', letterSpacing: '-0.5px' }}>
-              Karya Saarthi
-            </span>
-          </Link>
-        </div>
-
         {/* Nav links */}
         <nav style={{ padding: '0 var(--space-sm)' }}>
           {navLinks.map(link => {

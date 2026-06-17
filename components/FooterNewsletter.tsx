@@ -37,7 +37,7 @@ export default function FooterNewsletter() {
   }
 
   return (
-    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 6, flex: 1, minWidth: 240, maxWidth: 400 }}>
+    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 6, flex: 1, minWidth: 'min(240px, 100%)', maxWidth: 400 }}>
       <div style={{ display: 'flex', gap: 8, width: '100%' }}>
         <input
           type="email"
@@ -46,7 +46,7 @@ export default function FooterNewsletter() {
           placeholder="your@email.com"
           required
           style={{
-            flex: 1, padding: '10px 14px', borderRadius: 'var(--radius-md)',
+            flex: 1, minWidth: 0, padding: '10px 14px', borderRadius: 'var(--radius-md)',
             border: '1px solid var(--color-hairline)', backgroundColor: 'var(--color-canvas)',
             color: 'var(--color-ink)', fontSize: 13, outline: 'none',
           }}

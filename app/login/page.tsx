@@ -131,6 +131,13 @@ function LoginContent() {
         justifyContent: 'center',
         padding: '64px 48px',
       }}>
+        <div className="mobile-logo">
+          <Link href="/" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, textDecoration: 'none', marginBottom: 32 }}>
+            <Image src="/images/karyasaarthi.png" alt="Karya Saarthi" width={24} height={24} style={{ borderRadius: 4 }} />
+            <span style={{ fontFamily: 'var(--font-display)', fontSize: 15, fontWeight: 600, color: 'var(--color-ink)', letterSpacing: '-0.4px' }}>Karya Saarthi</span>
+          </Link>
+        </div>
+
         <div style={{ marginBottom: 36 }}>
           <h2 className="text-display-md" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-ink)', marginBottom: 8 }}>Sign in</h2>
           <p className="text-body" style={{ color: 'var(--color-ink-muted)' }}>
@@ -232,9 +239,11 @@ function LoginContent() {
       </div>
 
       <style>{`
+        .mobile-logo { display: none; }
         @media (max-width: 810px) {
           .login-left { display: none !important; }
           .login-right { width: 100% !important; max-width: 460px; margin: 0 auto; padding: 40px 24px !important; }
+          .mobile-logo { display: block; }
         }
       `}</style>
     </div>
