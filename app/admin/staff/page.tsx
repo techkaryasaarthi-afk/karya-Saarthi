@@ -1,7 +1,7 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useState, useCallback, Suspense } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from '@/lib/motion'
 import { useSearchParams, useRouter } from 'next/navigation'
 import DepartmentHubs from '@/components/admin/DepartmentHubs'
 
@@ -60,9 +60,9 @@ const VALID_TABS: TabKey[] = ['directory', 'payroll', 'appraisals', 'leaves']
 
 const ROLE_COLORS: Record<string, { label: string; color: string; bg: string }> = {
   super_admin: { label: 'Super Admin', color: '#FF6B35', bg: '#FFF0EB' },
-  board_member: { label: 'Board Member', color: '#8B5CF6', bg: '#EDE9FE' },
-  admin: { label: 'Admin', color: '#3B82F6', bg: '#DBEAFE' },
-  pillar_member: { label: 'Pillar Member', color: '#10B981', bg: '#D1FAE5' },
+  board_member: { label: 'Board Member', color: '#8B5CF6', bg: 'rgba(139,92,246,0.15)' },
+  admin: { label: 'Admin', color: '#3B82F6', bg: 'rgba(59,130,246,0.15)' },
+  pillar_member: { label: 'Pillar Member', color: '#10B981', bg: 'rgba(16,185,129,0.15)' },
 }
 
 // ── Inner component that uses useSearchParams ──
@@ -297,7 +297,7 @@ function StaffContent() {
             onClick={() => setUpraisalTarget(null)}>
             <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
               className="bg-white rounded-3xl p-8 shadow-2xl border border-slate-100 w-full max-w-lg"
-              onClick={e => e.stopPropagation()}>
+              onClick={(e: React.MouseEvent) => e.stopPropagation()}>
               <div className="flex items-center gap-4 mb-6">
                 <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-xl font-bold text-white"
                   style={{ background: 'linear-gradient(135deg, #10B981, #059669)' }}>
@@ -914,10 +914,10 @@ function LeavesAdminTab() {
                     <tbody>
                       {processed.map(l => {
                         const styles: Record<string, { bg: string; text: string }> = {
-                          approved: { bg: '#D1FAE5', text: '#065F46' },
-                          rejected: { bg: '#FEE2E2', text: '#991B1B' },
+                          approved: { bg: 'rgba(16,185,129,0.15)', text: '#065F46' },
+                          rejected: { bg: 'rgba(239,68,68,0.15)', text: '#991B1B' },
                         }
-                        const s = styles[l.status] || { bg: '#F3F4F6', text: '#6B7280' }
+                        const s = styles[l.status] || { bg: 'rgba(255,255,255,0.08)', text: '#6B7280' }
                         return (
                           <tr key={l.id} className="border-b border-slate-50 hover:bg-slate-50/60">
                             <td className="px-4 py-3 font-semibold text-navy">{l.fullname}</td>
@@ -952,3 +952,4 @@ export default function StaffManagementPage() {
     </Suspense>
   )
 }
+

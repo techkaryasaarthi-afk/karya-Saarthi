@@ -3,8 +3,8 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
-import { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { useState, useEffect }
+ from 'react'
 
 interface UserData {
   id: number
@@ -208,6 +208,7 @@ function buildNavGroups(user: UserData): NavGroup[] {
     items: [
       { icon: '📁', label: 'Team Workspace', href: '/admin/workspace' },
       { icon: '🤖', label: 'Internal AI Chatbot', href: '/admin/chatbot' },
+      { icon: '📨', label: 'Newsletter Subscribers', href: '/admin/newsletter' },
     ],
   })
 
@@ -277,7 +278,7 @@ export default function AdminSidebar({ user }: { user: UserData }) {
 
   const handleLogout = async () => {
     await fetch('/api/auth/logout', { method: 'POST' })
-    router.push('/staff-login')
+    router.push('/login')
   }
 
   const getRoleBadge = () => {
@@ -292,100 +293,92 @@ export default function AdminSidebar({ user }: { user: UserData }) {
   const roleBadge = getRoleBadge()
 
   const SidebarContent = () => (
-    <div className="flex flex-col h-screen">
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
       {/* Logo */}
-      <div className="p-5 border-b border-white/8 flex-shrink-0">
-        <Link href="/admin" className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl overflow-hidden shadow-lg ring-2 ring-accent/30 flex-shrink-0">
-            <Image src="/images/karyasaarthi.png" alt="Logo" width={36} height={36} className="w-full h-full object-cover" />
+      <div style={{ padding: '18px 16px', borderBottom: '1px solid var(--color-hairline-soft)', flexShrink: 0 }}>
+        <Link href="/admin" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
+          <div style={{ width: 28, height: 28, borderRadius: 6, overflow: 'hidden', flexShrink: 0 }}>
+            <Image src="/images/karyasaarthi.png" alt="Logo" width={28} height={28} style={{ width: '100%', height: '100%', objectFit: 'cover', }} />
           </div>
           <div>
-            <span className="font-bold text-white font-heading text-sm">Karya<span className="text-accent">Saarthi</span></span>
-            <p className="text-white/30 text-[10px]">Enterprise Platform</p>
+            <span style={{ fontFamily: 'var(--font-display)', fontWeight: 600, color: 'var(--color-ink)', fontSize: 13, letterSpacing: '-0.3px' }}>KaryaSaarthi</span>
+            <p style={{ color: 'var(--color-ink-muted)', fontSize: 10, marginTop: 1 }}>Enterprise Platform</p>
           </div>
         </Link>
       </div>
 
       {/* User card */}
-      <div className="m-3 p-3 rounded-xl flex-shrink-0" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}>
-        <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-xl flex items-center justify-center text-white font-bold text-sm flex-shrink-0"
-            style={{ background: roleBadge.color }}>
+      <div style={{ margin: '10px 10px', padding: 10, borderRadius: 'var(--radius-md)', backgroundColor: 'var(--color-surface-2)', border: '1px solid var(--color-hairline-soft)', flexShrink: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div style={{ width: 32, height: 32, borderRadius: 'var(--radius-sm)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, fontSize: 13, flexShrink: 0, backgroundColor: roleBadge.color }}>
             {user.fullname.charAt(0)}
           </div>
-          <div className="min-w-0">
-            <p className="text-white text-xs font-semibold truncate">{user.fullname}</p>
-            <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full" style={{ background: `${roleBadge.color}25`, color: roleBadge.color }}>
-              {roleBadge.label}
-            </span>
+          <div style={{ minWidth: 0 }}>
+            <p className="text-body-sm" style={{ color: 'var(--color-ink)', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user.fullname}</p>
+            <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 6px', borderRadius: 'var(--radius-pill)', backgroundColor: `${roleBadge.color}25`, color: roleBadge.color }}>{roleBadge.label}</span>
           </div>
         </div>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto px-2 py-2 space-y-0.5" style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.12) transparent' }}>
+      <nav style={{ flex: 1, overflowY: 'auto', padding: '8px 8px' }} className="scrollbar-none">
         {navGroups.map(group => (
-          <div key={group.title} className="mb-1">
-            {/* Group header */}
+          <div key={group.title} style={{ marginBottom: 4 }}>
             <button
               onClick={() => toggleGroup(group.title)}
-              className="w-full flex items-center justify-between px-3 py-2 text-[10px] font-bold text-white/30 uppercase tracking-wider hover:text-white/50 transition-colors cursor-pointer"
+              style={{
+                width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                padding: '6px 10px', background: 'none', border: 'none', cursor: 'pointer',
+                fontSize: 10, fontWeight: 700, letterSpacing: '0.07em', textTransform: 'uppercase',
+                color: 'var(--color-ink-muted)', transition: 'color var(--dur-fast)',
+              }}
             >
               <span>{group.title}</span>
-              <span className="text-white/20 transition-transform duration-200"
-                style={{ transform: expanded.has(group.title) ? 'rotate(90deg)' : 'rotate(0deg)' }}>›</span>
+              <span style={{ transform: expanded.has(group.title) ? 'rotate(90deg)' : 'rotate(0)', transition: 'transform var(--dur-normal) var(--ease-out)', fontSize: 14, lineHeight: 1 }}>›</span>
             </button>
 
-            <AnimatePresence>
-              {expanded.has(group.title) && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: 'auto', opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className="overflow-hidden"
-                >
-                  {group.items.map((item, idx) => (
-                    <Link
-                      key={`${group.title}-${item.label}-${idx}`}
-                      href={item.href}
-                      onClick={(e) => handleNavClick(e, item.href)}
-                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium transition-all mb-0.5 group relative ${
-                        isActive(item.href)
-                          ? 'bg-white/10 text-white'
-                          : 'text-white/50 hover:bg-white/5 hover:text-white/80'
-                      }`}
-                    >
-                      {/* Active indicator */}
-                      {isActive(item.href) && (
-                        <motion.div layoutId="activeNav"
-                          className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 rounded-r-full"
-                          style={{ background: '#FF6B35' }} />
-                      )}
-                      <span className="text-base">{item.icon}</span>
-                      <span className="truncate">{item.label}</span>
-                      {item.badge ? (
-                        <span className="ml-auto px-1.5 py-0.5 rounded-full text-[9px] font-bold text-white bg-red-500">
-                          {item.badge}
-                        </span>
-                      ) : null}
-                    </Link>
-                  ))}
-                </motion.div>
-              )}
-            </AnimatePresence>
+            <div style={{
+              display: 'grid',
+              gridTemplateRows: expanded.has(group.title) ? '1fr' : '0fr',
+              transition: 'grid-template-rows var(--dur-normal) var(--ease-out)',
+              overflow: 'hidden',
+            }}>
+              <div style={{ overflow: 'hidden' }}>
+                {group.items.map((item, idx) => (
+                  <Link
+                    key={`${group.title}-${item.label}-${idx}`}
+                    href={item.href}
+                    onClick={(e) => handleNavClick(e, item.href)}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: 8,
+                      padding: '8px 10px', borderRadius: 'var(--radius-md)',
+                      marginBottom: 2, textDecoration: 'none',
+                      fontSize: 12, fontWeight: isActive(item.href) ? 600 : 400,
+                      color: isActive(item.href) ? 'var(--color-ink)' : 'var(--color-ink-muted)',
+                      backgroundColor: isActive(item.href) ? 'var(--color-surface-2)' : 'transparent',
+                      borderLeft: isActive(item.href) ? '2px solid var(--color-accent-blue)' : '2px solid transparent',
+                      transition: 'background-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out)',
+                    }}
+                  >
+                    <span style={{ fontSize: 14 }}>{item.icon}</span>
+                    <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1 }}>{item.label}</span>
+                    {item.badge ? (
+                      <span style={{ marginLeft: 'auto', padding: '1px 5px', borderRadius: 'var(--radius-pill)', fontSize: 9, fontWeight: 700, backgroundColor: '#ef4444', color: '#fff' }}>{item.badge}</span>
+                    ) : null}
+                  </Link>
+                ))}
+              </div>
+            </div>
           </div>
         ))}
       </nav>
 
       {/* Footer */}
-      <div className="p-3 border-t border-white/8 flex-shrink-0 space-y-1">
-        <Link href="/" target="_blank"
-          className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs text-white/40 hover:bg-white/5 hover:text-white/70 transition-colors">
+      <div style={{ padding: '8px 8px 14px', borderTop: '1px solid var(--color-hairline-soft)', flexShrink: 0 }}>
+        <Link href="/" target="_blank" style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px', borderRadius: 'var(--radius-md)', textDecoration: 'none', fontSize: 12, color: 'var(--color-ink-muted)' }}>
           <span>🌐</span> View Website
         </Link>
-        <button onClick={handleLogout}
-          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs text-white/40 hover:bg-red-500/10 hover:text-red-400 transition-colors cursor-pointer">
+        <button onClick={handleLogout} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px', borderRadius: 'var(--radius-md)', border: 'none', background: 'transparent', cursor: 'pointer', fontSize: 12, color: '#f87171' }}>
           <span>🚪</span> Sign Out
         </button>
       </div>
@@ -395,40 +388,40 @@ export default function AdminSidebar({ user }: { user: UserData }) {
   return (
     <>
       {/* Desktop sidebar */}
-      <aside className="hidden lg:flex w-64 h-screen fixed top-0 left-0 z-30 flex-col overflow-hidden"
-        style={{ background: '#0d1829', borderRight: '1px solid rgba(255,255,255,0.06)' }}>
+      <aside style={{ width: 232, height: '100vh', position: 'fixed', top: 0, left: 0, zIndex: 30, display: 'flex', flexDirection: 'column', overflow: 'hidden', backgroundColor: 'var(--color-surface-1)', borderRight: '1px solid var(--color-hairline-soft)' }}
+        className="admin-sidebar-desktop">
         <SidebarContent />
       </aside>
 
       {/* Mobile toggle button */}
       <button
-        className="lg:hidden fixed top-4 left-4 z-50 w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-xl cursor-pointer"
-        style={{ background: '#1B3A6B' }}
+        style={{ position: 'fixed', top: 16, left: 16, zIndex: 50, width: 40, height: 40, borderRadius: 'var(--radius-md)', display: 'none', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--color-surface-1)', border: '1px solid var(--color-hairline)', color: 'var(--color-ink)', cursor: 'pointer' }}
+        className="admin-mobile-toggle"
         onClick={() => setMobileOpen(v => !v)}
       >
         {mobileOpen ? '✕' : '☰'}
       </button>
 
       {/* Mobile overlay */}
-      <AnimatePresence>
-        {mobileOpen && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="lg:hidden fixed inset-0 z-40 bg-black/60 backdrop-blur-sm"
-              onClick={() => setMobileOpen(false)}
-            />
-            <motion.aside
-              initial={{ x: -280 }} animate={{ x: 0 }} exit={{ x: -280 }}
-              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-              className="lg:hidden fixed top-0 left-0 bottom-0 w-72 z-50 flex flex-col overflow-hidden"
-              style={{ background: '#0d1829' }}
-            >
-              <SidebarContent />
-            </motion.aside>
-          </>
-        )}
-      </AnimatePresence>
+      {mobileOpen && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 40, backgroundColor: 'rgba(0,0,0,0.7)' }} onClick={() => setMobileOpen(false)} />
+      )}
+
+      {/* Mobile sidebar */}
+      <aside
+        style={{ position: 'fixed', top: 0, left: 0, bottom: 0, width: 260, zIndex: 50, display: 'flex', flexDirection: 'column', overflow: 'hidden', backgroundColor: 'var(--color-surface-1)', borderRight: '1px solid var(--color-hairline)', transform: mobileOpen ? 'translateX(0)' : 'translateX(-100%)', transition: 'transform var(--dur-slow) var(--ease-out)' }}
+        className="admin-sidebar-mobile"
+      >
+        <SidebarContent />
+      </aside>
+
+      <style>{`
+        @media (max-width: 1024px) {
+          .admin-sidebar-desktop { display: none !important; }
+          .admin-mobile-toggle   { display: flex !important; }
+        }
+      `}</style>
     </>
   )
 }
+

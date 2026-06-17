@@ -1,7 +1,7 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useState } from 'react'
-import { motion } from 'framer-motion'
+import { motion } from '@/lib/motion'
 
 interface Profile {
   id: number
@@ -97,3 +97,4 @@ export default function AdminSettingsPage() {
     </div>
   )
 }
+

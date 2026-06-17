@@ -1,46 +1,98 @@
 'use client'
 
-import { motion } from 'framer-motion'
 import Link from 'next/link'
 
 export default function CTABanner() {
   return (
-    <section className="py-20 lg:py-28 bg-gradient-to-r from-accent via-accent to-accent-dark relative overflow-hidden">
-      {/* Decorative shapes */}
-      <div className="absolute top-0 right-0 w-72 h-72 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/3" />
-      <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-1/3 -translate-x-1/4" />
+    <section style={{
+      padding: 'var(--space-section) var(--space-xl)',
+      backgroundColor: 'var(--color-surface-1)',
+      borderTop: '1px solid var(--color-hairline-soft)',
+      borderBottom: '1px solid var(--color-hairline-soft)',
+      position: 'relative',
+      overflow: 'hidden',
+    }}>
+      {/* Background gradient accent */}
+      <div aria-hidden="true" style={{
+        position: 'absolute', inset: 0, pointerEvents: 'none',
+        background: 'radial-gradient(ellipse 70% 80% at 50% 110%, rgba(106,76,245,0.12) 0%, transparent 70%)',
+      }} />
+      <div aria-hidden="true" style={{
+        position: 'absolute', top: -60, right: -60, width: 320, height: 320,
+        borderRadius: '50%', backgroundColor: 'rgba(0,153,255,0.04)',
+        pointerEvents: 'none',
+      }} />
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-        >
-          <h2 className="text-3xl lg:text-5xl font-extrabold text-white font-heading">
-            Ready to Get Started?
-          </h2>
-          <p className="mt-4 text-white/80 text-lg max-w-2xl mx-auto">
-            Join 500+ satisfied clients who trust Karya Saarthi for their academic
-            and professional needs. Get your free quote today.
-          </p>
-          <div className="mt-8 flex flex-wrap justify-center gap-4">
-            <Link
-              href="/contact"
-              className="px-10 py-4 rounded-2xl bg-white text-accent font-bold text-lg shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300"
-            >
-              Get Free Quote →
-            </Link>
-            <a
-              href="https://wa.me/918595025753"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-10 py-4 rounded-2xl border-2 border-white/40 text-white font-bold text-lg hover:bg-white/10 hover:border-white/60 transition-all duration-300"
-            >
-              💬 WhatsApp Us
-            </a>
-          </div>
-        </motion.div>
+      <div style={{ maxWidth: 720, margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 1 }}>
+
+        {/* Badge */}
+        <span style={{
+          display: 'inline-block', fontSize: 11, fontWeight: 700,
+          letterSpacing: '0.1em', textTransform: 'uppercase',
+          padding: '4px 12px', borderRadius: 'var(--radius-pill)',
+          backgroundColor: 'rgba(0,153,255,0.08)', color: 'var(--color-accent-blue)',
+          border: '1px solid rgba(0,153,255,0.18)', marginBottom: 24,
+        }}>
+          Get Started Today
+        </span>
+
+        <h2 style={{
+          fontFamily: 'var(--font-display)',
+          fontSize: 'clamp(28px, 4vw, 52px)',
+          fontWeight: 700,
+          color: 'var(--color-ink)',
+          letterSpacing: '-2px',
+          marginBottom: 16,
+          lineHeight: 1.05,
+        }}>
+          Ready to Get Started?
+        </h2>
+
+        <p style={{
+          fontSize: 16, color: 'var(--color-ink-muted)',
+          maxWidth: 480, margin: '0 auto 40px',
+          lineHeight: 1.65,
+        }}>
+          Join 500+ satisfied clients who trust Karya Saarthi for their academic and professional needs. Get your free quote today.
+        </p>
+
+        {/* CTA buttons */}
+        <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
+          <Link href="/contact" className="btn-primary" style={{ minWidth: 180, justifyContent: 'center', padding: '14px 32px', fontSize: 15 }}>
+            Get Free Quote Now →
+          </Link>
+          <a
+            href="https://wa.me/918595025753"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: 8,
+              padding: '13px 28px', minWidth: 180, justifyContent: 'center',
+              borderRadius: 'var(--radius-pill)',
+              border: '1px solid var(--color-hairline)',
+              backgroundColor: 'var(--color-surface-2)',
+              color: 'var(--color-ink)',
+              fontSize: 15, fontWeight: 600, textDecoration: 'none',
+              transition: 'border-color 0.15s, background-color 0.15s',
+            }}
+            className="cta-wa-btn"
+          >
+            💬 WhatsApp Us
+          </a>
+        </div>
+
+        {/* Trust strip */}
+        <div style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          gap: 24, marginTop: 44, flexWrap: 'wrap',
+        }}>
+          {['⚡ 2-hr response', '🔒 100% secure', '✅ 2000+ clients', '⭐ 98% satisfaction'].map(t => (
+            <span key={t} style={{ fontSize: 12, color: 'var(--color-ink-muted)', fontWeight: 500 }}>{t}</span>
+          ))}
+        </div>
       </div>
+
+      <style>{`.cta-wa-btn:hover { border-color: rgba(34,197,94,0.4) !important; background-color: rgba(34,197,94,0.06) !important; }`}</style>
     </section>
   )
 }

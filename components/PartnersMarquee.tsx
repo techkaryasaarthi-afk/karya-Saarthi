@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useRef } from 'react'
+import Image from 'next/image'
 
 interface Partner {
   id?: string | number
@@ -9,32 +9,44 @@ interface Partner {
   website?: string | null
 }
 
-interface PartnersMarqueeProps {
-  partners: Partner[]
-}
-
-export default function PartnersMarquee({ partners }: PartnersMarqueeProps) {
-  // Triple the list so the infinite scroll looks seamless at all viewport widths
+export default function PartnersMarquee({ partners }: { partners: Partner[] }) {
   const list = [...partners, ...partners, ...partners]
 
   return (
-    <div className="w-full py-10 bg-white border-t border-slate-100 overflow-hidden relative">
-      {/* Section label */}
-      <div className="max-w-7xl mx-auto px-6 mb-8 text-center">
-        <p className="text-xs font-bold uppercase tracking-widest text-slate-400 font-heading">
+    <div style={{
+      backgroundColor: 'var(--color-surface-1)',
+      borderTop: '1px solid var(--color-hairline-soft)',
+      padding: '40px 0 36px',
+      overflow: 'hidden',
+      position: 'relative',
+    }}>
+      {/* Label */}
+      <div style={{ textAlign: 'center', marginBottom: 28 }}>
+        <p style={{
+          fontSize: 11, fontWeight: 700,
+          textTransform: 'uppercase', letterSpacing: '0.1em',
+          color: 'var(--color-ink-muted)',
+        }}>
           Trusted by Industry Leaders &amp; Partners
         </p>
       </div>
 
-      {/* Scroll track */}
-      <div className="relative w-full flex items-center overflow-hidden">
-        {/* Left fade */}
-        <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-28 bg-gradient-to-r from-white to-transparent z-10" />
-        {/* Right fade */}
-        <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-28 bg-gradient-to-l from-white to-transparent z-10" />
+      {/* Marquee track */}
+      <div style={{ position: 'relative', width: '100%', display: 'flex', alignItems: 'center', overflow: 'hidden' }}>
+        {/* Fade edges */}
+        <div style={{
+          pointerEvents: 'none', position: 'absolute', left: 0, top: 0, bottom: 0, width: 120,
+          background: 'linear-gradient(to right, var(--color-surface-1), transparent)',
+          zIndex: 10,
+        }} />
+        <div style={{
+          pointerEvents: 'none', position: 'absolute', right: 0, top: 0, bottom: 0, width: 120,
+          background: 'linear-gradient(to left, var(--color-surface-1), transparent)',
+          zIndex: 10,
+        }} />
 
-        {/* CSS-animated marquee — no JS jank */}
-        <div className="flex gap-6 animate-marquee shrink-0 will-change-transform">
+        {/* Scrolling items */}
+        <div style={{ display: 'flex', gap: 16, animation: 'marquee-scroll 30s linear infinite', willChange: 'transform' }}>
           {list.map((p, idx) => (
             <a
               key={`${p.id ?? p.name}-${idx}`}
@@ -42,32 +54,39 @@ export default function PartnersMarquee({ partners }: PartnersMarqueeProps) {
               target={p.website ? '_blank' : undefined}
               rel="noopener noreferrer"
               title={p.name}
-              className="flex items-center justify-center shrink-0 px-8 py-4 bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:border-accent/30 hover:scale-105 transition-all duration-300 group"
-              style={{ minWidth: '160px', height: '72px' }}
+              style={{
+                flexShrink: 0, minWidth: 160, height: 68,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                padding: '0 24px',
+                borderRadius: 'var(--radius-lg)',
+                border: '1px solid var(--color-hairline-soft)',
+                backgroundColor: 'var(--color-surface-2)',
+                textDecoration: 'none',
+                transition: 'border-color 0.2s, background-color 0.2s',
+              }}
+              className="partner-card"
             >
               {p.logo_url ? (
-                /* Logo image — grayscale by default, full colour on hover */
                 <img
                   src={p.logo_url}
                   alt={p.name}
-                  className="max-h-9 w-auto object-contain grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300"
+                  style={{ maxHeight: 32, width: 'auto', objectFit: 'contain', filter: 'grayscale(1) brightness(0.7)', transition: 'filter 0.2s' }}
+                  className="partner-logo"
                   onError={(e) => {
-                    // If logo fails, show the company initial instead
                     const target = e.currentTarget
                     target.style.display = 'none'
                     const parent = target.parentElement
                     if (parent && !parent.querySelector('[data-fallback]')) {
                       const span = document.createElement('span')
                       span.dataset.fallback = 'true'
-                      span.className = 'font-extrabold text-slate-400 group-hover:text-navy text-sm tracking-wide transition-colors'
+                      span.style.cssText = 'font-size:13px;font-weight:700;color:var(--color-ink-muted);letter-spacing:0.04em;'
                       span.textContent = p.name
                       parent.appendChild(span)
                     }
                   }}
                 />
               ) : (
-                /* No logo URL — show company name as styled text */
-                <span className="font-extrabold text-slate-400 group-hover:text-navy text-sm tracking-wide transition-colors select-none">
+                <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--color-ink-muted)', letterSpacing: '0.04em' }}>
                   {p.name}
                 </span>
               )}
@@ -75,6 +94,20 @@ export default function PartnersMarquee({ partners }: PartnersMarqueeProps) {
           ))}
         </div>
       </div>
+
+      <style>{`
+        @keyframes marquee-scroll {
+          0%   { transform: translateX(0); }
+          100% { transform: translateX(-33.333%); }
+        }
+        .partner-card:hover {
+          border-color: rgba(0,153,255,0.25) !important;
+          background-color: rgba(0,153,255,0.04) !important;
+        }
+        .partner-card:hover .partner-logo {
+          filter: grayscale(0) brightness(1) !important;
+        }
+      `}</style>
     </div>
   )
 }

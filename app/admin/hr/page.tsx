@@ -1,7 +1,7 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from '@/lib/motion'
 import InterdeptTaskInbox from '@/components/admin/InterdeptTaskInbox'
 
 interface TeamMember {
@@ -39,9 +39,9 @@ interface HRData {
 
 const ROLE_COLORS: Record<string, { label: string; color: string; bg: string }> = {
   super_admin: { label: 'Super Admin', color: '#FF6B35', bg: '#FFF0EB' },
-  board_member: { label: 'Board Member', color: '#8B5CF6', bg: '#EDE9FE' },
-  admin: { label: 'Admin', color: '#3B82F6', bg: '#DBEAFE' },
-  pillar_member: { label: 'Pillar Member', color: '#10B981', bg: '#D1FAE5' },
+  board_member: { label: 'Board Member', color: '#8B5CF6', bg: 'rgba(139,92,246,0.15)' },
+  admin: { label: 'Admin', color: '#3B82F6', bg: 'rgba(59,130,246,0.15)' },
+  pillar_member: { label: 'Pillar Member', color: '#10B981', bg: 'rgba(16,185,129,0.15)' },
 }
 
 const LEAVE_TYPES: Record<string, string> = {
@@ -104,7 +104,7 @@ export default function HRPage() {
       {/* Summary KPIs */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { label: 'Total Team', value: data?.team.length || 0, icon: '👥', color: '#1B3A6B' },
+          { label: 'Total Team', value: data?.team.length || 0, icon: '👥', color: 'var(--color-ink)' },
           { label: 'Present Today', value: data?.attendance.present || 0, icon: '✅', color: '#10B981' },
           { label: 'Absent Today', value: data?.attendance.absent || 0, icon: '❌', color: '#EF4444' },
           { label: 'Pending Leaves', value: data?.pendingLeaves.length || 0, icon: '🏖️', color: '#F59E0B' },
@@ -196,7 +196,7 @@ export default function HRPage() {
                   {data?.pendingLeaves.map(leave => (
                     <div key={leave.id} className="p-4 flex items-center justify-between gap-4 flex-wrap">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-navy/10 flex items-center justify-center text-navy font-bold text-sm">
+                        <div className="w-10 h-10 rounded-xl bg-[rgba(0,153,255,0.12)] flex items-center justify-center text-navy font-bold text-sm">
                           {leave.user?.fullname.charAt(0)}
                         </div>
                         <div>
@@ -245,3 +245,4 @@ export default function HRPage() {
     </div>
   )
 }
+

@@ -1,14 +1,21 @@
 import type { Metadata, Viewport } from 'next'
-import { Inter, Poppins } from 'next/font/google'
+import { Inter, Geist } from 'next/font/google'
+import { GeistSans } from 'geist/font/sans'
 import './globals.css'
 import SilenceWarnings from '@/components/SilenceWarnings'
+import { cn } from "@/lib/utils";
+import ChatbotLoader from '@/components/ChatbotLoader'
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' })
-const poppins = Poppins({
-  weight: ['400', '500', '600', '700', '800'],
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+
+
+/* ── Fonts ─────────────────────────────────────────────────── */
+// Inter Variable: body typeface with full OpenType support
+const inter = Inter({
   subsets: ['latin'],
-  variable: '--font-poppins',
+  variable: '--font-inter',
   display: 'swap',
+  axes: ['opsz'],
 })
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://karyasaarthi.vercel.app'
@@ -17,17 +24,17 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   maximumScale: 5,
-  themeColor: '#1B3A6B',
+  themeColor: '#090909',
 }
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: 'Karya Saarthi | Academic & Professional Services',
+    default: 'Karya Saarthi - Project Solutions With Education',
     template: '%s | Karya Saarthi',
   },
   description:
-    'Karya Saarthi is your trusted partner for Thesis Writing, Research Papers, Web Development, Digital Marketing, SEO, and Campus Ambassador programs. Expert support for students and businesses.',
+    'Transform your academic success. Get expert thesis writing, web development, and study abroad help. We teach while we complete. 500+ projects completed. 98% satisfaction.',
   keywords: [
     'thesis writing',
     'research paper help',
@@ -35,52 +42,50 @@ export const metadata: Metadata = {
     'digital marketing',
     'SEO services',
     'academic writing',
+    'AI automation',
     'campus ambassador',
     'karya saarthi',
     'professional services India',
     'dissertation help',
+    'mobile app development',
   ],
   authors: [{ name: 'Karya Saarthi', url: BASE_URL }],
   creator: 'Karya Saarthi',
   publisher: 'Karya Saarthi',
   category: 'Education & Professional Services',
 
-  // Open Graph
   openGraph: {
     type: 'website',
     locale: 'en_IN',
     url: BASE_URL,
     siteName: 'Karya Saarthi',
-    title: 'Karya Saarthi | Academic & Professional Services',
+    title: 'Karya Saarthi - Project Solutions With Education',
     description:
-      'Expert thesis writing, web development, digital marketing, and campus programs. Trusted by 10,000+ students and businesses.',
+      'India\'s first project solutions company where education meets execution. Expert thesis writing, web development, digital marketing & AI solutions. 500+ projects completed.',
     images: [
       {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'Karya Saarthi — Premium Academic & Professional Services',
+        alt: 'Karya Saarthi — Your Digital Growth Partner',
       },
     ],
   },
 
-  // Twitter Card
   twitter: {
     card: 'summary_large_image',
-    title: 'Karya Saarthi | Academic & Professional Services',
+    title: 'Karya Saarthi - Project Solutions With Education',
     description:
-      'Expert thesis writing, web development, digital marketing, and campus programs.',
+      'Transform your academic success. Get expert thesis writing, web development, and study abroad help. 500+ projects completed. 98% satisfaction.',
     images: ['/og-image.png'],
     creator: '@karyasaarthi',
     site: '@karyasaarthi',
   },
 
-  // Canonical & alternate
   alternates: {
     canonical: BASE_URL,
   },
 
-  // Icons — multi-format for all browsers
   icons: {
     icon: [
       { url: '/favicon.ico', sizes: 'any' },
@@ -91,7 +96,6 @@ export const metadata: Metadata = {
     apple: '/apple-touch-icon.png',
   },
 
-  // Crawling
   robots: {
     index: true,
     follow: true,
@@ -104,7 +108,6 @@ export const metadata: Metadata = {
     },
   },
 
-  // Verification (add your Google Search Console code here)
   verification: {
     google: process.env.GOOGLE_SITE_VERIFICATION || '',
   },
@@ -112,13 +115,20 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" data-scroll-behavior="smooth" suppressHydrationWarning>
+    <html
+      lang="en"
+      data-scroll-behavior="smooth"
+      suppressHydrationWarning
+      className={cn(GeistSans.variable, inter.variable, "font-sans", geist.variable)}
+      style={{ backgroundColor: '#090909', colorScheme: 'dark' }}
+    >
       <head>
-        {/* Favicons — explicit tags for maximum browser compatibility */}
+        {/* Favicons */}
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="icon" href="/icon-32.png" type="image/png" sizes="32x32" />
         <link rel="icon" href="/icon-16.png" type="image/png" sizes="16x16" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
         {/* JSON-LD: Organization structured data */}
         <script
           type="application/ld+json"
@@ -132,7 +142,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               sameAs: [
                 'https://www.instagram.com/karyasaarthi/',
                 'https://www.facebook.com/profile.php?id=61576877739779',
-                'https://linkedin.com/in/karya-saarthi🤝-693a01369',
+                'https://linkedin.com/in/karya-saarthi-693a01369',
                 'https://x.com/karyasaarthi',
                 'https://www.youtube.com/@KaryaSaarthi',
                 'https://www.threads.com/@karyasaarthi',
@@ -153,6 +163,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               },
               address: {
                 '@type': 'PostalAddress',
+                streetAddress: 'Gali No 1, Block A, Uttarakhand Enclave, Nathupura, Burari',
+                addressLocality: 'North Delhi',
+                addressRegion: 'Delhi',
+                postalCode: '110084',
                 addressCountry: 'IN',
               },
             }),
@@ -160,11 +174,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body
-        className={`${inter.variable} ${poppins.variable} font-sans antialiased text-slate-900 bg-white`}
+        className="antialiased"
+        style={{
+          fontFamily: `var(--font-inter, 'Inter', system-ui, sans-serif)`,
+          backgroundColor: 'var(--color-canvas)',
+          color: 'var(--color-ink)',
+        }}
         suppressHydrationWarning
       >
         <SilenceWarnings />
         {children}
+        <ChatbotLoader />
       </body>
     </html>
   )

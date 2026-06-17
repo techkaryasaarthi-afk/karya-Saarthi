@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { motion } from 'framer-motion'
+import { useReveal } from '@/hooks/useReveal'
 
 const pillars = [
   {
@@ -10,8 +10,7 @@ const pillars = [
     tagline: 'Empowering Students',
     description: 'Campus ambassadors network connecting students with academic excellence, internships, and college projects.',
     icon: '🎓',
-    gradient: 'from-blue-600 to-indigo-700',
-    glow: 'rgba(99,102,241,0.3)',
+    accent: '#6a4cf5',
     features: ['College Ambassador Program', 'Academic Project Support', 'Campus Workshops', 'Student Referral Rewards'],
     stat: '200+ Colleges',
   },
@@ -21,8 +20,7 @@ const pillars = [
     tagline: 'Content & Presence',
     description: 'Full-stack digital solutions for websites, SEO, content creation, social media and brand building.',
     icon: '💻',
-    gradient: 'from-violet-600 to-purple-700',
-    glow: 'rgba(139,92,246,0.3)',
+    accent: '#0099ff',
     features: ['Website Development', 'SEO & Digital Marketing', 'Content Creation', 'Social Media Management'],
     stat: '1000+ Websites',
   },
@@ -32,8 +30,7 @@ const pillars = [
     tagline: 'Voice-First Outreach',
     description: 'Dedicated calling team for lead generation, customer follow-up, and relationship management.',
     icon: '📞',
-    gradient: 'from-orange-500 to-red-600',
-    glow: 'rgba(249,115,22,0.3)',
+    accent: '#ff7a3d',
     features: ['Lead Generation Calls', 'Customer Follow-up', 'Survey & Feedback', 'Appointment Setting'],
     stat: '50K+ Calls/yr',
   },
@@ -43,8 +40,7 @@ const pillars = [
     tagline: 'Public Sector Excellence',
     description: 'Specialised services for government schemes, tender documentation, and compliance management.',
     icon: '🏛️',
-    gradient: 'from-emerald-600 to-teal-700',
-    glow: 'rgba(16,185,129,0.3)',
+    accent: '#22c55e',
     features: ['Tender Documentation', 'Government Scheme Advisory', 'Compliance Management', 'Policy Research'],
     stat: '500+ Tenders',
   },
@@ -54,122 +50,128 @@ const pillars = [
     tagline: 'On-Ground Presence',
     description: 'Field agents network for hyperlocal marketing, offline lead generation, and on-ground business development.',
     icon: '🗺️',
-    gradient: 'from-amber-500 to-orange-600',
-    glow: 'rgba(245,158,11,0.3)',
+    accent: '#f59e0b',
     features: ['Field Sales Agents', 'Hyperlocal Marketing', 'Offline Lead Capture', 'Territory Management'],
     stat: '12 States',
   },
 ]
 
 export default function PillarsSection() {
-  return (
-    <section className="relative overflow-hidden bg-[#080d1a] py-20">
-      <div
-        className="absolute inset-0 opacity-5"
-        style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)', backgroundSize: '32px 32px' }}
-      />
-      <div className="absolute left-0 right-0 top-0 h-16 bg-gradient-to-b from-white/5 to-transparent" />
+  const ref = useReveal()
 
-      <div className="relative z-10 mx-auto max-w-7xl px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="mb-14 text-center"
-        >
-          <span
-            className="mb-4 inline-block rounded-full px-4 py-1.5 text-xs font-semibold uppercase tracking-wider"
-            style={{ background: 'rgba(255,107,53,0.15)', color: '#FF6B35', border: '1px solid rgba(255,107,53,0.3)' }}
-          >
+  return (
+    <section
+      ref={ref as React.RefObject<HTMLElement>}
+      className="pillars-section"
+      style={{
+        backgroundColor: 'var(--color-canvas)',
+        borderTop: '1px solid var(--color-hairline-soft)',
+        padding: 'var(--space-section) var(--space-xl)',
+        position: 'relative',
+        overflow: 'hidden',
+      }}
+    >
+      {/* Faint dot grid */}
+      <div style={{ position: 'absolute', inset: 0, opacity: 0.025, backgroundImage: 'radial-gradient(circle at 1px 1px, #fff 1px, transparent 0)', backgroundSize: '28px 28px', pointerEvents: 'none' }} />
+
+      <div style={{ maxWidth: 1199, margin: '0 auto', position: 'relative' }}>
+
+        {/* Header */}
+        <div className="reveal" style={{ textAlign: 'center', marginBottom: 56 }}>
+          <span style={{ display: 'inline-block', fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '4px 12px', borderRadius: 'var(--radius-pill)', backgroundColor: 'rgba(0,153,255,0.1)', color: 'var(--color-accent-blue)', border: '1px solid rgba(0,153,255,0.2)', marginBottom: 16 }}>
             Our Saarthi
           </span>
-          <h2 className="mb-4 text-4xl font-extrabold text-white font-heading md:text-5xl">
-            Our <span style={{ color: '#FF6B35' }}>Saarthi Pillars</span>
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700, color: 'var(--color-ink)', letterSpacing: '-1.5px', marginBottom: 14 }}>
+            Five Specialised <span style={{ color: 'var(--color-accent-blue)' }}>Pillars</span>
           </h2>
-          <p className="mx-auto max-w-2xl text-lg text-white/50">
+          <p style={{ fontSize: 'var(--text-body-size)', color: 'var(--color-ink-muted)', maxWidth: 520, margin: '0 auto', lineHeight: 1.6 }}>
             Specialised verticals working together to deliver comprehensive solutions across student and business success.
           </p>
-        </motion.div>
+        </div>
 
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
+        {/* Cards grid */}
+        <div className="pillars-grid">
           {pillars.map((pillar, i) => (
-            <motion.div
+            <div
               key={pillar.id}
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.08 }}
-              whileHover={{ y: -6 }}
-              className={`group relative flex flex-col justify-between overflow-hidden rounded-2xl h-full ${i === 4 ? 'sm:col-span-2 lg:col-span-1' : ''}`}
-              style={{
-                background: 'rgba(255,255,255,0.03)',
-                border: '1px solid rgba(255,255,255,0.08)',
-              }}
+              className="reveal pillar-card"
+              style={{ animationDelay: `${i * 80}ms`, '--accent': pillar.accent } as React.CSSProperties}
             >
-              <motion.div
-                className="absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-                style={{ boxShadow: `inset 0 0 60px ${pillar.glow}` }}
-              />
+              {/* Top accent bar */}
+              <div style={{ height: 2, backgroundColor: pillar.accent, borderRadius: '2px 2px 0 0', marginBottom: 20 }} />
 
-              <div className={`h-1 bg-gradient-to-r ${pillar.gradient}`} />
-
-              <div className="p-3.5 flex flex-col justify-between flex-grow h-full">
-                <div>
-                  <div className="mb-3 flex items-start justify-between gap-2">
-                    <div className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br text-lg shadow-md ${pillar.gradient}`}>
-                      {pillar.icon}
-                    </div>
-                    <span
-                      className="rounded-full px-2 py-0.5 text-[9px] font-bold text-white/60"
-                      style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}
-                    >
-                      {pillar.stat}
-                    </span>
-                  </div>
-
-                  <h3 className="mb-0.5 text-base font-bold leading-snug text-white font-heading">{pillar.name}</h3>
-                  <p className="mb-1.5 text-[10px] font-medium uppercase tracking-wider text-white/40">{pillar.tagline}</p>
-                  <p className="mb-3 text-[11px] leading-relaxed text-white/50">{pillar.description}</p>
-
-                  <ul className="mb-3 space-y-1">
-                    {pillar.features.map(feat => (
-                      <li key={feat} className="flex items-center gap-1.5 text-[10px] text-white/40">
-                        <div className={`h-1 w-1 flex-shrink-0 rounded-full bg-gradient-to-br ${pillar.gradient}`} />
-                        {feat}
-                      </li>
-                    ))}
-                  </ul>
+              {/* Icon + stat */}
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 16 }}>
+                <div style={{ width: 44, height: 44, borderRadius: 'var(--radius-md)', backgroundColor: `${pillar.accent}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22 }}>
+                  {pillar.icon}
                 </div>
-
-                <div className="mt-auto pt-2">
-                  <Link
-                    href={`/contact?pillar=${pillar.id}`}
-                    className={`inline-flex w-full justify-center items-center gap-1 rounded-lg bg-gradient-to-r px-2.5 py-1.5 text-[10px] font-semibold text-white shadow-md transition-opacity hover:opacity-90 ${pillar.gradient}`}
-                  >
-                    Connect →
-                  </Link>
-                </div>
+                <span style={{ fontSize: 10, fontWeight: 700, padding: '3px 8px', borderRadius: 'var(--radius-pill)', backgroundColor: 'var(--color-surface-2)', color: 'var(--color-ink-muted)', border: '1px solid var(--color-hairline)', whiteSpace: 'nowrap' }}>
+                  {pillar.stat}
+                </span>
               </div>
-            </motion.div>
+
+              {/* Content */}
+              <h3 style={{ fontSize: 15, fontWeight: 700, color: 'var(--color-ink)', marginBottom: 4, fontFamily: 'var(--font-display)', letterSpacing: '-0.3px' }}>{pillar.name}</h3>
+              <p style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: pillar.accent, marginBottom: 10 }}>{pillar.tagline}</p>
+              <p style={{ fontSize: 12, color: 'var(--color-ink-muted)', lineHeight: 1.55, marginBottom: 14 }}>{pillar.description}</p>
+
+              {/* Features list */}
+              <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 20px', display: 'flex', flexDirection: 'column', gap: 6 }}>
+                {pillar.features.map(f => (
+                  <li key={f} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: 'var(--color-ink-muted)' }}>
+                    <div style={{ width: 5, height: 5, borderRadius: '50%', backgroundColor: pillar.accent, flexShrink: 0 }} />
+                    {f}
+                  </li>
+                ))}
+              </ul>
+
+              {/* CTA */}
+              <Link
+                href={`/contact?pillar=${pillar.id}`}
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', padding: '9px 0', borderRadius: 'var(--radius-md)', border: `1px solid ${pillar.accent}40`, backgroundColor: `${pillar.accent}12`, color: pillar.accent, fontSize: 12, fontWeight: 600, textDecoration: 'none', transition: 'background-color var(--dur-fast)' }}
+              >
+                Connect →
+              </Link>
+            </div>
           ))}
         </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="mt-12 text-center"
-        >
-          <p className="mb-4 text-sm text-white/30">All Saarthi teams work together under one platform: Karya Saarthi</p>
+        {/* Bottom CTA */}
+        <div className="reveal" style={{ textAlign: 'center', marginTop: 48 }}>
+          <p style={{ fontSize: 13, color: 'var(--color-ink-muted)', marginBottom: 16 }}>All Saarthi teams work together under one platform: Karya Saarthi</p>
           <Link
             href="/contact"
-            className="inline-flex items-center gap-2 rounded-xl px-8 py-3.5 font-bold text-white"
-            style={{ background: 'linear-gradient(135deg, #FF6B35, #e0551f)', boxShadow: '0 8px 24px rgba(255,107,53,0.3)' }}
+            className="btn-primary"
+            style={{ display: 'inline-flex', padding: '14px 32px' }}
           >
             Start Your Journey with Us
           </Link>
-        </motion.div>
+        </div>
       </div>
+
+      <style>{`
+        .pillars-grid {
+          display: grid;
+          grid-template-columns: repeat(5, 1fr);
+          gap: 12px;
+        }
+        .pillar-card {
+          background: var(--color-surface-1);
+          border: 1px solid var(--color-hairline-soft);
+          border-radius: var(--radius-lg);
+          padding: 20px;
+          display: flex;
+          flex-direction: column;
+          transition: border-color var(--dur-fast), transform var(--dur-fast);
+        }
+        .pillar-card:hover {
+          border-color: var(--accent, var(--color-hairline));
+          transform: translateY(-4px);
+        }
+        @media (max-width: 1200px) { .pillars-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 768px)  { .pillars-grid { grid-template-columns: repeat(2, 1fr); } .pillars-section { padding-left: 16px !important; padding-right: 16px !important; } }
+        @media (max-width: 480px)  { .pillars-grid { grid-template-columns: 1fr; } }
+      `}</style>
     </section>
   )
 }

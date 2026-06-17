@@ -1,23 +1,19 @@
 'use client'
 
-import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 
 interface PodcastEvent {
-  id: number
-  title: string
-  short_description: string
-  event_date: string
-  status: string
-  registration_fee: number
-  prize_pool: string | null
-  tags: string[]
+  id: number; title: string; short_description: string
+  event_date: string; status: string; registration_fee: number
+  prize_pool: string | null; tags: string[]
 }
+
+const ACCENT = '#8B5CF6'
 
 export default function PodcastsSection() {
   const [podcasts, setPodcasts] = useState<PodcastEvent[]>([])
-  const [loading, setLoading] = useState(true)
+  const [loading,  setLoading]  = useState(true)
 
   useEffect(() => {
     fetch('/api/events?type=podcast&limit=6')
@@ -30,69 +26,131 @@ export default function PodcastsSection() {
   if (!loading && podcasts.length === 0) return null
 
   return (
-    <section className="py-20 bg-white relative overflow-hidden">
-      <div className="absolute top-0 left-0 w-80 h-80 rounded-full opacity-5" style={{ background: 'radial-gradient(circle, #8B5CF6, transparent)' }} />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div initial={{ opacity: 0, y: 25 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-          className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+    <section style={{
+      padding: 'var(--space-section) var(--space-xl)',
+      backgroundColor: 'var(--color-surface-1)',
+      borderTop: '1px solid var(--color-hairline-soft)',
+      position: 'relative', overflow: 'hidden',
+    }}>
+      {/* Ambient glow */}
+      <div aria-hidden="true" style={{
+        position: 'absolute', top: -80, left: -60, width: 360, height: 360,
+        borderRadius: '50%', background: `radial-gradient(circle, ${ACCENT}18, transparent)`,
+        pointerEvents: 'none',
+      }} />
+
+      <div style={{ maxWidth: 1199, margin: '0 auto', position: 'relative', zIndex: 1 }}>
+
+        {/* Header */}
+        <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 44, flexWrap: 'wrap', gap: 16 }}>
           <div>
-            <span className="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-3"
-              style={{ background: 'rgba(139,92,246,0.1)', color: '#8B5CF6', border: '1px solid rgba(139,92,246,0.2)' }}>
-              🎤 Podcasts
-            </span>
-            <Link href="/podcasts" className="group block">
-              <h2 className="text-4xl font-extrabold text-navy font-heading group-hover:text-purple-600 transition-colors">
-                Listen &amp; <span style={{ color: '#8B5CF6' }}>Learn</span> →
+            <span style={{
+              display: 'inline-block', fontSize: 11, fontWeight: 700,
+              letterSpacing: '0.1em', textTransform: 'uppercase',
+              padding: '4px 12px', borderRadius: 'var(--radius-pill)',
+              backgroundColor: `${ACCENT}14`, color: ACCENT,
+              border: `1px solid ${ACCENT}30`, marginBottom: 14,
+            }}>🎤 Podcasts</span>
+            <Link href="/podcasts" style={{ display: 'block', textDecoration: 'none' }}>
+              <h2 style={{
+                fontFamily: 'var(--font-display)',
+                fontSize: 'clamp(26px, 3.5vw, 42px)',
+                fontWeight: 700, color: 'var(--color-ink)',
+                letterSpacing: '-1.5px',
+              }}>
+                Listen &amp; <span style={{ color: ACCENT }}>Learn</span> →
               </h2>
             </Link>
-            <p className="text-slate-500 mt-2">Expert conversations, industry insights and inspiring stories</p>
+            <p style={{ fontSize: 14, color: 'var(--color-ink-muted)', marginTop: 8 }}>
+              Expert conversations, industry insights and inspiring stories
+            </p>
           </div>
-          <Link href="/podcasts"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold border-2 border-purple-600 text-purple-600 hover:bg-purple-600 hover:text-white transition-all whitespace-nowrap">
+          <Link href="/podcasts" style={{
+            display: 'inline-flex', alignItems: 'center', gap: 6,
+            padding: '10px 20px', borderRadius: 'var(--radius-pill)',
+            border: `1px solid ${ACCENT}40`, color: ACCENT,
+            fontSize: 13, fontWeight: 600, textDecoration: 'none',
+            backgroundColor: `${ACCENT}0a`,
+            transition: 'background-color 0.15s',
+          }}>
             All Podcasts →
           </Link>
-        </motion.div>
+        </div>
 
+        {/* Grid */}
         {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[1,2,3].map(i => <div key={i} className="h-52 bg-slate-100 rounded-2xl animate-pulse" />)}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }} className="pod-grid">
+            {[1,2,3].map(i => <div key={i} className="skeleton" style={{ height: 220, borderRadius: 'var(--radius-lg)' }} />)}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }} className="pod-grid">
             {podcasts.map((ep, i) => (
-              <motion.div key={ep.id}
-                initial={{ opacity: 0, y: 25 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-                transition={{ delay: i * 0.08 }} whileHover={{ y: -4 }}
-                className="bg-white rounded-2xl overflow-hidden shadow-sm border border-purple-100 hover:shadow-xl transition-all duration-300 group flex flex-col">
-                <div className="h-28 flex items-center justify-center relative"
-                  style={{ background: 'linear-gradient(135deg, rgba(139,92,246,0.1), rgba(27,58,107,0.05))' }}>
-                  <span className="text-5xl">🎙️</span>
-                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                    <div className="w-14 h-14 rounded-full bg-purple-600 flex items-center justify-center shadow-lg">
-                      <span className="text-white text-xl ml-1">▶</span>
-                    </div>
-                  </div>
+              <div
+                key={ep.id}
+                style={{
+                  backgroundColor: 'var(--color-surface-2)',
+                  border: '1px solid var(--color-hairline-soft)',
+                  borderRadius: 'var(--radius-lg)',
+                  overflow: 'hidden',
+                  display: 'flex', flexDirection: 'column',
+                  transition: 'border-color 0.2s, transform 0.2s',
+                  opacity: 0,
+                  animation: `tile-fade-in 0.5s var(--ease-out) ${i * 70}ms forwards`,
+                }}
+                className="pod-card"
+              >
+                {/* Image area */}
+                <div style={{
+                  height: 110,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  position: 'relative',
+                  background: `linear-gradient(135deg, ${ACCENT}14, rgba(0,153,255,0.06))`,
+                }}>
+                  <span style={{ fontSize: 44 }}>🎙️</span>
                   {ep.registration_fee === 0 && (
-                    <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full text-[10px] font-bold text-white bg-purple-600">FREE</div>
+                    <div style={{
+                      position: 'absolute', top: 10, right: 10,
+                      padding: '3px 8px', borderRadius: 'var(--radius-pill)',
+                      fontSize: 10, fontWeight: 700, color: '#fff',
+                      backgroundColor: ACCENT,
+                    }}>FREE</div>
                   )}
                 </div>
-                <div className="p-5 flex flex-col flex-1">
-                  <p className="text-xs text-purple-500 font-semibold mb-1">
+                {/* Content */}
+                <div style={{ padding: '16px 18px', display: 'flex', flexDirection: 'column', flex: 1 }}>
+                  <p style={{ fontSize: 11, color: ACCENT, fontWeight: 600, marginBottom: 6 }}>
                     📅 {new Date(ep.event_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
                   </p>
-                  <h3 className="font-bold text-navy text-sm font-heading mb-2 line-clamp-2 group-hover:text-purple-600 transition-colors flex-1">{ep.title}</h3>
-                  <p className="text-slate-400 text-xs mb-4 line-clamp-2">{ep.short_description}</p>
-                  <Link href={`/events/${ep.id}`}
-                    className="mt-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold text-white transition-all"
-                    style={{ backgroundColor: '#8B5CF6' }}>
+                  <h3 style={{
+                    fontSize: 13, fontWeight: 700, color: 'var(--color-ink)',
+                    fontFamily: 'var(--font-display)', marginBottom: 8, flex: 1,
+                    display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden',
+                  }}>{ep.title}</h3>
+                  <p style={{
+                    fontSize: 12, color: 'var(--color-ink-muted)', marginBottom: 14,
+                    display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden',
+                  }}>{ep.short_description}</p>
+                  <Link href={`/events/${ep.id}`} style={{
+                    display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                    gap: 6, padding: '9px 0', borderRadius: 'var(--radius-md)',
+                    fontSize: 12, fontWeight: 700, color: '#fff',
+                    backgroundColor: ACCENT, textDecoration: 'none',
+                  }}>
                     🎧 Listen Now
                   </Link>
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
         )}
       </div>
+
+      <style>{`
+        .pod-card:hover { border-color: ${ACCENT}35 !important; transform: translateY(-4px); }
+        .pod-grid { grid-template-columns: repeat(3, 1fr); }
+        @media (max-width: 900px) { .pod-grid { grid-template-columns: repeat(2, 1fr) !important; } }
+        @media (max-width: 580px) { .pod-grid { grid-template-columns: 1fr !important; } }
+      `}</style>
     </section>
   )
 }

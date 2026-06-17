@@ -1,7 +1,7 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useState } from 'react'
-import { motion } from 'framer-motion'
+import { motion } from '@/lib/motion'
 import DepartmentMeetings from '@/components/admin/DepartmentMeetings'
 
 interface Stats {
@@ -25,7 +25,7 @@ interface MonthlyData {
   projects: number
 }
 
-const BAR_COLORS = ['#1B3A6B', '#2d5baa', '#3d7adf', '#FF6B35', '#ff8c5f', '#ffad8a']
+const BAR_COLORS = ['var(--color-accent-blue)', '#2d5baa', '#3d7adf', '#FF6B35', '#ff8c5f', '#ffad8a']
 
 function BarChart({ data, valueKey, color = '#FF6B35' }: { data: MonthlyData[]; valueKey: 'revenue' | 'projects'; color?: string }) {
   const max = Math.max(...data.map(d => d[valueKey]), 1)
@@ -202,3 +202,4 @@ export default function AnalyticsPage() {
     </div>
   )
 }
+

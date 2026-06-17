@@ -1,7 +1,7 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from '@/lib/motion'
 
 interface Meeting {
   id: number
@@ -107,7 +107,7 @@ export default function DepartmentMeetings() {
       <div className="flex items-center justify-between">
         <h3 className="font-bold text-navy font-heading text-base flex items-center gap-2">
           <span>📹 Video Meetings</span>
-          <span className="bg-navy/10 text-navy text-[10px] px-2 py-0.5 rounded-full font-bold">
+          <span className="bg-[rgba(0,153,255,0.12)] text-navy text-[10px] px-2 py-0.5 rounded-full font-bold">
             {meetings.length} Total
           </span>
         </h3>
@@ -301,3 +301,4 @@ export default function DepartmentMeetings() {
     </div>
   )
 }
+

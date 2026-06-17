@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { motion } from 'framer-motion'
+import { motion } from '@/lib/motion'
 import Link from 'next/link'
 
 interface DashboardData {
@@ -31,12 +31,12 @@ interface DashboardData {
 }
 
 const statCards = [
-  { key: 'totalUsers', icon: '👥', label: 'Total Users', color: 'from-blue-500 to-blue-600' },
-  { key: 'totalAdmins', icon: '🛡️', label: 'Admins', color: 'from-purple-500 to-purple-600' },
-  { key: 'totalVendors', icon: '🏪', label: 'Vendors', color: 'from-cyan-500 to-cyan-600' },
-  { key: 'totalProjects', icon: '📋', label: 'Projects', color: 'from-amber-500 to-amber-600' },
-  { key: 'pendingRequests', icon: '📩', label: 'Pending Requests', color: 'from-red-500 to-red-600' },
-  { key: 'totalBlogs', icon: '📝', label: 'Blogs', color: 'from-green-500 to-green-600' },
+  { key: 'totalUsers', icon: '👥', label: 'Total Users', color: '#3B82F6' },
+  { key: 'totalAdmins', icon: '🛡️', label: 'Admins', color: '#A855F7' },
+  { key: 'totalVendors', icon: '🏪', label: 'Vendors', color: '#06B6D4' },
+  { key: 'totalProjects', icon: '📋', label: 'Projects', color: '#F59E0B' },
+  { key: 'pendingRequests', icon: '📩', label: 'Pending Requests', color: '#EF4444' },
+  { key: 'totalBlogs', icon: '📝', label: 'Blogs', color: '#22C55E' },
 ]
 
 export default function AdminDashboard() {
@@ -52,58 +52,59 @@ export default function AdminDashboard() {
 
   if (loading) {
     return (
-      <div className="space-y-6">
-        <div className="h-8 w-48 bg-slate-200 rounded animate-pulse" />
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+        <div className="skeleton" style={{ height: 32, width: 200, borderRadius: 'var(--radius-sm)' }} />
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 16 }}>
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="h-32 bg-white rounded-2xl animate-pulse" />
+            <div key={i} className="skeleton" style={{ height: 128, borderRadius: 'var(--radius-lg)' }} />
           ))}
         </div>
       </div>
     )
   }
 
-  if (!data) return <p className="text-red-500">Failed to load dashboard data.</p>
+  if (!data) return <p style={{ color: '#ef4444' }}>Failed to load dashboard data.</p>
 
   return (
-    <div className="space-y-8">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
         <div>
-          <h1 className="text-2xl lg:text-3xl font-bold text-navy font-heading">
+          <h1 className="text-display-md" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-ink)' }}>
             {data.userRole === 'super_admin' ? '👑 Super Admin' : '📊'} Dashboard
           </h1>
-          <p className="text-slate-500 text-sm mt-1">Overview of your platform performance</p>
+          <p className="text-body-sm" style={{ color: 'var(--color-ink-muted)', marginTop: 4 }}>Overview of your platform performance</p>
         </div>
-        <div className="text-sm text-slate-400">
+        <div className="text-body-sm" style={{ color: 'var(--color-ink-muted)' }}>
           {new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
         </div>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }}>
         {statCards.map((card, i) => (
           <motion.div
             key={card.key}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.08 }}
-            className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 hover:shadow-lg transition-shadow group"
+            className="card-template"
+            style={{ padding: 20, position: 'relative', overflow: 'hidden' }}
           >
-            <div className="flex items-center justify-between mb-3">
-              <span className={`w-10 h-10 rounded-xl bg-gradient-to-br ${card.color} flex items-center justify-center text-white text-lg shadow-lg`}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+              <span style={{ width: 40, height: 40, borderRadius: 'var(--radius-md)', backgroundColor: 'var(--color-surface-2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>
                 {card.icon}
               </span>
               {card.key === 'pendingRequests' && data.stats.pendingRequests > 0 && (
-                <span className="px-2 py-0.5 rounded-full bg-red-100 text-red-600 text-xs font-bold animate-pulse">
+                <span style={{ padding: '2px 8px', borderRadius: 'var(--radius-pill)', backgroundColor: 'rgba(239, 68, 68, 0.15)', color: '#fc8181', fontSize: 10, fontWeight: 700 }}>
                   NEW
                 </span>
               )}
             </div>
-            <h3 className="text-2xl lg:text-3xl font-extrabold text-navy font-heading">
+            <h3 className="text-display-lg" style={{ fontFamily: 'var(--font-display)', color: card.color }}>
               {data.stats[card.key as keyof typeof data.stats]}
             </h3>
-            <p className="text-slate-500 text-xs mt-1">{card.label}</p>
+            <p className="text-caption" style={{ color: 'var(--color-ink-muted)', marginTop: 4 }}>{card.label}</p>
           </motion.div>
         ))}
       </div>
@@ -113,40 +114,44 @@ export default function AdminDashboard() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5 }}
-        className="bg-gradient-to-br from-navy to-navy-dark rounded-2xl p-6 text-white shadow-xl"
+        style={{
+          background: 'linear-gradient(135deg, #0099ff22 0%, #141414 60%, #1c1c1c 100%)',
+          border: '1px solid rgba(0,153,255,0.2)',
+          borderRadius: 'var(--radius-xl)',
+          padding: 24,
+          boxShadow: 'var(--shadow-level-3)',
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between'
+        }}
       >
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-white/60 text-sm">Total Revenue</p>
-            <h2 className="text-3xl lg:text-4xl font-extrabold font-heading mt-1">
-              ₹{data.stats.totalRevenue.toLocaleString('en-IN')}
-            </h2>
-          </div>
-          <span className="text-5xl opacity-30">💰</span>
+        <div>
+          <p className="text-body-sm" style={{ color: 'var(--color-ink-muted)' }}>Total Revenue</p>
+          <h2 className="text-display-xl" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-ink)', marginTop: 4 }}>
+            ₹{data.stats.totalRevenue.toLocaleString('en-IN')}
+          </h2>
         </div>
+        <span style={{ fontSize: 48, opacity: 0.3 }}>💰</span>
       </motion.div>
 
       {/* Project Status + Quick Actions */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 24 }}>
         {/* Project Status Breakdown */}
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
-          <h3 className="font-bold text-navy text-lg mb-4 font-heading">Project Status</h3>
-          <div className="space-y-4">
+        <div className="card-template" style={{ padding: 24 }}>
+          <h3 className="text-headline" style={{ color: 'var(--color-ink)', fontWeight: 700, marginBottom: 16 }}>Project Status</h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             {[
-              { label: 'Pending', value: data.projectStats.pending, color: 'bg-amber-500', total: data.stats.totalProjects },
-              { label: 'In Progress', value: data.projectStats.in_progress, color: 'bg-blue-500', total: data.stats.totalProjects },
-              { label: 'Completed', value: data.projectStats.completed, color: 'bg-green-500', total: data.stats.totalProjects },
-              { label: 'Cancelled', value: data.projectStats.cancelled, color: 'bg-red-400', total: data.stats.totalProjects },
+              { label: 'Pending', value: data.projectStats.pending, color: '#F59E0B', total: data.stats.totalProjects },
+              { label: 'In Progress', value: data.projectStats.in_progress, color: '#3B82F6', total: data.stats.totalProjects },
+              { label: 'Completed', value: data.projectStats.completed, color: '#22C55E', total: data.stats.totalProjects },
+              { label: 'Cancelled', value: data.projectStats.cancelled, color: '#EF4444', total: data.stats.totalProjects },
             ].map(item => (
               <div key={item.label}>
-                <div className="flex justify-between text-sm mb-1">
-                  <span className="text-slate-600">{item.label}</span>
-                  <span className="font-bold text-navy">{item.value}</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, marginBottom: 4 }}>
+                  <span style={{ color: 'var(--color-ink-muted)' }}>{item.label}</span>
+                  <span style={{ fontWeight: 700, color: 'var(--color-ink)' }}>{item.value}</span>
                 </div>
-                <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                <div style={{ width: '100%', height: 6, borderRadius: 'var(--radius-pill)', backgroundColor: 'var(--color-surface-2)', overflow: 'hidden' }}>
                   <div
-                    className={`h-full ${item.color} rounded-full transition-all duration-700`}
-                    style={{ width: `${item.total > 0 ? (item.value / item.total) * 100 : 0}%` }}
+                    style={{ height: '100%', backgroundColor: item.color, borderRadius: 'var(--radius-pill)', transition: 'width 700ms ease', width: `${item.total > 0 ? (item.value / item.total) * 100 : 0}%` }}
                   />
                 </div>
               </div>
@@ -155,9 +160,9 @@ export default function AdminDashboard() {
         </div>
 
         {/* Quick Actions */}
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
-          <h3 className="font-bold text-navy text-lg mb-4 font-heading">Quick Actions</h3>
-          <div className="grid grid-cols-2 gap-3">
+        <div className="card-template" style={{ padding: 24 }}>
+          <h3 className="text-headline" style={{ color: 'var(--color-ink)', fontWeight: 700, marginBottom: 16 }}>Quick Actions</h3>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
             {[
               { icon: '📩', label: 'Staff Requests', href: '/admin/staff-requests', count: data.stats.pendingRequests },
               { icon: '👥', label: 'Manage Users', href: '/admin/users' },
@@ -169,13 +174,17 @@ export default function AdminDashboard() {
               <Link
                 key={action.href}
                 href={action.href}
-                className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 hover:bg-accent/5 hover:shadow-md transition-all duration-200 group"
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 12, padding: 12,
+                  backgroundColor: 'var(--color-surface-2)', border: '1px solid var(--color-hairline-soft)',
+                  borderRadius: 'var(--radius-md)', textDecoration: 'none', transition: 'background-color var(--dur-fast)'
+                }}
               >
-                <span className="text-2xl group-hover:scale-110 transition-transform">{action.icon}</span>
+                <span style={{ fontSize: 20 }}>{action.icon}</span>
                 <div>
-                  <span className="text-sm font-medium text-navy">{action.label}</span>
+                  <span className="text-body-sm" style={{ fontWeight: 600, color: 'var(--color-ink)' }}>{action.label}</span>
                   {action.count !== undefined && action.count > 0 && (
-                    <span className="ml-2 px-1.5 py-0.5 rounded-full bg-red-100 text-red-600 text-[10px] font-bold">
+                    <span style={{ marginLeft: 8, padding: '2px 6px', borderRadius: 'var(--radius-pill)', backgroundColor: 'rgba(239, 68, 68, 0.15)', color: '#fc8181', fontSize: 10, fontWeight: 700 }}>
                       {action.count}
                     </span>
                   )}
@@ -187,22 +196,22 @@ export default function AdminDashboard() {
       </div>
 
       {/* Recent Activity */}
-      <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
-        <h3 className="font-bold text-navy text-lg mb-4 font-heading">Recent Activity</h3>
+      <div className="card-template" style={{ padding: 24 }}>
+        <h3 className="text-headline" style={{ color: 'var(--color-ink)', fontWeight: 700, marginBottom: 16 }}>Recent Activity</h3>
         {data.recentActivity.length === 0 ? (
-          <div className="text-center py-10 text-slate-400">
-            <span className="text-4xl block mb-2">📭</span>
-            <p>No recent activity</p>
+          <div style={{ textAlign: 'center', padding: '40px 0', color: 'var(--color-ink-muted)' }}>
+            <span style={{ fontSize: 40, display: 'block', marginBottom: 8 }}>📭</span>
+            <p className="text-body-sm">No recent activity</p>
           </div>
         ) : (
-          <div className="space-y-3">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             {data.recentActivity.map(activity => (
-              <div key={activity.id} className="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
-                <div className="w-2 h-2 mt-2 rounded-full bg-accent flex-shrink-0" />
+              <div key={activity.id} style={{ display: 'flex', alignItems: 'flex-start', gap: 12, padding: 12, borderRadius: 'var(--radius-md)', transition: 'background-color var(--dur-fast)', cursor: 'default' }} onMouseEnter={e => e.currentTarget.style.backgroundColor = 'var(--color-surface-2)'} onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}>
+                <div style={{ width: 8, height: 8, marginTop: 6, borderRadius: '50%', backgroundColor: 'var(--color-accent-blue)', flexShrink: 0 }} />
                 <div>
-                  <p className="text-sm text-navy font-medium">{activity.action}</p>
-                  <p className="text-xs text-slate-400">{activity.details}</p>
-                  <p className="text-xs text-slate-300 mt-1">
+                  <p className="text-body-sm" style={{ fontWeight: 600, color: 'var(--color-ink)' }}>{activity.action}</p>
+                  <p className="text-micro" style={{ color: 'var(--color-ink-muted)', marginTop: 2 }}>{activity.details}</p>
+                  <p className="text-micro" style={{ color: 'var(--color-hairline)', marginTop: 4 }}>
                     {new Date(activity.created_at).toLocaleString('en-IN')}
                   </p>
                 </div>

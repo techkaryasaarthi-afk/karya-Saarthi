@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import HackathonsClient from '@/components/HackathonsClient'
+import PageCTABanner from '@/components/PageCTABanner'
 
 // ISR: Revalidate every hour
 export const revalidate = 3600
@@ -31,6 +32,15 @@ export default async function HackathonsPage() {
     <>
       <Navbar />
       <HackathonsClient initialHackathons={hackathons} />
+      <PageCTABanner
+        headline="Ready to Build & Win?"
+        subtext="Join India's most challenging hackathons. Compete with top talent, innovate, and take home massive rewards."
+        primaryLabel="Contact Support →"
+        primaryHref="/contact"
+        secondaryLabel="💬 WhatsApp Us"
+        secondaryHref="https://wa.me/918595025753"
+        variant="orange"
+      />
       <Footer />
     </>
   )

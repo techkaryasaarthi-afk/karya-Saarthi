@@ -1,6 +1,5 @@
 import Navbar from '@/components/Navbar'
 import HeroSection from '@/components/HeroSection'
-import LiveStatsBar from '@/components/LiveStatsBar'
 import dynamic from 'next/dynamic'
 import { createClient } from '@/lib/supabase/server'
 import PartnersMarquee from '@/components/PartnersMarquee'
@@ -13,19 +12,30 @@ const StatsSection = dynamic(() => import('@/components/StatsSection'), { ssr: t
 const EventsPreviewSection = dynamic(() => import('@/components/EventsPreviewSection'))
 const HackathonsSection = dynamic(() => import('@/components/HackathonsSection'))
 const PodcastsSection = dynamic(() => import('@/components/PodcastsSection'))
+const BlogSection = dynamic(() => import('@/components/BlogSection'), { ssr: true })
 const TestimonialsSection = dynamic(() => import('@/components/TestimonialsSection'), { ssr: true })
 const QuickAccessDashboard = dynamic(() => import('@/components/QuickAccessDashboard'))
+const FAQSection = dynamic(() => import('@/components/FAQSection'), { ssr: true })
 const CTABanner = dynamic(() => import('@/components/CTABanner'), { ssr: true })
 const NewsletterSection = dynamic(() => import('@/components/NewsletterSection'), { ssr: true })
 const Footer = dynamic(() => import('@/components/Footer'), { ssr: true })
 
-// These are client-heavy widgets, definitely lazy load them
-const Chatbot = dynamic(() => import('@/components/Chatbot'))
-const WhatsAppWidget = dynamic(() => import('@/components/WhatsAppWidget'))
+
 
 export const metadata = {
-  title: 'Karya Saarthi — Hum Hai Aapke Saathi | Academic, Technical & Business Services',
-  description: 'Karya Saarthi provides expert academic writing, technical, business, and government services across India. Get free quotes, track your project, and connect with our dedicated Saarthi support system.',
+  title: 'Karya Saarthi - Project Solutions With Education | Complete Your Project + Learn',
+  description: 'Transform your academic success. Get expert thesis writing, web development, and study abroad help. We teach while we complete. 500+ projects completed. 98% satisfaction.',
+  openGraph: {
+    title: 'Karya Saarthi - Project Solutions With Education',
+    description: 'India\'s first project solutions company where education meets execution. Expert thesis writing, web development, digital marketing & AI solutions.',
+    images: [{ url: '/og-image.png', width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: 'summary_large_image' as const,
+    title: 'Karya Saarthi - Project Solutions With Education',
+    description: 'Transform your academic success. 500+ projects completed. 98% satisfaction rate.',
+    images: ['/og-image.png'],
+  },
 }
 
 export default async function Home() {
@@ -67,7 +77,6 @@ export default async function Home() {
     <>
       <Navbar />
       <HeroSection />
-      <LiveStatsBar />
       <ServiceTiles />
       <HowItWorks />
       <PillarsSection />
@@ -75,14 +84,15 @@ export default async function Home() {
       <EventsPreviewSection />
       <HackathonsSection />
       <PodcastsSection />
+      <BlogSection />
       <TestimonialsSection />
       <QuickAccessDashboard />
+      <FAQSection />
       <CTABanner />
       <NewsletterSection />
       <PartnersMarquee partners={displayPartners} />
       <Footer />
-      <Chatbot />
-      <WhatsAppWidget />
+
     </>
   )
 }

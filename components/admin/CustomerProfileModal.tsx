@@ -1,7 +1,7 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from '@/lib/motion'
 
 interface CustomerProfile {
   id: number
@@ -46,7 +46,7 @@ export default function CustomerProfileModal({ userId, onClose }: Props) {
             initial={{ scale: 0.92, y: 20 }}
             animate={{ scale: 1, y: 0 }}
             exit={{ scale: 0.92, y: 20 }}
-            onClick={e => e.stopPropagation()}
+            onClick={(e: React.MouseEvent) => e.stopPropagation()}
             className="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden"
           >
             {/* Header */}
@@ -115,3 +115,4 @@ export default function CustomerProfileModal({ userId, onClose }: Props) {
     </AnimatePresence>
   )
 }
+

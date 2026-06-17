@@ -4,6 +4,29 @@ import { verifyAccessToken, verifyRefreshToken, signAccessToken, type TokenPaylo
 import { createServerClient } from '@supabase/ssr'
 import { rateLimit, buildKey } from '@/lib/security/rateLimit'
 
+// ─── Hostname helpers ────────────────────────────────────────────────────────
+
+/**
+ * Returns true when the request is coming from the admin subdomain.
+ * Supports:
+ *   - admin.karyasaarthi.com  (production)
+ *   - admin.localhost          (local dev with /etc/hosts alias)
+ *   - localhost:PORT/via NEXT_PUBLIC_IS_ADMIN_HOST=true env override (dev preview)
+ */
+function isAdminHost(req: NextRequest): boolean {
+  const host = req.headers.get('host') || ''
+  // Env override: set NEXT_PUBLIC_IS_ADMIN_HOST=true in a .env.admin.local file
+  // when running the dev server to test admin domain behaviour locally.
+  if (process.env.NEXT_PUBLIC_IS_ADMIN_HOST === 'true') return true
+  return host.startsWith('admin.')
+}
+
+const ADMIN_DOMAIN =
+  process.env.NEXT_PUBLIC_ADMIN_DOMAIN || 'https://admin.karyasaarthi.com'
+
+const MAIN_DOMAIN =
+  process.env.NEXT_PUBLIC_MAIN_DOMAIN || 'https://karyasaarthi.com'
+
 /** Extract real IP — works on Vercel, Cloudflare, and local */
 function getIP(req: NextRequest): string {
   return (
@@ -18,7 +41,6 @@ function getIP(req: NextRequest): string {
 function isSuspicious(pathname: string, req: NextRequest): boolean {
   const ua = req.headers.get('user-agent') || ''
 
-  // Block common scanner/exploit path patterns
   const maliciousPaths = [
     '/.env', '/.git', '/wp-admin', '/wp-login', '/phpmyadmin',
     '/admin.php', '/config.php', '/.htaccess', '/xmlrpc.php',
@@ -27,7 +49,6 @@ function isSuspicious(pathname: string, req: NextRequest): boolean {
   ]
   if (maliciousPaths.some(p => pathname.toLowerCase().includes(p))) return true
 
-  // Block common scanner user agents
   const badAgents = ['sqlmap', 'nikto', 'nmap', 'masscan', 'zgrab', 'nuclei', 'dirbuster', 'gobuster']
   if (badAgents.some(a => ua.toLowerCase().includes(a))) return true
 
@@ -45,16 +66,72 @@ async function sha256(message: string): Promise<string> {
 
 const INTERNAL_ROLES = ['super_admin', 'board_member', 'admin', 'pending_admin', 'pillar_member']
 
+// ─── Middleware ───────────────────────────────────────────────────────────────
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
   const ip = getIP(request)
+  const adminHost = isAdminHost(request)
+
+  // ─── Skip rate limiting & auth for Next.js internals ───────────────────
+  if (
+    pathname.startsWith('/_next/') ||
+    pathname.startsWith('/images/') ||
+    pathname.startsWith('/favicon')
+  ) {
+    return NextResponse.next()
+  }
 
   // ─── Block suspicious/scanner requests ─────────────────────────────────
   if (isSuspicious(pathname, request)) {
     return new NextResponse(null, { status: 404 })
   }
 
-  // ─── Rate limiting ──────────────────────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════════════════
+  // HOSTNAME ROUTING
+  // ═══════════════════════════════════════════════════════════════════════
+
+  if (adminHost) {
+    // ── admin.karyasaarthi.com ──────────────────────────────────────────
+    //
+    // Root "/" → redirect to /admin dashboard
+    if (pathname === '/') {
+      return NextResponse.redirect(new URL('/admin', request.url))
+    }
+    // "/login" on admin host → rewrite to /staff-login internally
+    if (pathname === '/login') {
+      const url = request.nextUrl.clone()
+      url.pathname = '/staff-login'
+      return NextResponse.rewrite(url)
+    }
+    // Block public user-facing routes from admin domain
+    const publicOnlyRoutes = ['/signup', '/services', '/about', '/contact', '/blogs', '/events', '/podcasts', '/hackathons']
+    if (publicOnlyRoutes.some(r => pathname === r || pathname.startsWith(r + '/'))) {
+      return NextResponse.redirect(new URL(MAIN_DOMAIN + pathname))
+    }
+    // Everything else (including /admin/*, /api/*, /staff-login, /dashboard, /vendor)
+    // falls through to the normal auth logic below.
+
+  } else {
+    // ── karyasaarthi.com (main public site) ────────────────────────────
+    //
+    // Block /admin/* → redirect to admin subdomain
+    if (pathname.startsWith('/admin')) {
+      // Preserve the path: karyasaarthi.com/admin/crm → admin.karyasaarthi.com/admin/crm
+      return NextResponse.redirect(new URL(ADMIN_DOMAIN + pathname + request.nextUrl.search))
+    }
+    // /staff-login → redirect to admin subdomain login
+    if (pathname === '/staff-login') {
+      return NextResponse.redirect(new URL(ADMIN_DOMAIN + '/login'))
+    }
+    // /api/admin/* on main domain — still works (same origin Vercel deployment)
+    // Only UI routes are blocked above. API routes pass through.
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // RATE LIMITING
+  // ═══════════════════════════════════════════════════════════════════════
+
   // Tier 1: Auth endpoints — very strict (10 req / 60s, then 5 min block)
   if (
     pathname.startsWith('/api/auth/login') ||
@@ -85,10 +162,10 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // Tier 2: General API endpoints — moderate (120 req / 60s)
+  // Tier 2: General API endpoints — 300/min
   else if (pathname.startsWith('/api/')) {
     const result = rateLimit(buildKey(ip, 'api'), {
-      limit: 120,
+      limit: 300,
       windowMs: 60_000,
     })
     if (!result.success) {
@@ -98,7 +175,7 @@ export async function middleware(request: NextRequest) {
           status: 429,
           headers: {
             'Retry-After': '60',
-            'X-RateLimit-Limit': '120',
+            'X-RateLimit-Limit': '300',
             'X-RateLimit-Remaining': '0',
           },
         }
@@ -115,32 +192,39 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
-  // ─── Public routes — no auth needed ─────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════════════════
+  // PUBLIC ROUTES — no auth needed
+  // ═══════════════════════════════════════════════════════════════════════
+
   const publicPaths = [
     '/', '/login', '/signup', '/staff-login', '/forgot-password',
     '/blogs', '/services', '/about', '/contact', '/events',
+    '/terms', '/privacy', '/disclaimer', '/refund', '/cookies',
     '/api/auth/login', '/api/auth/signup', '/api/auth/refresh',
     '/api/auth/forgot-password', '/api/auth/verify-otp',
     '/api/auth/reset-password', '/api/auth/send-signup-otp',
     '/api/services', '/api/events', '/api/newsletter',
-    '/api/public', '/api/chat/ai',
+    '/api/public', '/api/chat/ai', '/api/health',
   ]
 
   const isPublic = publicPaths.some(p =>
     pathname === p ||
-    (p === '/blogs' && pathname.startsWith('/blogs/')) ||
-    (p === '/services' && pathname.startsWith('/services/')) ||
-    (p === '/events' && pathname.startsWith('/events/')) ||
+    (p === '/blogs'        && pathname.startsWith('/blogs/')) ||
+    (p === '/services'     && pathname.startsWith('/services/')) ||
+    (p === '/events'       && pathname.startsWith('/events/')) ||
     (p === '/api/services' && pathname.startsWith('/api/services')) ||
-    (p === '/api/events' && pathname.startsWith('/api/events')) ||
-    (p === '/api/public' && pathname.startsWith('/api/public'))
-  ) || 
+    (p === '/api/events'   && pathname.startsWith('/api/events')) ||
+    (p === '/api/public'   && pathname.startsWith('/api/public'))
+  ) ||
   (pathname.startsWith('/api/admin/blogs') && request.nextUrl.searchParams.get('public') === 'true') ||
   (pathname.startsWith('/api/admin/about') && request.nextUrl.searchParams.get('public') === 'true')
 
   if (isPublic) return NextResponse.next()
 
-  // ─── Auth verification & refresh ─────────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════════════════
+  // AUTH VERIFICATION & TRANSPARENT REFRESH
+  // ═══════════════════════════════════════════════════════════════════════
+
   const accessToken = request.cookies.get('access_token')?.value
   let user: TokenPayload | null = null
   let newAccessTokenToSet: string | null = null
@@ -149,16 +233,22 @@ export async function middleware(request: NextRequest) {
     user = await verifyAccessToken(accessToken)
   }
 
-  // Transparent session token refresh
-  if (!user) {
+  // Only run DB-hitting refresh if:
+  // 1. We don't have a valid access token AND
+  // 2. This is NOT a Next.js internal prefetch request
+  const isNextjsPrefetch =
+    request.headers.get('purpose') === 'prefetch' ||
+    request.headers.get('next-router-prefetch') === '1' ||
+    request.headers.get('rsc') === '1'
+
+  if (!user && !isNextjsPrefetch) {
     const refreshToken = request.cookies.get('refresh_token')?.value
     if (refreshToken) {
       try {
         const payload = await verifyRefreshToken(refreshToken)
         if (payload) {
           const tokenHash = await sha256(refreshToken)
-          
-          // Dummy response to initialize Supabase SSR client
+
           let mockResponse = NextResponse.next()
           const supabase = createServerClient(
             process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -180,19 +270,22 @@ export async function middleware(request: NextRequest) {
             }
           )
 
-          const { data: storedToken } = await supabase
-            .from('refresh_tokens')
-            .select('*')
-            .eq('token_hash', tokenHash)
-            .eq('revoked', false)
-            .single()
+          // ⚠️ CRITICAL: 3s timeout on ALL Supabase middleware calls
+          const timeout = (ms: number) =>
+            new Promise<never>((_, reject) => setTimeout(() => reject(new Error('timeout')), ms))
+
+          const tokenResult = await Promise.race([
+            supabase.from('refresh_tokens').select('id').eq('token_hash', tokenHash).eq('revoked', false).single(),
+            timeout(3000),
+          ])
+          const storedToken = tokenResult.data
 
           if (storedToken) {
-            const { data: userData } = await supabase
-              .from('users')
-              .select('id, email, role, department, pillar_role, is_approved')
-              .eq('id', payload.userId)
-              .single()
+            const userResult = await Promise.race([
+              supabase.from('users').select('id, email, role, department, pillar_role, is_approved').eq('id', payload.userId).single(),
+              timeout(3000),
+            ])
+            const userData = userResult.data
 
             if (userData) {
               const newAccessToken = await signAccessToken({
@@ -217,12 +310,16 @@ export async function middleware(request: NextRequest) {
           }
         }
       } catch (err) {
-        console.error('Middleware transparent refresh error:', err)
+        // On timeout or DB error: fail open — user stays logged out temporarily.
+        // Far better than a 504 for everyone.
+        if (process.env.NODE_ENV !== 'production') {
+          console.error('Middleware transparent refresh error:', err)
+        }
       }
     }
   }
 
-  // Helper function to attach refreshed token cookie to final response
+  // Helper: attach refreshed token cookie to the final response
   const withRefresh = (res: NextResponse): NextResponse => {
     if (newAccessTokenToSet) {
       res.cookies.set('access_token', newAccessTokenToSet, {
@@ -236,6 +333,7 @@ export async function middleware(request: NextRequest) {
     return res
   }
 
+  // ─── Unauthenticated ─────────────────────────────────────────────────────
   if (!user) {
     const refreshToken = request.cookies.get('refresh_token')?.value
     if (!refreshToken) {
@@ -245,8 +343,10 @@ export async function middleware(request: NextRequest) {
         pathname.startsWith('/dashboard') ||
         pathname.startsWith('/vendor')
       ) {
-        const loginUrl = INTERNAL_ROLES.some(r => pathname.includes(r)) || pathname.startsWith('/admin')
-          ? '/staff-login'
+        // On admin host: redirect to /login (which rewrites to /staff-login)
+        // On main host: /admin/* was already redirected to admin domain above
+        const loginUrl = pathname.startsWith('/admin')
+          ? (adminHost ? '/login' : ADMIN_DOMAIN + '/login')
           : '/login'
         return withRefresh(NextResponse.redirect(new URL(loginUrl, request.url)))
       }
@@ -256,7 +356,7 @@ export async function middleware(request: NextRequest) {
       return withRefresh(NextResponse.next())
     }
     if (pathname.startsWith('/admin')) {
-      return withRefresh(NextResponse.redirect(new URL('/staff-login', request.url)))
+      return withRefresh(NextResponse.redirect(new URL(adminHost ? '/login' : ADMIN_DOMAIN + '/login', request.url)))
     }
     return withRefresh(NextResponse.next())
   }
@@ -337,7 +437,8 @@ export async function middleware(request: NextRequest) {
   // ─── Dashboard (customer only) ────────────────────────────────────────────
   if (pathname.startsWith('/dashboard')) {
     if (INTERNAL_ROLES.includes(user.role) && user.role !== 'pending_admin') {
-      return withRefresh(NextResponse.redirect(new URL('/admin', request.url)))
+      // Admin users who land on main site dashboard → send to admin subdomain
+      return withRefresh(NextResponse.redirect(new URL(ADMIN_DOMAIN + '/admin', request.url)))
     }
     if (user.role === 'vendor') {
       return withRefresh(NextResponse.redirect(new URL('/vendor', request.url)))
@@ -349,6 +450,7 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
+    '/',
     '/admin',
     '/admin/:path*',
     '/api/:path*',
@@ -356,5 +458,7 @@ export const config = {
     '/dashboard/:path*',
     '/vendor',
     '/vendor/:path*',
+    '/staff-login',
+    '/login',
   ],
 }

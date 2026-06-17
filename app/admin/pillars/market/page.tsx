@@ -1,7 +1,7 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from '@/lib/motion'
 import DirectChatPanel from '@/components/admin/DirectChatPanel'
 
 // ── Types ──────────────────────────────────────────────────────────────────────
@@ -44,7 +44,7 @@ type Tab = typeof TABS[number]['key']
 const OUTCOME_COLORS: Record<string, { bg: string; text: string }> = {
   visited:    { bg: '#EFF6FF', text: '#3B82F6' },
   interested: { bg: '#ECFDF5', text: '#10B981' },
-  not_home:   { bg: '#FEF3C7', text: '#D97706' },
+  not_home:   { bg: 'rgba(245,158,11,0.15)', text: '#D97706' },
   declined:   { bg: '#FEF2F2', text: '#EF4444' },
 }
 
@@ -178,7 +178,7 @@ export default function MarketSaarthiPage() {
         </div>
         <button onClick={() => setShowChat(v => !v)}
           className="px-3 py-2 rounded-xl text-xs font-bold text-white cursor-pointer"
-          style={{ background: '#FF6B35' }}>💬 Team Chat</button>
+          style={{ background: '#ff7a3d' }}>💬 Team Chat</button>
       </div>
 
       {/* KPIs */}
@@ -211,7 +211,7 @@ export default function MarketSaarthiPage() {
             <p className="text-sm text-slate-500">{agents.length} field agents registered</p>
             <button onClick={() => setShowAgentForm(v => !v)}
               className="px-4 py-2 rounded-xl font-bold text-white text-sm cursor-pointer hover:opacity-90"
-              style={{ background: '#1B3A6B' }}>+ Add Agent</button>
+              style={{ background: 'var(--color-accent-blue)' }}>+ Add Agent</button>
           </div>
 
           <AnimatePresence>
@@ -317,7 +317,7 @@ export default function MarketSaarthiPage() {
             <p className="text-sm text-slate-500">{walkins.length} walk-in leads captured</p>
             <button onClick={() => setShowWalkinForm(v => !v)}
               className="px-4 py-2 rounded-xl font-bold text-white text-sm cursor-pointer hover:opacity-90"
-              style={{ background: '#FF6B35' }}>+ Capture Walk-in Lead</button>
+              style={{ background: '#ff7a3d' }}>+ Capture Walk-in Lead</button>
           </div>
           <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-700">
             📱 Walk-in leads are <strong>automatically added to the CRM</strong> with source = "field" and assigned to Market Saarthi pillar.
@@ -403,7 +403,7 @@ export default function MarketSaarthiPage() {
             <p className="text-sm text-slate-500">{visits.length} field visits logged</p>
             <button onClick={() => setShowVisitForm(v => !v)}
               className="px-4 py-2 rounded-xl font-bold text-white text-sm cursor-pointer hover:opacity-90"
-              style={{ background: '#1B3A6B' }}>+ Log Visit</button>
+              style={{ background: 'var(--color-accent-blue)' }}>+ Log Visit</button>
           </div>
 
           <AnimatePresence>
@@ -448,7 +448,7 @@ export default function MarketSaarthiPage() {
           {visits.length === 0 ? <EmptyState icon="📍" label="No visit reports yet." /> : (
             <div className="space-y-3">
               {visits.map((v, i) => {
-                const cfg = OUTCOME_COLORS[v.outcome] || { bg: '#F3F4F6', text: '#6B7280' }
+                const cfg = OUTCOME_COLORS[v.outcome] || { bg: 'rgba(255,255,255,0.08)', text: '#6B7280' }
                 return (
                   <motion.div key={v.id} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.04 }}
                     className="bg-white rounded-xl p-4 border border-slate-100 hover:shadow-sm transition-shadow">
@@ -611,7 +611,7 @@ export default function MarketSaarthiPage() {
           <p className="text-slate-400 text-sm mb-4">Open the direct message panel to chat with any field agent or team member.</p>
           <button onClick={() => setShowChat(true)}
             className="px-6 py-3 rounded-xl font-bold text-white text-sm cursor-pointer hover:opacity-90"
-            style={{ background: '#FF6B35' }}>Open Messages</button>
+            style={{ background: '#ff7a3d' }}>Open Messages</button>
         </div>
       )}
 
@@ -622,3 +622,4 @@ export default function MarketSaarthiPage() {
     </div>
   )
 }
+

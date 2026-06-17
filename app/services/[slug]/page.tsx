@@ -116,17 +116,10 @@ export default function ServiceDetailPage({ params }: { params: Promise<{ slug: 
               </div>
             </div>
 
-            {/* Pricing Card */}
+            {/* Enquiry Card */}
             <div className="bg-white rounded-3xl p-6 shadow-2xl w-full md:w-80 flex-shrink-0 text-navy">
-              <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider mb-1">Starting from</p>
-              {service.price_min ? (
-                <p className="text-3xl font-extrabold font-heading mb-4 text-navy">
-                  ₹{service.price_min.toLocaleString('en-IN')}
-                  {service.price_max && <span className="text-lg text-slate-400 font-normal"> - ₹{service.price_max.toLocaleString('en-IN')}</span>}
-                </p>
-              ) : (
-                <p className="text-2xl font-extrabold font-heading mb-4 text-navy">Custom Quote</p>
-              )}
+              <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider mb-1">Interested?</p>
+              <p className="text-2xl font-extrabold font-heading mb-4 text-navy">Get a Quote</p>
               
               <div className="space-y-4 mb-6 text-sm text-slate-600">
                 <div className="flex items-start gap-3">

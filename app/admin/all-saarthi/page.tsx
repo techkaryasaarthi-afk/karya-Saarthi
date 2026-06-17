@@ -1,7 +1,7 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from '@/lib/motion'
 import { STAFF_ROLE_CONFIGS, formatDepartmentLabel } from '@/lib/org'
 
 interface User {
@@ -611,3 +611,4 @@ export default function AllSaarthiPage() {
     </div>
   )
 }
+

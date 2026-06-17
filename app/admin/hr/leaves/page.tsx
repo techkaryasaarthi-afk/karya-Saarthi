@@ -1,7 +1,7 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useState } from 'react'
-import { motion } from 'framer-motion'
+import { motion } from '@/lib/motion'
 
 interface LeaveRequest {
   id: number
@@ -201,3 +201,4 @@ export default function LeavesPage() {
     </div>
   )
 }
+

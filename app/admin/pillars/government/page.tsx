@@ -1,7 +1,7 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from '@/lib/motion'
 import InterdeptTaskInbox from '@/components/admin/InterdeptTaskInbox'
 import DepartmentMeetings from '@/components/admin/DepartmentMeetings'
 
@@ -32,27 +32,27 @@ const TABS = [
 type Tab = typeof TABS[number]['key']
 
 const STATUS_CFG: Record<string, { label: string; color: string; bg: string }> = {
-  under_review: { label: 'Under Review', color: '#F59E0B', bg: '#FEF3C7' },
-  won:          { label: 'Won ✅', color: '#10B981', bg: '#D1FAE5' },
-  lost:         { label: 'Lost', color: '#EF4444', bg: '#FEE2E2' },
-  submitted:    { label: 'Submitted', color: '#3B82F6', bg: '#DBEAFE' },
-  preparing:    { label: 'Preparing', color: '#8B5CF6', bg: '#EDE9FE' },
+  under_review: { label: 'Under Review', color: '#F59E0B', bg: 'rgba(245,158,11,0.15)' },
+  won:          { label: 'Won ✅', color: '#10B981', bg: 'rgba(16,185,129,0.15)' },
+  lost:         { label: 'Lost', color: '#EF4444', bg: 'rgba(239,68,68,0.15)' },
+  submitted:    { label: 'Submitted', color: '#3B82F6', bg: 'rgba(59,130,246,0.15)' },
+  preparing:    { label: 'Preparing', color: '#8B5CF6', bg: 'rgba(139,92,246,0.15)' },
   shortlisted:  { label: 'Shortlisted', color: '#06B6D4', bg: '#CFFAFE' },
-  draft:        { label: 'Draft', color: '#6B7280', bg: '#F3F4F6' },
-  active:       { label: 'Active', color: '#10B981', bg: '#D1FAE5' },
-  expired:      { label: 'Expired', color: '#EF4444', bg: '#FEE2E2' },
-  terminated:   { label: 'Terminated', color: '#EF4444', bg: '#FEE2E2' },
-  renewed:      { label: 'Renewed', color: '#8B5CF6', bg: '#EDE9FE' },
-  pending:      { label: 'Pending', color: '#F59E0B', bg: '#FEF3C7' },
-  received:     { label: 'Received', color: '#10B981', bg: '#D1FAE5' },
+  draft:        { label: 'Draft', color: '#6B7280', bg: 'rgba(255,255,255,0.08)' },
+  active:       { label: 'Active', color: '#10B981', bg: 'rgba(16,185,129,0.15)' },
+  expired:      { label: 'Expired', color: '#EF4444', bg: 'rgba(239,68,68,0.15)' },
+  terminated:   { label: 'Terminated', color: '#EF4444', bg: 'rgba(239,68,68,0.15)' },
+  renewed:      { label: 'Renewed', color: '#8B5CF6', bg: 'rgba(139,92,246,0.15)' },
+  pending:      { label: 'Pending', color: '#F59E0B', bg: 'rgba(245,158,11,0.15)' },
+  received:     { label: 'Received', color: '#10B981', bg: 'rgba(16,185,129,0.15)' },
   partial:      { label: 'Partial', color: '#06B6D4', bg: '#CFFAFE' },
-  overdue:      { label: 'Overdue', color: '#EF4444', bg: '#FEE2E2' },
+  overdue:      { label: 'Overdue', color: '#EF4444', bg: 'rgba(239,68,68,0.15)' },
 }
 const TASK_PRIORITY_COLORS: Record<string, string> = { low: '#10B981', medium: '#F59E0B', high: '#EF4444', critical: '#8B5CF6' }
 const PHASES = ['proposal', 'approval', 'execution', 'review', 'completed']
 
 function Badge({ status }: { status: string }) {
-  const cfg = STATUS_CFG[status] || { label: status, color: '#6B7280', bg: '#F3F4F6' }
+  const cfg = STATUS_CFG[status] || { label: status, color: '#6B7280', bg: 'rgba(255,255,255,0.08)' }
   return <span className="px-2 py-0.5 rounded-full text-[10px] font-bold capitalize" style={{ background: cfg.bg, color: cfg.color }}>{cfg.label}</span>
 }
 
@@ -411,7 +411,7 @@ export default function GovernmentSaarthiPage() {
                 <motion.div key={c.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
                   className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
                   <div className="flex items-start gap-3 mb-3">
-                    <div className="w-10 h-10 rounded-xl bg-navy/10 flex items-center justify-center font-bold text-navy text-lg">{c.name[0]}</div>
+                    <div className="w-10 h-10 rounded-xl bg-[rgba(0,153,255,0.12)] flex items-center justify-center font-bold text-navy text-lg">{c.name[0]}</div>
                     <div className="flex-1 min-w-0">
                       <p className="font-bold text-navy truncate">{c.name}</p>
                       {c.dept && <p className="text-xs text-slate-400">{c.dept}</p>}
@@ -764,7 +764,7 @@ export default function GovernmentSaarthiPage() {
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 bg-black/50 flex items-center justify-end" onClick={() => setSelectedProject(null)}>
             <motion.div initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-              className="w-full max-w-lg h-full bg-white overflow-y-auto p-6 shadow-2xl" onClick={e => e.stopPropagation()}>
+              className="w-full max-w-lg h-full bg-white overflow-y-auto p-6 shadow-2xl" onClick={(e: React.MouseEvent) => e.stopPropagation()}>
               <div className="flex items-center justify-between mb-5">
                 <div>
                   <h2 className="font-bold text-navy font-heading">🏗️ {selectedProject.title}</h2>
@@ -839,3 +839,4 @@ export default function GovernmentSaarthiPage() {
     </div>
   )
 }
+

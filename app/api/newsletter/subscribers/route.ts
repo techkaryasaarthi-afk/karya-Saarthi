@@ -20,8 +20,8 @@ export async function GET(request: Request) {
 
   let query = supabase
     .from('newsletter_subscribers')
-    .select('id, email, subscribed_at, is_active', { count: 'exact' })
-    .order('subscribed_at', { ascending: false })
+    .select('id, email, created_at, status', { count: 'exact' })
+    .order('created_at', { ascending: false })
     .range(offset, offset + limit - 1)
 
   if (search) {
@@ -42,13 +42,15 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
 
-  const { id, is_active } = await request.json()
+  const { id, is_active, status: newStatus } = await request.json()
   if (!id) return NextResponse.json({ error: 'Missing id' }, { status: 400 })
+
+  const statusVal = newStatus || (is_active ? 'active' : 'unsubscribed')
 
   const supabase = await createClient()
   const { error } = await supabase
     .from('newsletter_subscribers')
-    .update({ is_active })
+    .update({ status: statusVal })
     .eq('id', id)
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })

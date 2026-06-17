@@ -1,11 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
 
 export default function NewsletterSection() {
-  const [email, setEmail] = useState('')
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+  const [email,   setEmail]   = useState('')
+  const [status,  setStatus]  = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const [message, setMessage] = useState('')
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -13,7 +12,7 @@ export default function NewsletterSection() {
     if (!email) return
     setStatus('loading')
     try {
-      const res = await fetch('/api/newsletter', {
+      const res  = await fetch('/api/newsletter', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
@@ -21,7 +20,7 @@ export default function NewsletterSection() {
       const data = await res.json()
       if (res.ok) {
         setStatus('success')
-        setMessage('You\'re subscribed! Welcome to the Karya Saarthi community 🎉')
+        setMessage("You're subscribed! Welcome to the Karya Saarthi community 🎉")
         setEmail('')
       } else {
         setStatus('error')
@@ -34,96 +33,124 @@ export default function NewsletterSection() {
   }
 
   return (
-    <section className="py-16 relative overflow-hidden"
-      style={{ background: 'linear-gradient(135deg, #1B3A6B 0%, #0f2545 60%, #1B3A6B 100%)' }}>
-      {/* Static decorative circles — no infinite JS animation */}
-      <div
-        className="absolute -top-20 -right-20 w-80 h-80 rounded-full opacity-10"
-        style={{ background: '#FF6B35' }}
-      />
-      <div
-        className="absolute -bottom-20 -left-20 w-64 h-64 rounded-full opacity-10"
-        style={{ background: '#FF6B35' }}
-      />
+    <section style={{
+      padding: 'var(--space-section) var(--space-xl)',
+      backgroundColor: 'var(--color-canvas)',
+      borderTop: '1px solid var(--color-hairline-soft)',
+      position: 'relative',
+      overflow: 'hidden',
+    }}>
+      {/* Ambient glows */}
+      <div aria-hidden="true" style={{
+        position: 'absolute', top: -80, right: -80, width: 360, height: 360,
+        borderRadius: '50%', backgroundColor: 'rgba(0,153,255,0.05)', pointerEvents: 'none',
+      }} />
+      <div aria-hidden="true" style={{
+        position: 'absolute', bottom: -80, left: -80, width: 280, height: 280,
+        borderRadius: '50%', backgroundColor: 'rgba(106,76,245,0.05)', pointerEvents: 'none',
+      }} />
 
-      <div className="max-w-3xl mx-auto px-4 text-center relative z-10">
+      <div style={{ maxWidth: 640, margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 1 }}>
+
         {/* Icon */}
-        <motion.div
-          initial={{ scale: 0, rotate: -20 }}
-          whileInView={{ scale: 1, rotate: 0 }}
-          viewport={{ once: true }}
-          transition={{ type: 'spring', stiffness: 200 }}
-          className="w-16 h-16 mx-auto mb-6 rounded-2xl flex items-center justify-center text-3xl"
-          style={{ background: 'rgba(255,107,53,0.2)', border: '1px solid rgba(255,107,53,0.3)' }}
-        >
+        <div style={{
+          width: 64, height: 64, margin: '0 auto 24px',
+          borderRadius: 'var(--radius-xl)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: 28,
+          backgroundColor: 'var(--color-surface-1)',
+          border: '1px solid var(--color-hairline)',
+          animation: 'nl-icon-bounce 3s ease-in-out infinite',
+        }}>
           ✉️
-        </motion.div>
+        </div>
 
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-3xl md:text-4xl font-extrabold text-white font-heading mb-3"
-        >
-          Stay in the <span style={{ color: '#FF6B35' }}>Loop</span>
-        </motion.h2>
-        <motion.p
-          initial={{ opacity: 0, y: 15 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.1 }}
-          className="text-white/50 text-lg mb-8"
-        >
+        <h2 style={{
+          fontFamily: 'var(--font-display)',
+          fontSize: 'clamp(26px, 4vw, 44px)',
+          fontWeight: 700,
+          color: 'var(--color-ink)',
+          letterSpacing: '-1.5px',
+          marginBottom: 14,
+        }}>
+          Stay in the <span style={{ color: 'var(--color-accent-blue)' }}>Loop</span>
+        </h2>
+
+        <p style={{
+          fontSize: 15, color: 'var(--color-ink-muted)',
+          maxWidth: 480, margin: '0 auto 36px',
+          lineHeight: 1.65,
+        }}>
           Get updates on new services, events, hackathons, and exclusive offers directly in your inbox.
-        </motion.p>
-
-        <motion.form
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.2 }}
-          onSubmit={handleSubmit}
-          className="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto"
-        >
-          <input
-            type="email"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            placeholder="Enter your email address"
-            required
-            disabled={status === 'success'}
-            className="flex-1 px-5 py-4 rounded-xl text-sm outline-none border border-white/10 text-white placeholder-white/30 transition-all focus:border-accent/50"
-            style={{ background: 'rgba(255,255,255,0.08)' }}
-          />
-          <button
-            type="submit"
-            disabled={status === 'loading' || status === 'success'}
-            className="px-7 py-4 rounded-xl font-bold text-white text-sm transition-all cursor-pointer disabled:opacity-60 whitespace-nowrap"
-            style={{ background: '#FF6B35', boxShadow: '0 4px 20px rgba(255,107,53,0.4)' }}
-          >
-            {status === 'loading' ? '⏳ Subscribing...' : status === 'success' ? '✅ Subscribed!' : 'Subscribe →'}
-          </button>
-        </motion.form>
-
-        <AnimatePresence>
-          {(status === 'success' || status === 'error') && (
-            <motion.p
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              className={`mt-4 text-sm font-medium ${status === 'success' ? 'text-green-400' : 'text-red-400'}`}
-            >
-              {message}
-            </motion.p>
-          )}
-        </AnimatePresence>
-
-        <p className="text-white/20 text-xs mt-5">
-          No spam. Unsubscribe anytime. Your data is safe with us. 🔒
         </p>
 
+        {/* Form */}
+        <form onSubmit={handleSubmit} style={{ width: '100%' }}>
+          {status !== 'success' ? (
+            <div style={{
+              display: 'flex', gap: 10,
+              maxWidth: 500, margin: '0 auto',
+              flexWrap: 'wrap',
+            }}>
+              <input
+                type="email"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                placeholder="Enter your email address"
+                required
+                style={{
+                  flex: 1, minWidth: 200,
+                  padding: '13px 18px',
+                  borderRadius: 'var(--radius-pill)',
+                  border: '1px solid var(--color-hairline)',
+                  backgroundColor: 'var(--color-surface-1)',
+                  color: 'var(--color-ink)',
+                  fontSize: 14, outline: 'none',
+                  transition: 'border-color 0.15s',
+                }}
+                onFocus={e => { e.currentTarget.style.borderColor = 'var(--color-accent-blue)' }}
+                onBlur={e  => { e.currentTarget.style.borderColor = 'var(--color-hairline)' }}
+              />
+              <button
+                type="submit"
+                disabled={status === 'loading'}
+                id="newsletter-subscribe-btn"
+                className="btn-primary"
+                style={{ flexShrink: 0, opacity: status === 'loading' ? 0.6 : 1 }}
+              >
+                {status === 'loading' ? '⏳ Subscribing…' : 'Subscribe →'}
+              </button>
+            </div>
+          ) : (
+            <div style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              gap: 10, padding: '14px 24px',
+              borderRadius: 'var(--radius-xl)',
+              backgroundColor: 'rgba(34,197,94,0.08)',
+              border: '1px solid rgba(34,197,94,0.2)',
+              maxWidth: 500, margin: '0 auto',
+            }}>
+              <span style={{ fontSize: 20 }}>✅</span>
+              <p style={{ fontSize: 13, color: '#22c55e', fontWeight: 600 }}>You&apos;re subscribed! Welcome aboard 🎉</p>
+            </div>
+          )}
+        </form>
 
+        {status === 'error' && (
+          <p style={{ marginTop: 12, fontSize: 13, color: '#f87171', fontWeight: 500 }}>{message}</p>
+        )}
+
+        <p style={{ color: 'var(--color-ink-muted)', fontSize: 11, marginTop: 20, opacity: 0.6 }}>
+          No spam. <a href="/unsubscribe" style={{ color: 'var(--color-accent-blue)', textDecoration: 'underline' }}>Unsubscribe anytime</a>. Your data is safe with us. 🔒
+        </p>
       </div>
+
+      <style>{`
+        @keyframes nl-icon-bounce {
+          0%, 100% { transform: translateY(0); }
+          50%       { transform: translateY(-6px); }
+        }
+      `}</style>
     </section>
   )
 }

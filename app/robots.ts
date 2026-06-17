@@ -1,4 +1,4 @@
-import { MetadataRoute } from 'next'
+﻿import { MetadataRoute } from 'next'
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://karyasaarthi.vercel.app'
 
@@ -17,6 +17,12 @@ export default function robots(): MetadataRoute.Robots {
           '/contact',
           '/events',
           '/events/',
+          '/hackathons',
+          '/hackathons/',
+          '/podcasts',
+          '/podcasts/',
+          '/privacy-policy',
+          '/terms-and-conditions',
         ],
         disallow: [
           '/admin',
@@ -26,7 +32,7 @@ export default function robots(): MetadataRoute.Robots {
           '/vendor',
           '/vendor/',
           '/api/',
-          '/staff-login',
+          '# moved to admin.karyasaarthi.com',
           '/forgot-password',
           '/_next/',
         ],

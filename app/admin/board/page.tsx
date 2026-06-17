@@ -1,7 +1,7 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useState, useCallback, Suspense } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from '@/lib/motion'
 import { useSearchParams, useRouter } from 'next/navigation'
 import AboutPageManager from '@/components/admin/AboutPageManager'
 import DepartmentMeetings from '@/components/admin/DepartmentMeetings'
@@ -303,7 +303,7 @@ function BoardDashboard() {
                 <p className="text-slate-400 text-xs text-center py-4">No client revenue data yet</p>
               ) : (d?.topClients || []).map((c, i) => (
                 <div key={c.id} className="flex items-center gap-3 py-2.5 border-b border-slate-50 last:border-0">
-                  <div className="w-8 h-8 rounded-xl bg-navy/10 flex items-center justify-center text-sm font-bold text-navy">{c.name.charAt(0)}</div>
+                  <div className="w-8 h-8 rounded-xl bg-[rgba(0,153,255,0.12)] flex items-center justify-center text-sm font-bold text-navy">{c.name.charAt(0)}</div>
                   <div className="flex-1">
                     <p className="text-sm font-semibold text-navy">{c.name}</p>
                     <div className="w-full h-1.5 bg-slate-100 rounded-full mt-1">
@@ -340,7 +340,7 @@ function BoardDashboard() {
                 })}
                 <div className="mt-3 pt-3 border-t border-slate-100 grid grid-cols-3 gap-2">
                   {[
-                    { label: 'Internal', count: d?.team.internal || 0, color: '#1B3A6B' },
+                    { label: 'Internal', count: d?.team.internal || 0, color: 'var(--color-ink)' },
                     { label: 'Vendors', count: d?.team.vendors || 0, color: '#F59E0B' },
                     { label: 'Clients', count: d?.team.clients || 0, color: '#10B981' },
                   ].map(item => (
@@ -361,7 +361,7 @@ function BoardDashboard() {
               <h3 className="font-bold text-navy font-heading mb-4">⚠️ Active Risk Alerts</h3>
               <div className="space-y-2">
                 {(d?.riskAlerts || []).map((alert, i) => {
-                  const sev = { high: { bg: '#FEE2E2', color: '#EF4444', icon: '🔴' }, medium: { bg: '#FEF3C7', color: '#F59E0B', icon: '🟡' }, low: { bg: '#DBEAFE', color: '#3B82F6', icon: '🔵' } }
+                  const sev = { high: { bg: 'rgba(239,68,68,0.15)', color: '#EF4444', icon: '🔴' }, medium: { bg: 'rgba(245,158,11,0.15)', color: '#F59E0B', icon: '🟡' }, low: { bg: 'rgba(59,130,246,0.15)', color: '#3B82F6', icon: '🔵' } }
                   const cfg = sev[alert.severity as keyof typeof sev] || sev.low
                   return (
                     <div key={i} className="flex items-center gap-3 p-3 rounded-xl" style={{ background: cfg.bg }}>
@@ -435,7 +435,7 @@ function BoardDashboard() {
                 </div>
                 <button onClick={() => window.print()}
                   className="mt-5 w-full py-2.5 rounded-xl text-xs font-bold text-white cursor-pointer hover:opacity-90 transition-opacity"
-                  style={{ background: '#1B3A6B' }}>
+                  style={{ background: 'var(--color-accent-blue)' }}>
                   🖨️ Print P&L Report
                 </button>
               </div>
@@ -537,7 +537,7 @@ function BoardDashboard() {
               { label: 'Lead Conversion Rate', value: d?.leads.conversionRate || 0, target: 30, icon: '🎯', color: '#8B5CF6', format: 'percent' },
               { label: 'Project Completion Rate', value: d?.projects.total ? Math.round((d.projects.completed / d.projects.total) * 100) : 0, target: 80, icon: '✅', color: '#3B82F6', format: 'percent' },
               { label: 'Active Client Portfolio', value: d?.team.clients || 0, target: 500, icon: '👤', color: '#FF6B35', format: 'number' },
-              { label: 'Total Team Strength', value: (d?.team.internal || 0) + Object.values(d?.headcountByPillar || {}).reduce((a, b) => a + b, 0), target: 50, icon: '👥', color: '#1B3A6B', format: 'number' },
+              { label: 'Total Team Strength', value: (d?.team.internal || 0) + Object.values(d?.headcountByPillar || {}).reduce((a, b) => a + b, 0), target: 50, icon: '👥', color: 'var(--color-ink)', format: 'number' },
               { label: 'Pending Revenue Collection', value: d?.revenue.pending || 0, target: 0, icon: '⏳', color: '#F59E0B', format: 'currency', inverse: true },
             ].map((kpi, i) => {
               const progress = kpi.inverse
@@ -639,7 +639,7 @@ function BoardDashboard() {
           ) : (
             <div className="space-y-3">
               {(d?.riskAlerts || []).map((alert, i) => {
-                const sev = { high: { bg: '#FEE2E2', border: '#FECACA', color: '#DC2626', icon: '🔴', label: 'HIGH RISK' }, medium: { bg: '#FEF3C7', border: '#FDE68A', color: '#D97706', icon: '🟡', label: 'MEDIUM' }, low: { bg: '#DBEAFE', border: '#BFDBFE', color: '#2563EB', icon: '🔵', label: 'LOW' } }
+                const sev = { high: { bg: 'rgba(239,68,68,0.15)', border: '#FECACA', color: '#DC2626', icon: '🔴', label: 'HIGH RISK' }, medium: { bg: 'rgba(245,158,11,0.15)', border: '#FDE68A', color: '#D97706', icon: '🟡', label: 'MEDIUM' }, low: { bg: 'rgba(59,130,246,0.15)', border: '#BFDBFE', color: '#2563EB', icon: '🔵', label: 'LOW' } }
                 const cfg = sev[alert.severity as keyof typeof sev] || sev.low
                 return (
                   <motion.div key={i} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.06 }}
@@ -695,10 +695,10 @@ function BoardDashboard() {
                 <div className="divide-y divide-slate-50">
                   {mous.filter(m => ['mou', 'agreement'].includes(m.type)).map((doc) => {
                     const STATUS_CFG: Record<string, { label: string; color: string; bg: string }> = {
-                      draft: { label: 'Draft', color: '#6B7280', bg: '#F3F4F6' },
-                      pending_approval: { label: 'Pending Approval', color: '#F59E0B', bg: '#FEF3C7' },
-                      approved: { label: 'Approved', color: '#10B981', bg: '#D1FAE5' },
-                      rejected: { label: 'Rejected', color: '#EF4444', bg: '#FEE2E2' },
+                      draft: { label: 'Draft', color: '#6B7280', bg: 'rgba(255,255,255,0.08)' },
+                      pending_approval: { label: 'Pending Approval', color: '#F59E0B', bg: 'rgba(245,158,11,0.15)' },
+                      approved: { label: 'Approved', color: '#10B981', bg: 'rgba(16,185,129,0.15)' },
+                      rejected: { label: 'Rejected', color: '#EF4444', bg: 'rgba(239,68,68,0.15)' },
                       expired: { label: 'Expired', color: '#6B7280', bg: '#F1F5F9' },
                     }
                     const sc = STATUS_CFG[doc.status] || STATUS_CFG.draft
@@ -743,7 +743,7 @@ function BoardDashboard() {
             <h2 className="text-xl font-bold text-navy font-heading">📢 Announcement Publisher</h2>
             <button onClick={() => setShowAnnForm(v => !v)}
               className="px-4 py-2.5 rounded-xl font-bold text-white text-sm cursor-pointer hover:opacity-90 transition-opacity"
-              style={{ background: '#FF6B35' }}>
+              style={{ background: '#ff7a3d' }}>
               + Publish Announcement
             </button>
           </div>
@@ -769,10 +769,10 @@ function BoardDashboard() {
                   <div className="flex gap-3">
                     <button type="submit" disabled={savingAnn}
                       className="px-6 py-2.5 rounded-xl font-bold text-white text-sm cursor-pointer disabled:opacity-60"
-                      style={{ background: '#1B3A6B' }}>
+                      style={{ background: 'var(--color-accent-blue)' }}>
                       {savingAnn ? '⏳ Publishing...' : '📢 Publish Now'}
                     </button>
-                    <button type="button" onClick={() => setShowAnnForm(false)} className="px-4 py-2.5 rounded-xl bg-slate-100 text-slate-600 text-sm cursor-pointer hover:bg-slate-200">Cancel</button>
+                    <button type="button" onClick={() => setShowAnnForm(false)} className="px-4 py-2.5 rounded-xl bg-[rgba(255,255,255,0.06)] text-[var(--color-ink-muted)] text-sm cursor-pointer hover:bg-[rgba(255,255,255,0.1)]">Cancel</button>
                   </div>
                 </form>
               </motion.div>
@@ -790,10 +790,10 @@ function BoardDashboard() {
                 </div>
               ) : announcements.map((ann, i) => {
                 const TYPE_CFG: Record<string, { bg: string; color: string; icon: string }> = {
-                  info: { bg: '#DBEAFE', color: '#2563EB', icon: 'ℹ️' },
-                  success: { bg: '#D1FAE5', color: '#059669', icon: '✅' },
-                  warning: { bg: '#FEF3C7', color: '#D97706', icon: '⚠️' },
-                  urgent: { bg: '#FEE2E2', color: '#DC2626', icon: '🚨' },
+                  info: { bg: 'rgba(59,130,246,0.15)', color: '#2563EB', icon: 'ℹ️' },
+                  success: { bg: 'rgba(16,185,129,0.15)', color: '#059669', icon: '✅' },
+                  warning: { bg: 'rgba(245,158,11,0.15)', color: '#D97706', icon: '⚠️' },
+                  urgent: { bg: 'rgba(239,68,68,0.15)', color: '#DC2626', icon: '🚨' },
                 }
                 const cfg = TYPE_CFG[ann.type] || TYPE_CFG.info
                 return (
@@ -824,7 +824,7 @@ function BoardDashboard() {
             <p className="text-sm text-slate-500">{boardNotes.length} meeting notes</p>
             <button onClick={() => setShowNoteForm(v => !v)}
               className="px-4 py-2 rounded-xl font-bold text-white text-sm cursor-pointer hover:opacity-90"
-              style={{ background: '#1B3A6B' }}>+ Add Meeting Notes</button>
+              style={{ background: 'var(--color-accent-blue)' }}>+ Add Meeting Notes</button>
           </div>
           {showNoteForm && (
             <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
@@ -960,3 +960,4 @@ function BoardDashboard() {
     </div>
   )
 }
+

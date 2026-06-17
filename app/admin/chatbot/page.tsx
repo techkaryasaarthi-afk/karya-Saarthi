@@ -1,7 +1,7 @@
-'use client'
+﻿'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from '@/lib/motion'
 import { DEPARTMENT_HUBS, STAFF_ROLE_CONFIGS } from '@/lib/org'
 import Link from 'next/link'
 
@@ -144,7 +144,7 @@ export default function ChatbotPage() {
                   <div className="flex flex-wrap gap-1.5 pt-1 border-t border-slate-100">
                     <Link
                       href={hub.route}
-                      className="px-2.5 py-1 rounded-lg bg-navy/5 text-navy hover:bg-navy/10 text-[10px] font-bold transition-all"
+                      className="px-2.5 py-1 rounded-lg bg-navy/5 text-navy hover:bg-[rgba(0,153,255,0.12)] text-[10px] font-bold transition-all"
                     >
                       Dashboard ➡️
                     </Link>
@@ -289,3 +289,4 @@ export default function ChatbotPage() {
     </div>
   )
 }
+

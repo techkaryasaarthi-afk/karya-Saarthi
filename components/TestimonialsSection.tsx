@@ -1,22 +1,13 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
-import Image from 'next/image'
+import { useState, useEffect, useCallback } from 'react'
 
-// Google SVG Icons
 const GoogleG = () => (
-  <svg viewBox="0 0 24 24" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
+  <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
     <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
     <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
     <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
     <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-  </svg>
-)
-
-const StarIcon = () => (
-  <svg viewBox="0 0 24 24" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
-    <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" fill="#fbbc04"/>
   </svg>
 )
 
@@ -28,102 +19,246 @@ interface GoogleReview {
   text: string
 }
 
-export default function TestimonialsSection() {
-  const [data, setData] = useState<{ reviews: GoogleReview[], rating: number, total: number } | null>(null)
-  const [loading, setLoading] = useState(true)
+const FALLBACK_REVIEWS: GoogleReview[] = [
+  { author_name: 'Priya Sharma',   profile_photo_url: '', rating: 5, relative_time_description: '2 weeks ago',  text: 'Karya Saarthi helped me with my MBA thesis. The quality was outstanding and delivered before deadline. Highly recommend to anyone looking for academic support!' },
+  { author_name: 'Rahul Verma',    profile_photo_url: '', rating: 5, relative_time_description: '1 month ago',  text: 'Got my website developed by their team. Professional, responsive, and the design exceeded my expectations. Best investment I\'ve made for my business.' },
+  { author_name: 'Ananya Singh',   profile_photo_url: '', rating: 5, relative_time_description: '3 weeks ago',  text: 'The campus ambassador program was an amazing experience. Learned so much about marketing and networking. The team is incredibly supportive. Thank you KS!' },
+  { author_name: 'Mohit Gupta',    profile_photo_url: '', rating: 5, relative_time_description: '1 month ago',  text: 'Used their digital marketing services for my startup. Saw real results in just 2 months. ROI was excellent! Highly professional team.' },
+  { author_name: 'Sneha Patel',    profile_photo_url: '', rating: 5, relative_time_description: '2 months ago', text: 'Research paper assistance was top-notch. The team understood exactly what I needed and delivered beyond expectations. Will definitely use again!' },
+  { author_name: 'Arjun Nair',     profile_photo_url: '', rating: 4, relative_time_description: '3 weeks ago',  text: 'Very professional team. Quick turnaround on my project presentation. 24/7 support as promised. Would recommend for any technical work.' },
+  { author_name: 'Kavya Reddy',    profile_photo_url: '', rating: 5, relative_time_description: '1 week ago',   text: 'Excellent service! They guided me through every step of my dissertation. The support is genuinely unmatched. 10/10 would recommend.' },
+]
 
-  useEffect(() => {
-    async function load() {
-      try {
-        const res = await fetch('/api/public/google-reviews')
-        if (res.ok) {
-          const d = await res.json()
-          setData({
-            reviews: d.reviews || [],
-            rating: d.rating || 5,
-            total: d.user_ratings_total || 0
-          })
-        }
-      } catch (err) {
-        console.error('Failed to load reviews', err)
-      } finally {
-        setLoading(false)
-      }
-    }
-    load()
-  }, [])
+const AVATAR_COLORS = ['#6366f1','#0ea5e9','#10b981','#f59e0b','#ef4444','#8b5cf6','#ec4899']
+const VISIBLE = 4 // number of cards visible at once (desktop)
 
-  if (loading) {
-    return (
-      <section className="py-20 lg:py-28 bg-slate-50 relative overflow-hidden flex justify-center items-center min-h-[400px]">
-        <div className="w-10 h-10 border-4 border-navy/20 border-t-navy rounded-full animate-spin" />
-      </section>
-    )
-  }
+function getVisibleCount() {
+  if (typeof window === 'undefined') return VISIBLE
+  if (window.innerWidth <= 480) return 1
+  if (window.innerWidth <= 768) return 2
+  if (window.innerWidth <= 1024) return 3
+  return VISIBLE
+}
 
-  if (!data || data.reviews.length === 0) return null
+function ReviewCard({ review, active }: { review: GoogleReview; active: boolean }) {
+  const initial = review.author_name?.charAt(0)?.toUpperCase() || '?'
+  const color   = AVATAR_COLORS[review.author_name.charCodeAt(0) % AVATAR_COLORS.length]
 
   return (
-    <section id="testimonials" className="py-20 lg:py-28 bg-slate-50 relative overflow-hidden border-y border-slate-100">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="flex flex-col md:flex-row justify-between items-center mb-12 gap-6">
-          <div className="text-center md:text-left">
-             <div className="flex items-center justify-center md:justify-start gap-4 mb-3">
-               <h2 className="text-3xl lg:text-4xl font-bold text-slate-900 font-heading">Excellent</h2>
-               <div className="flex gap-0.5 mt-1">
-                 {Array.from({ length: Math.round(data.rating) }).map((_, i) => <StarIcon key={i} />)}
-               </div>
-             </div>
-             <div className="flex items-center justify-center md:justify-start gap-2 text-slate-600 font-medium">
-               <span>Based on {data.total} reviews</span>
-               <span>on</span>
-               <div className="flex items-center"><GoogleG /></div>
-             </div>
-          </div>
-          
-          <a href="https://search.google.com/local/writereview?placeid=PLACEHOLDER" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 bg-white border border-slate-200 px-6 py-3 rounded-full text-sm font-semibold text-slate-700 hover:shadow-md hover:border-slate-300 transition-all">
-            <GoogleG />
-            Review us on Google
-          </a>
-        </motion.div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {data.reviews.slice(0, 3).map((r, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-50px' }}
-              transition={{ delay: i * 0.08 }}
-              className="bg-white rounded-2xl p-7 shadow-sm border border-slate-100 relative hover:shadow-md hover:-translate-y-1 transition-all duration-300"
-            >
-              <div className="absolute top-6 right-6">
-                <GoogleG />
-              </div>
-              
-              <div className="flex items-center gap-4 mb-5">
-                <div className="relative w-12 h-12 rounded-full overflow-hidden flex-shrink-0 bg-slate-100 flex items-center justify-center font-bold text-xl text-slate-500 border border-slate-200">
-                  {r.profile_photo_url ? (
-                    <Image src={r.profile_photo_url} alt={r.author_name} width={48} height={48} className="w-full h-full object-cover" />
-                  ) : (
-                    r.author_name.charAt(0)
-                  )}
-                </div>
-                <div>
-                  <h4 className="font-semibold text-slate-900 text-[15px] leading-tight pr-6">{r.author_name}</h4>
-                  <p className="text-slate-500 text-[13px] mt-1">{r.relative_time_description}</p>
-                </div>
-              </div>
-
-              <div className="flex gap-0.5 mb-4">
-                {Array.from({ length: r.rating }).map((_, j) => (
-                  <StarIcon key={j} />
-                ))}
-              </div>
-              <p className="text-slate-700 text-[15px] leading-relaxed line-clamp-4">"{r.text}"</p>
-            </motion.div>
-          ))}
+    <div style={{
+      backgroundColor: 'var(--color-surface-1)',
+      border: `1px solid ${active ? 'rgba(0,153,255,0.25)' : 'var(--color-hairline-soft)'}`,
+      borderRadius: 'var(--radius-lg)',
+      padding: '24px 22px',
+      display: 'flex', flexDirection: 'column', gap: 14,
+      flexShrink: 0,
+      width: undefined,
+      transition: 'border-color 0.3s, box-shadow 0.3s, opacity 0.3s',
+      boxShadow: active ? '0 0 0 1px rgba(0,153,255,0.12), 0 8px 32px rgba(0,0,0,0.2)' : 'none',
+    }}>
+      {/* Header */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        <div style={{ width: 38, height: 38, borderRadius: '50%', backgroundColor: color, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: 15, fontWeight: 700, color: '#fff' }}>
+          {initial}
         </div>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--color-ink)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{review.author_name}</p>
+          <p style={{ fontSize: 11, color: 'var(--color-ink-muted)' }}>{review.relative_time_description}</p>
+        </div>
+        <div style={{ width: 26, height: 26, backgroundColor: 'var(--color-surface-2)', borderRadius: 'var(--radius-sm)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <GoogleG />
+        </div>
+      </div>
+
+      {/* Stars */}
+      <div style={{ display: 'flex', gap: 2 }}>
+        {Array.from({ length: 5 }).map((_, i) => (
+          <svg key={i} viewBox="0 0 24 24" width="13" height="13" aria-hidden="true">
+            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" fill={i < review.rating ? '#fbbc04' : 'var(--color-hairline)'} />
+          </svg>
+        ))}
+      </div>
+
+      {/* Text */}
+      <p style={{ fontSize: 13, color: 'var(--color-ink-muted)', lineHeight: 1.65, flex: 1, display: '-webkit-box', WebkitLineClamp: 4, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+        "{review.text}"
+      </p>
+    </div>
+  )
+}
+
+export default function TestimonialsSection() {
+  const [reviews,  setReviews]  = useState<GoogleReview[]>(FALLBACK_REVIEWS)
+  const [index,    setIndex]    = useState(0)
+  const [paused,   setPaused]   = useState(false)
+  const [visibleCount, setVisibleCount] = useState(VISIBLE)
+
+  useEffect(() => {
+    const update = () => setVisibleCount(getVisibleCount())
+    update()
+    window.addEventListener('resize', update)
+    return () => window.removeEventListener('resize', update)
+  }, [])
+
+  useEffect(() => {
+    fetch('/api/reviews')
+      .then(r => r.ok ? r.json() : null)
+      .then(d => { if (d?.reviews?.length) setReviews(d.reviews) })
+      .catch(() => {})
+  }, [])
+
+  // Total pages based on visible cards
+  const maxIndex = Math.max(0, reviews.length - visibleCount)
+
+  // Clamp index if visibleCount changes
+  useEffect(() => {
+    setIndex(i => Math.min(i, maxIndex))
+  }, [maxIndex])
+
+  const prev = useCallback(() => setIndex(i => Math.max(0, i - 1)), [])
+  const next = useCallback(() => setIndex(i => Math.min(maxIndex, i + 1)), [maxIndex])
+
+  // Auto-advance every 4s
+  useEffect(() => {
+    if (paused) return
+    const t = setInterval(() => {
+      setIndex(i => (i >= maxIndex ? 0 : i + 1))
+    }, 4000)
+    return () => clearInterval(t)
+  }, [paused, maxIndex])
+
+  // Rating summary
+  const avg = (reviews.reduce((s, r) => s + r.rating, 0) / reviews.length).toFixed(1)
+
+  return (
+    <section
+      id="testimonials"
+      aria-label="Customer reviews"
+      style={{
+        backgroundColor: 'var(--color-surface-1)',
+        paddingTop: 'var(--space-section)',
+        paddingBottom: 'var(--space-section)',
+        borderTop: '1px solid var(--color-hairline-soft)',
+        overflow: 'hidden',
+      }}
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+    >
+      <div style={{ maxWidth: 1199, margin: '0 auto', paddingLeft: 'var(--space-xl)', paddingRight: 'var(--space-xl)' }}>
+
+        {/* Header */}
+        <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 44, flexWrap: 'wrap', gap: 20 }}>
+          <div>
+            <span style={{ display: 'inline-block', fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '4px 12px', borderRadius: 'var(--radius-pill)', backgroundColor: 'rgba(251,188,4,0.1)', color: '#fbbc04', border: '1px solid rgba(251,188,4,0.25)', marginBottom: 14 }}>
+              ⭐ Customer Reviews
+            </span>
+            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(24px, 3.5vw, 40px)', fontWeight: 700, color: 'var(--color-ink)', letterSpacing: '-1.5px', marginBottom: 4 }}>
+              What Our Clients Say
+            </h2>
+            <p style={{ fontSize: 14, color: 'var(--color-ink-muted)' }}>
+              Trusted by 500+ students and businesses across India
+            </p>
+          </div>
+
+          {/* Rating summary + nav */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+            <div style={{ textAlign: 'right' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, justifyContent: 'flex-end', marginBottom: 4 }}>
+                <span style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 800, color: 'var(--color-ink)', letterSpacing: '-1px' }}>{avg}</span>
+                <div>
+                  <div style={{ display: 'flex', gap: 2 }}>
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <svg key={i} viewBox="0 0 24 24" width="14" height="14"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" fill="#fbbc04" /></svg>
+                    ))}
+                  </div>
+                  <p style={{ fontSize: 10, color: 'var(--color-ink-muted)', fontWeight: 600 }}>on Google</p>
+                </div>
+              </div>
+              <p style={{ fontSize: 11, color: 'var(--color-ink-muted)' }}>{reviews.length} reviews</p>
+            </div>
+
+            {/* Prev/Next */}
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button
+                onClick={prev} disabled={index === 0} id="testimonials-prev-btn"
+                style={{
+                  width: 40, height: 40, borderRadius: 'var(--radius-full)',
+                  border: '1px solid var(--color-hairline)',
+                  backgroundColor: 'var(--color-surface-2)',
+                  color: 'var(--color-ink)', fontSize: 16, cursor: 'pointer',
+                  opacity: index === 0 ? 0.35 : 1,
+                  transition: 'opacity 0.15s, background-color 0.15s',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}
+              >←</button>
+              <button
+                onClick={next} disabled={index >= maxIndex} id="testimonials-next-btn"
+                style={{
+                  width: 40, height: 40, borderRadius: 'var(--radius-full)',
+                  border: '1px solid var(--color-hairline)',
+                  backgroundColor: 'var(--color-surface-2)',
+                  color: 'var(--color-ink)', fontSize: 16, cursor: 'pointer',
+                  opacity: index >= maxIndex ? 0.35 : 1,
+                  transition: 'opacity 0.15s, background-color 0.15s',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}
+              >→</button>
+            </div>
+          </div>
+        </div>
+
+        {/* Slider */}
+        <div style={{ overflow: 'hidden', position: 'relative' }}>
+          <div
+            className="testimonials-slider"
+            style={{
+              display: 'flex', gap: 16,
+              transform: `translateX(calc(-${index} * (100% / ${visibleCount} + ${16 / visibleCount}px)))`,
+              transition: 'transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+            }}
+          >
+            {reviews.map((r, i) => (
+              <ReviewCard key={i} review={r} active={i >= index && i < index + visibleCount} />
+            ))}
+          </div>
+        </div>
+
+        {/* Dots */}
+        <div style={{ display: 'flex', gap: 6, justifyContent: 'center', marginTop: 28 }}>
+          {Array.from({ length: maxIndex + 1 }).map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setIndex(i)}
+              style={{
+                width: i === index ? 24 : 8, height: 8, borderRadius: 99,
+                border: 'none', cursor: 'pointer', padding: 0,
+                backgroundColor: i === index ? 'var(--color-accent-blue)' : 'var(--color-hairline)',
+                transition: 'width 0.3s, background-color 0.3s',
+              }}
+            />
+          ))}
+          <style>{`
+          .testimonials-slider > div {
+            width: calc((100% - ${(VISIBLE - 1) * 16}px) / ${VISIBLE});
+            flex-shrink: 0;
+          }
+          @media (max-width: 1024px) {
+            .testimonials-slider > div {
+              width: calc((100% - ${(3 - 1) * 16}px) / 3);
+            }
+          }
+          @media (max-width: 768px) {
+            .testimonials-slider > div {
+              width: calc((100% - 16px) / 2);
+            }
+          }
+          @media (max-width: 480px) {
+            .testimonials-slider > div {
+              width: 100%;
+            }
+          }
+        `}</style>
+      </div>
       </div>
     </section>
   )

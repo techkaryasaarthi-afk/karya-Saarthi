@@ -1,7 +1,7 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useState, useCallback, useRef } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from '@/lib/motion'
 import DepartmentMeetings from '@/components/admin/DepartmentMeetings'
 
 // ─── Types ────────────────────────────────────────────────────
@@ -35,22 +35,22 @@ type Tab = typeof TABS[number]['key']
 
 const STAGES = ['new', 'contacted', 'interested', 'proposal', 'won', 'lost']
 const STAGE_CFG: Record<string, { label: string; color: string; bg: string; icon: string }> = {
-  new:       { label: 'New',          color: '#6B7280', bg: '#F3F4F6', icon: '🆕' },
-  contacted: { label: 'Contacted',    color: '#3B82F6', bg: '#DBEAFE', icon: '📞' },
-  interested:{ label: 'Interested',   color: '#8B5CF6', bg: '#EDE9FE', icon: '🤝' },
-  proposal:  { label: 'Proposal Sent',color: '#F59E0B', bg: '#FEF3C7', icon: '📄' },
-  won:       { label: 'Won ✅',       color: '#10B981', bg: '#D1FAE5', icon: '🏆' },
-  lost:      { label: 'Lost',         color: '#EF4444', bg: '#FEE2E2', icon: '❌' },
+  new:       { label: 'New',          color: '#6B7280', bg: 'rgba(255,255,255,0.08)', icon: '🆕' },
+  contacted: { label: 'Contacted',    color: '#3B82F6', bg: 'rgba(59,130,246,0.15)', icon: '📞' },
+  interested:{ label: 'Interested',   color: '#8B5CF6', bg: 'rgba(139,92,246,0.15)', icon: '🤝' },
+  proposal:  { label: 'Proposal Sent',color: '#F59E0B', bg: 'rgba(245,158,11,0.15)', icon: '📄' },
+  won:       { label: 'Won ✅',       color: '#10B981', bg: 'rgba(16,185,129,0.15)', icon: '🏆' },
+  lost:      { label: 'Lost',         color: '#EF4444', bg: 'rgba(239,68,68,0.15)', icon: '❌' },
 }
 const SOURCES = ['website','social_media','referral','cold_call','email','walk_in','campus','digital','calling','government','market','whatsapp','field','other']
 const PILLARS = ['calling','campus','digital','government','market','operations']
 const SEGMENTS = ['student','startup','corporate','government','individual']
 const INV_STATUS_CFG: Record<string, { label: string; color: string; bg: string }> = {
-  draft:     { label: 'Draft',     color: '#6B7280', bg: '#F3F4F6' },
-  sent:      { label: 'Sent',      color: '#3B82F6', bg: '#DBEAFE' },
-  paid:      { label: 'Paid ✅',   color: '#10B981', bg: '#D1FAE5' },
-  overdue:   { label: 'Overdue ⚠️',color: '#EF4444', bg: '#FEE2E2' },
-  cancelled: { label: 'Cancelled', color: '#9CA3AF', bg: '#F9FAFB' },
+  draft:     { label: 'Draft',     color: '#6B7280', bg: 'rgba(255,255,255,0.08)' },
+  sent:      { label: 'Sent',      color: '#3B82F6', bg: 'rgba(59,130,246,0.15)' },
+  paid:      { label: 'Paid ✅',   color: '#10B981', bg: 'rgba(16,185,129,0.15)' },
+  overdue:   { label: 'Overdue ⚠️',color: '#EF4444', bg: 'rgba(239,68,68,0.15)' },
+  cancelled: { label: 'Cancelled', color: '#9CA3AF', bg: 'rgba(255,255,255,0.05)' },
 }
 
 function LeadScore({ lead }: { lead: Lead }) {
@@ -71,7 +71,7 @@ function LeadScore({ lead }: { lead: Lead }) {
 }
 
 function Badge({ status, cfg }: { status: string; cfg: Record<string, { label: string; color: string; bg: string }> }) {
-  const c = cfg[status] || { label: status, color: '#6B7280', bg: '#F3F4F6' }
+  const c = cfg[status] || { label: status, color: '#6B7280', bg: 'rgba(255,255,255,0.08)' }
   return <span className="px-2 py-0.5 rounded-full text-[10px] font-bold" style={{ background: c.bg, color: c.color }}>{c.label}</span>
 }
 
@@ -346,7 +346,7 @@ export default function CRMPage() {
               const cfg = STAGE_CFG[s]
               return (
                 <button key={s} onClick={() => setStageFilter(stageFilter === s ? 'all' : s)}
-                  className={`bg-white rounded-xl p-3 border text-center cursor-pointer transition-all hover:shadow-md ${stageFilter === s ? 'border-navy shadow-md' : 'border-slate-100 shadow-sm'}`}>
+                  className={`bg-white rounded-xl p-3 border text-center cursor-pointer transition-all hover:shadow-md ${stageFilter === s ? 'border-accent shadow-md' : 'border-slate-100 shadow-sm'}`}>
                   <p className="text-lg font-extrabold" style={{ color: cfg.color }}>{count}</p>
                   <p className="text-[9px] text-slate-400">{cfg.label}</p>
                 </button>
@@ -437,7 +437,7 @@ export default function CRMPage() {
                   </div>
                   <textarea value={newLead.notes} onChange={e => setNewLead(p => ({ ...p, notes: e.target.value }))} placeholder="Notes" rows={1} className="col-span-2 px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none resize-none" />
                   <div className="col-span-3 flex gap-3">
-                    <button type="submit" disabled={saving} className="px-5 py-2.5 rounded-xl font-bold text-white text-sm cursor-pointer disabled:opacity-60" style={{ background: '#1B3A6B' }}>{saving ? '⏳ Saving...' : '✅ Add Lead'}</button>
+                    <button type="submit" disabled={saving} className="px-5 py-2.5 rounded-xl font-bold text-white text-sm cursor-pointer disabled:opacity-60" style={{ background: 'var(--color-accent-blue)' }}>{saving ? '⏳ Saving...' : '✅ Add Lead'}</button>
                     <button type="button" onClick={() => setShowNewLead(false)} className="px-4 py-2.5 rounded-xl bg-slate-100 text-slate-600 text-sm cursor-pointer">Cancel</button>
                   </div>
                 </form>
@@ -513,7 +513,7 @@ export default function CRMPage() {
               const revenue = (seg === 'all' ? clients : clients.filter(c => c.segment === seg)).reduce((a, c) => a + c.totalRevenue, 0)
               return (
                 <button key={seg} onClick={() => setClientSegFilter(clientSegFilter === seg ? 'all' : seg)}
-                  className={`bg-white rounded-xl p-3 border text-center cursor-pointer transition-all hover:shadow-md ${clientSegFilter === seg ? 'border-navy shadow-md' : 'border-slate-100 shadow-sm'}`}>
+                  className={`bg-white rounded-xl p-3 border text-center cursor-pointer transition-all hover:shadow-md ${clientSegFilter === seg ? 'border-accent shadow-md' : 'border-slate-100 shadow-sm'}`}>
                   <p className="text-lg font-extrabold text-navy">{count}</p>
                   <p className="text-[10px] text-slate-400 capitalize">{seg}</p>
                   <p className="text-[9px] text-slate-300">₹{revenue.toLocaleString('en-IN')}</p>
@@ -572,7 +572,7 @@ export default function CRMPage() {
                         <tr key={client.id} className={`border-b border-slate-50 hover:bg-slate-50/60 transition-colors ${renewalAlert ? 'bg-amber-50/30' : ''}`}>
                           <td className="px-3 py-3">
                             <button onClick={() => setSelectedClient(client)} className="flex items-center gap-2 cursor-pointer group">
-                              <div className="w-8 h-8 rounded-lg bg-navy/10 flex items-center justify-center font-bold text-navy text-sm">{client.fullname[0]}</div>
+                              <div className="w-8 h-8 rounded-lg bg-[rgba(0,153,255,0.12)] flex items-center justify-center font-bold text-navy text-sm">{client.fullname[0]}</div>
                               <div>
                                 <p className="font-bold text-navy group-hover:text-accent">{client.fullname}</p>
                                 {renewalAlert && <p className="text-[9px] text-amber-500 font-bold">🔄 Renewal opportunity</p>}
@@ -589,10 +589,10 @@ export default function CRMPage() {
                           <td className="px-3 py-3 text-slate-400">{new Date(client.created_at).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })}</td>
                           <td className="px-3 py-3">
                             <div className="flex gap-1">
-                              <a href={`mailto:${client.email}`} className="px-2 py-1 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 cursor-pointer">✉️</a>
-                              {client.phone && <a href={`https://wa.me/${client.phone.replace(/\D/g, '')}`} target="_blank" rel="noreferrer" className="px-2 py-1 rounded-lg bg-green-50 text-green-600 hover:bg-green-100 cursor-pointer">💬</a>}
+                              <a href={`mailto:${client.email}`} className="px-2 py-1 rounded-lg bg-[rgba(0,153,255,0.1)] text-[#60b4ff] hover:bg-[rgba(0,153,255,0.2)] cursor-pointer">✉️</a>
+                              {client.phone && <a href={`https://wa.me/${client.phone.replace(/\D/g, '')}`} target="_blank" rel="noreferrer" className="px-2 py-1 rounded-lg bg-[rgba(16,185,129,0.1)] text-[#34d399] hover:bg-[rgba(16,185,129,0.2)] cursor-pointer">💬</a>}
                               <button onClick={() => { setInvForm(p => ({ ...p, client_name: client.fullname, client_email: client.email, client_phone: client.phone || '' })); setActiveTab('invoices'); setShowInvForm(true) }}
-                                className="px-2 py-1 rounded-lg bg-amber-50 text-amber-600 hover:bg-amber-100 cursor-pointer">🧾</button>
+                                className="px-2 py-1 rounded-lg bg-[rgba(245,158,11,0.1)] text-[#fbbf24] hover:bg-[rgba(245,158,11,0.2)] cursor-pointer">🧾</button>
                             </div>
                           </td>
                         </tr>
@@ -637,7 +637,7 @@ export default function CRMPage() {
             <input type="date" value={invDateFrom} onChange={e => setInvDateFrom(e.target.value)} className="px-3 py-2.5 rounded-xl border border-slate-200 bg-white text-sm focus:outline-none" />
             <input type="date" value={invDateTo} onChange={e => setInvDateTo(e.target.value)} className="px-3 py-2.5 rounded-xl border border-slate-200 bg-white text-sm focus:outline-none" />
             <button onClick={loadInvoices} className="px-3 py-2.5 rounded-xl bg-slate-100 text-slate-600 text-xs font-bold cursor-pointer">🔄</button>
-            <button onClick={() => setShowInvForm(v => !v)} className="ml-auto px-4 py-2.5 rounded-xl font-bold text-white text-sm cursor-pointer hover:opacity-90" style={{ background: '#1B3A6B' }}>+ Create Invoice</button>
+            <button onClick={() => setShowInvForm(v => !v)} className="ml-auto px-4 py-2.5 rounded-xl font-bold text-white text-sm cursor-pointer hover:opacity-90" style={{ background: 'var(--color-accent-blue)' }}>+ Create Invoice</button>
           </div>
 
           {/* Invoice form */}
@@ -685,7 +685,7 @@ export default function CRMPage() {
 
                 <textarea value={invForm.notes} onChange={e => setInvForm(p => ({ ...p, notes: e.target.value }))} placeholder="Notes / terms" rows={2} className="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none resize-none mb-4" />
                 <div className="flex gap-3">
-                  <button onClick={createInvoice} disabled={saving || !invForm.client_name} className="px-6 py-2.5 rounded-xl font-bold text-white text-sm cursor-pointer disabled:opacity-60" style={{ background: '#1B3A6B' }}>{saving ? '⏳' : '🧾 Create Invoice'}</button>
+                  <button onClick={createInvoice} disabled={saving || !invForm.client_name} className="px-6 py-2.5 rounded-xl font-bold text-white text-sm cursor-pointer disabled:opacity-60" style={{ background: 'var(--color-accent-blue)' }}>{saving ? '⏳' : '🧾 Create Invoice'}</button>
                   <button onClick={() => setShowInvForm(false)} className="px-4 py-2.5 rounded-xl bg-slate-100 text-slate-600 text-sm cursor-pointer">Cancel</button>
                 </div>
               </motion.div>
@@ -743,7 +743,7 @@ export default function CRMPage() {
             <input type="date" value={invDateTo} onChange={e => setInvDateTo(e.target.value)} className="px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" />
             <button onClick={loadInvoices} className="px-4 py-2 rounded-xl bg-navy text-white text-xs font-bold cursor-pointer hover:opacity-90">Apply Filter</button>
             <button onClick={() => { setInvDateFrom(''); setInvDateTo(''); loadInvoices() }} className="px-4 py-2 rounded-xl bg-slate-100 text-slate-600 text-xs font-bold cursor-pointer">Reset</button>
-            <button onClick={() => window.print()} className="ml-auto px-4 py-2 rounded-xl font-bold text-white text-xs cursor-pointer hover:opacity-90" style={{ background: '#FF6B35' }}>🖨️ Export PDF</button>
+            <button onClick={() => window.print()} className="ml-auto px-4 py-2 rounded-xl font-bold text-white text-xs cursor-pointer hover:opacity-90" style={{ background: '#ff7a3d' }}>🖨️ Export PDF</button>
           </div>
 
           {/* Summary Stats */}
@@ -773,7 +773,7 @@ export default function CRMPage() {
                   {Object.entries(invSummary.byPillar).sort((a, b) => b[1] - a[1]).map(([pillar, amount]) => {
                     const total = Object.values(invSummary.byPillar).reduce((a, b) => a + b, 0)
                     const pct = total > 0 ? (amount / total * 100) : 0
-                    const colors: Record<string, string> = { calling: '#10B981', campus: '#3B82F6', digital: '#E1306C', government: '#1B3A6B', market: '#F59E0B', operations: '#8B5CF6' }
+                    const colors: Record<string, string> = { calling: '#10B981', campus: '#3B82F6', digital: '#E1306C', government: 'var(--color-accent-blue)', market: '#F59E0B', operations: '#8B5CF6' }
                     return (
                       <div key={pillar}>
                         <div className="flex justify-between text-xs mb-1"><span className="font-medium text-slate-600 capitalize">{pillar}</span><span className="font-bold text-navy">₹{amount.toLocaleString('en-IN')} ({pct.toFixed(0)}%)</span></div>
@@ -881,13 +881,13 @@ export default function CRMPage() {
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 bg-black/50 flex items-center justify-end" onClick={() => setSelectedLead(null)}>
             <motion.div initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-              className="w-full max-w-md h-full bg-white shadow-2xl overflow-y-auto p-6" onClick={e => e.stopPropagation()}>
+              className="w-full max-w-md h-full bg-white shadow-2xl overflow-y-auto p-6" onClick={(e: React.MouseEvent) => e.stopPropagation()}>
               <div className="flex items-center justify-between mb-5">
                 <h2 className="font-bold text-navy text-lg font-heading">Lead Detail</h2>
                 <button onClick={() => setSelectedLead(null)} className="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center cursor-pointer hover:bg-slate-200">✕</button>
               </div>
               <div className="flex items-center gap-3 mb-5">
-                <div className="w-14 h-14 rounded-2xl bg-navy/10 flex items-center justify-center font-bold text-navy text-2xl">{selectedLead.name[0]}</div>
+                <div className="w-14 h-14 rounded-2xl bg-[rgba(0,153,255,0.12)] flex items-center justify-center font-bold text-navy text-2xl">{selectedLead.name[0]}</div>
                 <div>
                   <p className="font-bold text-navy text-lg">{selectedLead.name}</p>
                   <LeadScore lead={selectedLead} />
@@ -942,7 +942,7 @@ export default function CRMPage() {
                     <input type="date" value={nextFollowup} onChange={e => setNextFollowup(e.target.value)} className="flex-1 px-2 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs focus:outline-none" placeholder="Next follow-up date" />
                   </div>
                   <textarea value={followupNote} onChange={e => setFollowupNote(e.target.value)} placeholder="Add a note..." rows={2} className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs focus:outline-none resize-none" />
-                  <button onClick={addFollowupLog} disabled={saving || !followupNote} className="w-full py-2 rounded-xl font-bold text-white text-xs cursor-pointer disabled:opacity-60" style={{ background: '#1B3A6B' }}>{saving ? '⏳' : '💬 Add Note'}</button>
+                  <button onClick={addFollowupLog} disabled={saving || !followupNote} className="w-full py-2 rounded-xl font-bold text-white text-xs cursor-pointer disabled:opacity-60" style={{ background: 'var(--color-accent-blue)' }}>{saving ? '⏳' : '💬 Add Note'}</button>
                 </div>
               </div>
 
@@ -976,7 +976,7 @@ export default function CRMPage() {
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 bg-black/50 flex items-center justify-end" onClick={() => setSelectedInvoice(null)}>
             <motion.div initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-              className="w-full max-w-md h-full bg-white shadow-2xl overflow-y-auto p-6" onClick={e => e.stopPropagation()}>
+              className="w-full max-w-md h-full bg-white shadow-2xl overflow-y-auto p-6" onClick={(e: React.MouseEvent) => e.stopPropagation()}>
               <div className="flex items-center justify-between mb-5">
                 <div>
                   <h2 className="font-bold text-navy text-lg font-heading">{selectedInvoice.invoice_number}</h2>
@@ -1042,3 +1042,4 @@ export default function CRMPage() {
     </div>
   )
 }
+

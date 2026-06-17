@@ -1,7 +1,7 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useState, useCallback, useRef } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from '@/lib/motion'
 import { ResponsiveContainer, AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, LineChart, Line, PieChart, Pie, Cell } from 'recharts'
 import InterdeptTaskInbox from '@/components/admin/InterdeptTaskInbox'
 import DepartmentMeetings from '@/components/admin/DepartmentMeetings'
@@ -41,15 +41,15 @@ const STATUS_COLORS: Record<string, { bg: string; text: string }> = {
   rejected: { bg:'#FEE2E2', text:'#991B1B' },
   revision: { bg:'#DBEAFE', text:'#1E40AF' },
   active:   { bg:'#D1FAE5', text:'#065F46' },
-  inactive: { bg:'#F3F4F6', text:'#6B7280' },
+  inactive: { bg:'rgba(255,255,255,0.08)', text:'#6B7280' },
   planned:  { bg:'#EDE9FE', text:'#5B21B6' },
   in_progress: { bg:'#DBEAFE', text:'#1E40AF' },
   published: { bg:'#D1FAE5', text:'#065F46' },
-  archived: { bg:'#F3F4F6', text:'#6B7280' },
+  archived: { bg:'rgba(255,255,255,0.08)', text:'#6B7280' },
 }
 
 function Badge({ status }: { status: string }) {
-  const cfg = STATUS_COLORS[status] || { bg: '#F3F4F6', text: '#6B7280' }
+  const cfg = STATUS_COLORS[status] || { bg: 'rgba(255,255,255,0.08)', text: '#6B7280' }
   return <span className="px-2 py-0.5 rounded-full text-[10px] font-bold capitalize" style={{ background: cfg.bg, color: cfg.text }}>{status}</span>
 }
 
@@ -711,7 +711,7 @@ export default function DigitalPage() {
               <input value={subForm.content_url} onChange={e => setSubForm(p => ({ ...p, content_url: e.target.value }))} placeholder="Content URL / Drive link" className="px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" />
               <input type="datetime-local" value={subForm.scheduled_for} onChange={e => setSubForm(p => ({ ...p, scheduled_for: e.target.value }))} className="px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" />
             </div>
-            <button onClick={saveSubmission} className="mt-3 px-5 py-2.5 rounded-xl font-bold text-white text-sm cursor-pointer hover:opacity-90" style={{ background: '#FF6B35' }}>📤 Submit for Review</button>
+            <button onClick={saveSubmission} className="mt-3 px-5 py-2.5 rounded-xl font-bold text-white text-sm cursor-pointer hover:opacity-90" style={{ background: '#ff7a3d' }}>📤 Submit for Review</button>
           </div>
 
           {submissions.length === 0 ? <EmptyState icon="📥" label="No submissions yet" /> : (
@@ -995,7 +995,7 @@ export default function DigitalPage() {
               <input value={creativeForm.dimensions} onChange={e => setCreativeForm(p => ({ ...p, dimensions: e.target.value }))} placeholder="Dimensions (e.g. 1080x1080)" className="px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" />
               <textarea value={creativeForm.notes} onChange={e => setCreativeForm(p => ({ ...p, notes: e.target.value }))} placeholder="Notes" rows={1} className="col-span-3 px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none resize-none" />
             </div>
-            <button onClick={saveCreative} className="mt-3 px-5 py-2.5 rounded-xl font-bold text-white text-sm cursor-pointer hover:opacity-90" style={{ background: '#FF6B35' }}>📤 Upload Creative</button>
+            <button onClick={saveCreative} className="mt-3 px-5 py-2.5 rounded-xl font-bold text-white text-sm cursor-pointer hover:opacity-90" style={{ background: '#ff7a3d' }}>📤 Upload Creative</button>
           </div>
 
           {creatives.length === 0 ? <EmptyState icon="🎨" label="No ad creatives in library yet" /> : (
@@ -1071,7 +1071,7 @@ export default function DigitalPage() {
               <input type="date" value={calForm.scheduled_date} onChange={e => setCalForm(p => ({ ...p, scheduled_date: e.target.value }))} className="px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" />
               <textarea value={calForm.notes} onChange={e => setCalForm(p => ({ ...p, notes: e.target.value }))} placeholder="Notes" rows={1} className="col-span-3 px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none resize-none" />
             </div>
-            <button onClick={saveCalEntry} className="mt-3 px-5 py-2.5 rounded-xl font-bold text-white text-sm cursor-pointer hover:opacity-90" style={{ background: '#1B3A6B' }}>📅 Add to Calendar</button>
+            <button onClick={saveCalEntry} className="mt-3 px-5 py-2.5 rounded-xl font-bold text-white text-sm cursor-pointer hover:opacity-90" style={{ background: 'var(--color-accent-blue)' }}>📅 Add to Calendar</button>
           </div>
 
           {/* Calendar grid */}
@@ -1152,3 +1152,4 @@ export default function DigitalPage() {
     </div>
   )
 }
+

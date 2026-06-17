@@ -1,7 +1,7 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useState, useCallback, useRef } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from '@/lib/motion'
 
 interface Subscriber {
   id: number
@@ -215,8 +215,8 @@ export default function NewsletterPage() {
                           disabled={togglingId === sub.id}
                           className={`px-2.5 py-1.5 rounded-lg text-xs font-bold cursor-pointer transition-all disabled:opacity-60 ${
                             sub.is_active
-                              ? 'bg-amber-50 text-amber-600 hover:bg-amber-100'
-                              : 'bg-green-50 text-green-600 hover:bg-green-100'
+                              ? 'bg-[rgba(245,158,11,0.1)] text-[#fbbf24] hover:bg-[rgba(245,158,11,0.2)]'
+                              : 'bg-[rgba(16,185,129,0.1)] text-[#34d399] hover:bg-[rgba(16,185,129,0.2)]'
                           }`}>
                           {togglingId === sub.id ? '⏳' : sub.is_active ? '🔕 Unsub' : '✅ Resub'}
                         </button>
@@ -259,7 +259,7 @@ export default function NewsletterPage() {
             className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4"
             onClick={() => setConfirmDelete(null)}>
             <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }}
-              onClick={e => e.stopPropagation()}
+              onClick={(e: React.MouseEvent) => e.stopPropagation()}
               className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl">
               <h3 className="font-bold text-navy font-heading text-lg mb-2">🗑 Delete Subscriber?</h3>
               <p className="text-sm text-slate-500 mb-4">
@@ -285,3 +285,4 @@ export default function NewsletterPage() {
     </div>
   )
 }
+

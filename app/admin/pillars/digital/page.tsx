@@ -1,7 +1,7 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from '@/lib/motion'
 import DirectChatPanel from '@/components/admin/DirectChatPanel'
 
 // ── Types ──────────────────────────────────────────────────────────────────────
@@ -238,7 +238,7 @@ export default function DigitalSaarthiPage() {
                         <td className="px-4 py-3 text-sm font-bold text-amber-600">{views.toLocaleString()}</td>
                         <td className="px-4 py-3 text-sm font-bold text-red-500">❤️ {likes.toLocaleString()}</td>
                         <td className="px-4 py-3"><span className={`px-2 py-1 rounded-full text-[10px] font-bold ${m.status === 'active' ? 'bg-green-100 text-green-600' : 'bg-slate-100 text-slate-500'}`}>{m.status}</span></td>
-                        <td className="px-4 py-3"><button onClick={() => setChatUserId(m.user_id === chatUserId ? null : m.user_id)} className="px-2.5 py-1.5 rounded-lg bg-navy/5 text-navy text-xs font-bold hover:bg-navy/10 cursor-pointer">💬</button></td>
+                        <td className="px-4 py-3"><button onClick={() => setChatUserId(m.user_id === chatUserId ? null : m.user_id)} className="px-2.5 py-1.5 rounded-lg bg-navy/5 text-navy text-xs font-bold hover:bg-[rgba(0,153,255,0.12)] cursor-pointer">💬</button></td>
                       </tr>
                     )
                   })}
@@ -505,7 +505,7 @@ export default function DigitalSaarthiPage() {
                   <h3 className="text-sm font-bold text-slate-500 uppercase mb-3">📅 Upcoming ({upcoming.length})</h3>
                   <div className="space-y-2">
                     {upcoming.map((e, i) => {
-                      const cfg = CAL_STATUS_CFG[e.status] || { bg: '#F3F4F6', color: '#6B7280' }
+                      const cfg = CAL_STATUS_CFG[e.status] || { bg: 'rgba(255,255,255,0.08)', color: '#6B7280' }
                       return (
                         <motion.div key={e.id} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.04 }}
                           className="bg-white rounded-xl p-4 border border-slate-100 flex items-center gap-3 hover:shadow-sm transition-shadow">
@@ -531,7 +531,7 @@ export default function DigitalSaarthiPage() {
                   <h3 className="text-sm font-bold text-slate-400 uppercase mb-3">📂 Past ({past.length})</h3>
                   <div className="space-y-2 opacity-60">
                     {past.map(e => {
-                      const cfg = CAL_STATUS_CFG[e.status] || { bg: '#F3F4F6', color: '#6B7280' }
+                      const cfg = CAL_STATUS_CFG[e.status] || { bg: 'rgba(255,255,255,0.08)', color: '#6B7280' }
                       return (
                         <div key={e.id} className="bg-white rounded-xl p-3 border border-slate-100 flex items-center gap-3">
                           <div className="w-8 h-8 rounded-lg text-center flex flex-col items-center justify-center text-[10px] bg-slate-50 border border-slate-100 flex-shrink-0">
@@ -560,7 +560,7 @@ export default function DigitalSaarthiPage() {
             <p className="text-sm text-slate-500">{creatives.length} ad creatives</p>
             <button onClick={() => setShowCreativeForm(v => !v)}
               className="px-4 py-2 rounded-xl font-bold text-white text-sm cursor-pointer hover:opacity-90"
-              style={{ background: '#1B3A6B' }}>+ Upload Creative</button>
+              style={{ background: 'var(--color-accent-blue)' }}>+ Upload Creative</button>
           </div>
 
           <AnimatePresence>
@@ -613,7 +613,7 @@ export default function DigitalSaarthiPage() {
                   {c.dimensions && <p className="text-xs text-slate-400 mb-2">📐 {c.dimensions}</p>}
                   {c.notes && <p className="text-xs text-slate-500 italic bg-slate-50 rounded-lg px-2 py-1 mb-3">{c.notes}</p>}
                   <a href={c.asset_url} target="_blank" rel="noreferrer"
-                    className="block w-full text-center py-2 bg-navy/5 text-navy text-xs font-bold rounded-xl hover:bg-navy/10 transition-colors">
+                    className="block w-full text-center py-2 bg-navy/5 text-navy text-xs font-bold rounded-xl hover:bg-[rgba(0,153,255,0.12)] transition-colors">
                     🔗 Open Creative
                   </a>
                 </motion.div>
@@ -644,3 +644,4 @@ export default function DigitalSaarthiPage() {
     </div>
   )
 }
+

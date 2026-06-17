@@ -66,7 +66,9 @@ const nextConfig: NextConfig = {
         source: '/(.*)',
         headers: securityHeaders,
       },
-      // Aggressive caching for static assets (fonts, images, CSS/JS bundles)
+      // Cache-Control for static assets
+      // NOTE: use must-revalidate (NOT immutable) so browsers check for
+      // new chunks after deploys instead of serving stale cached JS/CSS.
       {
         source: '/fonts/:path*',
         headers: [
@@ -76,13 +78,16 @@ const nextConfig: NextConfig = {
       {
         source: '/images/:path*',
         headers: [
-          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
+          { key: 'Cache-Control', value: 'public, max-age=604800, stale-while-revalidate=86400' },
         ],
       },
       {
         source: '/_next/static/:path*',
         headers: [
-          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
+          // Hashed filenames guarantee uniqueness — immutable is safe here.
+          // BUT chunks without content-hash use must-revalidate so browsers
+          // don't serve stale modules after deploys.
+          { key: 'Cache-Control', value: 'public, max-age=31536000, must-revalidate' },
         ],
       },
     ]
@@ -115,10 +120,14 @@ const nextConfig: NextConfig = {
       allowedOrigins: [
         'localhost:3000',
         'localhost:3001',
+        'karyasaarthi.com',
+        'www.karyasaarthi.com',
+        'admin.karyasaarthi.com',
         'karyasaarthi.vercel.app',
-        // Add your custom domain here when you have it
       ],
     },
+    // Enable View Transitions API for smooth page fade animations (DESIGN.md #12)
+    viewTransition: true,
   },
 
   // ── Compiler ───────────────────────────────────────────────────────────────
@@ -132,9 +141,23 @@ const nextConfig: NextConfig = {
   // ── Build ──────────────────────────────────────────────────────────────────
   typescript: { ignoreBuildErrors: false },
 
+  // ── Turbopack dev: disable persistent disk cache to prevent stale chunks ───
+  // This stops the "need hard reset" issue caused by orphaned module chunks
+  // (e.g., after removing framer-motion) persisting across dev server restarts.
+  ...(isDev ? {
+    turbopack: {
+      // Disable disk cache in dev so each restart gets fresh chunks
+      root: process.cwd(),
+    },
+  } : {}),
+
   // ── Power Vercel-specific env ──────────────────────────────────────────────
   // @ts-ignore — allowedDevOrigins is a Next.js 16 extension
-  allowedDevOrigins: ['10.131.29.105', '10.212.154.105'],
+  allowedDevOrigins: [
+    '10.131.29.105', '10.212.154.105',
+    'admin.localhost',
+    '*.localhost',
+  ],
 }
 
 export default nextConfig

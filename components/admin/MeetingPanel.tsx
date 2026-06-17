@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from '@/lib/motion'
 
 interface Meeting {
   id: number
@@ -108,21 +108,21 @@ export default function MeetingPanel({ currentUserId, onClose }: Props) {
         {/* Toolbar */}
         <div className="flex items-center justify-between px-5 py-3 bg-gray-900 flex-shrink-0">
           <div>
-            <h3 className="font-bold text-white font-heading text-sm">{activeMeeting.title}</h3>
-            <p className="text-white/40 text-xs">Room: {activeMeeting.jitsi_room}</p>
+            <h3 className="font-bold text-black font-heading text-sm">{activeMeeting.title}</h3>
+            <p className="text-black/40 text-xs">Room: {activeMeeting.jitsi_room}</p>
           </div>
           <div className="flex items-center gap-3">
             <a
               href={`https://meet.jit.si/${activeMeeting.jitsi_room}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-4 py-2 rounded-xl bg-blue-600 text-white text-xs font-bold hover:bg-blue-700 cursor-pointer"
+              className="px-4 py-2 rounded-xl bg-blue-600 text-black text-xs font-bold hover:bg-blue-700 cursor-pointer"
             >
               🔗 Open in New Tab
             </a>
             <button
               onClick={() => setActiveMeeting(null)}
-              className="px-4 py-2 rounded-xl bg-red-600 text-white text-xs font-bold hover:bg-red-700 cursor-pointer"
+              className="px-4 py-2 rounded-xl bg-red-600 text-black text-xs font-bold hover:bg-red-700 cursor-pointer"
             >
               ✕ End / Leave
             </button>
@@ -132,11 +132,11 @@ export default function MeetingPanel({ currentUserId, onClose }: Props) {
         {/* Jitsi meeting launch card */}
         <div className="flex-1 w-full bg-slate-900 flex flex-col items-center justify-center p-8 text-center">
           <span className="text-6xl mb-4">🎥</span>
-          <h3 className="text-xl font-bold text-white font-heading mb-2">Ready to join &ldquo;{activeMeeting.title}&rdquo;?</h3>
+          <h3 className="text-xl font-bold text-black font-heading mb-2">Ready to join &ldquo;{activeMeeting.title}&rdquo;?</h3>
           {activeMeeting.creator && (
             <p className="text-xs text-accent font-bold mb-2">👑 Host/Owner: {activeMeeting.creator.fullname}</p>
           )}
-          <p className="text-slate-400 text-xs max-w-md mb-6 leading-relaxed">
+          <p className="text-ink-muted text-xs max-w-md mb-6 leading-relaxed">
             To guarantee microphone and camera access with full security, Jitsi meetings must be launched in a secure external tab.
             <br />
             <span className="text-amber-500 font-semibold mt-2.5 block">
@@ -148,7 +148,7 @@ export default function MeetingPanel({ currentUserId, onClose }: Props) {
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => setActiveMeeting(null)}
-            className="px-8 py-3.5 bg-green-500 hover:bg-green-600 text-white font-bold text-sm rounded-xl transition-all shadow-lg shadow-green-500/20"
+            className="px-8 py-3.5 bg-green-500 hover:bg-green-600 text-black font-bold text-sm rounded-xl transition-all  shadow-green-500/20"
           >
             🚀 Launch Jitsi Meeting Room
           </a>
@@ -162,45 +162,45 @@ export default function MeetingPanel({ currentUserId, onClose }: Props) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
+      className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
       onClick={onClose}
     >
       <motion.div
         initial={{ scale: 0.95, y: 20 }}
         animate={{ scale: 1, y: 0 }}
         exit={{ scale: 0.95, y: 20 }}
-        onClick={e => e.stopPropagation()}
-        className="bg-white w-full max-w-2xl rounded-3xl overflow-hidden shadow-2xl flex flex-col"
+        onClick={(e: React.MouseEvent) => e.stopPropagation()}
+        className="bg-surface-1 w-full max-w-2xl rounded-3xl overflow-hidden shadow-2xl shadow-black/50 flex flex-col"
         style={{ maxHeight: '85vh' }}
       >
         {/* Header */}
-        <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between flex-shrink-0"
+        <div className="px-6 py-5 border-b border-hairline flex items-center justify-between flex-shrink-0"
           style={{ background: 'linear-gradient(135deg, #1B3A6B 0%, #0d1829 100%)' }}>
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-xl">📹</div>
+            <div className="w-10 h-10 rounded-xl bg-surface-1/10 flex items-center justify-center text-xl">📹</div>
             <div>
-              <h2 className="font-bold text-white font-heading">Video Meetings</h2>
-              <p className="text-white/40 text-xs">Schedule & join team meetings</p>
+              <h2 className="font-bold text-black font-heading">Video Meetings</h2>
+              <p className="text-black/40 text-xs">Schedule & join team meetings</p>
             </div>
           </div>
-          <button onClick={onClose} className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white text-sm cursor-pointer">✕</button>
+          <button onClick={onClose} className="w-8 h-8 rounded-full bg-surface-1/10 hover:bg-surface-1/20 flex items-center justify-center text-black text-sm cursor-pointer">✕</button>
         </div>
 
         {/* Tabs */}
-        <div className="flex border-b border-slate-100 flex-shrink-0">
+        <div className="flex border-b border-hairline flex-shrink-0">
           {TABS.map(t => (
             <button
               key={t.key}
               onClick={() => setActiveTab(t.key as typeof activeTab)}
               className={`flex-1 py-3 text-sm font-semibold transition-colors cursor-pointer flex items-center justify-center gap-1.5 ${
                 activeTab === t.key
-                  ? 'text-navy border-b-2 border-navy bg-blue-50/50'
-                  : 'text-slate-500 hover:bg-slate-50'
+                  ? 'text-ink border-b-2 border-hairline bg-surface-2'
+                  : 'text-ink-muted hover:bg-surface-2'
               }`}
             >
               {t.label}
               {t.count !== null && t.count > 0 && (
-                <span className="w-5 h-5 rounded-full bg-accent text-white text-[10px] font-bold flex items-center justify-center">
+                <span className="w-5 h-5 rounded-full bg-white text-black text-[10px] font-bold flex items-center justify-center">
                   {t.count}
                 </span>
               )}
@@ -215,17 +215,17 @@ export default function MeetingPanel({ currentUserId, onClose }: Props) {
             <div className="space-y-3">
               {loading ? (
                 Array.from({ length: 3 }).map((_, i) => (
-                  <div key={i} className="h-24 bg-slate-50 rounded-2xl animate-pulse" />
+                  <div key={i} className="h-24 bg-surface-2 rounded-2xl animate-pulse" />
                 ))
               ) : upcomingMeetings.length === 0 ? (
                 <div className="text-center py-12">
                   <span className="text-5xl block mb-3">📅</span>
-                  <p className="text-slate-500 font-semibold">No upcoming meetings</p>
-                  <p className="text-slate-400 text-sm mt-1">Create one to get started</p>
+                  <p className="text-ink-muted font-semibold">No upcoming meetings</p>
+                  <p className="text-ink-muted text-sm mt-1">Create one to get started</p>
                   <button
                     onClick={() => setActiveTab('create')}
-                    className="mt-4 px-5 py-2.5 rounded-xl text-white text-sm font-bold cursor-pointer"
-                    style={{ background: '#1B3A6B' }}
+                    className="mt-4 px-5 py-2.5 rounded-xl text-black text-sm font-bold cursor-pointer"
+                    style={{ background: 'var(--color-accent-blue)' }}
                   >
                     + Schedule Meeting
                   </button>
@@ -248,7 +248,7 @@ export default function MeetingPanel({ currentUserId, onClose }: Props) {
           {activeTab === 'past' && (
             <div className="space-y-3">
               {pastMeetings.length === 0 ? (
-                <div className="text-center py-12 text-slate-400">
+                <div className="text-center py-12 text-ink-muted">
                   <span className="text-4xl block mb-3">🕐</span>
                   <p>No past meetings</p>
                 </div>
@@ -271,41 +271,41 @@ export default function MeetingPanel({ currentUserId, onClose }: Props) {
           {activeTab === 'create' && (
             <form onSubmit={createMeeting} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1.5">Meeting Title *</label>
+                <label className="block text-xs font-semibold text-ink mb-1.5">Meeting Title *</label>
                 <input
                   required
                   value={form.title}
                   onChange={e => setForm(p => ({ ...p, title: e.target.value }))}
                   placeholder="e.g. Weekly Team Sync"
-                  className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none focus:border-navy focus:bg-white transition-colors"
+                  className="w-full px-4 py-3 rounded-xl border border-hairline bg-surface-2 text-sm focus:outline-none focus:border-hairline focus:bg-surface-1 transition-colors"
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1.5">Description (optional)</label>
+                <label className="block text-xs font-semibold text-ink mb-1.5">Description (optional)</label>
                 <textarea
                   value={form.description}
                   onChange={e => setForm(p => ({ ...p, description: e.target.value }))}
                   rows={3}
                   placeholder="Agenda, topics to discuss..."
-                  className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none focus:border-navy focus:bg-white transition-colors resize-none"
+                  className="w-full px-4 py-3 rounded-xl border border-hairline bg-surface-2 text-sm focus:outline-none focus:border-hairline focus:bg-surface-1 transition-colors resize-none"
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1.5">Scheduled Date & Time</label>
+                  <label className="block text-xs font-semibold text-ink mb-1.5">Scheduled Date & Time</label>
                   <input
                     type="datetime-local"
                     value={form.scheduled_at}
                     onChange={e => setForm(p => ({ ...p, scheduled_at: e.target.value }))}
-                    className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none focus:border-navy focus:bg-white transition-colors"
+                    className="w-full px-4 py-3 rounded-xl border border-hairline bg-surface-2 text-sm focus:outline-none focus:border-hairline focus:bg-surface-1 transition-colors"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1.5">Duration (minutes)</label>
+                  <label className="block text-xs font-semibold text-ink mb-1.5">Duration (minutes)</label>
                   <select
                     value={form.duration_min}
                     onChange={e => setForm(p => ({ ...p, duration_min: Number(e.target.value) }))}
-                    className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none focus:border-navy focus:bg-white transition-colors"
+                    className="w-full px-4 py-3 rounded-xl border border-hairline bg-surface-2 text-sm focus:outline-none focus:border-hairline focus:bg-surface-1 transition-colors"
                   >
                     {[15, 30, 45, 60, 90, 120].map(d => (
                       <option key={d} value={d}>{d} min{d >= 60 ? ` (${d / 60}h)` : ''}</option>
@@ -316,12 +316,12 @@ export default function MeetingPanel({ currentUserId, onClose }: Props) {
 
               {/* Preview */}
               {form.title && (
-                <div className="p-4 rounded-xl bg-blue-50 border border-blue-100">
-                  <p className="text-xs text-blue-600 font-semibold mb-1">📋 Meeting Room Preview</p>
-                  <p className="text-sm text-navy font-mono truncate">
+                <div className="p-4 rounded-xl bg-surface-2 border border-blue-100">
+                  <p className="text-xs text-[#0099ff] font-semibold mb-1">📋 Meeting Room Preview</p>
+                  <p className="text-sm text-ink font-mono truncate">
                     meet.jit.si/{generateRoomName(form.title)}
                   </p>
-                  <p className="text-[10px] text-slate-400 mt-1">A unique room will be generated when you create the meeting</p>
+                  <p className="text-[10px] text-ink-muted mt-1">A unique room will be generated when you create the meeting</p>
                 </div>
               )}
 
@@ -329,15 +329,15 @@ export default function MeetingPanel({ currentUserId, onClose }: Props) {
                 <button
                   type="submit"
                   disabled={saving || !form.title}
-                  className="flex-1 py-3 rounded-xl text-white font-bold text-sm cursor-pointer disabled:opacity-50 shadow-lg transition-all hover:shadow-xl"
-                  style={{ background: '#1B3A6B' }}
+                  className="flex-1 py-3 rounded-xl text-black font-bold text-sm cursor-pointer disabled:opacity-50  transition-all hover:shadow-xl"
+                  style={{ background: 'var(--color-accent-blue)' }}
                 >
                   {saving ? '⏳ Creating...' : '🚀 Create Meeting'}
                 </button>
                 <button
                   type="button"
                   onClick={() => setActiveTab('upcoming')}
-                  className="px-5 py-3 rounded-xl bg-slate-100 text-slate-600 font-medium text-sm cursor-pointer hover:bg-slate-200"
+                  className="px-5 py-3 rounded-xl bg-surface-2 text-ink font-medium text-sm cursor-pointer hover:bg-surface-2"
                 >
                   Cancel
                 </button>
@@ -363,18 +363,18 @@ function MeetingCard({
   const scheduledDate = meeting.scheduled_at ? new Date(meeting.scheduled_at) : null
 
   return (
-    <div className={`rounded-2xl border p-5 transition-all ${isPast ? 'bg-slate-50 border-slate-100 opacity-70' : 'bg-white border-slate-100 shadow-sm hover:shadow-md'}`}>
+    <div className={`rounded-2xl border p-5 transition-all ${isPast ? 'bg-surface-2 border-hairline opacity-70' : 'bg-surface-1 border-hairline  hover:'}`}>
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-start gap-3 min-w-0">
-          <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-xl flex-shrink-0 ${isPast ? 'bg-slate-200' : 'bg-blue-100'}`}>
+          <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-xl flex-shrink-0 ${isPast ? 'bg-surface-2' : 'bg-surface-2'}`}>
             📹
           </div>
           <div className="min-w-0">
-            <h4 className="font-bold text-navy text-sm truncate">{meeting.title}</h4>
+            <h4 className="font-bold text-ink text-sm truncate">{meeting.title}</h4>
             {meeting.description && (
-              <p className="text-xs text-slate-400 mt-0.5 truncate">{meeting.description}</p>
+              <p className="text-xs text-ink-muted mt-0.5 truncate">{meeting.description}</p>
             )}
-            <div className="flex items-center gap-3 mt-1.5 text-[10px] text-slate-400 flex-wrap">
+            <div className="flex items-center gap-3 mt-1.5 text-[10px] text-ink-muted flex-wrap">
               {scheduledDate && (
                 <span>📅 {scheduledDate.toLocaleString('en-IN', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}</span>
               )}
@@ -391,8 +391,8 @@ function MeetingCard({
             onClick={onJoin}
             className={`px-3 py-1.5 rounded-lg text-xs font-bold cursor-pointer transition-all ${
               isPast
-                ? 'bg-slate-200 text-slate-500 hover:bg-slate-300'
-                : 'text-white hover:opacity-90 shadow-md'
+                ? 'bg-surface-2 text-ink-muted hover:bg-slate-300'
+                : 'text-black hover:opacity-90 '
             }`}
             style={isPast ? {} : { background: '#10B981' }}
           >
@@ -411,3 +411,4 @@ function MeetingCard({
     </div>
   )
 }
+

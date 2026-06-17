@@ -1,7 +1,7 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useState, useCallback, Suspense } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from '@/lib/motion'
 import DepartmentMeetings from '@/components/admin/DepartmentMeetings'
 
 interface Doc { id: number; title: string; doc_type: string; content?: string; doc_url?: string; tags: string[]; department?: string; is_pinned: boolean; created_at: string; author?: { fullname: string } }
@@ -143,10 +143,10 @@ function WorkspaceContent() {
               </label>
             </div>
             <div className="flex gap-3 mt-4">
-              <button onClick={saveDoc} className="px-6 py-2.5 rounded-xl font-bold text-white text-sm cursor-pointer hover:opacity-90" style={{ background: '#1B3A6B' }}>
+              <button onClick={saveDoc} className="px-6 py-2.5 rounded-xl font-bold text-white text-sm cursor-pointer hover:opacity-90" style={{ background: 'var(--color-accent-blue)' }}>
                 {editing ? 'Save Changes' : 'Add Document'}
               </button>
-              <button onClick={resetForm} className="px-4 py-2.5 rounded-xl bg-slate-100 text-slate-600 text-sm cursor-pointer hover:bg-slate-200">Cancel</button>
+              <button onClick={resetForm} className="px-4 py-2.5 rounded-xl bg-[rgba(255,255,255,0.06)] text-[var(--color-ink-muted)] text-sm cursor-pointer hover:bg-[rgba(255,255,255,0.1)]">Cancel</button>
             </div>
           </motion.div>
         )}
@@ -162,7 +162,7 @@ function WorkspaceContent() {
           <span className="text-5xl block mb-3">📁</span>
           <p className="text-slate-400 text-sm mb-4">{search || filterType ? 'No documents found matching your search' : 'No documents yet. Add your first document!'}</p>
           {!search && !filterType && (
-            <button onClick={() => setShowForm(true)} className="px-4 py-2 rounded-xl font-bold text-white text-xs cursor-pointer hover:opacity-90" style={{ background: '#1B3A6B' }}>+ Add Document</button>
+            <button onClick={() => setShowForm(true)} className="px-4 py-2 rounded-xl font-bold text-white text-xs cursor-pointer hover:opacity-90" style={{ background: 'var(--color-accent-blue)' }}>+ Add Document</button>
           )}
         </div>
       ) : (
@@ -253,3 +253,4 @@ function DocCard({ doc, idx, onEdit, onDelete, onPin }: { doc: Doc; idx: number;
     </motion.div>
   )
 }
+

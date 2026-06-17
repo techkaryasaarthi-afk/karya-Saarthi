@@ -1,12 +1,13 @@
 'use client'
 
 import { useEffect, useState, useCallback, useMemo } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from '@/lib/motion'
 import InterdeptTaskInbox from '@/components/admin/InterdeptTaskInbox'
 import dynamic from 'next/dynamic'
 import DepartmentMeetings from '@/components/admin/DepartmentMeetings'
 
-const RichTextEditor = dynamic(() => import('@/components/RichTextEditor'), { ssr: false, loading: () => <div className="h-64 bg-slate-50 rounded-xl animate-pulse border border-slate-200 flex items-center justify-center text-slate-400 text-sm">Loading editor...</div> })
+const RichTextEditor = dynamic(() => import('@/components/RichTextEditor'), { ssr: false, loading: () => <div className="h-64 rounded-xl animate-pulse border flex items-center justify-center text-sm" style={{ background: 'var(--color-surface-2)', borderColor: 'var(--color-hairline)', color: 'var(--color-ink-muted)' }}>Loading editor...</div> })
+
 
 
 interface Campaign { id: number; name: string; type: string; channel: string; status: string; budget: number | null; start_date: string | null; end_date: string | null; leads_generated: number | null; created_at: string }
@@ -28,10 +29,10 @@ const TABS = [
 type Tab = typeof TABS[number]['key']
 
 const CAMPAIGN_STATUS: Record<string, { label: string; color: string; bg: string }> = {
-  draft: { label: 'Draft', color: '#6B7280', bg: '#F3F4F6' },
-  active: { label: 'Active', color: '#10B981', bg: '#D1FAE5' },
-  paused: { label: 'Paused', color: '#F59E0B', bg: '#FEF3C7' },
-  completed: { label: 'Completed', color: '#3B82F6', bg: '#DBEAFE' },
+  draft: { label: 'Draft', color: '#6B7280', bg: 'rgba(255,255,255,0.08)' },
+  active: { label: 'Active', color: '#10B981', bg: 'rgba(16,185,129,0.15)' },
+  paused: { label: 'Paused', color: '#F59E0B', bg: 'rgba(245,158,11,0.15)' },
+  completed: { label: 'Completed', color: '#3B82F6', bg: 'rgba(59,130,246,0.15)' },
 }
 
 const CONTENT_TYPES = ['Blog Post', 'Social Media', 'Email Newsletter', 'Video', 'Webinar', 'Event', 'Ad Campaign']
@@ -370,14 +371,14 @@ export default function MarketingPage() {
         <div className="space-y-4">
           <div className="flex justify-between items-center">
             <div className="flex gap-3">
-              {[{ label: 'Total', v: blogs.length, c: '#1B3A6B' }, { label: 'Published', v: blogs.filter(b => b.is_published).length, c: '#10B981' }, { label: 'Drafts', v: blogs.filter(b => !b.is_published).length, c: '#F59E0B' }].map(s => (
+              {[{ label: 'Total', v: blogs.length, c: 'var(--color-accent-blue)' }, { label: 'Published', v: blogs.filter(b => b.is_published).length, c: '#10B981' }, { label: 'Drafts', v: blogs.filter(b => !b.is_published).length, c: '#F59E0B' }].map(s => (
                 <div key={s.label} className="bg-white rounded-xl px-4 py-2.5 border border-slate-100 text-center shadow-sm">
                   <p className="text-xl font-extrabold" style={{ color: s.c }}>{s.v}</p>
                   <p className="text-[10px] text-slate-400">{s.label}</p>
                 </div>
               ))}
             </div>
-            <button onClick={() => setShowBlogForm(v => !v)} className="px-4 py-2.5 rounded-xl font-bold text-white text-sm cursor-pointer hover:opacity-90" style={{ background: '#FF6B35' }}>+ New Blog Post</button>
+            <button onClick={() => setShowBlogForm(v => !v)} className="px-4 py-2.5 rounded-xl font-bold text-white text-sm cursor-pointer hover:opacity-90" style={{ background: '#ff7a3d' }}>+ New Blog Post</button>
           </div>
           <div id="blog-form-anchor" />
           <AnimatePresence>
@@ -411,10 +412,10 @@ export default function MarketingPage() {
                     <label className="flex items-center gap-2 cursor-pointer select-none"><input type="checkbox" checked={blogForm.is_featured} onChange={e => setBlogForm(p => ({ ...p, is_featured: e.target.checked }))} className="w-4 h-4 accent-orange-400" /> <span className="text-slate-600">Mark as featured</span></label>
                   </div>
                   <div className="flex gap-3 pt-1">
-                    <button type="submit" disabled={savingBlog || !blogForm.content || blogForm.content === '<p></p>'} className="px-6 py-2.5 rounded-xl font-bold text-white text-sm cursor-pointer disabled:opacity-50 transition-all hover:opacity-90" style={{ background: '#1B3A6B' }}>
+                    <button type="submit" disabled={savingBlog || !blogForm.content || blogForm.content === '<p></p>'} className="px-6 py-2.5 rounded-xl font-bold text-white text-sm cursor-pointer disabled:opacity-50 transition-all hover:opacity-90" style={{ background: 'var(--color-accent-blue)' }}>
                       {savingBlog ? 'â³ Saving...' : editingBlogId ? 'âœï¸ Update Blog Post' : 'ðŸ“ Publish Blog Post'}
                     </button>
-                    <button type="button" onClick={() => { setShowBlogForm(false); setEditingBlogId(null); setBlogForm({ title: '', excerpt: '', content: '', category_id: '', is_published: false, is_featured: false, featured_image: '' }) }} className="px-4 py-2.5 rounded-xl bg-slate-100 text-slate-600 text-sm cursor-pointer hover:bg-slate-200">Cancel</button>
+                    <button type="button" onClick={() => { setShowBlogForm(false); setEditingBlogId(null); setBlogForm({ title: '', excerpt: '', content: '', category_id: '', is_published: false, is_featured: false, featured_image: '' }) }} className="px-4 py-2.5 rounded-xl bg-[rgba(255,255,255,0.06)] text-[var(--color-ink-muted)] text-sm cursor-pointer hover:bg-[rgba(255,255,255,0.1)]">Cancel</button>
                   </div>
                 </form>
               </motion.div>
@@ -501,7 +502,7 @@ export default function MarketingPage() {
             </div>
             <textarea value={hackForm.short_desc} onChange={e => setHackForm(p => ({ ...p, short_desc: e.target.value }))} placeholder="Short description" rows={2} className="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none resize-none mb-3" />
             <textarea value={hackForm.problem} onChange={e => setHackForm(p => ({ ...p, problem: e.target.value }))} placeholder="Problem statement (optional)" rows={2} className="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none resize-none mb-3" />
-            <button onClick={saveHackathon} disabled={savingHack} className="px-4 py-2 rounded-xl text-white text-xs font-bold cursor-pointer hover:opacity-90 disabled:opacity-60" style={{ background: '#FF6B35' }}>{savingHack ? 'â³ Creating...' : 'ðŸ’» Launch Hackathon'}</button>
+            <button onClick={saveHackathon} disabled={savingHack} className="px-4 py-2 rounded-xl text-white text-xs font-bold cursor-pointer hover:opacity-90 disabled:opacity-60" style={{ background: '#ff7a3d' }}>{savingHack ? 'â³ Creating...' : 'ðŸ’» Launch Hackathon'}</button>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {hackathons.length === 0 ? <div className="col-span-2 bg-white rounded-2xl p-12 text-center border border-slate-100 text-slate-400"><span className="text-4xl block mb-3">ðŸ’»</span><p>No hackathons yet</p></div> :
@@ -565,14 +566,14 @@ export default function MarketingPage() {
         <div className="space-y-4">
           <div className="flex justify-between items-center">
             <div className="flex gap-3">
-              {[{ label: 'Total', v: campaigns.length, c: '#1B3A6B' }, { label: 'Active', v: campaigns.filter(c => c.status === 'active').length, c: '#10B981' }, { label: 'Completed', v: campaigns.filter(c => c.status === 'completed').length, c: '#3B82F6' }].map(s => (
+              {[{ label: 'Total', v: campaigns.length, c: 'var(--color-accent-blue)' }, { label: 'Active', v: campaigns.filter(c => c.status === 'active').length, c: '#10B981' }, { label: 'Completed', v: campaigns.filter(c => c.status === 'completed').length, c: '#3B82F6' }].map(s => (
                 <div key={s.label} className="bg-white rounded-xl px-4 py-2.5 border border-slate-100 text-center shadow-sm">
                   <p className="text-xl font-extrabold" style={{ color: s.c }}>{s.v}</p>
                   <p className="text-[10px] text-slate-400">{s.label}</p>
                 </div>
               ))}
             </div>
-            <button onClick={() => setShowNewCamp(v => !v)} className="px-4 py-2.5 rounded-xl font-bold text-white text-sm cursor-pointer hover:opacity-90" style={{ background: '#FF6B35' }}>+ New Campaign</button>
+            <button onClick={() => setShowNewCamp(v => !v)} className="px-4 py-2.5 rounded-xl font-bold text-white text-sm cursor-pointer hover:opacity-90" style={{ background: '#ff7a3d' }}>+ New Campaign</button>
           </div>
 
           <AnimatePresence>
@@ -594,7 +595,7 @@ export default function MarketingPage() {
                     <div><label className="text-xs text-slate-400 mb-1 block">End Date</label><input type="date" value={campForm.end_date} onChange={e => setCampForm(p => ({ ...p, end_date: e.target.value }))} className="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" /></div>
                   </div>
                   <div className="flex gap-3">
-                    <button type="submit" disabled={savingCamp} className="px-5 py-2.5 rounded-xl font-bold text-white text-sm cursor-pointer disabled:opacity-60" style={{ background: '#1B3A6B' }}>{savingCamp ? 'â³' : 'ðŸ“£ Launch Campaign'}</button>
+                    <button type="submit" disabled={savingCamp} className="px-5 py-2.5 rounded-xl font-bold text-white text-sm cursor-pointer disabled:opacity-60" style={{ background: 'var(--color-accent-blue)' }}>{savingCamp ? 'â³' : 'ðŸ“£ Launch Campaign'}</button>
                     <button type="button" onClick={() => setShowNewCamp(false)} className="px-4 py-2.5 rounded-xl bg-slate-100 text-slate-600 text-sm cursor-pointer">Cancel</button>
                   </div>
                 </form>
@@ -964,3 +965,4 @@ export default function MarketingPage() {
     </div>
   )
 }
+

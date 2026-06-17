@@ -1,97 +1,207 @@
 'use client'
 
-import { motion } from 'framer-motion'
-import { useState } from 'react'
-import dynamic from 'next/dynamic'
-
-const ServiceIcon3D = dynamic(() => import('./ThreeElements').then(m => m.ServiceIcon3D), { ssr: false })
+import { useState, useRef } from 'react'
+import Link from 'next/link'
+import { useReveal } from '@/hooks/useReveal'
 
 const serviceCategories = [
-  { key: 'all', label: 'All', icon: '🔥' },
-  { key: 'academic', label: 'Academic', icon: '📚' },
-  { key: 'tech', label: 'Web & Tech', icon: '💻' },
-  { key: 'design', label: 'Design', icon: '🎨' },
-  { key: 'marketing', label: 'Marketing', icon: '📈' },
-  { key: 'writing', label: 'Writing', icon: '✍️' },
+  { key: 'all',       label: 'All' },
+  { key: 'academic',  label: 'Academic' },
+  { key: 'tech',      label: 'Web & Tech' },
+  { key: 'design',    label: 'Design' },
+  { key: 'marketing', label: 'Marketing' },
+  { key: 'writing',   label: 'Writing' },
 ]
 
 const serviceCards = [
-  { category: 'academic', icon3d: 'thesis', title: 'Thesis Writing & Research', desc: 'Complete thesis support from topic selection to final submission with expert guidance.', badge: 'BESTSELLER' },
-  { category: 'tech', icon3d: 'website', title: 'Professional Website', desc: 'Responsive, modern business websites built with the latest technologies.', badge: 'HOT' },
-  { category: 'design', icon3d: 'logo', title: 'Logo & Brand Design', desc: 'Unique, professional logo design with unlimited revisions.', badge: '' },
-  { category: 'academic', icon3d: 'assignment', title: 'Assignment Help', desc: 'Subject-wise assignment help with detailed explanations and learning.', badge: 'POPULAR' },
-  { category: 'marketing', icon3d: 'seo', title: 'SEO & Digital Marketing', desc: 'Improve your website ranking and online presence with proven strategies.', badge: '' },
-  { category: 'writing', icon3d: 'blog', title: 'Blog & Article Writing', desc: 'SEO-optimized content that engages readers and drives traffic.', badge: '' },
-  { category: 'design', icon3d: 'video', title: 'Professional Video Editing', desc: 'YouTube videos, reels, and promotional videos with cinematic quality.', badge: 'NEW' },
-  { category: 'writing', icon3d: 'resume', title: 'Resume & Cover Letter', desc: 'ATS-friendly professional resumes that get you noticed.', badge: '' },
+  { category: 'academic',  icon: '📖', title: 'Thesis & Research',      desc: 'Complete thesis support from topic selection to final submission with expert guidance.', badge: 'BESTSELLER', spotlight: false },
+  { category: 'tech',      icon: '💻', title: 'Professional Website',    desc: 'Responsive, modern business websites built with the latest technologies.',                badge: 'HOT',        spotlight: false },
+  { category: 'design',    icon: '🎨', title: 'Logo & Brand Design',     desc: 'Unique, professional logo design with unlimited revisions.',                               badge: '',           spotlight: false },
+  { category: 'academic',  icon: '📝', title: 'Assignment Help',         desc: 'Subject-wise assignment help with detailed explanations and learning.',                    badge: 'POPULAR',    spotlight: false },
+  { category: 'marketing', icon: '📈', title: 'SEO & Digital Marketing', desc: 'Improve your ranking and online presence with proven strategies.',                        badge: '',           spotlight: true  }, /* gradient card */
+  { category: 'writing',   icon: '✍️', title: 'Blog & Article Writing',  desc: 'SEO-optimized content that engages readers and drives organic traffic.',                  badge: '',           spotlight: false },
+  { category: 'design',    icon: '🎬', title: 'Video Editing',           desc: 'YouTube videos, reels, and promotional videos with cinematic quality.',                   badge: '',           spotlight: false },
+  { category: 'writing',   icon: '📄', title: 'Resume & Cover Letter',   desc: 'ATS-friendly professional resumes that get you noticed by top recruiters.',               badge: '',           spotlight: false },
+  { category: 'tech',      icon: '🤖', title: 'AI & Automation',         desc: 'Custom AI solutions and workflow automation that scale with your business.',              badge: '',           spotlight: true  }, /* gradient card */
 ]
 
-const badgeColors: Record<string, string> = {
-  BESTSELLER: 'bg-green-500',
-  HOT: 'bg-red-500',
-  POPULAR: 'bg-blue-500',
-  NEW: 'bg-cyan-500',
+const badgeStyle: Record<string, React.CSSProperties> = {
+  BESTSELLER: { backgroundColor: '#0d1f17', color: '#22c55e' },
+  HOT:        { backgroundColor: '#1a0808', color: '#f87171' },
+  POPULAR:    { backgroundColor: '#0d1020', color: '#818cf8' },
+  NEW:        { backgroundColor: '#001a1a', color: '#2dd4bf' },
 }
 
 export default function ServicesSection() {
   const [active, setActive] = useState('all')
+  const sectionRef = useReveal()
   const filtered = active === 'all' ? serviceCards : serviceCards.filter(s => s.category === active)
 
   return (
-    <section id="services" className="py-20 lg:py-28 bg-surface">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
-          <span className="inline-block px-4 py-1.5 rounded-full bg-navy/5 text-navy text-sm font-semibold mb-4">Our Services</span>
-          <h2 className="text-3xl lg:text-5xl font-bold text-navy font-heading">Popular Services</h2>
-          <p className="mt-4 text-slate-500 max-w-2xl mx-auto">Choose from our most requested professional services — no hidden fees, no surprises.</p>
-        </motion.div>
+    <section
+      id="services"
+      ref={sectionRef as React.RefObject<HTMLElement>}
+      className="services-section"
+      style={{
+        backgroundColor: 'var(--color-canvas)',
+        paddingTop: 'var(--space-section)',
+        paddingBottom: 'var(--space-section)',
+        paddingLeft: 'var(--space-xl)',
+        paddingRight: 'var(--space-xl)',
+      }}
+      aria-label="Our Services"
+    >
+      <div style={{ maxWidth: 1199, margin: '0 auto' }}>
 
-        {/* Category Tabs */}
-        <div className="flex flex-wrap justify-center gap-2 mb-12">
+        {/* Header */}
+        <div className="reveal" style={{ textAlign: 'center', marginBottom: 48 }}>
+          <span style={{
+            display: 'inline-block',
+            backgroundColor: 'var(--color-surface-1)',
+            color: 'var(--color-ink-muted)',
+            fontSize: 'var(--text-caption-size)',
+            fontWeight: 600,
+            letterSpacing: '0.08em',
+            textTransform: 'uppercase',
+            padding: '4px 12px',
+            borderRadius: 'var(--radius-pill)',
+            border: '1px solid var(--color-hairline)',
+            marginBottom: 20,
+          }}>
+            Our Services
+          </span>
+          <h2 className="text-display-lg" style={{ color: 'var(--color-ink)', fontFamily: 'var(--font-display)', marginBottom: 16 }}>
+            Popular Services
+          </h2>
+          <p className="text-body-lg" style={{ color: 'var(--color-ink-muted)', maxWidth: 520, margin: '0 auto' }}>
+            Choose from our most-requested professional services — no hidden fees, no surprises.
+          </p>
+        </div>
+
+        {/* Category Tab Pills */}
+        <div className="reveal" style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 8, marginBottom: 48 }}>
           {serviceCategories.map(c => (
             <button
               key={c.key}
               onClick={() => setActive(c.key)}
-              className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 cursor-pointer ${active === c.key
-                  ? 'bg-navy text-white shadow-lg shadow-navy/20'
-                  : 'bg-white text-slate-600 hover:bg-navy/5 hover:text-navy border border-slate-200'
-                }`}
+              className={`tab-pill${active === c.key ? ' active' : ''}`}
             >
-              {c.icon} {c.label}
+              {c.label}
             </button>
           ))}
         </div>
 
-        {/* Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {filtered.map((s, i) => (
-            <motion.div
-              key={s.title}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.05 }}
-              whileHover={{ y: -8, transition: { duration: 0.2 } }}
-              className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl border border-slate-100 transition-shadow duration-300 group"
-            >
-              <div className="p-6">
-                {s.badge && (
-                  <span className={`inline-block px-2.5 py-1 rounded-full text-[10px] font-bold text-white mb-2 ${badgeColors[s.badge] || 'bg-slate-500'}`}>
-                    {s.badge}
-                  </span>
-                )}
-                {/* 3D Isometric Icon */}
-                <ServiceIcon3D type={s.icon3d} />
-                <h3 className="font-bold text-navy text-lg mb-2 font-heading">{s.title}</h3>
-                <p className="text-slate-500 text-sm leading-relaxed mb-6">{s.desc}</p>
-                <button className="w-full py-3 rounded-xl bg-navy/5 text-navy font-semibold text-sm hover:bg-accent hover:text-white transition-all duration-300 cursor-pointer group-hover:bg-accent group-hover:text-white">
-                  Request Pricing
-                </button>
+        {/* Service Cards Grid */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(3, 1fr)',
+            gap: 'var(--space-sm)',
+          }}
+          className="services-grid"
+        >
+          {filtered.map((s, i) =>
+            s.spotlight ? (
+              /* Gradient spotlight card */
+              <div
+                key={s.title}
+                className={`reveal card-spotlight ${s.title.includes('AI') ? 'card-spotlight-violet' : 'card-spotlight-orange'}`}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'flex-end',
+                  minHeight: 200,
+                  transitionDelay: `${i * 40}ms`,
+                }}
+              >
+                <span style={{ fontSize: 36, marginBottom: 12 }}>{s.icon}</span>
+                <h3 className="text-headline" style={{ color: 'var(--color-ink)', marginBottom: 8 }}>{s.title}</h3>
+                <p className="text-body-sm" style={{ color: 'rgba(255,255,255,0.75)', marginBottom: 20 }}>{s.desc}</p>
+                <Link href="/services" className="btn-translucent" style={{ alignSelf: 'flex-start' }}>
+                  Learn more
+                </Link>
               </div>
-            </motion.div>
-          ))}
+            ) : (
+              /* Standard template-card */
+              <div
+                key={s.title}
+                className="reveal card-template"
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  minHeight: 200,
+                  padding: 20,
+                  transitionDelay: `${i * 40}ms`,
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 16 }}>
+                  <div style={{
+                    width: 40, height: 40,
+                    backgroundColor: 'var(--color-surface-2)',
+                    borderRadius: 'var(--radius-md)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: 20,
+                    flexShrink: 0,
+                  }}>
+                    {s.icon}
+                  </div>
+                  {s.badge && (
+                    <span style={{
+                      fontSize: 10, fontWeight: 700,
+                      padding: '3px 7px',
+                      borderRadius: 'var(--radius-pill)',
+                      letterSpacing: '0.04em',
+                      ...badgeStyle[s.badge],
+                    }}>
+                      {s.badge}
+                    </span>
+                  )}
+                </div>
+                <h3 className="text-body-sm" style={{ color: 'var(--color-ink)', marginBottom: 8, fontWeight: 600 }}>{s.title}</h3>
+                <p className="text-body-sm" style={{ color: 'var(--color-ink-muted)', lineHeight: 1.5, flex: 1 }}>{s.desc}</p>
+                <Link
+                  href="/services"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 4,
+                    marginTop: 16,
+                    fontSize: 13,
+                    fontWeight: 500,
+                    color: 'var(--color-accent-blue)',
+                    textDecoration: 'none',
+                    transition: 'gap var(--dur-fast) var(--ease-out)',
+                  }}
+                  onMouseEnter={e => (e.currentTarget.style.gap = '8px')}
+                  onMouseLeave={e => (e.currentTarget.style.gap = '4px')}
+                >
+                  Explore →
+                </Link>
+              </div>
+            )
+          )}
+        </div>
+
+        {/* View all CTA */}
+        <div className="reveal" style={{ textAlign: 'center', marginTop: 48 }}>
+          <Link href="/services" className="btn-secondary">
+            View All Services
+          </Link>
         </div>
       </div>
+
+      <style>{`
+        .services-grid {
+          grid-template-columns: repeat(3, 1fr);
+        }
+        @media (max-width: 1024px) {
+          .services-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 640px) {
+          .services-grid { grid-template-columns: 1fr; }
+          .services-section { padding-left: 16px !important; padding-right: 16px !important; }
+        }
+      `}</style>
     </section>
   )
 }

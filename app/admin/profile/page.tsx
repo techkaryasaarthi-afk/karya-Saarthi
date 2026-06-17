@@ -1,7 +1,7 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useState, useCallback, Suspense } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from '@/lib/motion'
 import { useSearchParams } from 'next/navigation'
 
 interface Doc { id: number; doc_type: string; title: string; doc_url?: string; month?: string; notes?: string; created_at: string; uploader?: { fullname: string } }
@@ -193,7 +193,7 @@ function ProfileContent() {
                 <div className="flex gap-3 mt-4">
                   <button onClick={uploadDoc}
                     className="px-5 py-2.5 rounded-xl font-bold text-white text-sm cursor-pointer hover:opacity-90"
-                    style={{ background: '#1B3A6B' }}>Upload</button>
+                    style={{ background: 'var(--color-accent-blue)' }}>Upload</button>
                   <button onClick={() => setShowDocForm(false)}
                     className="px-4 py-2.5 rounded-xl bg-slate-100 text-slate-600 text-sm cursor-pointer">Cancel</button>
                 </div>
@@ -237,7 +237,7 @@ function ProfileContent() {
               <p className="text-slate-400 text-sm mb-4">No documents yet. Upload your joining letter, payslips, or other documents.</p>
               <button onClick={() => setShowDocForm(true)}
                 className="px-4 py-2 rounded-xl font-bold text-white text-xs cursor-pointer hover:opacity-90"
-                style={{ background: '#1B3A6B' }}>+ Upload Document</button>
+                style={{ background: 'var(--color-accent-blue)' }}>+ Upload Document</button>
             </div>
           )}
         </div>
@@ -379,7 +379,7 @@ function ProfileContent() {
                   </thead>
                   <tbody>
                     {leaves.map(l => {
-                      const s = STATUS_STYLES[l.status] || { bg: '#F3F4F6', text: '#6B7280' }
+                      const s = STATUS_STYLES[l.status] || { bg: 'rgba(255,255,255,0.08)', text: '#6B7280' }
                       return (
                         <tr key={l.id} className="border-b border-slate-50 hover:bg-slate-50/60">
                           <td className="px-4 py-3 font-semibold text-navy capitalize">{l.leave_type.replace(/_/g, ' ')}</td>
@@ -446,3 +446,4 @@ export default function MyProfilePage() {
     </Suspense>
   )
 }
+

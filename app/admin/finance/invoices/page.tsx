@@ -1,7 +1,7 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from '@/lib/motion'
 
 interface InvoiceItem {
   description: string
@@ -120,7 +120,7 @@ export default function InvoicesPage() {
         </div>
         <button onClick={() => setShowCreate(v => !v)}
           className="px-4 py-2.5 rounded-xl font-bold text-white text-sm cursor-pointer"
-          style={{ background: '#FF6B35' }}>
+          style={{ background: '#ff7a3d' }}>
           + Create Invoice
         </button>
       </div>
@@ -208,7 +208,7 @@ export default function InvoicesPage() {
               <div className="flex gap-3">
                 <button type="submit" disabled={saving}
                   className="px-6 py-2.5 rounded-xl font-bold text-white text-sm cursor-pointer disabled:opacity-60"
-                  style={{ background: '#FF6B35' }}>
+                  style={{ background: '#ff7a3d' }}>
                   {saving ? '⏳ Creating...' : '🧾 Create Invoice'}
                 </button>
                 <button type="button" onClick={() => setShowCreate(false)}
@@ -303,3 +303,4 @@ export default function InvoicesPage() {
     </div>
   )
 }
+

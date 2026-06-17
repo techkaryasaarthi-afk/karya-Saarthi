@@ -1,151 +1,314 @@
 'use client'
 
-import { motion } from 'framer-motion'
 import Link from 'next/link'
-import dynamic from 'next/dynamic'
+import { useEffect, useRef } from 'react'
 
-const Scene3D = dynamic(() => import('./Scene3D'), { ssr: false })
-
-const PARTICLES = Array.from({ length: 12 }, (_, i) => ({
-  left: `${(i * 17 + 7) % 100}%`,
-  top: `${(i * 23 + 11) % 100}%`,
-  size: 4 + (i % 7),
-  delay: i * 0.2,
-}))
+const stats = [
+  { value: '500+', label: 'Projects Completed' },
+  { value: '2000+', label: 'Happy Clients' },
+  { value: '98%', label: 'Satisfaction Rate' },
+  { value: '5★', label: 'Average Rating' },
+]
 
 export default function HeroSection() {
+  const sectionRef = useRef<HTMLElement>(null)
+
+  useEffect(() => {
+    const el = sectionRef.current
+    if (!el) return
+    const onMouseMove = (e: MouseEvent) => {
+      const rect = el.getBoundingClientRect()
+      const x = ((e.clientX - rect.left) / rect.width) * 100
+      const y = ((e.clientY - rect.top) / rect.height) * 100
+      el.style.setProperty('--gx', `${x}%`)
+      el.style.setProperty('--gy', `${y}%`)
+    }
+    el.addEventListener('mousemove', onMouseMove)
+    return () => el.removeEventListener('mousemove', onMouseMove)
+  }, [])
+
   return (
-    <section id="home" className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-navy via-navy-dark to-navy">
-      {/* 3D Background (desktop) */}
-      <div className="absolute inset-0 opacity-[0.12] hidden md:block">
-        <Scene3D />
-      </div>
+    <section
+      ref={sectionRef}
+      aria-label="Hero — Your Trusted Partner"
+      className="hero-section"
+      style={{
+        backgroundColor: 'var(--color-canvas)',
+        paddingTop: 'calc(56px + 80px)',
+        paddingBottom: 'var(--space-section)',
+        paddingLeft: 'var(--space-xl)',
+        paddingRight: 'var(--space-xl)',
+        position: 'relative',
+        overflow: 'hidden',
+        '--gx': '50%',
+        '--gy': '50%',
+      } as React.CSSProperties}
+    >
+      {/* Subtle radial mouse-follow glow */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          inset: 0,
+          background: 'radial-gradient(600px circle at var(--gx) var(--gy), rgba(0,153,255,0.04) 0%, transparent 70%)',
+          pointerEvents: 'none',
+          transition: 'background 0.1s',
+        }}
+      />
 
-      {/* Mobile particles (no 3D) */}
-      <div className="absolute inset-0 md:hidden">
-        {PARTICLES.map((p, i) => (
-          <motion.div
-            key={i}
-            className="absolute rounded-full bg-accent/50"
-            style={{ left: p.left, top: p.top, width: p.size, height: p.size }}
-            animate={{ y: [0, -30, 0], opacity: [0.4, 0.8, 0.4] }}
-            transition={{ duration: 3 + (i % 3), repeat: Infinity, delay: p.delay }}
-          />
-        ))}
-      </div>
+      <div style={{ maxWidth: 1199, margin: '0 auto', position: 'relative', zIndex: 1 }}>
+        <div className="hero-grid">
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 lg:pt-28 pb-28 w-full">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          {/* Left */}
-          <motion.div initial={{ opacity: 0, x: -40 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }}>
-            <motion.span
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="inline-block px-4 py-1.5 rounded-full bg-accent/20 text-accent text-sm font-semibold mb-6"
-            >
-              ✅ Trusted by 500+ Clients
-            </motion.span>
+          {/* ── Left: Text ─────────────────────────────────── */}
+          <div className="hero-left">
 
-            <div className="inline-flex items-center rounded-[2rem] border border-white/15 bg-white/5 px-5 py-3 sm:px-7 sm:py-4 backdrop-blur-sm">
-              <h1 className="whitespace-nowrap text-[2rem] sm:text-5xl lg:text-[4rem] xl:text-[4.8rem] font-extrabold leading-none font-heading">
-                <span className="text-white">Karya</span>{' '}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-accent-light">
-                  Saarthi
-                </span>
-              </h1>
+            {/* Eyebrow chip */}
+            <div className="hero-reveal" style={{ marginBottom: 'var(--space-lg)' }}>
+              <span style={{
+                display: 'inline-flex', alignItems: 'center', gap: 6,
+                backgroundColor: 'var(--color-surface-1)',
+                color: 'var(--color-ink-muted)',
+                fontSize: 'var(--text-caption-size)',
+                fontWeight: 600,
+                letterSpacing: '0.04em',
+                padding: '5px 12px',
+                borderRadius: 'var(--radius-sm)',
+                border: '1px solid var(--color-hairline)',
+              }}>
+                <span style={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: 'var(--color-accent-blue)', display: 'inline-block', flexShrink: 0 }} />
+                India&apos;s First Project Solutions Company Where Education Meets Execution
+              </span>
             </div>
 
-            <h2 className="mt-3 text-2xl sm:text-3xl lg:text-4xl font-bold text-white/90 leading-tight">
-              Your Trusted Work Companion
-            </h2>
+            {/* Headline */}
+            <h1
+              className="text-display-xxl hero-headline hero-reveal"
+              style={{ color: 'var(--color-ink)', marginBottom: 'var(--space-md)', animationDelay: '60ms' }}
+            >
+              Your Trusted<br />Work Companion
+            </h1>
 
-            <p className="mt-5 text-base sm:text-lg text-white/70 max-w-xl leading-relaxed">
-              We don&apos;t just complete your work — we guide, teach, and empower
-              you. From thesis writing to website development, get expert help
-              with a personal touch.
+            {/* Tagline */}
+            <p
+              className="hero-reveal"
+              style={{
+                color: 'var(--color-accent-blue)',
+                fontSize: 'var(--text-body-lg-size)',
+                fontWeight: 600,
+                fontStyle: 'italic',
+                marginBottom: 'var(--space-lg)',
+                animationDelay: '90ms',
+              }}
+            >
+              Hum Hai Aapke Saathi — Your Trusted Partner
             </p>
 
-            <div className="mt-8 flex flex-wrap gap-4">
-              <Link
-                href="/contact"
-                className="px-8 py-4 rounded-2xl bg-accent text-white font-bold text-base shadow-xl shadow-accent/30 hover:shadow-accent/50 hover:scale-105 transition-all duration-300"
-              >
-                Get Free Quote →
+            {/* Subheadline */}
+            <p
+              className="text-body-lg hero-reveal"
+              style={{
+                color: 'var(--color-ink-muted)',
+                maxWidth: 520,
+                marginBottom: 'var(--space-lg)',
+                animationDelay: '120ms',
+              }}
+            >
+              Struggling with your thesis? Can&apos;t complete your project? Need a website built? Karya Saarthi is your one-stop solution. We don&apos;t just complete projects — we teach you everything. So when you submit or present, you do it with confidence.
+            </p>
+
+
+
+            {/* CTA row */}
+            <div
+              className="hero-reveal"
+              style={{
+                display: 'flex', gap: 'var(--space-xs)',
+                flexWrap: 'wrap', alignItems: 'center',
+                marginBottom: 'var(--space-xxl)',
+                animationDelay: '180ms',
+              }}
+            >
+              <Link href="/contact" className="btn-primary" style={{ minWidth: 148 }}>
+                Get Free Quote Now
               </Link>
-              <Link
-                href="/dashboard"
-                className="px-8 py-4 rounded-2xl border-2 border-white/30 text-white font-bold text-base hover:bg-white/10 hover:border-white/50 transition-all duration-300"
-              >
-                Track Project
+              <Link href="/login?role=vendor" className="btn-secondary" style={{ minWidth: 148 }}>
+                Vendor Login
               </Link>
             </div>
 
-            {/* Stats */}
-            <div className="mt-12 flex flex-wrap gap-8">
-              {[
-                { value: '500+', label: 'Projects' },
-                { value: '98%', label: 'Satisfaction' },
-                { value: '80%', label: 'Repeat Clients' },
-              ].map((s, i) => (
-                <motion.div
-                  key={s.label}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.6 + i * 0.15 }}
-                >
-                  <div className="text-2xl lg:text-3xl font-extrabold text-white font-heading">{s.value}</div>
-                  <div className="text-white/50 text-sm">{s.label}</div>
-                </motion.div>
+            {/* Social Proof */}
+            <div className="hero-reveal" style={{ marginBottom: 'var(--space-lg)', animationDelay: '210ms' }}>
+              <p style={{ fontSize: 'var(--text-caption-size)', fontWeight: 600, color: 'var(--color-ink-muted)' }}>
+                Trusted by 2000+ Students from Top Universities
+              </p>
+            </div>
+
+            {/* Stats row */}
+            <div
+              className="hero-stats-grid hero-reveal"
+              style={{
+                paddingTop: 'var(--space-lg)',
+                borderTop: '1px solid var(--color-hairline-soft)',
+                animationDelay: '240ms',
+              }}
+            >
+              {stats.map((s, i) => (
+                <div key={s.label} style={{ animationDelay: `${300 + i * 60}ms` }}>
+                  <p className="text-display-md" style={{ color: 'var(--color-ink)', marginBottom: 4 }}>{s.value}</p>
+                  <p className="text-caption" style={{ color: 'var(--color-ink-muted)' }}>{s.label}</p>
+                </div>
               ))}
             </div>
-          </motion.div>
+          </div>
 
-          {/* Right — Video Showcase */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.4, duration: 0.8 }}
-            className="flex justify-center w-full mt-10 lg:mt-0"
-          >
-            <div className="relative w-full max-w-lg lg:max-w-none">
-              {/* Decorative background glow */}
-              <div className="absolute -inset-4 rounded-3xl bg-gradient-to-br from-accent/20 to-navy-light/20 blur-2xl opacity-70" />
-              
-              <div className="relative rounded-2xl p-1 bg-gradient-to-br from-white/20 to-white/5 border border-white/10 backdrop-blur-md shadow-2xl overflow-hidden">
-                <div className="relative aspect-video rounded-xl overflow-hidden bg-black/40">
-                  <video
-                    src="/images/karyasaarthi.mp4"
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
-                    controls
-                    preload="metadata"
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-black/60 backdrop-blur-sm text-xs font-semibold text-white flex items-center gap-1.5 pointer-events-none">
-                    <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
-                    Platform Tour
-                  </div>
+          {/* ── Right: Video ────────────────────────────────── */}
+          <div className="hero-right hero-reveal" style={{ animationDelay: '100ms' }}>
+
+            {/* Ambient glow behind the card */}
+            <div aria-hidden="true" style={{
+              position: 'absolute',
+              inset: -40,
+              background: 'radial-gradient(ellipse 70% 60% at 50% 50%, rgba(106,76,245,0.18) 0%, transparent 70%)',
+              pointerEvents: 'none',
+              zIndex: 0,
+            }} />
+
+            {/* Video card with browser chrome */}
+            <div className="hero-video-card" style={{ position: 'relative', zIndex: 1 }}>
+
+              {/* Browser chrome bar */}
+              <div style={{
+                display: 'flex', alignItems: 'center', gap: 6,
+                padding: '10px 16px',
+                borderBottom: '1px solid var(--color-hairline)',
+                backgroundColor: 'var(--color-surface-2)',
+                borderRadius: 'var(--radius-xl) var(--radius-xl) 0 0',
+              }}>
+                {['#ff5f57','#ffbd2e','#28ca41'].map(c => (
+                  <div key={c} style={{ width: 11, height: 11, borderRadius: '50%', backgroundColor: c, flexShrink: 0 }} />
+                ))}
+                <div style={{
+                  flex: 1, height: 24, backgroundColor: 'var(--color-surface-1)',
+                  borderRadius: 'var(--radius-pill)', marginLeft: 8,
+                  display: 'flex', alignItems: 'center', paddingLeft: 12, maxWidth: 280,
+                }}>
+                  <span style={{ fontSize: 11, color: 'var(--color-ink-muted)' }}>karyasaarthi.com</span>
                 </div>
               </div>
+
+              {/* Video */}
+              <div style={{
+                backgroundColor: '#000',
+                borderRadius: '0 0 var(--radius-xl) var(--radius-xl)',
+                overflow: 'hidden',
+                lineHeight: 0,
+              }}>
+                <video
+                  src="/images/karyasaarthi.mp4"
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  preload="metadata"
+                  style={{ width: '100%', display: 'block', maxHeight: 380, objectFit: 'cover' }}
+                />
+              </div>
             </div>
-          </motion.div>
+
+            {/* Floating "Project delivered" badge */}
+            <div style={{
+              position: 'absolute',
+              bottom: -16, left: -16,
+              backgroundColor: 'var(--color-surface-2)',
+              border: '1px solid var(--color-hairline)',
+              borderRadius: 'var(--radius-xl)',
+              padding: '12px 16px',
+              zIndex: 2,
+              display: 'flex', alignItems: 'center', gap: 10,
+              boxShadow: 'var(--shadow-level-2)',
+              animation: 'hero-badge-float 3s ease-in-out infinite',
+            }}>
+              <div style={{
+                width: 36, height: 36, borderRadius: 'var(--radius-full)',
+                backgroundColor: '#0d1f17',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18,
+              }}>🤝</div>
+              <div>
+                <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--color-ink)', letterSpacing: '-0.3px' }}>Your Saarthi</p>
+              </div>
+            </div>
+
+            {/* Top-right "Live" badge */}
+            <div style={{
+              position: 'absolute', top: -12, right: -12, zIndex: 2,
+              backgroundColor: 'var(--color-surface-2)',
+              border: '1px solid rgba(0,153,255,0.25)',
+              borderRadius: 'var(--radius-xl)',
+              padding: '8px 14px',
+              display: 'flex', alignItems: 'center', gap: 7,
+              animation: 'hero-badge-float 3s ease-in-out infinite',
+              animationDelay: '1.5s',
+              boxShadow: 'var(--shadow-level-2)',
+            }}>
+              <span style={{ width: 7, height: 7, borderRadius: '50%', backgroundColor: '#22c55e', display: 'inline-block', animation: 'live-pulse 1.4s ease-in-out infinite' }} />
+              <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--color-ink)' }}>24/7 Support</span>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Scroll indicator */}
-      <motion.div
-        animate={{ y: [0, 8, 0] }}
-        transition={{ duration: 2, repeat: Infinity }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
-      >
-        <span className="text-white/40 text-xs tracking-widest uppercase">Scroll</span>
-        <div className="w-5 h-8 border-2 border-white/30 rounded-full flex justify-center pt-1.5">
-          <div className="w-1 h-2 bg-accent rounded-full" />
-        </div>
-      </motion.div>
+      <style>{`
+        @keyframes hero-fade-up {
+          from { opacity: 0; transform: translateY(22px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes hero-badge-float {
+          0%, 100% { transform: translateY(0px); }
+          50%       { transform: translateY(-6px); }
+        }
+        @keyframes live-pulse {
+          0%, 100% { opacity: 1; transform: scale(1); }
+          50%       { opacity: 0.5; transform: scale(1.3); }
+        }
+        .hero-reveal {
+          opacity: 0;
+          animation: hero-fade-up 0.65s var(--ease-out) forwards;
+        }
+        .hero-video-card {
+          border-radius: var(--radius-xl);
+          border: 1px solid var(--color-hairline-soft);
+          overflow: hidden;
+          box-shadow: 0 0 0 1px var(--color-hairline-soft), 0 32px 80px rgba(0,0,0,0.6);
+          transition: box-shadow 0.3s;
+        }
+        .hero-video-card:hover {
+          box-shadow: 0 0 0 1px rgba(0,153,255,0.2), 0 32px 80px rgba(0,0,0,0.7), 0 0 40px rgba(0,153,255,0.08);
+        }
+        .hero-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 80px;
+          align-items: center;
+        }
+        .hero-right { position: relative; }
+        .hero-headline { font-family: var(--font-display); }
+        .hero-stats-grid {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: var(--space-lg);
+        }
+        @media (max-width: 1024px) { .hero-grid { gap: 48px; } }
+        @media (max-width: 810px) {
+          .hero-grid { grid-template-columns: 1fr; gap: 48px; }
+          .hero-right { order: -1; max-width: 520px; margin: 0 auto; width: 100%; }
+          .hero-headline { font-size: clamp(36px, 9vw, 72px) !important; }
+          .hero-stats-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+        }
+        @media (max-width: 480px) {
+          .hero-grid { gap: 32px; }
+          .hero-stats-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        }
+      `}</style>
     </section>
   )
 }

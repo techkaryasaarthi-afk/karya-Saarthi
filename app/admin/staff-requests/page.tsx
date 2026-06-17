@@ -1,8 +1,8 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from '@/lib/motion'
 
 interface PendingUser {
   id: number
@@ -27,15 +27,15 @@ interface AdminRequest {
 }
 
 const DEPT_COLORS: Record<string, { color: string; bg: string }> = {
-  hr: { color: '#8B5CF6', bg: '#EDE9FE' },
-  finance: { color: '#10B981', bg: '#D1FAE5' },
-  operations: { color: '#3B82F6', bg: '#DBEAFE' },
-  marketing: { color: '#F59E0B', bg: '#FEF3C7' },
+  hr: { color: '#8B5CF6', bg: 'rgba(139,92,246,0.15)' },
+  finance: { color: '#10B981', bg: 'rgba(16,185,129,0.15)' },
+  operations: { color: '#3B82F6', bg: 'rgba(59,130,246,0.15)' },
+  marketing: { color: '#F59E0B', bg: 'rgba(245,158,11,0.15)' },
   digital: { color: '#EC4899', bg: '#FCE7F3' },
-  campus: { color: '#3B82F6', bg: '#DBEAFE' },
+  campus: { color: '#3B82F6', bg: 'rgba(59,130,246,0.15)' },
   calling: { color: '#FF6B35', bg: '#FFF0EB' },
-  government: { color: '#10B981', bg: '#D1FAE5' },
-  market: { color: '#F59E0B', bg: '#FEF3C7' },
+  government: { color: '#10B981', bg: 'rgba(16,185,129,0.15)' },
+  market: { color: '#F59E0B', bg: 'rgba(245,158,11,0.15)' },
 }
 
 const ROLE_TITLES: Record<string, string> = {
@@ -168,7 +168,7 @@ export default function StaffRequestsPage() {
               <div className="space-y-3">
                 {data.pendingAdmins.map((u, i) => {
                   const deptKey = deptOverride[u.id] || u.department || ''
-                  const deptCfg = DEPT_COLORS[deptKey] || { color: '#6B7280', bg: '#F3F4F6' }
+                  const deptCfg = DEPT_COLORS[deptKey] || { color: '#6B7280', bg: 'rgba(255,255,255,0.08)' }
                   const actionState = actionStates[u.id]
                   return (
                     <motion.div key={u.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
@@ -252,7 +252,7 @@ export default function StaffRequestsPage() {
               <div className="space-y-3">
                 {data.pendingPillar.map((u, i) => {
                   const pillarKey = u.pillar_role || ''
-                  const deptCfg = DEPT_COLORS[pillarKey] || { color: '#10B981', bg: '#D1FAE5' }
+                  const deptCfg = DEPT_COLORS[pillarKey] || { color: '#10B981', bg: 'rgba(16,185,129,0.15)' }
                   const actionState = actionStates[u.id]
                   return (
                     <motion.div key={u.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
@@ -303,8 +303,9 @@ export default function StaffRequestsPage() {
       <div className="rounded-2xl border border-blue-100 bg-blue-50 p-4 text-xs text-blue-700">
         <p className="font-bold mb-1">📧 Email Notifications</p>
         <p>Approving or rejecting a staff member automatically sends them a branded email notification from Karya Saarthi.</p>
-        <p className="mt-1">Approved staff can log in immediately at <code className="bg-blue-100 px-1 rounded">/staff-login</code></p>
+        <p className="mt-1">Approved staff can log in immediately at <code className="bg-blue-100 px-1 rounded">admin.karyasaarthi.com/login</code></p>
       </div>
     </div>
   )
 }
+

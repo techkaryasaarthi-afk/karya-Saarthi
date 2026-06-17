@@ -1,7 +1,7 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useState, useCallback, useMemo, useRef } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from '@/lib/motion'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer, Legend } from 'recharts'
 import DepartmentMeetings from '@/components/admin/DepartmentMeetings'
 
@@ -385,7 +385,7 @@ export default function CampusSaarthiPage() {
                         <button onClick={() => { setChatUser(a); setChatMsgs([]) }}
                           className="text-xs px-2 py-1 rounded-lg bg-indigo-50 text-indigo-600 hover:bg-indigo-100 cursor-pointer">💬</button>
                         <button onClick={() => { setEditId(a.id); setEditForm({}) }}
-                          className="text-xs px-2 py-1 rounded-lg bg-amber-50 text-amber-600 hover:bg-amber-100 cursor-pointer">✏️</button>
+                          className="text-xs px-2 py-1 rounded-lg bg-[rgba(245,158,11,0.1)] text-[#fbbf24] hover:bg-[rgba(245,158,11,0.2)] cursor-pointer">✏️</button>
                         <button onClick={() => deleteAmbassador(a.id, a.fullname)}
                           className="text-xs px-2 py-1 rounded-lg bg-red-50 text-red-400 hover:bg-red-100 cursor-pointer">🗑️</button>
                       </div>
@@ -778,3 +778,4 @@ export default function CampusSaarthiPage() {
     </div>
   )
 }
+

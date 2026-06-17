@@ -1,7 +1,7 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { motion } from 'framer-motion'
+import { motion } from '@/lib/motion'
 import DepartmentMeetings from '@/components/admin/DepartmentMeetings'
 
 interface Caller { id: number; fullname: string; email: string; phone: string; shift: string; calls_today: number; leads_today: number; conversion_rate: number; revenue: number; target_calls: number }
@@ -12,11 +12,11 @@ const TABS = ['📞 Roster', '📋 Call Logs', '📊 Performance', '📝 Scripts
 type Tab = typeof TABS[number]
 
 const OUTCOME_CFG: Record<string, { label: string; color: string; bg: string }> = {
-  interested: { label: 'Interested 🤝', color: '#8B5CF6', bg: '#EDE9FE' },
-  not_interested: { label: 'Not Interested', color: '#EF4444', bg: '#FEE2E2' },
-  callback: { label: 'Call Back 📞', color: '#F59E0B', bg: '#FEF3C7' },
-  converted: { label: 'Converted ✅', color: '#10B981', bg: '#D1FAE5' },
-  no_answer: { label: 'No Answer', color: '#6B7280', bg: '#F3F4F6' },
+  interested: { label: 'Interested 🤝', color: '#8B5CF6', bg: 'rgba(139,92,246,0.15)' },
+  not_interested: { label: 'Not Interested', color: '#EF4444', bg: 'rgba(239,68,68,0.15)' },
+  callback: { label: 'Call Back 📞', color: '#F59E0B', bg: 'rgba(245,158,11,0.15)' },
+  converted: { label: 'Converted ✅', color: '#10B981', bg: 'rgba(16,185,129,0.15)' },
+  no_answer: { label: 'No Answer', color: '#6B7280', bg: 'rgba(255,255,255,0.08)' },
 }
 
 export default function CallingSaarthiPage() {
@@ -136,7 +136,7 @@ export default function CallingSaarthiPage() {
         <div className="space-y-4">
           <div className="flex justify-between items-center">
             <p className="text-sm text-slate-500">{callers.length} callers active</p>
-            <button onClick={() => setShowNew(v => !v)} className="px-4 py-2.5 rounded-xl font-bold text-white text-sm cursor-pointer" style={{ background: '#FF6B35' }}>+ Add Caller</button>
+            <button onClick={() => setShowNew(v => !v)} className="px-4 py-2.5 rounded-xl font-bold text-white text-sm cursor-pointer" style={{ background: '#ff7a3d' }}>+ Add Caller</button>
           </div>
           {showNew && (
             <form onSubmit={createCaller} className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm space-y-3">
@@ -150,7 +150,7 @@ export default function CallingSaarthiPage() {
                 <input type="number" value={form.target_calls} onChange={e => setForm(p => ({ ...p, target_calls: e.target.value }))} placeholder="Daily call target" className="px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" />
               </div>
               <div className="flex gap-3">
-                <button type="submit" disabled={saving} className="px-5 py-2.5 rounded-xl font-bold text-white text-sm cursor-pointer disabled:opacity-60" style={{ background: '#1B3A6B' }}>{saving ? '⏳' : '✅ Add Caller'}</button>
+                <button type="submit" disabled={saving} className="px-5 py-2.5 rounded-xl font-bold text-white text-sm cursor-pointer disabled:opacity-60" style={{ background: 'var(--color-accent-blue)' }}>{saving ? '⏳' : '✅ Add Caller'}</button>
                 <button type="button" onClick={() => setShowNew(false)} className="px-4 py-2.5 rounded-xl bg-slate-100 text-slate-600 text-sm cursor-pointer">Cancel</button>
               </div>
             </form>
@@ -310,3 +310,4 @@ export default function CallingSaarthiPage() {
     </div>
   )
 }
+

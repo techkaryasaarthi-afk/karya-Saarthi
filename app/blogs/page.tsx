@@ -5,7 +5,8 @@ import { motion } from 'framer-motion'
 import Link from 'next/link'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
-import Chatbot from '@/components/Chatbot'
+
+import PageCTABanner from '@/components/PageCTABanner'
 
 interface Blog {
   id: number
@@ -57,32 +58,46 @@ export default function BlogsPage() {
   return (
     <>
       <Navbar />
-      <main className="pt-20 lg:pt-24 pb-20 bg-surface min-h-screen">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Header */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-10 pt-6">
-            <h1 className="text-3xl lg:text-5xl font-bold text-navy font-heading">Blog &amp; Resources</h1>
-            <p className="mt-3 text-slate-500">Insights, guides, and tips from our team of experts.</p>
-          </motion.div>
+      <main className="min-h-screen bg-surface pb-20">
+        {/* Hero Header */}
+        <div className="bg-navy pt-24 pb-12 px-4 text-white">
+          <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+              <span className="inline-block px-4 py-1.5 rounded-full bg-white/10 text-white/80 text-sm font-semibold mb-4">
+                📝 Blog & Resources
+              </span>
+              <h1 className="text-3xl lg:text-5xl font-extrabold font-heading mb-3">
+                Insights &amp; Expert Guides
+              </h1>
+              <p className="text-white/60 text-lg max-w-2xl">
+                Practical tips, in-depth guides, and industry insights from the Karya Saarthi team.
+              </p>
+            </motion.div>
+          </div>
+        </div>
 
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10">
           {/* Search + Filters */}
-          <div className="flex flex-col sm:flex-row gap-4 mb-8">
+          <div className="flex flex-col gap-4 mb-6">
             <input
               type="text"
               placeholder="Search articles..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="flex-1 px-5 py-3.5 rounded-xl bg-white border border-slate-200 focus:outline-none focus:border-navy focus:ring-2 focus:ring-navy/10 text-sm shadow-sm"
+              className="w-full sm:max-w-sm px-5 py-3.5 rounded-xl bg-white border border-slate-200 focus:outline-none focus:border-navy focus:ring-2 focus:ring-navy/10 text-sm shadow-sm font-body"
             />
             <div className="flex flex-wrap gap-2">
-              {['All', ...categories.map(c => c.name)].map(cat => (
+              {['All', ...(categories.length > 0
+                ? categories.map(c => c.name)
+                : ['Academic', 'Technology', 'Marketing', 'Career', 'Business']
+              )].map(cat => (
                 <button
                   key={cat}
                   onClick={() => setActiveCategory(cat)}
-                  className={`px-4 py-2.5 rounded-full text-sm font-semibold transition-all cursor-pointer ${
+                  className={`px-4 py-2 rounded-full text-sm font-semibold transition-all cursor-pointer font-heading ${
                     activeCategory === cat
                       ? 'bg-navy text-white shadow-lg shadow-navy/20'
-                      : 'bg-white text-slate-600 border border-slate-200 hover:bg-navy/5'
+                      : 'bg-white text-slate-600 border border-slate-200 hover:bg-navy/5 hover:border-navy/30'
                   }`}
                 >
                   {cat}
@@ -93,7 +108,7 @@ export default function BlogsPage() {
 
           {/* Blog count */}
           {!loading && (
-            <p className="text-sm text-slate-400 mb-6">
+            <p className="text-sm text-slate-400 mb-6 font-medium">
               {filtered.length} article{filtered.length !== 1 ? 's' : ''} found
             </p>
           )}
@@ -107,7 +122,7 @@ export default function BlogsPage() {
             </div>
           ) : filtered.length === 0 ? (
             <div className="text-center py-24 text-slate-400">
-              <span className="text-5xl block mb-4">{blogs.length === 0 ? '📝' : '🔍'}</span>
+              <span className="text-5xl block mb-4">{blogs.length === 0 ? '✍️' : '🔍'}</span>
               {blogs.length === 0 ? (
                 <>
                   <p className="font-semibold text-slate-600 text-lg">Blog articles coming soon!</p>
@@ -194,8 +209,17 @@ export default function BlogsPage() {
           )}
         </div>
       </main>
+      <PageCTABanner
+        headline="Have a Project in Mind?"
+        subtext="From academic writing to website development — our experts are ready. Get a free quote within 30 minutes!"
+        primaryLabel="Get Free Quote →"
+        primaryHref="/contact"
+        secondaryLabel="💬 WhatsApp Us"
+        secondaryHref="https://wa.me/918595025753"
+        variant="violet"
+      />
       <Footer />
-      <Chatbot />
+
     </>
   )
 }
@@ -215,3 +239,4 @@ function getCatColor(name?: string | null): string {
   if (!name) return '#1B3A6B'
   return CAT_COLOR_MAP[name] || '#1B3A6B'
 }
+

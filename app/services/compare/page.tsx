@@ -94,7 +94,7 @@ function CompareContent() {
                 {'⭐'.repeat(Math.round(s.rating || 0))}
                 <span className="text-xs text-slate-400 ml-1">{(s.rating || 0).toFixed(1)}</span>
               </div>
-              <div className="text-2xl font-extrabold text-navy font-heading mb-4">₹{s.price.toLocaleString('en-IN')}</div>
+
               <Link href={`/services/${s.id}`}
                 className="w-full py-2.5 rounded-xl font-bold text-white text-sm text-center block cursor-pointer"
                 style={{ background: '#FF6B35' }}>
@@ -118,7 +118,7 @@ function CompareContent() {
               </thead>
               <tbody>
                 {/* Price */}
-                <CompareRow label="💰 Price" values={services.map(s => `₹${s.price.toLocaleString('en-IN')}`)} highlight="lowest" rawValues={services.map(s => s.price)} />
+
                 {/* Rating */}
                 <CompareRow label="⭐ Rating" values={services.map(s => `${(s.rating || 0).toFixed(1)} / 5`)} highlight="highest" rawValues={services.map(s => s.rating || 0)} />
                 {/* Delivery */}

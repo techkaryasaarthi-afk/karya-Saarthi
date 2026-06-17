@@ -1,90 +1,108 @@
 'use client'
 
-import { motion, useMotionValue, useTransform, animate } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
 
 function Counter({ target, suffix = '' }: { target: number; suffix?: string }) {
-  const count = useMotionValue(0)
-  const rounded = useTransform(count, v => Math.round(v))
   const [display, setDisplay] = useState(0)
-  const ref = useRef<HTMLDivElement>(null)
+  const ref     = useRef<HTMLSpanElement>(null)
   const started = useRef(false)
 
   useEffect(() => {
-    const unsub = rounded.on('change', v => setDisplay(v))
-    return unsub
-  }, [rounded])
-
-  useEffect(() => {
-    if (!ref.current) return
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !started.current) {
-          started.current = true
-          animate(count, target, { duration: 2, ease: 'easeOut' })
+    const el = ref.current; if (!el) return
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && !started.current) {
+        started.current = true
+        let start: number
+        const step = (ts: number) => {
+          if (!start) start = ts
+          const progress = Math.min((ts - start) / 2000, 1)
+          const eased = 1 - Math.pow(1 - progress, 3)
+          setDisplay(Math.floor(eased * target))
+          if (progress < 1) requestAnimationFrame(step)
         }
-      },
-      { threshold: 0.5 }
-    )
-    observer.observe(ref.current)
+        requestAnimationFrame(step)
+      }
+    }, { threshold: 0.5 })
+    observer.observe(el)
     return () => observer.disconnect()
-  }, [count, target])
+  }, [target])
 
-  return (
-    <span ref={ref}>
-      {display}{suffix}
-    </span>
-  )
+  return <span ref={ref}>{display}{suffix}</span>
 }
 
 const stats = [
-  { icon: '🏆', value: 500, suffix: '+', label: 'Projects Completed' },
-  { icon: '⭐', value: 98, suffix: '%', label: 'Client Satisfaction' },
-  { icon: '🔄', value: 80, suffix: '%', label: 'Repeat Clients' },
-  { icon: '🎓', value: 50, suffix: '+', label: 'Service Categories' },
+  { icon: '🏆', value: 500,  suffix: '+', label: 'Projects Completed' },
+  { icon: '⭐', value: 98,   suffix: '%', label: 'Client Satisfaction' },
+  { icon: '👥', value: 2000, suffix: '+', label: 'Happy Clients'      },
+  { icon: '🎓', value: 50,   suffix: '+', label: 'Service Categories'  },
 ]
 
 export default function StatsSection() {
   return (
-    <section className="py-20 lg:py-24 bg-navy relative overflow-hidden">
-      {/* Decorative */}
-      <div className="absolute top-0 left-0 w-64 h-64 rounded-full bg-accent/5 -translate-x-1/2 -translate-y-1/2" />
-      <div className="absolute bottom-0 right-0 w-96 h-96 rounded-full bg-accent/5 translate-x-1/3 translate-y-1/3" />
+    <section
+      className="stats-section"
+      style={{
+        backgroundColor: 'var(--color-surface-1)',
+        borderTop: '1px solid var(--color-hairline-soft)',
+        borderBottom: '1px solid var(--color-hairline-soft)',
+        padding: 'var(--space-section) var(--space-xl)',
+        position: 'relative',
+        overflow: 'hidden',
+      }}
+    >
+      {/* Glow orb */}
+      <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: 500, height: 300, borderRadius: '50%', background: 'radial-gradient(ellipse, rgba(0,153,255,0.05) 0%, transparent 70%)', pointerEvents: 'none' }} />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-14"
-        >
-          <h2 className="text-3xl lg:text-5xl font-bold text-white font-heading">
+      <div style={{ maxWidth: 1199, margin: '0 auto', position: 'relative' }}>
+        {/* Header */}
+        <div style={{ textAlign: 'center', marginBottom: 52 }}>
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(26px, 3.5vw, 44px)', fontWeight: 700, color: 'var(--color-ink)', letterSpacing: '-1.5px', marginBottom: 12 }}>
             Numbers That Speak
           </h2>
-          <p className="mt-4 text-white/50 max-w-xl mx-auto">
+          <p style={{ fontSize: 'var(--text-body-size)', color: 'var(--color-ink-muted)', maxWidth: 440, margin: '0 auto' }}>
             Our growing community of satisfied clients and successful projects.
           </p>
-        </motion.div>
+        </div>
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-          {stats.map((s, i) => (
-            <motion.div
+        {/* Stats grid */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, width: '100%' }} className="stats-section-grid">
+          {stats.map((s) => (
+            <div
               key={s.label}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              className="text-center p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all duration-300 group"
+              style={{
+                textAlign: 'center',
+                padding: '28px 20px',
+                borderRadius: 'var(--radius-lg)',
+                backgroundColor: 'var(--color-surface-2)',
+                border: '1px solid var(--color-hairline)',
+                transition: 'border-color var(--dur-fast), transform var(--dur-fast)',
+              }}
+              className="stat-card-item"
             >
-              <div className="text-4xl mb-3">{s.icon}</div>
-              <div className="text-4xl lg:text-5xl font-extrabold text-white font-heading">
+              <div style={{ fontSize: 32, marginBottom: 10 }}>{s.icon}</div>
+              <div className="stat-value" style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 800, color: 'var(--color-ink)', letterSpacing: '-2px', lineHeight: 1 }}>
                 <Counter target={s.value} suffix={s.suffix} />
               </div>
-              <div className="text-white/50 text-sm mt-2">{s.label}</div>
-            </motion.div>
+              <div style={{ color: 'var(--color-ink-muted)', fontSize: 13, marginTop: 8 }}>{s.label}</div>
+            </div>
           ))}
         </div>
       </div>
+
+      <style>{`
+        .stats-section-grid { grid-template-columns: repeat(4, 1fr); }
+        .stat-card-item:hover { border-color: rgba(0,153,255,0.3); transform: translateY(-3px); }
+        .stat-card-item { min-width: 0; overflow: hidden; }
+        @media (max-width: 900px) {
+          .stats-section-grid { grid-template-columns: repeat(2, 1fr); gap: 12px !important; }
+          .stats-section { padding-left: 16px !important; padding-right: 16px !important; }
+        }
+        @media (max-width: 400px) {
+          .stats-section-grid { grid-template-columns: repeat(2, 1fr); gap: 10px !important; }
+          .stat-card-item { padding: 20px 12px !important; }
+          .stat-value { font-size: 28px !important; }
+        }
+      `}</style>
     </section>
   )
 }

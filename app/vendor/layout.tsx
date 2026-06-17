@@ -1,32 +1,31 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import SessionInactivityGuard from '@/components/SessionInactivityGuard'
 
-interface UserData {
-  id: number
-  fullname: string
-  email: string
-  role: string
-}
+interface UserData { id: number; fullname: string; email: string; role: string }
+
+const NAV_ITEMS = [
+  { icon: '📊', label: 'Dashboard', href: '/vendor' },
+  { icon: '📋', label: 'My Projects', href: '/vendor/projects' },
+  { icon: '⚙️', label: 'Settings', href: '/vendor/settings' },
+]
 
 export default function VendorLayout({ children }: { children: React.ReactNode }) {
-  const router = useRouter()
-  const [user, setUser] = useState<UserData | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [mobileOpen, setMobileOpen] = useState(false)
+  const router      = useRouter()
+  const pathname    = usePathname()
+  const [user, setUser]         = useState<UserData | null>(null)
+  const [loading, setLoading]   = useState(true)
+  const [mobileOpen, setMobile] = useState(false)
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
         let res = await fetch('/api/auth/me')
-        if (res.status === 401) {
-          const refreshRes = await fetch('/api/auth/refresh', { method: 'POST' })
-          if (refreshRes.ok) res = await fetch('/api/auth/me')
-        }
+        if (res.status === 401) { const r = await fetch('/api/auth/refresh', { method: 'POST' }); if (r.ok) res = await fetch('/api/auth/me') }
         if (!res.ok) { router.push('/login'); return }
         const data = await res.json()
         if (data.role !== 'vendor' && data.role !== 'super_admin') { router.push('/dashboard'); return }
@@ -40,66 +39,117 @@ export default function VendorLayout({ children }: { children: React.ReactNode }
   const handleLogout = async () => { await fetch('/api/auth/logout', { method: 'POST' }); router.push('/') }
 
   if (loading || !user) {
-    return <div className="min-h-screen bg-surface flex items-center justify-center"><div className="w-12 h-12 border-4 border-navy/20 border-t-accent rounded-full animate-spin" /></div>
+    return (
+      <div style={{ minHeight: '100vh', backgroundColor: 'var(--color-canvas)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10 }}>
+        {[0,1,2].map(i => <div key={i} className="skeleton" style={{ width: 8, height: 8, borderRadius: '50%', animationDelay: `${i * 200}ms` }} />)}
+      </div>
+    )
   }
 
-  const sidebarContent = (
+  const SidebarInner = () => (
     <>
-      <div className="p-5 flex items-center gap-3 border-b border-white/10">
-        <Image src="/images/karyasaarthi.png" alt="Logo" width={36} height={36} className="rounded-lg" />
-        <span className="font-bold font-heading text-lg">Karya<span className="text-accent">Saarthi</span></span>
+      {/* Brand */}
+      <div style={{ padding: '20px 16px', borderBottom: '1px solid var(--color-hairline-soft)', display: 'flex', alignItems: 'center', gap: 10 }}>
+        <Image src="/images/karyasaarthi.png" alt="Logo" width={24} height={24} style={{ borderRadius: 4 }} />
+        <span style={{ fontFamily: 'var(--font-display)', fontSize: 14, fontWeight: 600, color: 'var(--color-ink)', letterSpacing: '-0.3px' }}>Karya Saarthi</span>
       </div>
-      <div className="px-5 py-3 border-b border-white/10">
-        <span className="inline-block px-3 py-1 rounded-full bg-cyan-400/20 text-cyan-300 text-xs font-bold">🏪 Vendor</span>
+
+      {/* Vendor badge */}
+      <div style={{ padding: '10px 16px', borderBottom: '1px solid var(--color-hairline-soft)' }}>
+        <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', padding: '3px 8px', borderRadius: 'var(--radius-pill)', backgroundColor: 'rgba(34,197,94,0.12)', color: 'var(--color-semantic-success)' }}>
+          🏪 Vendor
+        </span>
       </div>
-      <nav className="flex-1 py-4">
-        {[
-          { icon: '📊', label: 'Dashboard', href: '/vendor' },
-          { icon: '📋', label: 'My Projects', href: '/vendor/projects' },
-          { icon: '⚙️', label: 'Settings', href: '/vendor/settings' },
-        ].map(item => (
-          <Link key={item.href} href={item.href} onClick={() => setMobileOpen(false)}
-            className="flex items-center gap-3 px-5 py-3.5 text-sm text-white/60 hover:bg-white/5 hover:text-white transition-colors">
-            <span className="text-lg">{item.icon}</span><span>{item.label}</span>
-          </Link>
-        ))}
+
+      {/* Nav */}
+      <nav style={{ flex: 1, padding: '8px 8px' }}>
+        {NAV_ITEMS.map(item => {
+          const isActive = pathname === item.href || (item.href !== '/vendor' && pathname?.startsWith(item.href))
+          return (
+            <Link key={item.href} href={item.href} onClick={() => setMobile(false)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 10,
+                padding: '10px 12px', borderRadius: 'var(--radius-md)', marginBottom: 2,
+                textDecoration: 'none', fontSize: 'var(--text-body-sm-size)', fontWeight: isActive ? 600 : 400,
+                color: isActive ? 'var(--color-ink)' : 'var(--color-ink-muted)',
+                backgroundColor: isActive ? 'var(--color-surface-2)' : 'transparent',
+                transition: 'background-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out)',
+              }}>
+              <span style={{ fontSize: 15 }}>{item.icon}</span> {item.label}
+            </Link>
+          )
+        })}
       </nav>
-      <div className="border-t border-white/10 p-4 space-y-2">
-        <div className="flex items-center gap-3 px-2 py-2">
-          <div className="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center text-accent font-bold text-sm">{user.fullname.charAt(0)}</div>
-          <div className="flex-1 min-w-0"><p className="text-sm font-medium truncate">{user.fullname}</p><p className="text-xs text-white/40 truncate">{user.email}</p></div>
+
+      {/* User footer */}
+      <div style={{ padding: '8px 8px 16px', borderTop: '1px solid var(--color-hairline-soft)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', marginBottom: 4 }}>
+          <div style={{ width: 30, height: 30, borderRadius: '50%', backgroundColor: 'rgba(0,153,255,0.15)', color: 'var(--color-accent-blue)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 12, flexShrink: 0 }}>
+            {user.fullname.charAt(0)}
+          </div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <p className="text-body-sm" style={{ color: 'var(--color-ink)', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user.fullname}</p>
+            <p className="text-micro" style={{ color: 'var(--color-ink-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user.email}</p>
+          </div>
         </div>
-        <Link href="/" className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm text-white/60 hover:bg-white/5 hover:text-white transition-colors">🌐 View Website</Link>
-        <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm text-white/60 hover:bg-red-500/10 hover:text-red-400 transition-colors cursor-pointer">🚪 Logout</button>
+        <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', borderRadius: 'var(--radius-md)', textDecoration: 'none', fontSize: 'var(--text-body-sm-size)', color: 'var(--color-ink-muted)' }}>🌐 View Website</Link>
+        <button onClick={handleLogout} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', borderRadius: 'var(--radius-md)', border: 'none', background: 'transparent', cursor: 'pointer', fontSize: 'var(--text-body-sm-size)', color: '#f87171' }}>🚪 Logout</button>
       </div>
     </>
   )
 
   return (
-    <div className="min-h-screen bg-surface">
+    <div style={{ minHeight: '100vh', backgroundColor: 'var(--color-canvas)' }}>
       <SessionInactivityGuard redirectTo="/login?timeout=1" />
+
       {/* Mobile hamburger */}
-      <button onClick={() => setMobileOpen(true)}
-        className="lg:hidden fixed top-4 left-4 z-50 w-10 h-10 bg-navy rounded-xl flex items-center justify-center text-white shadow-lg cursor-pointer"
-        aria-label="Open menu">
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
+      <button
+        onClick={() => setMobile(true)}
+        aria-label="Open menu"
+        style={{
+          display: 'none', position: 'fixed', top: 16, left: 16, zIndex: 50,
+          width: 40, height: 40, borderRadius: 'var(--radius-md)',
+          backgroundColor: 'var(--color-surface-1)', border: '1px solid var(--color-hairline)',
+          alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
+        }}
+        className="vendor-hamburger"
+      >
+        <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+          <path d="M3 5h14M3 10h14M3 15h14" stroke="var(--color-ink)" strokeWidth="2" strokeLinecap="round"/>
+        </svg>
       </button>
 
       {/* Mobile overlay */}
-      {mobileOpen && <div className="sidebar-overlay active lg:hidden" onClick={() => setMobileOpen(false)} />}
+      {mobileOpen && (
+        <div onClick={() => setMobile(false)} style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.7)', zIndex: 40 }} />
+      )}
 
       {/* Desktop sidebar */}
-      <aside className="hidden lg:flex fixed top-0 left-0 h-screen w-64 bg-navy flex-col text-white z-50">
-        {sidebarContent}
+      <aside style={{ width: 232, height: '100vh', backgroundColor: 'var(--color-surface-1)', display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, left: 0, borderRight: '1px solid var(--color-hairline-soft)', zIndex: 30 }} className="vendor-sidebar">
+        <SidebarInner />
       </aside>
 
       {/* Mobile sidebar */}
-      <aside className={`lg:hidden fixed top-0 left-0 h-screen w-72 bg-navy flex flex-col text-white z-50 transition-transform duration-300 ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-        <button onClick={() => setMobileOpen(false)} className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white/60 hover:text-white cursor-pointer">✕</button>
-        {sidebarContent}
+      <aside
+        style={{ width: 260, height: '100vh', backgroundColor: 'var(--color-surface-1)', display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, left: 0, zIndex: 50, borderRight: '1px solid var(--color-hairline)', transform: mobileOpen ? 'translateX(0)' : 'translateX(-100%)', transition: 'transform var(--dur-slow) var(--ease-out)' }}
+        className="vendor-mobile-sidebar"
+      >
+        <button onClick={() => setMobile(false)} style={{ position: 'absolute', top: 12, right: 12, width: 28, height: 28, borderRadius: '50%', border: 'none', backgroundColor: 'var(--color-surface-2)', color: 'var(--color-ink-muted)', cursor: 'pointer', fontSize: 14 }}>✕</button>
+        <SidebarInner />
       </aside>
 
-      <main className="lg:ml-64 p-4 sm:p-6 lg:p-8 min-h-screen pt-16 lg:pt-6">{children}</main>
+      <main style={{ marginLeft: 232, padding: '32px 28px', minHeight: '100vh' }} className="vendor-main">
+        {children}
+      </main>
+
+      <style>{`
+        @media (max-width: 768px) {
+          .vendor-sidebar    { display: none !important; }
+          .vendor-main       { margin-left: 0 !important; padding: 20px 16px !important; padding-top: 64px !important; }
+          .vendor-hamburger  { display: flex !important; }
+        }
+      `}</style>
     </div>
   )
 }
+

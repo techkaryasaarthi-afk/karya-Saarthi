@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { motion } from 'framer-motion'
+import { motion } from '@/lib/motion'
 import CustomerProfileModal from '@/components/admin/CustomerProfileModal'
 import VendorProfileModal from '@/components/admin/VendorProfileModal'
 import { STAFF_ROLE_CONFIGS, formatDepartmentLabel } from '@/lib/org'
@@ -21,13 +21,13 @@ interface User {
   last_login: string | null
 }
 
-const roleColors: Record<string, string> = {
-  super_admin: 'bg-purple-100 text-purple-700',
-  admin: 'bg-blue-100 text-blue-700',
-  board_member: 'bg-indigo-100 text-indigo-700',
-  vendor: 'bg-cyan-100 text-cyan-700',
-  customer: 'bg-green-100 text-green-700',
-  pending_admin: 'bg-amber-100 text-amber-700',
+const roleColors: Record<string, { bg: string, color: string }> = {
+  super_admin: { bg: 'rgba(168, 85, 247, 0.1)', color: '#A855F7' },
+  admin: { bg: 'rgba(59, 130, 246, 0.1)', color: '#3B82F6' },
+  board_member: { bg: 'rgba(99, 102, 241, 0.1)', color: '#6366F1' },
+  vendor: { bg: 'rgba(6, 182, 212, 0.1)', color: '#06B6D4' },
+  customer: { bg: 'rgba(34, 197, 94, 0.1)', color: '#22C55E' },
+  pending_admin: { bg: 'rgba(245, 158, 11, 0.1)', color: '#F59E0B' },
 }
 
 const roleLabel = (user: User) => {
@@ -120,13 +120,13 @@ export default function UsersPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
-          <h1 className="text-2xl font-bold text-navy font-heading">
+          <h1 className="text-display-md" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-ink)' }}>
             {isSuperAdmin ? '👥 User Management' : '👤 Clients & Vendors'}
           </h1>
-          <p className="text-slate-500 text-sm mt-1">
+          <p className="text-body-sm" style={{ color: 'var(--color-ink-muted)', marginTop: 4 }}>
             {isSuperAdmin
               ? `${total} total users — full access`
               : `${total} clients & vendors in your CRM`}
@@ -135,14 +135,15 @@ export default function UsersPage() {
       </div>
 
       {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-3">
-        <form onSubmit={handleSearch} className="flex-1">
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
+        <form onSubmit={handleSearch} style={{ flex: 1, minWidth: 200 }}>
           <input
             type="text"
             placeholder={isSuperAdmin ? 'Search by name, email, or phone...' : 'Search clients & vendors...'}
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="w-full px-4 py-3 rounded-xl bg-white border border-slate-200 focus:outline-none focus:border-navy focus:ring-2 focus:ring-navy/10 text-sm shadow-sm"
+            className="ks-input"
+            style={{ width: '100%', backgroundColor: 'var(--color-surface-1)' }}
           />
         </form>
         {/* Only super admin sees role filter */}
@@ -150,7 +151,8 @@ export default function UsersPage() {
           <select
             value={roleFilter}
             onChange={e => { setRoleFilter(e.target.value); setPage(1) }}
-            className="px-4 py-3 rounded-xl bg-white border border-slate-200 text-sm focus:outline-none focus:border-navy"
+            className="ks-input"
+            style={{ minWidth: 160, backgroundColor: 'var(--color-surface-1)', cursor: 'pointer' }}
           >
             <option value="">All Roles</option>
             <option value="super_admin">Super Admin</option>
@@ -166,7 +168,8 @@ export default function UsersPage() {
           <select
             value={roleFilter}
             onChange={e => { setRoleFilter(e.target.value); setPage(1) }}
-            className="px-4 py-3 rounded-xl bg-white border border-slate-200 text-sm focus:outline-none focus:border-navy"
+            className="ks-input"
+            style={{ minWidth: 160, backgroundColor: 'var(--color-surface-1)', cursor: 'pointer' }}
           >
             <option value="">All (Clients + Vendors)</option>
             <option value="customer">Clients</option>
@@ -176,42 +179,46 @@ export default function UsersPage() {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+      <div className="card-template" style={{ padding: 0, overflow: 'hidden' }}>
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', textAlign: 'left', borderCollapse: 'collapse', fontSize: 13 }}>
             <thead>
-              <tr className="bg-slate-50 border-b border-slate-100">
-                <th className="text-left p-4 font-semibold text-slate-600">User</th>
-                <th className="text-left p-4 font-semibold text-slate-600">Role</th>
-                <th className="text-left p-4 font-semibold text-slate-600">Status</th>
-                <th className="text-left p-4 font-semibold text-slate-600">Joined</th>
-                <th className="text-right p-4 font-semibold text-slate-600">Actions</th>
+              <tr style={{ backgroundColor: 'var(--color-surface-2)', borderBottom: '1px solid var(--color-hairline-soft)' }}>
+                <th style={{ padding: 16, fontWeight: 600, color: 'var(--color-ink)' }}>User</th>
+                <th style={{ padding: 16, fontWeight: 600, color: 'var(--color-ink)' }}>Role</th>
+                <th style={{ padding: 16, fontWeight: 600, color: 'var(--color-ink)' }}>Status</th>
+                <th style={{ padding: 16, fontWeight: 600, color: 'var(--color-ink)' }}>Joined</th>
+                <th style={{ padding: 16, fontWeight: 600, color: 'var(--color-ink)', textAlign: 'right' }}>Actions</th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
                 Array.from({ length: 5 }).map((_, i) => (
-                  <tr key={i} className="border-b border-slate-50">
-                    <td colSpan={5} className="p-4">
-                      <div className="h-6 bg-slate-100 rounded animate-pulse" />
+                  <tr key={i} style={{ borderBottom: '1px solid var(--color-hairline-soft)' }}>
+                    <td colSpan={5} style={{ padding: 16 }}>
+                      <div className="skeleton" style={{ height: 24, borderRadius: 'var(--radius-sm)' }} />
                     </td>
                   </tr>
                 ))
               ) : users.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="p-8 text-center text-slate-400">No users found</td>
+                  <td colSpan={5} style={{ padding: 32, textAlign: 'center', color: 'var(--color-ink-muted)' }}>No users found</td>
                 </tr>
               ) : (
-                users.map(user => (
+                users.map(user => {
+                  const rc = roleColors[user.role] || { bg: 'var(--color-surface-2)', color: 'var(--color-ink)' }
+                  return (
                   <motion.tr
                     key={user.id}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors"
+                    style={{ borderBottom: '1px solid var(--color-hairline-soft)', transition: 'background-color var(--dur-fast)' }}
+                    onMouseEnter={e => e.currentTarget.style.backgroundColor = 'var(--color-surface-2)'}
+                    onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
                   >
-                    <td className="p-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-full bg-navy/10 flex items-center justify-center text-navy font-bold text-sm">
+                    <td style={{ padding: 16 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                        <div style={{ width: 36, height: 36, borderRadius: '50%', backgroundColor: 'rgba(0,153,255,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-accent-blue)', fontWeight: 700, flexShrink: 0 }}>
                           {user.fullname.charAt(0)}
                         </div>
                         <div>
@@ -220,41 +227,49 @@ export default function UsersPage() {
                               if (user.role === 'customer') setProfileUserId(user.id)
                               else if (user.role === 'vendor') setProfileVendorId(user.id)
                             }}
-                            className={`font-medium text-navy ${['customer','vendor'].includes(user.role) ? 'hover:text-accent hover:underline cursor-pointer' : 'cursor-default'}`}
+                            style={{ 
+                              background: 'none', border: 'none', padding: 0,
+                              fontWeight: 600, color: 'var(--color-ink)', 
+                              cursor: ['customer','vendor'].includes(user.role) ? 'pointer' : 'default',
+                              textDecoration: ['customer','vendor'].includes(user.role) ? 'underline transparent' : 'none',
+                              transition: 'text-decoration var(--dur-fast)'
+                            }}
+                            onMouseEnter={e => { if (['customer','vendor'].includes(user.role)) e.currentTarget.style.textDecorationColor = 'var(--color-accent-blue)' }}
+                            onMouseLeave={e => { if (['customer','vendor'].includes(user.role)) e.currentTarget.style.textDecorationColor = 'transparent' }}
                           >
                             {user.fullname}
                           </button>
-                          <p className="text-xs text-slate-400">{user.email}</p>
+                          <p style={{ fontSize: 11, color: 'var(--color-ink-muted)', marginTop: 2 }}>{user.email}</p>
                         </div>
                       </div>
                     </td>
-                    <td className="p-4">
-                      <span className={`inline-block px-2.5 py-1 rounded-full text-xs font-bold capitalize ${roleColors[user.role] || 'bg-slate-100 text-slate-600'}`}>
+                    <td style={{ padding: 16 }}>
+                      <span style={{ display: 'inline-block', padding: '4px 10px', borderRadius: 'var(--radius-pill)', fontSize: 10, fontWeight: 700, textTransform: 'capitalize', backgroundColor: rc.bg, color: rc.color }}>
                         {roleLabel(user)}
                       </span>
                       {user.role === 'pending_admin' && (
-                        <span className="ml-1.5 text-[10px] text-amber-500 font-bold">⏳ Pending</span>
+                        <span style={{ marginLeft: 6, fontSize: 10, color: '#F59E0B', fontWeight: 700 }}>⏳ Pending</span>
                       )}
                     </td>
-                    <td className="p-4">
-                      <span className={`inline-block w-2 h-2 rounded-full mr-2 ${user.status === 'active' ? 'bg-green-500' : user.status === 'blocked' ? 'bg-red-500' : 'bg-amber-500'}`} />
-                      <span className="text-sm capitalize">{user.status}</span>
+                    <td style={{ padding: 16 }}>
+                      <span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: '50%', marginRight: 8, backgroundColor: user.status === 'active' ? '#22C55E' : user.status === 'blocked' ? '#EF4444' : '#F59E0B' }} />
+                      <span style={{ textTransform: 'capitalize', color: 'var(--color-ink)' }}>{user.status}</span>
                     </td>
-                    <td className="p-4 text-slate-500 text-xs">
+                    <td style={{ padding: 16, color: 'var(--color-ink-muted)', fontSize: 12 }}>
                       {new Date(user.created_at).toLocaleDateString('en-IN')}
                     </td>
-                    <td className="p-4 text-right">
-                      <div className="flex items-center justify-end gap-2">
+                    <td style={{ padding: 16, textAlign: 'right' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 8 }}>
                         {/* Block/Unblock — super admin only */}
                         {isSuperAdmin && user.role !== 'super_admin' && (
                           <button
                             onClick={() => updateUser(user.id, { status: user.status === 'blocked' ? 'active' : 'blocked' })}
                             disabled={actionLoading === user.id}
-                            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
-                              user.status === 'blocked'
-                                ? 'bg-green-50 text-green-600 hover:bg-green-100'
-                                : 'bg-red-50 text-red-600 hover:bg-red-100'
-                            }`}
+                            style={{ 
+                              padding: '6px 12px', borderRadius: 'var(--radius-md)', fontSize: 11, fontWeight: 600, cursor: 'pointer', border: 'none', transition: 'background-color var(--dur-fast)',
+                              backgroundColor: user.status === 'blocked' ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.1)',
+                              color: user.status === 'blocked' ? '#22C55E' : '#EF4444'
+                            }}
                           >
                             {actionLoading === user.id ? '...' : user.status === 'blocked' ? 'Unblock' : 'Block'}
                           </button>
@@ -264,7 +279,7 @@ export default function UsersPage() {
                           <button
                             onClick={() => deleteUser(user.id, user.fullname)}
                             disabled={actionLoading === user.id}
-                            className="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer bg-red-500 text-white hover:bg-red-600"
+                            style={{ padding: '6px 12px', borderRadius: 'var(--radius-md)', fontSize: 11, fontWeight: 600, cursor: 'pointer', border: 'none', transition: 'background-color var(--dur-fast)', backgroundColor: '#EF4444', color: '#fff' }}
                           >
                             {actionLoading === user.id ? '...' : '🗑 Delete'}
                           </button>
@@ -296,7 +311,7 @@ export default function UsersPage() {
                               else if (val.startsWith('pillar_')) updateUser(user.id, { role: 'pillar_member', department: null, pillar_role: val.split('_')[1], designation: null })
                               else updateUser(user.id, { role: val, department: null, pillar_role: null, designation: null })
                             }}
-                            className="px-2 py-1.5 rounded-lg text-xs border border-slate-200 bg-white focus:outline-none cursor-pointer"
+                            style={{ padding: '4px 8px', borderRadius: 'var(--radius-md)', fontSize: 11, border: '1px solid var(--color-hairline)', backgroundColor: 'var(--color-surface-2)', color: 'var(--color-ink)', cursor: 'pointer' }}
                           >
                             <option value="customer">Customer</option>
                             <option value="vendor">Vendor</option>
@@ -326,7 +341,7 @@ export default function UsersPage() {
                               if (user.role === 'customer') setProfileUserId(user.id)
                               else if (user.role === 'vendor') setProfileVendorId(user.id)
                             }}
-                            className="px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-50 text-slate-600 hover:bg-slate-100 cursor-pointer"
+                            className="btn-secondary" style={{ padding: '6px 12px', fontSize: 11 }}
                           >
                             👁 View
                           </button>
@@ -334,30 +349,31 @@ export default function UsersPage() {
                       </div>
                     </td>
                   </motion.tr>
-                ))
-              )}
+                )
+              })
+            )}
             </tbody>
           </table>
         </div>
 
         {/* Pagination */}
         {total > 20 && (
-          <div className="flex items-center justify-between p-4 border-t border-slate-100">
-            <p className="text-sm text-slate-500">
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: 16, borderTop: '1px solid var(--color-hairline-soft)' }}>
+            <p style={{ fontSize: 13, color: 'var(--color-ink-muted)' }}>
               Page {page} of {Math.ceil(total / 20)}
             </p>
-            <div className="flex gap-2">
+            <div style={{ display: 'flex', gap: 8 }}>
               <button
                 onClick={() => setPage(p => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="px-3 py-1.5 rounded-lg text-sm bg-slate-100 text-slate-600 hover:bg-slate-200 disabled:opacity-50 cursor-pointer"
+                className="btn-secondary" style={{ padding: '6px 12px', fontSize: 12, cursor: page === 1 ? 'not-allowed' : 'pointer', opacity: page === 1 ? 0.5 : 1 }}
               >
                 ← Prev
               </button>
               <button
                 onClick={() => setPage(p => p + 1)}
                 disabled={page * 20 >= total}
-                className="px-3 py-1.5 rounded-lg text-sm bg-slate-100 text-slate-600 hover:bg-slate-200 disabled:opacity-50 cursor-pointer"
+                className="btn-secondary" style={{ padding: '6px 12px', fontSize: 12, cursor: page * 20 >= total ? 'not-allowed' : 'pointer', opacity: page * 20 >= total ? 0.5 : 1 }}
               >
                 Next →
               </button>

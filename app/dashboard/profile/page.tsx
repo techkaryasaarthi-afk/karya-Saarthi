@@ -2,6 +2,10 @@
 
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
+import { useRouter } from 'next/navigation'
+import Navbar from '@/components/Navbar'
+import DashboardSidebar from '@/components/DashboardSidebar'
+import { fetchWithAuth } from '@/lib/auth/fetchWithAuth'
 
 interface Profile {
   id: number
@@ -28,8 +32,12 @@ export default function CustomerProfilePage() {
   const [pwMsg, setPwMsg] = useState('')
   const [pwSaving, setPwSaving] = useState(false)
 
+  const router = useRouter()
+
   useEffect(() => {
-    fetch('/api/auth/profile').then(r => r.json()).then(d => {
+    fetchWithAuth('/api/auth/profile').then(async r => {
+      if (r.status === 401) { router.push('/login'); return }
+      const d = await r.json()
       if (d.profile) {
         setProfile(d.profile)
         setFullname(d.profile.fullname || '')
@@ -37,11 +45,11 @@ export default function CustomerProfilePage() {
       }
       setLoading(false)
     })
-  }, [])
+  }, [router])
 
   const saveProfile = async () => {
     setSaving(true); setMsg('')
-    const res = await fetch('/api/auth/profile', {
+    const res = await fetchWithAuth('/api/auth/profile', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ fullname, phone }),
@@ -56,7 +64,7 @@ export default function CustomerProfilePage() {
     setPwSaving(true); setPwMsg('')
     if (newPw !== confirmPw) { setPwMsg('❌ Passwords do not match'); setPwSaving(false); return }
     if (newPw.length < 6) { setPwMsg('❌ Password must be at least 6 characters'); setPwSaving(false); return }
-    const res = await fetch('/api/auth/change-password', {
+    const res = await fetchWithAuth('/api/auth/change-password', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ currentPassword: currentPw, newPassword: newPw }),
@@ -67,52 +75,51 @@ export default function CustomerProfilePage() {
     setPwSaving(false)
   }
 
-  if (loading) return <div className="min-h-screen bg-surface flex items-center justify-center"><div className="w-10 h-10 border-4 border-navy/20 border-t-accent rounded-full animate-spin" /></div>
+  if (loading) return <div style={{ minHeight: '100vh', backgroundColor: 'var(--color-canvas)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><div className="skeleton" style={{ width: 40, height: 40, borderRadius: '50%' }} /></div>
 
   return (
-    <div className="min-h-screen bg-surface">
-      <div className="max-w-2xl mx-auto px-4 py-8 pt-20">
-        <div className="flex items-center justify-between mb-6">
+    <>
+      <div style={{ maxWidth: 800 }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
           <div>
-            <h1 className="text-2xl font-bold text-navy font-heading">👤 My Profile</h1>
-            <p className="text-slate-500 text-sm mt-1">Manage your account settings</p>
+            <h1 className="text-display-md" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-ink)', marginBottom: 4 }}>👤 My Profile</h1>
+            <p className="text-body-sm" style={{ color: 'var(--color-ink-muted)' }}>Manage your account settings</p>
           </div>
-          <a href="/dashboard" className="px-4 py-2 rounded-xl text-sm font-medium text-navy hover:bg-navy/5 transition-colors">← Back to Dashboard</a>
         </div>
 
         {/* Profile Card */}
-        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 mb-6">
-          <h3 className="font-bold text-navy text-lg mb-4 font-heading">Profile Information</h3>
-          <div className="space-y-4">
+        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} className="card-template" style={{ padding: '24px', marginBottom: 24 }}>
+          <h3 className="text-headline" style={{ color: 'var(--color-ink)', marginBottom: 16 }}>Profile Information</h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             <div>
-              <label className="block text-sm font-medium text-slate-600 mb-1">Full Name</label>
-              <input value={fullname} onChange={e => setFullname(e.target.value)} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-accent/30 focus:border-accent outline-none" />
+              <label className="text-body-sm" style={{ color: 'var(--color-ink-muted)', display: 'block', marginBottom: 6 }}>Full Name</label>
+              <input value={fullname} onChange={e => setFullname(e.target.value)} className="ks-input" style={{ width: '100%' }} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-600 mb-1">Email</label>
-              <input value={profile?.email || ''} disabled className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-400 cursor-not-allowed" />
+              <label className="text-body-sm" style={{ color: 'var(--color-ink-muted)', display: 'block', marginBottom: 6 }}>Email</label>
+              <input value={profile?.email || ''} disabled className="ks-input" style={{ width: '100%', backgroundColor: 'var(--color-surface-2)', color: 'var(--color-ink-muted)', cursor: 'not-allowed' }} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-600 mb-1">Phone</label>
-              <input value={phone} onChange={e => setPhone(e.target.value)} placeholder="+91 XXXXX XXXXX" className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-accent/30 focus:border-accent outline-none" />
+              <label className="text-body-sm" style={{ color: 'var(--color-ink-muted)', display: 'block', marginBottom: 6 }}>Phone</label>
+              <input value={phone} onChange={e => setPhone(e.target.value)} placeholder="+91 XXXXX XXXXX" className="ks-input" style={{ width: '100%' }} />
             </div>
-            <div className="flex items-center gap-3 pt-2">
-              <button onClick={saveProfile} disabled={saving} className="px-6 py-2.5 rounded-xl bg-accent text-white font-bold text-sm hover:bg-accent-dark disabled:opacity-50 shadow-lg shadow-accent/25 cursor-pointer">
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 8 }}>
+              <button onClick={saveProfile} disabled={saving} className="btn-primary" style={{ cursor: 'pointer', opacity: saving ? 0.6 : 1 }}>
                 {saving ? 'Saving...' : '💾 Save Changes'}
               </button>
-              {msg && <span className="text-sm">{msg}</span>}
+              {msg && <span className="text-body-sm" style={{ color: msg.includes('❌') ? '#f87171' : 'var(--color-semantic-success)' }}>{msg}</span>}
             </div>
           </div>
         </motion.div>
 
         {/* Slack Connection */}
-        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 mb-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="font-bold text-navy text-lg mb-1 font-heading">
-                <span className="mr-2">💬</span> Connect with Slack
+        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="card-template" style={{ padding: '24px', marginBottom: 24 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
+            <div style={{ flex: 1, minWidth: 200 }}>
+              <h3 className="text-headline" style={{ color: 'var(--color-ink)', marginBottom: 4 }}>
+                <span style={{ marginRight: 8 }}>💬</span> Connect with Slack
               </h3>
-              <p className="text-slate-500 text-sm">
+              <p className="text-body-sm" style={{ color: 'var(--color-ink-muted)' }}>
                 {profile?.slack_connected 
                   ? 'Your account is successfully linked to Slack for notifications and tools.'
                   : 'Link your Slack account to receive direct project updates and manage tasks without leaving Slack.'}
@@ -120,13 +127,13 @@ export default function CustomerProfilePage() {
             </div>
             <div>
               {profile?.slack_connected ? (
-                <div className="px-4 py-2 bg-emerald-50 text-emerald-600 border border-emerald-200 rounded-xl font-bold text-sm flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500"></span> Connected
+                <div style={{ padding: '8px 16px', backgroundColor: '#0d1f17', color: '#22c55e', borderRadius: 'var(--radius-pill)', fontSize: 13, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: '#22c55e' }}></span> Connected
                 </div>
               ) : (
                 <button
                   onClick={() => window.location.href = `/api/slack/auth?userId=${profile?.id}`}
-                  className="px-6 py-2.5 rounded-xl bg-[#4A154B] text-white font-bold text-sm hover:bg-[#3E113F] transition-colors shadow-lg shadow-[#4A154B]/25"
+                  style={{ padding: '10px 20px', borderRadius: 'var(--radius-pill)', backgroundColor: '#4A154B', color: '#fff', border: 'none', fontWeight: 600, fontSize: 14, cursor: 'pointer' }}
                 >
                   Connect Slack Workspace
                 </button>
@@ -136,39 +143,32 @@ export default function CustomerProfilePage() {
         </motion.div>
 
         {/* Password Change */}
-        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 mb-6">
-          <h3 className="font-bold text-navy text-lg mb-4 font-heading">🔐 Change Password</h3>
-          <div className="space-y-4">
+        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="card-template" style={{ padding: '24px', marginBottom: 24 }}>
+          <h3 className="text-headline" style={{ color: 'var(--color-ink)', marginBottom: 16 }}>🔐 Change Password</h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             <div>
-              <label className="block text-sm font-medium text-slate-600 mb-1">Current Password</label>
-              <input type="password" value={currentPw} onChange={e => setCurrentPw(e.target.value)} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-accent/30 focus:border-accent outline-none" />
+              <label className="text-body-sm" style={{ color: 'var(--color-ink-muted)', display: 'block', marginBottom: 6 }}>Current Password</label>
+              <input type="password" value={currentPw} onChange={e => setCurrentPw(e.target.value)} className="ks-input" style={{ width: '100%' }} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-600 mb-1">New Password</label>
-              <input type="password" value={newPw} onChange={e => setNewPw(e.target.value)} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-accent/30 focus:border-accent outline-none" />
+              <label className="text-body-sm" style={{ color: 'var(--color-ink-muted)', display: 'block', marginBottom: 6 }}>New Password</label>
+              <input type="password" value={newPw} onChange={e => setNewPw(e.target.value)} className="ks-input" style={{ width: '100%' }} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-600 mb-1">Confirm New Password</label>
-              <input type="password" value={confirmPw} onChange={e => setConfirmPw(e.target.value)} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-accent/30 focus:border-accent outline-none" />
+              <label className="text-body-sm" style={{ color: 'var(--color-ink-muted)', display: 'block', marginBottom: 6 }}>Confirm New Password</label>
+              <input type="password" value={confirmPw} onChange={e => setConfirmPw(e.target.value)} className="ks-input" style={{ width: '100%' }} />
             </div>
-            <div className="flex items-center gap-3 pt-2">
-              <button onClick={changePassword} disabled={pwSaving} className="px-6 py-2.5 rounded-xl bg-navy text-white font-bold text-sm hover:bg-navy-dark disabled:opacity-50 shadow-lg shadow-navy/25 cursor-pointer">
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 8 }}>
+              <button onClick={changePassword} disabled={pwSaving} className="btn-secondary" style={{ cursor: 'pointer', opacity: pwSaving ? 0.6 : 1 }}>
                 {pwSaving ? 'Changing...' : '🔑 Change Password'}
               </button>
-              {pwMsg && <span className="text-sm">{pwMsg}</span>}
+              {pwMsg && <span className="text-body-sm" style={{ color: pwMsg.includes('❌') ? '#f87171' : 'var(--color-semantic-success)' }}>{pwMsg}</span>}
             </div>
           </div>
         </motion.div>
 
-        {/* Account Info */}
-        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
-          <h3 className="font-bold text-navy text-lg mb-4 font-heading">ℹ️ Account Info</h3>
-          <div className="grid grid-cols-2 gap-4 text-sm">
-            <div><span className="text-slate-400">Role</span><p className="font-semibold text-navy capitalize">{profile?.role}</p></div>
-            <div><span className="text-slate-400">Member Since</span><p className="font-semibold text-navy">{profile ? new Date(profile.created_at).toLocaleDateString('en-IN') : '-'}</p></div>
-          </div>
-        </motion.div>
+
       </div>
-    </div>
+    </>
   )
 }

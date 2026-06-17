@@ -1,7 +1,7 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from '@/lib/motion'
 
 interface Announcement {
   id: number
@@ -15,10 +15,10 @@ interface Announcement {
 }
 
 const TYPE_CONFIG = {
-  info: { label: 'Info', icon: 'ℹ️', color: '#3B82F6', bg: '#DBEAFE' },
-  success: { label: 'Success', icon: '✅', color: '#10B981', bg: '#D1FAE5' },
-  warning: { label: 'Warning', icon: '⚠️', color: '#F59E0B', bg: '#FEF3C7' },
-  urgent: { label: 'Urgent', icon: '🚨', color: '#EF4444', bg: '#FEE2E2' },
+  info: { label: 'Info', icon: 'ℹ️', color: '#3B82F6', bg: 'rgba(59,130,246,0.15)' },
+  success: { label: 'Success', icon: '✅', color: '#10B981', bg: 'rgba(16,185,129,0.15)' },
+  warning: { label: 'Warning', icon: '⚠️', color: '#F59E0B', bg: 'rgba(245,158,11,0.15)' },
+  urgent: { label: 'Urgent', icon: '🚨', color: '#EF4444', bg: 'rgba(239,68,68,0.15)' },
 }
 
 export default function AnnouncementsPage() {
@@ -71,7 +71,7 @@ export default function AnnouncementsPage() {
         </div>
         <button onClick={() => setShowCreate(v => !v)}
           className="px-4 py-2.5 rounded-xl font-bold text-white text-sm cursor-pointer"
-          style={{ background: '#FF6B35' }}>
+          style={{ background: '#ff7a3d' }}>
           + New Announcement
         </button>
       </div>
@@ -121,7 +121,7 @@ export default function AnnouncementsPage() {
               <div className="flex gap-3">
                 <button type="submit" disabled={saving}
                   className="px-6 py-2.5 rounded-xl font-bold text-white text-sm cursor-pointer disabled:opacity-60"
-                  style={{ background: '#FF6B35' }}>
+                  style={{ background: '#ff7a3d' }}>
                   {saving ? '⏳ Publishing...' : '📣 Publish'}
                 </button>
                 <button type="button" onClick={() => setShowCreate(false)}
@@ -188,3 +188,4 @@ export default function AnnouncementsPage() {
     </div>
   )
 }
+

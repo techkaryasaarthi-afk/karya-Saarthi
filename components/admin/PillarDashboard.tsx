@@ -1,7 +1,7 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useState } from 'react'
-import { motion } from 'framer-motion'
+import { motion } from '@/lib/motion'
 import { usePathname } from 'next/navigation'
 
 const PILLAR_CONFIGS = {
@@ -9,7 +9,7 @@ const PILLAR_CONFIGS = {
     name: 'Digital Saarthi',
     icon: '💻',
     color: '#8B5CF6',
-    bg: '#EDE9FE',
+    bg: 'rgba(139,92,246,0.15)',
     description: 'Content creation, web development, SEO, and social media management',
     kpis: [
       { label: 'Active Websites', icon: '🌐', key: 'sites' },
@@ -33,7 +33,7 @@ const PILLAR_CONFIGS = {
     name: 'Government Saarthi',
     icon: '🏛️',
     color: '#10B981',
-    bg: '#D1FAE5',
+    bg: 'rgba(16,185,129,0.15)',
     description: 'Government scheme advisory, tender documentation, and compliance management',
     kpis: [
       { label: 'Active Tenders', icon: '📋', key: 'tenders' },
@@ -45,7 +45,7 @@ const PILLAR_CONFIGS = {
     name: 'Market Saarthi',
     icon: '🗺️',
     color: '#F59E0B',
-    bg: '#FEF3C7',
+    bg: 'rgba(245,158,11,0.15)',
     description: 'Field agents, hyperlocal marketing, territory management, and offline lead capture',
     kpis: [
       { label: 'Field Agents', icon: '🚶', key: 'agents' },
@@ -137,3 +137,4 @@ export default function PillarDashboard({ pillar }: { pillar: PillarKey }) {
     </div>
   )
 }
+

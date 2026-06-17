@@ -1,7 +1,7 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useState } from 'react'
-import { motion } from 'framer-motion'
+import { motion } from '@/lib/motion'
 import Link from 'next/link'
 
 interface Blog {
@@ -118,7 +118,7 @@ export default function BlogsPage() {
                         </button>
                         <Link
                           href={`/admin/blogs/${blog.id}/edit`}
-                          className="px-3 py-1.5 rounded-lg text-xs font-medium bg-blue-50 text-blue-600 hover:bg-blue-100"
+                          className="px-3 py-1.5 rounded-lg text-xs font-medium bg-[rgba(0,153,255,0.1)] text-[#60b4ff] hover:bg-[rgba(0,153,255,0.2)]"
                         >
                           Edit
                         </Link>
@@ -141,3 +141,4 @@ export default function BlogsPage() {
     </div>
   )
 }
+

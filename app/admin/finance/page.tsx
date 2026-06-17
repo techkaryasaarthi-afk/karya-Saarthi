@@ -1,7 +1,7 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from '@/lib/motion'
 import InterdeptTaskInbox from '@/components/admin/InterdeptTaskInbox'
 
 interface Invoice {
@@ -25,11 +25,11 @@ interface Summary {
 }
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
-  draft: { label: 'Draft', color: '#6B7280', bg: '#F3F4F6' },
-  sent: { label: 'Sent', color: '#3B82F6', bg: '#DBEAFE' },
-  paid: { label: 'Paid', color: '#10B981', bg: '#D1FAE5' },
-  overdue: { label: 'Overdue', color: '#EF4444', bg: '#FEE2E2' },
-  cancelled: { label: 'Cancelled', color: '#9CA3AF', bg: '#F3F4F6' },
+  draft: { label: 'Draft', color: '#6B7280', bg: 'rgba(255,255,255,0.08)' },
+  sent: { label: 'Sent', color: '#3B82F6', bg: 'rgba(59,130,246,0.15)' },
+  paid: { label: 'Paid', color: '#10B981', bg: 'rgba(16,185,129,0.15)' },
+  overdue: { label: 'Overdue', color: '#EF4444', bg: 'rgba(239,68,68,0.15)' },
+  cancelled: { label: 'Cancelled', color: '#9CA3AF', bg: 'rgba(255,255,255,0.08)' },
 }
 
 function CreateInvoiceModal({ onClose, onCreated }: { onClose: () => void; onCreated: () => void }) {
@@ -64,7 +64,7 @@ function CreateInvoiceModal({ onClose, onCreated }: { onClose: () => void; onCre
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
       className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4"
       onClick={onClose}>
-      <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} onClick={e => e.stopPropagation()}
+      <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} onClick={(e: React.MouseEvent) => e.stopPropagation()}
         className="bg-white rounded-3xl p-6 w-full max-w-2xl shadow-2xl max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-5">
           <h3 className="font-bold text-navy font-heading text-lg">🧾 Create Invoice</h3>
@@ -120,7 +120,7 @@ function CreateInvoiceModal({ onClose, onCreated }: { onClose: () => void; onCre
 
           <button type="submit" disabled={saving}
             className="w-full py-3 rounded-xl font-bold text-white text-sm cursor-pointer disabled:opacity-60"
-            style={{ background: '#FF6B35' }}>
+            style={{ background: '#ff7a3d' }}>
             {saving ? '⏳ Creating...' : '🧾 Create Invoice (Draft)'}
           </button>
         </form>
@@ -168,7 +168,7 @@ export default function FinancePage() {
         </div>
         <button onClick={() => setShowCreate(true)}
           className="px-4 py-2.5 rounded-xl font-bold text-white text-sm cursor-pointer shadow-lg"
-          style={{ background: '#FF6B35' }}>
+          style={{ background: '#ff7a3d' }}>
           + New Invoice
         </button>
       </div>
@@ -293,3 +293,4 @@ export default function FinancePage() {
     </div>
   )
 }
+

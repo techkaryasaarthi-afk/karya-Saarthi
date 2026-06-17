@@ -1,7 +1,7 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from '@/lib/motion'
 
 // ─── Types ─────────────────────────────────────────────────────────────────
 interface CompanyInfo {
@@ -302,7 +302,7 @@ export default function AboutPageManager() {
               <FieldInput label="Our Story" value={company.story} onChange={v => setCompany(p => ({ ...p, story: v }))} multiline rows={5} />
               <button onClick={saveCompany} disabled={savingCompany}
                 className="w-full py-3 rounded-xl font-bold text-white text-sm cursor-pointer disabled:opacity-60 hover:opacity-90 transition-opacity"
-                style={{ background: '#1B3A6B' }}>
+                style={{ background: 'var(--color-accent-blue)' }}>
                 {savingCompany ? '⏳ Saving...' : '💾 Save Company Info'}
               </button>
             </motion.div>
@@ -314,7 +314,7 @@ export default function AboutPageManager() {
               <div className="flex justify-between items-center">
                 <p className="text-sm text-slate-500">{data.timeline.length} milestone events · chronological order</p>
                 <button onClick={() => openTimelineForm()}
-                  className="px-4 py-2 rounded-xl font-bold text-white text-sm cursor-pointer hover:opacity-90" style={{ background: '#FF6B35' }}>
+                  className="px-4 py-2 rounded-xl font-bold text-white text-sm cursor-pointer hover:opacity-90" style={{ background: '#ff7a3d' }}>
                   + Add Milestone
                 </button>
               </div>
@@ -481,7 +481,7 @@ export default function AboutPageManager() {
                         <button onClick={() => openMemberForm(m)}
                           className="flex-1 py-1.5 rounded-lg bg-blue-50 text-blue-600 text-xs font-bold cursor-pointer hover:bg-blue-100 transition-colors">✏️ Edit</button>
                         <button onClick={() => toggleMemberActive(m)}
-                          className={`px-3 py-1.5 rounded-lg text-xs font-bold cursor-pointer transition-colors ${m.is_active ? 'bg-amber-50 text-amber-600 hover:bg-amber-100' : 'bg-green-50 text-green-600 hover:bg-green-100'}`}>
+                          className={`px-3 py-1.5 rounded-lg text-xs font-bold cursor-pointer transition-colors ${m.is_active ? 'bg-[rgba(245,158,11,0.1)] text-[#fbbf24] hover:bg-[rgba(245,158,11,0.2)]' : 'bg-[rgba(16,185,129,0.1)] text-[#34d399] hover:bg-[rgba(16,185,129,0.2)]'}`}>
                           {m.is_active ? '👁 Hide' : '✅ Show'}
                         </button>
                         <button onClick={() => deleteMember(m.id, m.name)}
@@ -575,3 +575,4 @@ export default function AboutPageManager() {
     </div>
   )
 }
+

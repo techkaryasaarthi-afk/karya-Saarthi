@@ -77,7 +77,7 @@ export default function EventsClient({ initialEvents }: { initialEvents: Event[]
   )
 
   return (
-    <div className="min-h-screen bg-slate-50 pt-20">
+    <div className="min-h-screen bg-[var(--color-canvas)] pt-20">
 
       {/* ── Hero ── */}
       <div className="relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1B3A6B 60%, #1e3a5f 100%)' }}>
@@ -117,7 +117,7 @@ export default function EventsClient({ initialEvents }: { initialEvents: Event[]
           {/* Search bar */}
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25 }} className="max-w-lg mx-auto relative">
             <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search events, hackathons, podcasts..."
-              className="w-full px-5 py-3.5 rounded-2xl bg-white/10 border border-white/20 text-white placeholder-white/30 focus:outline-none focus:border-white/50 text-sm backdrop-blur-sm" />
+              className="w-full px-5 py-3.5 rounded-2xl bg-[var(--color-surface-1)]/10 border border-white/20 text-white placeholder-white/30 focus:outline-none focus:border-white/50 text-sm backdrop-blur-sm" />
             <span className="absolute right-4 top-1/2 -translate-y-1/2 text-white/30">🔍</span>
           </motion.div>
         </div>
@@ -181,7 +181,7 @@ export default function EventsClient({ initialEvents }: { initialEvents: Event[]
               const cfg = t === 'all' ? { icon: '🏷️', label: 'All Types' } : TYPE_CONFIG[t]
               return (
                 <button key={t} onClick={() => setTypeFilter(t)}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer capitalize ${typeFilter === t ? 'text-white shadow-md' : 'bg-white text-slate-600 border border-slate-200 hover:border-navy'}`}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer capitalize ${typeFilter === t ? 'text-white shadow-md' : 'bg-[var(--color-surface-1)] text-[var(--color-ink)] border border-[var(--color-hairline)] hover:border-[var(--color-accent-blue)]'}`}
                   style={typeFilter === t ? { background: t === 'all' ? '#1B3A6B' : TYPE_CONFIG[t]?.color } : {}}>
                   {cfg.icon} {cfg.label}
                 </button>
@@ -191,7 +191,7 @@ export default function EventsClient({ initialEvents }: { initialEvents: Event[]
           <div className="ml-auto flex gap-2">
             {(['upcoming', 'live', 'completed', 'all'] as const).map(s => (
               <button key={s} onClick={() => setStatusFilter(s)}
-                className={`px-3 py-1.5 rounded-full text-xs font-semibold capitalize transition-all cursor-pointer ${statusFilter === s ? 'bg-navy text-white' : 'bg-white text-slate-500 border border-slate-200 hover:border-navy'}`}>
+                className={`px-3 py-1.5 rounded-full text-xs font-semibold capitalize transition-all cursor-pointer ${statusFilter === s ? 'bg-[var(--color-surface-2)] text-white' : 'bg-[var(--color-surface-1)] text-[var(--color-ink-muted)] border border-[var(--color-hairline)] hover:border-[var(--color-accent-blue)]'}`}>
                 {s === 'all' ? 'All Status' : s}
               </button>
             ))}
@@ -207,11 +207,11 @@ export default function EventsClient({ initialEvents }: { initialEvents: Event[]
               { label: 'Free Events', n: initialEvents.filter(e => e.registration_fee === 0 && e.status === 'upcoming').length, icon: '🎁', c: '#10B981' },
               { label: 'Online', n: initialEvents.filter(e => e.is_online && e.status === 'upcoming').length, icon: '🌐', c: '#8B5CF6' },
             ].map(s => (
-              <div key={s.label} className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm flex items-center gap-3">
+              <div key={s.label} className="bg-[var(--color-surface-1)] rounded-2xl p-4 border border-[var(--color-hairline-soft)] shadow-sm flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xl" style={{ background: `${s.c}15` }}>{s.icon}</div>
                 <div>
                   <p className="text-xl font-extrabold" style={{ color: s.c }}>{s.n}</p>
-                  <p className="text-xs text-slate-400">{s.label}</p>
+                  <p className="text-xs text-[var(--color-ink-muted)]">{s.label}</p>
                 </div>
               </div>
             ))}
@@ -220,10 +220,10 @@ export default function EventsClient({ initialEvents }: { initialEvents: Event[]
 
         {/* Event Grid */}
         {events.length === 0 ? (
-          <div className="text-center py-20 bg-white rounded-2xl border border-slate-100 shadow-sm">
+          <div className="text-center py-20 bg-[var(--color-surface-1)] rounded-2xl border border-[var(--color-hairline-soft)] shadow-sm">
             <span className="text-5xl block mb-4">🗓️</span>
-            <p className="text-slate-500 font-semibold mb-1">No events found</p>
-            <p className="text-slate-400 text-sm">Try adjusting your filters or search term</p>
+            <p className="text-[var(--color-ink-muted)] font-semibold mb-1">No events found</p>
+            <p className="text-[var(--color-ink-muted)] text-sm">Try adjusting your filters or search term</p>
             <button onClick={() => { setTypeFilter('all'); setStatusFilter('upcoming'); setSearch('') }}
               className="mt-6 px-5 py-2.5 rounded-xl text-sm font-bold text-white cursor-pointer" style={{ background: '#1B3A6B' }}>
               Clear Filters
@@ -241,7 +241,7 @@ export default function EventsClient({ initialEvents }: { initialEvents: Event[]
 
                 return (
                   <motion.div key={event.id} initial={{ opacity: 0, y: 25 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
-                    className="bg-white rounded-2xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 group flex flex-col">
+                    className="bg-[var(--color-surface-1)] rounded-2xl overflow-hidden border border-[var(--color-hairline-soft)] shadow-sm hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 group flex flex-col">
 
                     {/* Card header */}
                     <div className={`h-44 flex items-center justify-center relative overflow-hidden bg-gradient-to-br ${typeCfg.grad}`}>
@@ -250,7 +250,7 @@ export default function EventsClient({ initialEvents }: { initialEvents: Event[]
 
                       {/* Top-left badges */}
                       <div className="absolute top-3 left-3 flex flex-col gap-1.5">
-                        <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-white/20 backdrop-blur-sm text-white border border-white/20 capitalize">
+                        <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-[var(--color-surface-1)]/20 backdrop-blur-sm text-white border border-white/20 capitalize">
                           {typeCfg.label}
                         </span>
                         {event.status === 'live' && (
@@ -266,7 +266,7 @@ export default function EventsClient({ initialEvents }: { initialEvents: Event[]
                         {event.registration_fee === 0 ? (
                           <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-green-500 text-white">FREE</span>
                         ) : (
-                          <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-white/20 backdrop-blur-sm text-white border border-white/20">₹{event.registration_fee}</span>
+                          <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-[var(--color-surface-1)]/20 backdrop-blur-sm text-white border border-white/20">₹{event.registration_fee}</span>
                         )}
                       </div>
 
@@ -285,37 +285,37 @@ export default function EventsClient({ initialEvents }: { initialEvents: Event[]
 
                     <div className="p-5 flex flex-col flex-1">
                       {/* Date + location */}
-                      <div className="flex items-center gap-3 text-xs text-slate-400 mb-2">
+                      <div className="flex items-center gap-3 text-xs text-[var(--color-ink-muted)] mb-2">
                         <span>📅 {fmt(event.event_date)}</span>
                         <span>🕐 {fmtTime(event.event_date)}</span>
                       </div>
                       {event.venue ? (
-                        <p className="text-xs text-slate-400 mb-2">📍 {event.venue}</p>
+                        <p className="text-xs text-[var(--color-ink-muted)] mb-2">📍 {event.venue}</p>
                       ) : (
                         <p className="text-xs text-green-500 mb-2">🌐 Online Event</p>
                       )}
 
-                      <h3 className="font-bold text-navy text-sm font-heading mb-2 line-clamp-2 group-hover:text-accent transition-colors flex-1">
+                      <h3 className="font-bold text-[var(--color-ink)] text-sm font-heading mb-2 line-clamp-2 group-hover:text-[var(--color-accent-blue)] transition-colors flex-1">
                         {event.title}
                       </h3>
-                      <p className="text-slate-400 text-xs mb-3 line-clamp-2">{event.short_description}</p>
+                      <p className="text-[var(--color-ink-muted)] text-xs mb-3 line-clamp-2">{event.short_description}</p>
 
                       {/* Tags */}
                       {event.tags.length > 0 && (
                         <div className="flex flex-wrap gap-1 mb-3">
                           {event.tags.slice(0, 3).map(tag => (
-                            <span key={tag} className="px-2 py-0.5 rounded-full text-[10px] bg-slate-100 text-slate-500">#{tag}</span>
+                            <span key={tag} className="px-2 py-0.5 rounded-full text-[10px] bg-[var(--color-surface-2)] text-[var(--color-ink-muted)]">#{tag}</span>
                           ))}
                         </div>
                       )}
 
                       {/* Footer */}
-                      <div className="flex items-center justify-between pt-3 border-t border-slate-50 mt-auto">
+                      <div className="flex items-center justify-between pt-3 border-t border-[var(--color-hairline-soft)] mt-auto">
                         <div>
                           {event.max_participants && (
-                            <p className="text-[10px] text-slate-400">👥 Max {event.max_participants} seats</p>
+                            <p className="text-[10px] text-[var(--color-ink-muted)]">👥 Max {event.max_participants} seats</p>
                           )}
-                          <span className={`text-sm font-bold ${event.registration_fee === 0 ? 'text-green-600' : 'text-navy'}`}>
+                          <span className={`text-sm font-bold ${event.registration_fee === 0 ? 'text-green-600' : 'text-[var(--color-ink)]'}`}>
                             {event.registration_fee === 0 ? 'FREE' : `₹${event.registration_fee}`}
                           </span>
                         </div>
@@ -326,7 +326,7 @@ export default function EventsClient({ initialEvents }: { initialEvents: Event[]
                             Register →
                           </Link>
                         ) : (
-                          <span className="px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-400">Ended</span>
+                          <span className="px-4 py-2 rounded-xl text-xs font-bold bg-[var(--color-surface-2)] text-[var(--color-ink-muted)]">Ended</span>
                         )}
                       </div>
                     </div>
@@ -351,8 +351,8 @@ export default function EventsClient({ initialEvents }: { initialEvents: Event[]
                 style={{ background: `${item.color}10`, color: item.color }}>
                 <span className="text-4xl">{item.icon}</span>
                 <div>
-                  <p className="font-bold text-navy group-hover:text-current transition-colors">{item.label}</p>
-                  <p className="text-slate-400 text-xs">{item.desc}</p>
+                  <p className="font-bold text-[var(--color-ink)] group-hover:text-current transition-colors">{item.label}</p>
+                  <p className="text-[var(--color-ink-muted)] text-xs">{item.desc}</p>
                 </div>
                 <span className="ml-auto text-xl opacity-0 group-hover:opacity-100 transition-opacity">→</span>
               </Link>

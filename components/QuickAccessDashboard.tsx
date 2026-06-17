@@ -1,371 +1,322 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
 import Link from 'next/link'
 import Image from 'next/image'
 
-// ─── Shared Wrapper for Widgets ────────────────────────────────────────────────
-const WidgetWrapper = ({ children, delay = 0 }: { children: React.ReactNode, delay?: number }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true }}
-    transition={{ delay, duration: 0.5 }}
-    className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm hover:shadow-xl transition-shadow flex flex-col relative overflow-hidden"
+// ─── Dark-themed Widget Wrapper ────────────────────────────────────────────────
+const W = ({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) => (
+  <div
+    style={{
+      backgroundColor: 'var(--color-surface-1)',
+      border: '1px solid var(--color-hairline-soft)',
+      borderRadius: 'var(--radius-lg)',
+      padding: 24,
+      display: 'flex',
+      flexDirection: 'column',
+      position: 'relative',
+      overflow: 'hidden',
+      opacity: 0,
+      animation: `qad-fade 0.55s var(--ease-out) ${delay}ms forwards`,
+      transition: 'border-color 0.2s, box-shadow 0.2s',
+    }}
+    className="qad-widget"
   >
     {children}
-  </motion.div>
+  </div>
 )
+
+const WidgetTitle = ({ icon, label, href, linkLabel }: { icon: string; label: string; href?: string; linkLabel?: string }) => (
+  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+      <span style={{
+        width: 32, height: 32, borderRadius: 'var(--radius-md)',
+        backgroundColor: 'var(--color-surface-2)',
+        border: '1px solid var(--color-hairline-soft)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        fontSize: 15, flexShrink: 0,
+      }}>{icon}</span>
+      <h3 style={{ fontSize: 13, fontWeight: 700, color: 'var(--color-ink)', fontFamily: 'var(--font-display)' }}>{label}</h3>
+    </div>
+    {href && (
+      <Link href={href} style={{ fontSize: 10, fontWeight: 700, color: 'var(--color-ink-muted)', textDecoration: 'none', letterSpacing: '0.04em' }}>
+        {linkLabel || 'View All →'}
+      </Link>
+    )}
+  </div>
+)
+
+const skRow = { height: 14, borderRadius: 6, backgroundColor: 'var(--color-surface-2)', marginBottom: 8 }
 
 // ─── 1. Podcast Widget ─────────────────────────────────────────────────────────
 const PodcastWidget = () => {
   const [data, setData] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
   useEffect(() => {
-    fetch('/api/widgets/frontend?type=podcast').then(r => r.json()).then(setData)
+    fetch('/api/widgets/frontend?type=podcast').then(r => r.json()).then(d => { setData(d.title ? d : null); setLoading(false) }).catch(() => setLoading(false))
   }, [])
 
-  if (!data) return <WidgetWrapper><div className="animate-pulse h-48 bg-slate-100 rounded-xl" /></WidgetWrapper>
+  if (!loading && !data) return null;
 
   return (
-    <WidgetWrapper delay={0}>
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <span className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 text-sm">🎙️</span>
-          <h3 className="font-bold text-navy">Latest Podcast</h3>
+    <W delay={0}>
+      <WidgetTitle icon="🎙️" label="Latest Podcast" href="/podcasts" />
+      {!data ? (
+        <div style={{ flex: 1 }}>
+          <div style={skRow} className="skeleton" />
+          <div style={{ ...skRow, width: '70%' }} className="skeleton" />
+          <div style={{ height: 60, borderRadius: 10, marginTop: 16 }} className="skeleton" />
         </div>
-        <Link href="/podcasts" className="text-[10px] font-bold text-purple-600 hover:text-purple-800 transition-colors">View All →</Link>
-      </div>
-      <div className="flex-1">
-        <p className="text-xl font-bold text-navy font-heading leading-tight">{data.title}</p>
-        <p className="text-sm text-slate-500 mt-2">Guest: <span className="font-semibold">{data.guest}</span></p>
-        <p className="text-xs text-slate-400 mt-1">{new Date(data.date).toLocaleDateString('en-IN')}</p>
-        {/* Mock Audio Visualizer UI — deterministic heights to avoid SSR hydration mismatch */}
-        <div className="my-4 h-16 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 gap-1 overflow-hidden">
-          {Array.from({ length: 20 }).map((_, i) => {
-             const h = 20 + ((i * 37 + 13) % 80) // deterministic pseudo-random height
-             return <div key={i} className="w-1.5 bg-purple-200 rounded-full animate-pulse" style={{ height: `${h}%`, animationDelay: `${i * 0.1}s` }} />
-          })}
+      ) : (
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+          <p style={{ fontSize: 15, fontWeight: 700, color: 'var(--color-ink)', lineHeight: 1.35, marginBottom: 6, fontFamily: 'var(--font-display)' }}>{data.title}</p>
+          <p style={{ fontSize: 12, color: 'var(--color-ink-muted)' }}>Guest: <span style={{ fontWeight: 600, color: 'var(--color-ink)' }}>{data.guest}</span></p>
+          <p style={{ fontSize: 11, color: 'var(--color-ink-muted)', marginTop: 2, marginBottom: 14 }}>{new Date(data.date).toLocaleDateString('en-IN')}</p>
+          {/* Audio waveform visualiser */}
+          <div style={{
+            height: 56, borderRadius: 10,
+            backgroundColor: 'var(--color-surface-2)',
+            border: '1px solid var(--color-hairline-soft)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            gap: 3, padding: '0 12px', marginBottom: 16, overflow: 'hidden',
+          }}>
+            {Array.from({ length: 24 }).map((_, i) => {
+              const h = 20 + ((i * 37 + 13) % 80)
+              return (
+                <div key={i} style={{
+                  width: 3, borderRadius: 99,
+                  height: `${h}%`,
+                  backgroundColor: 'rgba(106,76,245,0.5)',
+                  animation: `wave-bar 1.2s ease-in-out infinite alternate`,
+                  animationDelay: `${i * 0.05}s`,
+                }} />
+              )
+            })}
+          </div>
+          <div style={{ marginTop: 'auto', display: 'flex', gap: 8 }}>
+            <a href={data.listen_link} target="_blank" rel="noreferrer" style={{
+              flex: 1, textAlign: 'center', padding: '9px 0', borderRadius: 'var(--radius-md)',
+              fontSize: 11, fontWeight: 700, backgroundColor: '#6a4cf5', color: '#fff', textDecoration: 'none',
+            }}>Listen Full</a>
+            <a href={data.subscribe_youtube} target="_blank" rel="noreferrer" style={{
+              flex: 1, textAlign: 'center', padding: '9px 0', borderRadius: 'var(--radius-md)',
+              fontSize: 11, fontWeight: 700,
+              backgroundColor: 'rgba(239,68,68,0.12)', color: '#ef4444',
+              border: '1px solid rgba(239,68,68,0.2)', textDecoration: 'none',
+            }}>📺 Subscribe</a>
+          </div>
         </div>
-      </div>
-      <div className="mt-auto pt-4 flex gap-2 border-t border-slate-50">
-        <a href={data.listen_link} target="_blank" rel="noreferrer" className="flex-1 text-center py-2 bg-navy text-white text-xs font-bold rounded-xl hover:bg-navy/90 transition-colors">Listen Full</a>
-        <a href={data.subscribe_youtube} target="_blank" rel="noreferrer" className="flex-1 text-center py-2 bg-red-50 text-red-600 text-xs font-bold rounded-xl hover:bg-red-100 transition-colors">📺 Subscribe</a>
-      </div>
-    </WidgetWrapper>
+      )}
+    </W>
   )
 }
 
 // ─── 2. Hackathon Widget ───────────────────────────────────────────────────────
 const HackathonWidget = () => {
-  const [event, setEvent] = useState<any>(null)
-  // For countdown timer
-  const [timeLeft, setTimeLeft] = useState<{ d: number, h: number, m: number, s: number } | null>(null)
+  const [event,    setEvent]    = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+  const [timeLeft, setTimeLeft] = useState<{ d: number; h: number; m: number; s: number } | null>(null)
 
   useEffect(() => {
     fetch('/api/events?type=hackathon&status=upcoming&limit=1')
       .then(r => r.json())
-      .then(d => {
-        if (d.events && d.events.length > 0) setEvent(d.events[0])
-      })
+      .then(d => { setEvent(d.events?.[0] || null); setLoading(false) })
+      .catch(() => setLoading(false))
   }, [])
 
   useEffect(() => {
     if (!event?.event_date) return
     const target = new Date(event.event_date).getTime()
     const timer = setInterval(() => {
-      const now = new Date().getTime()
-      const diff = target - now
+      const diff = target - Date.now()
       if (diff <= 0) { setTimeLeft({ d: 0, h: 0, m: 0, s: 0 }); clearInterval(timer); return }
-      setTimeLeft({
-        d: Math.floor(diff / (1000 * 60 * 60 * 24)),
-        h: Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
-        m: Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)),
-        s: Math.floor((diff % (1000 * 60)) / 1000)
-      })
+      setTimeLeft({ d: Math.floor(diff / 86400000), h: Math.floor((diff % 86400000) / 3600000), m: Math.floor((diff % 3600000) / 60000), s: Math.floor((diff % 60000) / 1000) })
     }, 1000)
     return () => clearInterval(timer)
   }, [event])
 
-  if (!event) return <WidgetWrapper delay={0.1}><div className="animate-pulse h-48 bg-slate-100 rounded-xl" /></WidgetWrapper>
+  if (!loading && !event) return null;
 
   return (
-    <WidgetWrapper delay={0.1}>
-      <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500 rounded-full opacity-5 -mr-10 -mt-10 blur-xl" />
-      <div className="flex items-center justify-between mb-4 relative">
-        <div className="flex items-center gap-2">
-          <span className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 text-sm">💻</span>
-          <h3 className="font-bold text-navy">Hackathon</h3>
+    <W delay={80}>
+      <WidgetTitle icon="💻" label="Hackathon" href="/hackathons" linkLabel="View All →" />
+      {!event ? (
+        <div style={{ flex: 1 }}>
+          <div style={skRow} className="skeleton" />
+          <div style={{ ...skRow, width: '80%' }} className="skeleton" />
+          <div style={{ height: 80, borderRadius: 10, marginTop: 12 }} className="skeleton" />
         </div>
-        <div className="flex items-center gap-2">
-          <Link href="/hackathons" className="text-[10px] font-bold text-orange-600 hover:text-orange-800 transition-colors mr-2">View All →</Link>
-          <span className="px-2.5 py-1 rounded-full bg-green-100 text-green-700 text-[10px] font-bold uppercase tracking-wider animate-pulse flex items-center gap-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-green-500" /> LIVE
-          </span>
-        </div>
-      </div>
-      <div className="flex-1 relative z-10">
-        <h4 className="font-bold text-lg text-navy leading-tight">{event.title}</h4>
-        <p className="text-xs text-slate-500 mt-1 line-clamp-2">{event.short_description}</p>
-        <div className="my-4 bg-orange-50 rounded-xl p-3 border border-orange-100 text-center">
-          <p className="text-[10px] text-orange-600 font-bold uppercase">Prize Pool</p>
-          <p className="text-lg font-extrabold text-orange-700">₹{event.prize_pool || '25,000'}</p>
-        </div>
-        {timeLeft && (
-          <div className="flex items-center justify-center gap-2 text-center my-3">
-            {[ { v: timeLeft.d, l: 'Days' }, { v: timeLeft.h, l: 'Hrs' }, { v: timeLeft.m, l: 'Min' }, { v: timeLeft.s, l: 'Sec' } ].map((t, i) => (
-              <div key={i} className="flex flex-col">
-                <span className="w-10 h-10 flex items-center justify-center bg-slate-50 rounded-lg font-bold text-navy border border-slate-100">{t.v.toString().padStart(2, '0')}</span>
-                <span className="text-[9px] text-slate-400 mt-1 uppercase font-bold">{t.l}</span>
-              </div>
-            ))}
+      ) : (
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+            <span style={{
+              display: 'flex', alignItems: 'center', gap: 5,
+              fontSize: 10, fontWeight: 700, color: '#22c55e',
+              backgroundColor: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.2)',
+              borderRadius: 'var(--radius-pill)', padding: '3px 8px',
+            }}>
+              <span style={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#22c55e', display: 'inline-block' }} />
+              LIVE
+            </span>
           </div>
-        )}
-      </div>
-      <Link href={`/events/${event.slug || event.id}`} className="block w-full text-center py-2.5 mt-2 bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold rounded-xl transition-colors relative z-10 shadow-lg shadow-orange-500/20">
-        Register Now
-      </Link>
-    </WidgetWrapper>
+          <h4 style={{ fontSize: 15, fontWeight: 700, color: 'var(--color-ink)', fontFamily: 'var(--font-display)', lineHeight: 1.35, marginBottom: 6 }}>{event.title}</h4>
+          <p style={{ fontSize: 11, color: 'var(--color-ink-muted)', marginBottom: 12, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{event.short_description}</p>
+          {/* Prize */}
+          <div style={{ padding: '10px 14px', borderRadius: 'var(--radius-md)', backgroundColor: 'rgba(255,122,61,0.1)', border: '1px solid rgba(255,122,61,0.2)', textAlign: 'center', marginBottom: 12 }}>
+            <p style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#ff7a3d', marginBottom: 2 }}>Prize Pool</p>
+            <p style={{ fontSize: 20, fontWeight: 800, color: '#ff7a3d', fontFamily: 'var(--font-display)' }}>₹{event.prize_pool || '25,000'}</p>
+          </div>
+          {/* Countdown */}
+          {timeLeft && (
+            <div style={{ display: 'flex', gap: 6, justifyContent: 'center', marginBottom: 14 }}>
+              {[{ v: timeLeft.d, l: 'Days' }, { v: timeLeft.h, l: 'Hrs' }, { v: timeLeft.m, l: 'Min' }, { v: timeLeft.s, l: 'Sec' }].map((t, i) => (
+                <div key={i} style={{ textAlign: 'center' }}>
+                  <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 40, height: 40, backgroundColor: 'var(--color-surface-2)', border: '1px solid var(--color-hairline-soft)', borderRadius: 'var(--radius-md)', fontWeight: 700, fontSize: 15, color: 'var(--color-ink)' }}>
+                    {t.v.toString().padStart(2, '0')}
+                  </span>
+                  <span style={{ fontSize: 9, color: 'var(--color-ink-muted)', textTransform: 'uppercase', fontWeight: 700 }}>{t.l}</span>
+                </div>
+              ))}
+            </div>
+          )}
+          <Link href={`/events/${event.slug || event.id}`} style={{ display: 'block', width: '100%', textAlign: 'center', padding: '10px 0', borderRadius: 'var(--radius-md)', fontSize: 12, fontWeight: 700, backgroundColor: '#ff7a3d', color: '#fff', textDecoration: 'none', marginTop: 'auto' }}>
+            Register Now
+          </Link>
+        </div>
+      )}
+    </W>
   )
 }
 
-// ─── 3. Seminar / Events Widget ────────────────────────────────────────────────
+// ─── 3. Seminar Widget ─────────────────────────────────────────────────────────
 const SeminarWidget = () => {
   const [event, setEvent] = useState<any>(null)
-
+  const [loading, setLoading] = useState(true)
   useEffect(() => {
     fetch('/api/events?type=seminar&status=upcoming&limit=1')
       .then(r => r.json())
-      .then(d => {
-        if (d.events && d.events.length > 0) setEvent(d.events[0])
-      })
+      .then(d => { setEvent(d.events?.[0] || null); setLoading(false) })
+      .catch(() => setLoading(false))
   }, [])
 
-  if (!event) return <WidgetWrapper delay={0.2}><div className="animate-pulse h-48 bg-slate-100 rounded-xl" /></WidgetWrapper>
+  if (!loading && !event) return null;
 
   return (
-    <WidgetWrapper delay={0.2}>
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <span className="w-8 h-8 rounded-full bg-teal-100 flex items-center justify-center text-teal-600 text-sm">🎓</span>
-          <h3 className="font-bold text-navy">Upcoming Seminar</h3>
-        </div>
-        <div className="flex items-center gap-2">
-          <Link href="/events" className="text-[10px] font-bold text-teal-600 hover:text-teal-800 transition-colors mr-2">View All →</Link>
-          <span className="text-xs font-bold text-teal-600 bg-teal-50 px-2 py-1 rounded-lg">Webinar</span>
-        </div>
-      </div>
-      <div className="flex-1">
-        <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{new Date(event.event_date).toLocaleDateString('en-IN', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
-        <h4 className="font-bold text-xl text-navy mt-1 leading-tight">{event.title}</h4>
-        <p className="text-sm text-slate-500 mt-2">Speaker: <span className="font-semibold text-slate-700">Dr. Industry Expert</span></p>
-        <div className="mt-5 space-y-2">
-          <a href="#" className="flex items-center gap-2 text-xs text-slate-500 hover:text-blue-600 font-semibold p-2 rounded-lg bg-slate-50 border border-slate-100 transition-colors">
-            📅 Add to Google Calendar
-          </a>
-          <a href="#" className="flex items-center gap-2 text-xs text-slate-500 hover:text-teal-600 font-semibold p-2 rounded-lg bg-slate-50 border border-slate-100 transition-colors">
-            📼 View Past Recordings
-          </a>
-        </div>
-      </div>
-      <Link href={`/events/${event.slug || event.id}`} className="mt-4 block w-full text-center py-2.5 border-2 border-navy text-navy hover:bg-navy hover:text-white text-xs font-bold rounded-xl transition-all">
-        RSVP / Register
-      </Link>
-    </WidgetWrapper>
-  )
-}
-
-// ─── 4. Project Enquiry Widget ─────────────────────────────────────────────────
-const ProjectEnquiryWidget = () => {
-  const [form, setForm] = useState({ name: '', email: '', phone: '', service_interest: 'Academic Services' })
-  const [submitting, setSubmitting] = useState(false)
-  const [success, setSuccess] = useState(false)
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setSubmitting(true)
-    try {
-      const res = await fetch('/api/leads/consultation', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form)
-      })
-      if (res.ok) setSuccess(true)
-    } finally {
-      setSubmitting(false)
-    }
-  }
-
-  return (
-    <WidgetWrapper delay={0.3}>
-      <div className="flex items-center gap-2 mb-4">
-        <span className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-sm">📩</span>
-        <h3 className="font-bold text-navy">Quick Project Enquiry</h3>
-      </div>
-      {success ? (
-        <div className="flex-1 flex flex-col items-center justify-center text-center space-y-3 bg-green-50 rounded-xl p-4 border border-green-100">
-          <span className="text-3xl">✅</span>
-          <p className="font-bold text-green-800 text-sm">Enquiry Submitted!</p>
-          <p className="text-xs text-green-600">Avg. response time: ~2 hours</p>
-          <a href={`https://wa.me/919999999999?text=Hi! I just submitted an enquiry for ${form.service_interest}. Name: ${form.name}`} target="_blank" rel="noreferrer" className="inline-block mt-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-xs font-bold rounded-xl shadow-md transition-colors w-full">
-             💬 Follow up on WhatsApp
-          </a>
+    <W delay={160}>
+      <WidgetTitle icon="🎓" label="Upcoming Seminar" href="/events" linkLabel="View All →" />
+      {!event ? (
+        <div style={{ flex: 1 }}>
+          <div style={skRow} className="skeleton" />
+          <div style={{ ...skRow, width: '60%' }} className="skeleton" />
+          <div style={{ height: 80, borderRadius: 10, marginTop: 12 }} className="skeleton" />
         </div>
       ) : (
-        <form onSubmit={handleSubmit} className="flex-1 flex flex-col space-y-3">
-          <input required type="text" placeholder="Your Name" value={form.name} onChange={e => setForm({...form, name: e.target.value})} className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-accent" />
-          <input required type="email" placeholder="Email Address (Needed for CRM)" value={form.email} onChange={e => setForm({...form, email: e.target.value})} className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-accent" />
-          <input required type="tel" placeholder="Phone Number" value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-accent" />
-          <select value={form.service_interest} onChange={e => setForm({...form, service_interest: e.target.value})} className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-accent text-slate-600">
-            {['Academic Services', 'Technical Services', 'Business Services', 'Government Deals', 'Campus Ambassador'].map(s => <option key={s} value={s}>{s}</option>)}
-          </select>
-          <div className="mt-auto pt-2">
-            <button disabled={submitting} type="submit" className="w-full py-2.5 bg-accent hover:bg-accent/90 text-white text-sm font-bold rounded-xl transition-colors shadow-lg shadow-accent/20 disabled:opacity-70">
-              {submitting ? 'Submitting...' : 'Request Quote / Callback'}
-            </button>
-            <p className="text-center text-[9px] text-slate-400 mt-2 font-semibold">⚡ Est. Response: ~2 Hrs</p>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+          <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--color-ink-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+            {new Date(event.event_date).toLocaleDateString('en-IN', { month: 'long', day: 'numeric', year: 'numeric' })}
+          </span>
+          <h4 style={{ fontSize: 16, fontWeight: 700, color: 'var(--color-ink)', fontFamily: 'var(--font-display)', marginTop: 6, marginBottom: 8, lineHeight: 1.35 }}>{event.title}</h4>
+          <p style={{ fontSize: 12, color: 'var(--color-ink-muted)', marginBottom: 14 }}>Speaker: <span style={{ fontWeight: 600, color: 'var(--color-ink)' }}>Dr. Industry Expert</span></p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 'auto' }}>
+            {[{ label: '📅 Add to Google Calendar', color: '#0099ff' }, { label: '📼 View Past Recordings', color: '#22c55e' }].map(item => (
+              <a key={item.label} href="#" style={{
+                display: 'flex', alignItems: 'center', gap: 8,
+                fontSize: 11, fontWeight: 600, color: 'var(--color-ink-muted)',
+                padding: '8px 12px', borderRadius: 'var(--radius-md)',
+                backgroundColor: 'var(--color-surface-2)',
+                border: '1px solid var(--color-hairline-soft)',
+                textDecoration: 'none',
+                transition: 'color 0.15s',
+              }}>
+                {item.label}
+              </a>
+            ))}
           </div>
-        </form>
-      )}
-    </WidgetWrapper>
-  )
-}
-
-// ─── 5. Live Stats Widget ──────────────────────────────────────────────────────
-const AnimatedCounter = ({ value, label, icon }: { value: number, label: string, icon: string }) => {
-  const [count, setCount] = useState(0)
-  
-  useEffect(() => {
-    let start = 0
-    const duration = 1500
-    const increment = value / (duration / 16)
-    const timer = setInterval(() => {
-      start += increment
-      if (start >= value) { setCount(value); clearInterval(timer) }
-      else setCount(Math.floor(start))
-    }, 16)
-    return () => clearInterval(timer)
-  }, [value])
-
-  return (
-    <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100">
-      <span className="text-2xl">{icon}</span>
-      <div>
-        <p className="font-extrabold text-xl text-navy leading-none">{count.toLocaleString()} <span className="text-accent text-sm">+</span></p>
-        <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wide mt-1">{label}</p>
-      </div>
-    </div>
-  )
-}
-
-const LiveStatsWidget = () => {
-  const [stats, setStats] = useState<any>(null)
-  useEffect(() => { fetch('/api/widgets/frontend?type=stats').then(r => r.json()).then(setStats) }, [])
-
-  return (
-    <WidgetWrapper delay={0.4}>
-      <div className="flex items-center gap-2 mb-5">
-        <span className="w-8 h-8 rounded-full bg-cyan-100 flex items-center justify-center text-cyan-600 text-sm">📊</span>
-        <h3 className="font-bold text-navy">Live Platform Stats</h3>
-      </div>
-      <div className="flex-1 flex flex-col justify-center space-y-3">
-        {stats ? (
-          <>
-            <AnimatedCounter value={stats.completed_projects} label="Projects Completed" icon="🚀" />
-            <AnimatedCounter value={stats.happy_clients} label="Happy Clients" icon="🌟" />
-            <div className="flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-navy to-[#1a2e4c] text-white">
-               <div>
-                 <p className="font-extrabold text-lg">{stats.active_projects}</p>
-                 <p className="text-[10px] text-white/70 font-bold uppercase">Active Projects Today</p>
-               </div>
-               <div className="flex gap-1" title={`${stats.active_pillars} Pillars Active`}>
-                 {Array.from({ length: 5 }).map((_, i) => (
-                   <span key={i} className={`w-2 h-2 rounded-full ${i < stats.active_pillars ? 'bg-accent animate-pulse' : 'bg-white/20'}`} style={{ animationDelay: `${i * 0.2}s` }} />
-                 ))}
-               </div>
-            </div>
-          </>
-        ) : (
-          <div className="animate-pulse space-y-3">
-            <div className="h-16 bg-slate-100 rounded-xl" />
-            <div className="h-16 bg-slate-100 rounded-xl" />
-            <div className="h-16 bg-slate-100 rounded-xl" />
-          </div>
-        )}
-      </div>
-    </WidgetWrapper>
-  )
-}
-
-// ─── 6. Social Proof Widget ────────────────────────────────────────────────────
-const SocialProofWidget = () => {
-  const [data, setData] = useState<any>(null)
-  useEffect(() => { fetch('/api/widgets/frontend?type=testimonial').then(r => r.json()).then(setData) }, [])
-
-  if (!data) return <WidgetWrapper delay={0.5}><div className="animate-pulse h-48 bg-slate-100 rounded-xl" /></WidgetWrapper>
-
-  return (
-    <WidgetWrapper delay={0.5}>
-      <div className="flex items-center gap-2 mb-4">
-        <span className="w-8 h-8 rounded-full bg-yellow-100 flex items-center justify-center text-yellow-600 text-sm">⭐</span>
-        <h3 className="font-bold text-navy">Latest Story</h3>
-      </div>
-      <div className="flex-1 flex flex-col relative">
-        <span className="text-4xl text-slate-200 absolute -top-2 -left-2 leading-none font-serif">"</span>
-        <p className="text-sm font-medium text-slate-600 italic relative z-10 pl-4">{data.review}</p>
-        <div className="mt-auto pt-4 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-slate-500 font-bold overflow-hidden border-2 border-white shadow-sm">
-            {data.customer?.profile_image ? (
-              <Image src={data.customer.profile_image} alt="User" width={40} height={40} className="w-full h-full object-cover" />
-            ) : (data.customer?.fullname?.charAt(0) || 'U')}
-          </div>
-          <div>
-            <p className="text-sm font-bold text-navy leading-tight">{data.customer?.fullname || 'Anonymous Client'}</p>
-            <p className="text-[10px] text-slate-400 font-semibold">{data.project?.service_type}</p>
-            <div className="flex gap-0.5 mt-0.5">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <span key={i} className={`text-[10px] ${i < data.rating ? 'text-yellow-400' : 'text-slate-200'}`}>★</span>
-              ))}
-            </div>
-          </div>
+          <Link href={`/events/${event.slug || event.id}`} style={{
+            display: 'block', width: '100%', textAlign: 'center', marginTop: 14,
+            padding: '10px 0', borderRadius: 'var(--radius-md)', fontSize: 12, fontWeight: 700,
+            border: '1px solid var(--color-accent-blue)', color: 'var(--color-accent-blue)',
+            backgroundColor: 'rgba(0,153,255,0.06)', textDecoration: 'none',
+          }}>
+            RSVP / Register
+          </Link>
         </div>
-      </div>
-      <Link href="/about#testimonials" className="mt-4 block w-full text-center py-2 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-600 text-xs font-bold rounded-xl transition-colors">
-        View All Reviews
-      </Link>
-    </WidgetWrapper>
+      )}
+    </W>
   )
 }
 
-// ─── Main Section Export ───────────────────────────────────────────────────────
+// ─── Main Section ──────────────────────────────────────────────────────────────
 export default function QuickAccessDashboard() {
   return (
-    <section className="py-20 bg-surface/50 border-t border-slate-100 relative overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4">
-        
-        <div className="mb-10 text-center max-w-2xl mx-auto">
-          <span className="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider mb-3 bg-blue-50 text-blue-600 border border-blue-100">
+    <section style={{
+      padding: 'var(--space-section) var(--space-xl)',
+      backgroundColor: 'var(--color-canvas)',
+      borderTop: '1px solid var(--color-hairline-soft)',
+      position: 'relative',
+      overflow: 'hidden',
+    }}>
+      {/* Ambient background glow */}
+      <div aria-hidden="true" style={{
+        position: 'absolute', top: -100, left: '50%', transform: 'translateX(-50%)',
+        width: 600, height: 400, borderRadius: '50%',
+        background: 'radial-gradient(ellipse, rgba(0,153,255,0.04) 0%, transparent 70%)',
+        pointerEvents: 'none',
+      }} />
+
+      <div style={{ maxWidth: 1199, margin: '0 auto', position: 'relative', zIndex: 1 }}>
+        <div style={{ textAlign: 'center', maxWidth: 600, margin: '0 auto', marginBottom: 52 }}>
+          <span style={{
+            display: 'inline-block', fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
+            textTransform: 'uppercase', padding: '4px 12px', borderRadius: 'var(--radius-pill)',
+            backgroundColor: 'rgba(0,153,255,0.08)', color: 'var(--color-accent-blue)',
+            border: '1px solid rgba(0,153,255,0.18)', marginBottom: 18,
+          }}>
             ⚡ Quick Access
           </span>
-          <h2 className="text-3xl md:text-4xl font-extrabold text-navy font-heading">
-            Live <span className="text-accent">Updates & Dashboard</span>
+          <h2 style={{
+            fontFamily: 'var(--font-display)',
+            fontSize: 'clamp(26px, 4vw, 44px)', fontWeight: 700,
+            color: 'var(--color-ink)', letterSpacing: '-1.5px', marginBottom: 14,
+          }}>
+            Live <span style={{ color: 'var(--color-accent-blue)' }}>Updates & Dashboard</span>
           </h2>
-          <p className="text-slate-500 mt-3 text-sm md:text-base">
-            Stay connected with the latest from Karya Saarthi – jump into ongoing hackathons, catch our newest podcast episode, or instantly book a technical consultation right here.
+          <p style={{ fontSize: 14, color: 'var(--color-ink-muted)', lineHeight: 1.65 }}>
+            Stay connected with the latest from Karya Saarthi — hackathons, podcasts, and instant consultations.
           </p>
         </div>
 
-        {/* CSS Grid ensures responsive layouts: 1 col on mobile, 2 on tablet, 3 on desktop */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="qad-grid">
           <PodcastWidget />
           <HackathonWidget />
           <SeminarWidget />
-          <LiveStatsWidget />
-          <SocialProofWidget />
-          <ProjectEnquiryWidget />
-        </div>
-        
+                  </div>
       </div>
+
+      <style>{`
+        @keyframes qad-fade {
+          from { opacity: 0; transform: translateY(16px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes wave-bar {
+          from { transform: scaleY(0.4); opacity: 0.5; }
+          to   { transform: scaleY(1); opacity: 1; }
+        }
+        .qad-widget:hover {
+          border-color: var(--color-hairline) !important;
+          box-shadow: 0 8px 32px rgba(0,0,0,0.3) !important;
+        }
+        .qad-grid { 
+          display: flex; 
+          flex-wrap: wrap; 
+          justify-content: center; 
+          gap: 16px; 
+        }
+        .qad-widget {
+          flex: 1 1 320px;
+          max-width: 400px;
+        }
+      `}</style>
     </section>
   )
 }

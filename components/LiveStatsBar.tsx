@@ -1,83 +1,89 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { motion, useInView } from 'framer-motion'
 
-interface Stat {
-  value: number
-  suffix: string
-  label: string
-  icon: string
-}
+interface Stat { value: number; suffix: string; label: string; icon: string }
 
 const stats: Stat[] = [
-  { value: 5000, suffix: '+', label: 'Projects Completed', icon: '✅' },
-  { value: 3200, suffix: '+', label: 'Happy Clients', icon: '😊' },
-  { value: 98, suffix: '%', label: 'Success Rate', icon: '🎯' },
-  { value: 150, suffix: '+', label: 'Expert Team', icon: '👥' },
-  { value: 12, suffix: '+', label: 'States Served', icon: '🗺️' },
-  { value: 24, suffix: '/7', label: 'Support Available', icon: '🎧' },
+  { value: 5000,  suffix: '+',  label: 'Projects Completed',  icon: '✅' },
+  { value: 3200,  suffix: '+',  label: 'Happy Clients',       icon: '😊' },
+  { value: 98,    suffix: '%',  label: 'Success Rate',        icon: '🎯' },
+  { value: 150,   suffix: '+',  label: 'Expert Team',         icon: '👥' },
+  { value: 12,    suffix: '+',  label: 'States Served',       icon: '🗺️' },
+  { value: 24,    suffix: '/7', label: 'Support Available',   icon: '🎧' },
 ]
 
-function AnimatedCounter({ target, suffix, duration = 2 }: { target: number; suffix: string; duration?: number }) {
+function AnimatedCounter({ target, suffix, duration = 2000 }: { target: number; suffix: string; duration?: number }) {
   const [count, setCount] = useState(0)
-  const ref = useRef<HTMLSpanElement>(null)
-  const inView = useInView(ref, { once: true })
+  const ref   = useRef<HTMLSpanElement>(null)
+  const started = useRef(false)
 
   useEffect(() => {
-    if (!inView) return
-    let startTime: number
-    const animate = (timestamp: number) => {
-      if (!startTime) startTime = timestamp
-      const progress = Math.min((timestamp - startTime) / (duration * 1000), 1)
-      const eased = 1 - Math.pow(1 - progress, 3) // ease-out-cubic
-      setCount(Math.floor(eased * target))
-      if (progress < 1) requestAnimationFrame(animate)
-    }
-    requestAnimationFrame(animate)
-  }, [inView, target, duration])
+    const el = ref.current; if (!el) return
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && !started.current) {
+        started.current = true
+        let startTime: number
+        const step = (ts: number) => {
+          if (!startTime) startTime = ts
+          const progress = Math.min((ts - startTime) / duration, 1)
+          const eased = 1 - Math.pow(1 - progress, 3)
+          setCount(Math.floor(eased * target))
+          if (progress < 1) requestAnimationFrame(step)
+        }
+        requestAnimationFrame(step)
+      }
+    }, { threshold: 0.3 })
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [target, duration])
 
   return <span ref={ref}>{count.toLocaleString()}{suffix}</span>
 }
 
 export default function LiveStatsBar() {
   return (
-    <section className="relative py-4 overflow-hidden" style={{ background: 'linear-gradient(135deg, #1B3A6B 0%, #0f2545 50%, #1B3A6B 100%)' }}>
-      {/* CSS-only shimmer — no JS overhead */}
-      <div
-        className="absolute inset-0 opacity-10"
-        style={{
-          background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)',
-          animation: 'shimmer 8s linear infinite',
-        }}
-      />
-      <style>{`@keyframes shimmer { from { transform: translateX(-100%); } to { transform: translateX(100%); } }`}</style>
+    <section
+      style={{
+        backgroundColor: 'var(--color-surface-1)',
+        borderTop: '1px solid var(--color-hairline-soft)',
+        borderBottom: '1px solid var(--color-hairline-soft)',
+        padding: '14px 0',
+        position: 'relative',
+        overflow: 'hidden',
+      }}
+    >
+      {/* subtle left-to-right scan line */}
+      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, transparent 0%, rgba(0,153,255,0.04) 50%, transparent 100%)', pointerEvents: 'none' }} />
 
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="flex flex-wrap justify-center md:justify-between items-center gap-4 md:gap-0">
+      <div style={{ maxWidth: 1199, margin: '0 auto', padding: '0 var(--space-xl)' }}>
+        <div className="stats-grid">
           {stats.map((stat, i) => (
-            <motion.div
-              key={stat.label}
-              initial={{ opacity: 0, y: 15 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              className="flex items-center gap-3 px-4 py-2 text-white"
-            >
-              <span className="text-2xl">{stat.icon}</span>
+            <div key={stat.label} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 12px', justifyContent: 'center' }}>
+              <span style={{ fontSize: 18, flexShrink: 0 }}>{stat.icon}</span>
               <div>
-                <div className="text-xl font-extrabold font-heading leading-none text-white">
+                <div style={{ fontSize: 18, fontWeight: 800, fontFamily: 'var(--font-display)', color: 'var(--color-ink)', lineHeight: 1, whiteSpace: 'nowrap', letterSpacing: '-0.5px' }}>
                   <AnimatedCounter target={stat.value} suffix={stat.suffix} />
                 </div>
-                <p className="text-white/50 text-[10px] mt-0.5">{stat.label}</p>
+                <p style={{ color: 'var(--color-ink-muted)', fontSize: 10, marginTop: 2, lineHeight: 1.2 }}>{stat.label}</p>
               </div>
               {i < stats.length - 1 && (
-                <div className="hidden md:block w-px h-8 bg-white/15 ml-4" />
+                <div style={{ display: 'none', width: 1, height: 28, backgroundColor: 'var(--color-hairline)', marginLeft: 8, flexShrink: 0 }} className="stat-divider" />
               )}
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>
+
+      <style>{`
+        .stats-grid {
+          display: grid;
+          grid-template-columns: repeat(6, 1fr);
+        }
+        .stat-divider { display: block !important; }
+        @media (max-width: 1024px) { .stats-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 640px)  { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+      `}</style>
     </section>
   )
 }

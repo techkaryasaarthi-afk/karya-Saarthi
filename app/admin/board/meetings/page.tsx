@@ -1,7 +1,7 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { motion } from 'framer-motion'
+import { motion } from '@/lib/motion'
 
 interface Meeting { id: number; title: string; description: string | null; jitsi_room: string; scheduled_at: string | null; duration_min: number; created_at: string }
 
@@ -47,7 +47,7 @@ export default function BoardMeetingsPage() {
           <h1 className="text-2xl font-bold text-navy font-heading">🗓️ Board Meetings</h1>
           <p className="text-slate-500 text-sm">Schedule &amp; join board meetings via Jitsi Meet</p>
         </div>
-        <button onClick={() => setShowForm(v => !v)} className="px-4 py-2.5 rounded-xl font-bold text-white text-sm cursor-pointer" style={{ background: '#1B3A6B' }}>+ Schedule Meeting</button>
+        <button onClick={() => setShowForm(v => !v)} className="px-4 py-2.5 rounded-xl font-bold text-white text-sm cursor-pointer" style={{ background: 'var(--color-accent-blue)' }}>+ Schedule Meeting</button>
       </div>
 
       {showForm && (
@@ -60,7 +60,7 @@ export default function BoardMeetingsPage() {
             <textarea rows={2} value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} placeholder="Meeting agenda / notes..." className="col-span-2 px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none resize-none" />
           </div>
           <div className="flex gap-3">
-            <button type="submit" disabled={saving} className="px-5 py-2.5 rounded-xl font-bold text-white text-sm cursor-pointer disabled:opacity-60" style={{ background: '#1B3A6B' }}>{saving ? '⏳ Creating...' : '🗓️ Schedule Meeting'}</button>
+            <button type="submit" disabled={saving} className="px-5 py-2.5 rounded-xl font-bold text-white text-sm cursor-pointer disabled:opacity-60" style={{ background: 'var(--color-accent-blue)' }}>{saving ? '⏳ Creating...' : '🗓️ Schedule Meeting'}</button>
             <button type="button" onClick={() => setShowForm(false)} className="px-4 py-2.5 rounded-xl bg-slate-100 text-slate-600 text-sm cursor-pointer">Cancel</button>
           </div>
         </motion.form>
@@ -121,3 +121,4 @@ function MeetingCard({ meeting, delay, isPast }: { meeting: Meeting; delay: numb
     </motion.div>
   )
 }
+

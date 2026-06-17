@@ -13,11 +13,11 @@ interface Project {
   customer_name?: string
 }
 
-const statusColors: Record<string, string> = {
-  pending: 'bg-amber-100 text-amber-700',
-  in_progress: 'bg-blue-100 text-blue-700',
-  completed: 'bg-green-100 text-green-700',
-  cancelled: 'bg-red-100 text-red-700',
+const statusColors: Record<string, { bg: string; color: string }> = {
+  pending: { bg: 'rgba(245, 158, 11, 0.1)', color: '#F59E0B' },
+  in_progress: { bg: 'rgba(6, 182, 212, 0.1)', color: '#06B6D4' },
+  completed: { bg: 'rgba(34, 197, 94, 0.1)', color: '#22C55E' },
+  cancelled: { bg: 'rgba(239, 68, 68, 0.1)', color: '#EF4444' },
 }
 
 export default function VendorProjectsPage() {
@@ -34,17 +34,17 @@ export default function VendorProjectsPage() {
 
   const filtered = filter === 'all' ? projects : projects.filter(p => p.status === filter)
 
-  if (loading) return <div className="flex justify-center py-20"><div className="w-10 h-10 border-4 border-navy/20 border-t-accent rounded-full animate-spin" /></div>
+  if (loading) return <div style={{ display: 'flex', justifyContent: 'center', padding: '80px 0' }}><div className="skeleton" style={{ width: 40, height: 40, borderRadius: '50%' }} /></div>
 
   return (
-    <div className="space-y-6">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
       <div>
-        <h1 className="text-2xl font-bold text-navy font-heading">📋 My Projects</h1>
-        <p className="text-slate-500 text-sm mt-1">All projects assigned to you</p>
+        <h1 className="text-display-md" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-ink)' }}>📋 My Projects</h1>
+        <p className="text-body-sm" style={{ color: 'var(--color-ink-muted)', marginTop: 4 }}>All projects assigned to you</p>
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex flex-wrap gap-2">
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
         {[
           { key: 'all', label: 'All', count: projects.length },
           { key: 'in_progress', label: 'Active', count: projects.filter(p => p.status === 'in_progress').length },
@@ -52,7 +52,8 @@ export default function VendorProjectsPage() {
           { key: 'pending', label: 'Pending', count: projects.filter(p => p.status === 'pending').length },
         ].map(t => (
           <button key={t.key} onClick={() => setFilter(t.key)}
-            className={`px-4 py-2 rounded-full text-sm font-semibold transition-all cursor-pointer ${filter === t.key ? 'bg-navy text-white shadow-lg' : 'bg-white text-slate-500 hover:bg-slate-50 border border-slate-200'}`}>
+            className={filter === t.key ? 'btn-primary' : 'btn-secondary'}
+            style={{ padding: '8px 16px', fontSize: 13, fontWeight: 600, borderRadius: 'var(--radius-pill)', cursor: 'pointer' }}>
             {t.label} ({t.count})
           </button>
         ))}
@@ -60,30 +61,32 @@ export default function VendorProjectsPage() {
 
       {/* Projects Grid */}
       {filtered.length === 0 ? (
-        <div className="bg-white rounded-2xl p-10 text-center shadow-sm border border-slate-100">
-          <span className="text-4xl block mb-3">📋</span>
-          <p className="text-slate-400">No projects found</p>
+        <div className="card-template" style={{ padding: 40, textAlign: 'center' }}>
+          <span style={{ fontSize: 40, display: 'block', marginBottom: 12 }}>📋</span>
+          <p className="text-body-sm" style={{ color: 'var(--color-ink-muted)' }}>No projects found</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {filtered.map((project, i) => (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 16 }}>
+          {filtered.map((project, i) => {
+            const sc = statusColors[project.status] || { bg: 'var(--color-surface-2)', color: 'var(--color-ink)' }
+            return (
             <motion.div key={project.id} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
-              className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
-              <div className="flex items-start justify-between mb-3">
-                <div className="flex-1 min-w-0">
-                  <h3 className="font-bold text-navy truncate">{project.title}</h3>
-                  <p className="text-xs text-slate-400 mt-1 line-clamp-2">{project.description}</p>
+              className="card-template" style={{ padding: 20 }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 12 }}>
+                <div style={{ flex: 1, minWidth: 0, marginRight: 12 }}>
+                  <h3 className="text-body-md" style={{ fontWeight: 700, color: 'var(--color-ink)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{project.title}</h3>
+                  <p className="text-micro" style={{ color: 'var(--color-ink-muted)', marginTop: 4, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{project.description}</p>
                 </div>
-                <span className={`px-2.5 py-1 rounded-full text-xs font-bold uppercase ml-3 flex-shrink-0 ${statusColors[project.status] || 'bg-slate-100 text-slate-600'}`}>
+                <span style={{ padding: '4px 10px', borderRadius: 'var(--radius-pill)', fontSize: 10, fontWeight: 700, textTransform: 'uppercase', backgroundColor: sc.bg, color: sc.color, flexShrink: 0 }}>
                   {project.status.replace('_', ' ')}
                 </span>
               </div>
-              <div className="flex items-center justify-between text-xs text-slate-400 pt-3 border-t border-slate-50">
-                <span>{project.budget ? `₹${Number(project.budget).toLocaleString('en-IN')}` : 'No budget'}</span>
-                <span>{new Date(project.created_at).toLocaleDateString('en-IN')}</span>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: 12, borderTop: '1px solid var(--color-hairline-soft)' }}>
+                <span className="text-micro" style={{ fontWeight: 600, color: 'var(--color-ink-muted)' }}>{project.budget ? `₹${Number(project.budget).toLocaleString('en-IN')}` : 'No budget'}</span>
+                <span className="text-micro" style={{ color: 'var(--color-ink-muted)' }}>{new Date(project.created_at).toLocaleDateString('en-IN')}</span>
               </div>
             </motion.div>
-          ))}
+          )})}
         </div>
       )}
     </div>

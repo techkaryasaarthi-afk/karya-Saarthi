@@ -4,85 +4,47 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { motion, AnimatePresence } from 'framer-motion'
 import { STAFF_ROLE_CONFIGS, getDepartmentRoute } from '@/lib/org'
 
-const ROLE_ROUTES: Record<string, string> = {
-  super_admin: '/admin',
-  board_member: '/admin/board',
-  'admin-hr': '/admin/hr',
-  'admin-finance': '/admin/finance',
-  'admin-operations': '/admin/operations',
-  'admin-marketing': '/admin/marketing',
-  'admin-digital': '/admin/digital',
-  'pillar-campus': '/admin/pillars/campus',
-  'pillar-digital': '/admin/pillars/digital',
-  'pillar-calling': '/admin/pillars/calling',
-  'pillar-government': '/admin/pillars/government',
-  'pillar-market': '/admin/pillars/market',
-}
-
-const STAFF_ROLES = STAFF_ROLE_CONFIGS.map(role => ({
-  value: role.value,
-  label: role.title,
-}))
+const STAFF_ROLES = STAFF_ROLE_CONFIGS.map(role => ({ value: role.value, label: role.title }))
 
 type RegisterStep = 'form' | 'otp' | 'success'
 
 function RegisterForm() {
-  const [form, setForm] = useState({ fullname: '', email: '', password: '', phone: '', staff_role: '' })
-  const [step, setStep] = useState<RegisterStep>('form')
-  const [saving, setSaving] = useState(false)
-  const [error, setError] = useState('')
-  const [otp, setOtp] = useState(['', '', '', '', '', ''])
+  const [form, setForm]         = useState({ fullname: '', email: '', password: '', phone: '', staff_role: '' })
+  const [step, setStep]         = useState<RegisterStep>('form')
+  const [saving, setSaving]     = useState(false)
+  const [error, setError]       = useState('')
+  const [otp, setOtp]           = useState(['', '', '', '', '', ''])
   const [countdown, setCountdown] = useState(0)
 
   useEffect(() => {
-    if (countdown > 0) {
-      const t = setTimeout(() => setCountdown(c => c - 1), 1000)
-      return () => clearTimeout(t)
-    }
+    if (countdown > 0) { const t = setTimeout(() => setCountdown(c => c - 1), 1000); return () => clearTimeout(t) }
   }, [countdown])
 
-  // Step 1: Send OTP
   const handleSendOTP = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!form.staff_role) { setError('Please select a role'); return }
     if (form.password.length < 8) { setError('Password must be at least 8 characters'); return }
     setSaving(true); setError('')
-
     try {
-      const res = await fetch('/api/auth/send-signup-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: form.email, fullname: form.fullname }),
-      })
-      const d = await res.json()
+      const res = await fetch('/api/auth/send-signup-otp', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: form.email, fullname: form.fullname }) })
+      const d   = await res.json()
       if (!res.ok) { setError(d.error || 'Failed to send OTP'); setSaving(false); return }
-      setStep('otp')
-      setCountdown(60)
+      setStep('otp'); setCountdown(60)
     } catch { setError('Something went wrong') }
     setSaving(false)
   }
 
-  // OTP input handlers
   const handleOtpChange = useCallback((index: number, value: string) => {
     if (value.length > 1) value = value.slice(-1)
     if (value && !/^\d$/.test(value)) return
-    const newOtp = [...otp]
-    newOtp[index] = value
-    setOtp(newOtp)
-    if (value && index < 5) {
-      const next = document.getElementById(`staff-otp-${index + 1}`)
-      next?.focus()
-    }
+    const newOtp = [...otp]; newOtp[index] = value; setOtp(newOtp)
+    if (value && index < 5) document.getElementById(`staff-otp-${index + 1}`)?.focus()
   }, [otp])
 
   const handleOtpKeyDown = useCallback((index: number, e: React.KeyboardEvent) => {
-    if (e.key === 'Backspace' && !otp[index] && index > 0) {
-      const prev = document.getElementById(`staff-otp-${index - 1}`)
-      prev?.focus()
-    }
+    if (e.key === 'Backspace' && !otp[index] && index > 0) document.getElementById(`staff-otp-${index - 1}`)?.focus()
   }, [otp])
 
   const handleOtpPaste = useCallback((e: React.ClipboardEvent) => {
@@ -91,449 +53,254 @@ function RegisterForm() {
     if (pasted.length === 6) setOtp(pasted.split(''))
   }, [])
 
-  // Step 2: Verify OTP then register
   const handleVerifyAndRegister = async (e: React.FormEvent) => {
     e.preventDefault()
     const otpStr = otp.join('')
     if (otpStr.length !== 6) { setError('Please enter the complete 6-digit OTP'); return }
     setSaving(true); setError('')
-
     try {
-      // Verify OTP first
-      const verifyRes = await fetch('/api/auth/verify-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: form.email, otp: otpStr, purpose: 'signup_verification' }),
-      })
+      const verifyRes  = await fetch('/api/auth/verify-otp', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: form.email, otp: otpStr, purpose: 'signup_verification' }) })
       const verifyData = await verifyRes.json()
       if (!verifyRes.ok) { setError(verifyData.error || 'OTP verification failed'); setSaving(false); return }
-
-      // OTP verified — now register
-      const res = await fetch('/api/auth/staff-register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, email_verified: true }),
-      })
-      const d = await res.json()
+      const res = await fetch('/api/auth/staff-register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...form, email_verified: true }) })
+      const d   = await res.json()
       if (!res.ok) { setError(d.error || 'Registration failed'); setSaving(false); return }
       setStep('success')
     } catch { setError('Something went wrong') }
     setSaving(false)
   }
 
-  // Resend OTP
   const handleResend = async () => {
     if (countdown > 0) return
     setSaving(true); setError('')
     try {
-      const res = await fetch('/api/auth/send-signup-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: form.email, fullname: form.fullname }),
-      })
-      const d = await res.json()
+      const res = await fetch('/api/auth/send-signup-otp', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: form.email, fullname: form.fullname }) })
+      const d   = await res.json()
       if (!res.ok) { setError(d.error); setSaving(false); return }
-      setOtp(['', '', '', '', '', ''])
-      setCountdown(60)
+      setOtp(['', '', '', '', '', '']); setCountdown(60)
     } catch { setError('Something went wrong') }
     setSaving(false)
   }
 
+  const inputSx = { width: '100%', padding: '11px 14px', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-hairline)', backgroundColor: 'var(--color-surface-2)', color: 'var(--color-ink)', fontSize: 'var(--text-body-sm-size)', outline: 'none', boxSizing: 'border-box' as const, fontFamily: 'var(--font-body)' }
+
   if (step === 'success') return (
-    <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-      className="bg-green-500/10 border border-green-500/20 rounded-xl p-6 text-center">
-      <span className="text-4xl block mb-3">🎉</span>
-      <p className="text-green-400 font-bold text-lg">Registration Submitted!</p>
-      <p className="text-green-400/70 text-sm mt-2">
-        Your email has been verified and your account is pending <strong>Super Admin approval</strong>.
-        You&apos;ll receive an email once your account is approved.
+    <div style={{ backgroundColor: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.2)', borderRadius: 'var(--radius-lg)', padding: 24, textAlign: 'center' }}>
+      <span style={{ fontSize: 36, display: 'block', marginBottom: 10 }}>🎉</span>
+      <p style={{ color: '#22c55e', fontWeight: 700, fontSize: 16, marginBottom: 8 }}>Registration Submitted!</p>
+      <p style={{ color: 'rgba(34,197,94,0.7)', fontSize: 13, lineHeight: 1.6 }}>
+        Your email has been verified and your account is pending <strong>Super Admin approval</strong>. You&apos;ll receive an email once approved.
       </p>
-      <div className="mt-4 bg-green-500/10 rounded-lg px-4 py-2 text-green-400/60 text-xs">
-        💡 After approval, log in using the Login tab with your registered email and password.
+      <div style={{ marginTop: 12, backgroundColor: 'rgba(34,197,94,0.08)', borderRadius: 'var(--radius-md)', padding: '8px 12px', color: 'rgba(34,197,94,0.6)', fontSize: 12 }}>
+        💡 After approval, log in using the Login tab.
       </div>
-    </motion.div>
+    </div>
   )
 
   if (step === 'otp') return (
-    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-4">
-      <div className="text-center mb-2">
-        <span className="text-3xl block mb-2">✉️</span>
-        <p className="text-white/80 text-sm">Enter the 6-digit code sent to</p>
-        <p className="text-accent font-bold text-sm">{form.email}</p>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+      <div style={{ textAlign: 'center', marginBottom: 4 }}>
+        <span style={{ fontSize: 28, display: 'block', marginBottom: 6 }}>✉️</span>
+        <p className="text-body-sm" style={{ color: 'var(--color-ink-muted)' }}>Enter the 6-digit code sent to</p>
+        <p className="text-body-sm" style={{ color: 'var(--color-accent-blue)', fontWeight: 600 }}>{form.email}</p>
       </div>
-
-      {error && <div className="bg-red-500/10 text-red-400 px-3 py-2.5 rounded-xl text-xs border border-red-500/20">⚠️ {error}</div>}
-
-      <form onSubmit={handleVerifyAndRegister} className="space-y-4">
-        <div className="flex justify-center gap-2" onPaste={handleOtpPaste}>
+      {error && <div style={{ backgroundColor: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 'var(--radius-md)', padding: '10px 14px', color: '#f87171', fontSize: 13 }}>⚠️ {error}</div>}
+      <form onSubmit={handleVerifyAndRegister} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: 8 }} onPaste={handleOtpPaste}>
           {otp.map((digit, i) => (
-            <input
-              key={i}
-              id={`staff-otp-${i}`}
-              type="text"
-              inputMode="numeric"
-              maxLength={1}
-              value={digit}
-              onChange={e => handleOtpChange(i, e.target.value)}
-              onKeyDown={e => handleOtpKeyDown(i, e)}
-              autoFocus={i === 0}
-              className="w-11 h-13 text-center text-lg font-bold rounded-xl border-2 border-white/10 bg-white/5 text-white focus:border-accent focus:ring-2 focus:ring-accent/20 focus:outline-none transition-all"
-            />
+            <input key={i} id={`staff-otp-${i}`} type="text" inputMode="numeric" maxLength={1} value={digit}
+              onChange={e => handleOtpChange(i, e.target.value)} onKeyDown={e => handleOtpKeyDown(i, e)} autoFocus={i === 0}
+              style={{ width: 44, height: 52, textAlign: 'center', fontSize: 20, fontWeight: 700, borderRadius: 'var(--radius-md)', border: '2px solid var(--color-hairline)', backgroundColor: 'var(--color-surface-2)', color: 'var(--color-ink)', outline: 'none' }} />
           ))}
         </div>
-
-        <div className="text-center text-sm text-white/40">
-          {countdown > 0 ? (
-            <span>Resend in <strong className="text-accent">{countdown}s</strong></span>
-          ) : (
-            <button type="button" onClick={handleResend} disabled={saving}
-              className="text-accent font-semibold hover:underline cursor-pointer disabled:opacity-50">
-              Resend OTP
-            </button>
-          )}
+        <div style={{ textAlign: 'center', fontSize: 13, color: 'var(--color-ink-muted)' }}>
+          {countdown > 0 ? <span>Resend in <strong style={{ color: 'var(--color-accent-blue)' }}>{countdown}s</strong></span> :
+            <button type="button" onClick={handleResend} disabled={saving} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-accent-blue)', fontWeight: 600 }}>Resend OTP</button>}
         </div>
-
-        <button type="submit" disabled={saving || otp.join('').length !== 6}
-          className="w-full py-3.5 rounded-xl font-bold text-white text-sm cursor-pointer disabled:opacity-50 hover:opacity-90 transition-opacity"
-          style={{ background: 'linear-gradient(135deg, #FF6B35, #e55a27)' }}>
-          {saving ? '⏳ Verifying & Registering...' : '✅ Verify & Create Account'}
+        <button type="submit" disabled={saving || otp.join('').length !== 6} className="btn-primary" style={{ width: '100%', justifyContent: 'center', opacity: (saving || otp.join('').length !== 6) ? 0.5 : 1, cursor: 'pointer', padding: '12px' }}>
+          {saving ? '⏳ Verifying…' : '✅ Verify & Create Account'}
         </button>
-
-        <button type="button" onClick={() => { setStep('form'); setOtp(['', '', '', '', '', '']); setError('') }}
-          className="w-full text-sm text-white/40 hover:text-white/70 cursor-pointer">
+        <button type="button" onClick={() => { setStep('form'); setOtp(['', '', '', '', '', '']); setError('') }} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: 'var(--color-ink-muted)' }}>
           ← Back to form
         </button>
       </form>
-    </motion.div>
+    </div>
   )
 
   return (
-    <motion.form initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}
-      onSubmit={handleSendOTP} className="space-y-3">
-      {error && <div className="bg-red-500/10 text-red-400 px-3 py-2.5 rounded-xl text-xs border border-red-500/20">⚠️ {error}</div>}
-
-      <input required value={form.fullname} onChange={e => setForm(p => ({ ...p, fullname: e.target.value }))}
-        placeholder="Full name *" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-accent/50" />
-
-      <input required type="email" value={form.email} onChange={e => setForm(p => ({ ...p, email: e.target.value }))}
-        placeholder="Work email *" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-accent/50" />
-
-      <input required type="password" minLength={8} value={form.password} onChange={e => setForm(p => ({ ...p, password: e.target.value }))}
-        placeholder="Password (min 8 chars) *" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-accent/50" />
-
-      <input value={form.phone} onChange={e => setForm(p => ({ ...p, phone: e.target.value }))}
-        placeholder="Phone number" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-accent/50" />
-
-      {/* Role Selection */}
+    <form onSubmit={handleSendOTP} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      {error && <div style={{ backgroundColor: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 'var(--radius-md)', padding: '10px 14px', color: '#f87171', fontSize: 13 }}>⚠️ {error}</div>}
+      <input required value={form.fullname}  onChange={e => setForm(p => ({ ...p, fullname: e.target.value }))}  placeholder="Full name *"              style={inputSx} />
+      <input required type="email" value={form.email}     onChange={e => setForm(p => ({ ...p, email: e.target.value }))}     placeholder="Work email *"             style={inputSx} />
+      <input required type="password" minLength={8} value={form.password}  onChange={e => setForm(p => ({ ...p, password: e.target.value }))}  placeholder="Password (min 8 chars) *" style={inputSx} />
+      <input value={form.phone}     onChange={e => setForm(p => ({ ...p, phone: e.target.value }))}     placeholder="Phone number"             style={inputSx} />
       <div>
-        <label className="block text-xs font-medium text-white/40 mb-1.5">Select Your Role *</label>
-        <select required value={form.staff_role} onChange={e => setForm(p => ({ ...p, staff_role: e.target.value }))}
-          className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-accent/50 appearance-none cursor-pointer">
-          <option value="" className="bg-slate-900 text-white/50">Choose a role…</option>
-          {STAFF_ROLES.map(r => (
-            <option key={r.value} value={r.value} className="bg-slate-900">{r.label}</option>
-          ))}
+        <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: 'var(--color-ink-muted)', marginBottom: 6 }}>Select Your Role *</label>
+        <select required value={form.staff_role} onChange={e => setForm(p => ({ ...p, staff_role: e.target.value }))} style={{ ...inputSx, cursor: 'pointer' }}>
+          <option value="">Choose a role…</option>
+          {STAFF_ROLES.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
         </select>
       </div>
-
-      <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl px-3 py-2 text-xs text-amber-400/80">
-        ℹ️ After email verification, your account will be reviewed by the Super Admin before you can log in.
+      <div style={{ backgroundColor: 'rgba(251,191,36,0.08)', border: '1px solid rgba(251,191,36,0.2)', borderRadius: 'var(--radius-md)', padding: '10px 14px', fontSize: 12, color: 'rgba(251,191,36,0.8)' }}>
+        ℹ️ After email verification, your account will be reviewed by the Super Admin.
       </div>
-
-      <button type="submit" disabled={saving}
-        className="w-full py-3.5 rounded-xl font-bold text-white text-sm cursor-pointer disabled:opacity-50 hover:opacity-90 transition-opacity"
-        style={{ background: 'linear-gradient(135deg, #FF6B35, #e55a27)' }}>
-        {saving ? '⏳ Sending OTP...' : '📧 Verify Email & Register'}
+      <button type="submit" disabled={saving} className="btn-primary" style={{ width: '100%', justifyContent: 'center', opacity: saving ? 0.5 : 1, cursor: 'pointer', padding: '12px' }}>
+        {saving ? '⏳ Sending OTP…' : '📧 Verify Email & Register'}
       </button>
-    </motion.form>
+    </form>
   )
 }
 
 export default function StaffLoginPage() {
-  const router = useRouter()
+  const router  = useRouter()
   const [showPassword, setShowPassword] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
-  const [pending, setPending] = useState(false)
-  const [activeTab, setActiveTab] = useState<'login' | 'register'>('login')
-
-  // Particles: client-only to avoid SSR/hydration mismatch from Math.random()
-  const [particles, setParticles] = useState<{ id: number; x: number; y: number; size: number; duration: number }[]>([])
-  useEffect(() => {
-    setParticles(
-      Array.from({ length: 20 }, (_, i) => ({
-        id: i,
-        x: Math.random() * 100,
-        y: Math.random() * 100,
-        size: Math.random() * 4 + 2,
-        duration: Math.random() * 10 + 8,
-      }))
-    )
-  }, [])
+  const [loading,      setLoading]      = useState(false)
+  const [error,        setError]        = useState('')
+  const [pending,      setPending]      = useState(false)
+  const [activeTab,    setActiveTab]    = useState<'login' | 'register'>('login')
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    setLoading(true)
-    setError('')
-    setPending(false)
+    e.preventDefault(); setLoading(true); setError(''); setPending(false)
     const formData = new FormData(e.currentTarget)
-
     try {
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: formData.get('email'),
-          password: formData.get('password'),
-          remember: true,
-        }),
-      })
+      const res  = await fetch('/api/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: formData.get('email'), password: formData.get('password'), remember: true }) })
       const data = await res.json()
-
       if (!res.ok) {
-        if (data.pending) {
-          setPending(true)
-        } else if (data.error?.includes('customer') || data.error?.includes('vendor')) {
-          setError('This portal is for staff only. Please use the main login page.')
-        } else {
-          setError(data.error || 'Login failed')
-        }
-        setLoading(false)
-        return
+        if (data.pending) { setPending(true) }
+        else if (data.error?.includes('customer') || data.error?.includes('vendor')) { setError('This portal is for staff only. Please use the main login page.') }
+        else { setError(data.error || 'Login failed') }
+        setLoading(false); return
       }
-
-      const role = data.user?.role
-      const dept = data.user?.department
-      const pillarRole = data.user?.pillar_role
-
-      // Block non-staff from this portal
+      const role = data.user?.role; const dept = data.user?.department; const pillarRole = data.user?.pillar_role
       if (['customer', 'vendor', 'campus', 'digital', 'calling', 'government', 'market'].includes(role)) {
-        setError('This portal is for internal team only. Please use your respective login link.')
-        await fetch('/api/auth/logout', { method: 'POST' })
-        setLoading(false)
-        return
+        setError('This portal is for internal team only.'); await fetch('/api/auth/logout', { method: 'POST' }); setLoading(false); return
       }
-
-      // Redirect based on role
-      if (role === 'super_admin') {
-        router.push('/admin')
-      } else if (role === 'board_member') {
-        router.push('/admin/board')
-      } else if (role === 'pillar_member' && pillarRole) {
-        router.push(`/admin/pillars/${pillarRole}`)
-      } else if (role === 'admin' && dept) {
-        router.push(getDepartmentRoute(dept, pillarRole))
-      } else if (role === 'admin') {
-        router.push('/admin')
-      } else {
-        router.push('/admin')
-      }
-    } catch {
-      setError('Something went wrong. Please try again.')
-      setLoading(false)
-    }
+      if (role === 'super_admin')      router.push('/admin')
+      else if (role === 'board_member')                                           router.push('/admin/board')
+      else if (role === 'pillar_member' && pillarRole)                            router.push(`/admin/pillars/${pillarRole}`)
+      else if (role === 'admin' && dept)                                          router.push(getDepartmentRoute(dept, pillarRole))
+      else                                                                        router.push('/admin')
+    } catch { setError('Something went wrong. Please try again.'); setLoading(false) }
   }
 
+  const inputSx: React.CSSProperties = { display: 'block', width: '100%', boxSizing: 'border-box', padding: '12px 14px', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-hairline)', backgroundColor: 'var(--color-surface-2)', color: 'var(--color-ink)', fontSize: 14, fontFamily: 'var(--font-body)', outline: 'none' }
+
   return (
-    <div className="min-h-screen bg-[#0a0f1e] flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Animated background grid */}
-      <div className="absolute inset-0 opacity-10"
-        style={{ backgroundImage: 'linear-gradient(#1B3A6B 1px, transparent 1px), linear-gradient(90deg, #1B3A6B 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
+    <div style={{ minHeight: '100vh', backgroundColor: 'var(--color-canvas)', display: 'flex', position: 'relative', overflow: 'hidden' }}>
+      {/* Background grid */}
+      <div style={{ position: 'absolute', inset: 0, opacity: 0.04, backgroundImage: 'linear-gradient(var(--color-ink-muted) 1px, transparent 1px), linear-gradient(90deg, var(--color-ink-muted) 1px, transparent 1px)', backgroundSize: '40px 40px', pointerEvents: 'none' }} />
 
-      {/* Glowing orbs */}
-      <motion.div className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] rounded-full"
-        style={{ background: 'radial-gradient(circle, rgba(27,58,107,0.4) 0%, transparent 70%)' }}
-        animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 8, repeat: Infinity }} />
-      <motion.div className="absolute bottom-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full"
-        style={{ background: 'radial-gradient(circle, rgba(255,107,53,0.15) 0%, transparent 70%)' }}
-        animate={{ scale: [1, 1.15, 1] }} transition={{ duration: 10, repeat: Infinity, delay: 2 }} />
+      {/* Subtle glow orbs */}
+      <div style={{ position: 'absolute', top: '-20%', right: '-10%', width: 500, height: 500, borderRadius: '50%', background: 'radial-gradient(circle, rgba(0,153,255,0.08) 0%, transparent 70%)', pointerEvents: 'none' }} className="animate-spotlight-breathe" />
+      <div style={{ position: 'absolute', bottom: '-20%', left: '-10%', width: 400, height: 400, borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,107,53,0.06) 0%, transparent 70%)', pointerEvents: 'none' }} />
 
-      {/* Floating particles */}
-      {particles.slice(0, 12).map(p => (
-        <motion.div key={p.id}
-          className="absolute rounded-full bg-accent/30"
-          style={{ left: `${p.x}%`, top: `${p.y}%`, width: p.size, height: p.size }}
-          animate={{ y: [0, -30, 0], opacity: [0.3, 0.8, 0.3] }}
-          transition={{ duration: p.duration, repeat: Infinity, delay: p.id * 0.5 }}
-        />
-      ))}
-
-      {/* Back to website */}
-      <Link href="/"
-        className="absolute top-6 left-6 z-20 flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 backdrop-blur-md text-white/70 text-sm hover:bg-white/10 hover:text-white transition-all border border-white/10">
+      {/* Top nav links */}
+      <Link href="/" style={{ position: 'absolute', top: 24, left: 24, zIndex: 20, display: 'flex', alignItems: 'center', gap: 6, padding: '8px 16px', borderRadius: 'var(--radius-pill)', border: '1px solid var(--color-hairline)', color: 'var(--color-ink-muted)', fontSize: 13, textDecoration: 'none', backgroundColor: 'var(--color-surface-1)' }}>
         ← Public Website
       </Link>
-
-      {/* Customer login hint */}
-      <Link href="/login"
-        className="absolute top-6 right-6 z-20 flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 backdrop-blur-md text-accent text-sm hover:bg-accent/20 transition-all border border-accent/20">
+      <Link href="/login" style={{ position: 'absolute', top: 24, right: 24, zIndex: 20, display: 'flex', alignItems: 'center', gap: 6, padding: '8px 16px', borderRadius: 'var(--radius-pill)', border: '1px solid var(--color-hairline)', color: 'var(--color-accent-blue)', fontSize: 13, textDecoration: 'none', backgroundColor: 'rgba(0,153,255,0.08)' }}>
         Customer Login →
       </Link>
 
-      <motion.div
-        initial={{ opacity: 0, y: 40, scale: 0.95 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ duration: 0.5, ease: 'easeOut' }}
-        className="relative z-10 w-full max-w-md"
-      >
-        {/* Card */}
-        <div className="bg-white/[0.04] backdrop-blur-2xl rounded-3xl border border-white/10 shadow-2xl overflow-hidden">
-          {/* Header stripe */}
-          <div className="h-1 bg-gradient-to-r from-navy via-accent to-navy" />
-
-          <div className="p-8 lg:p-10">
-            {/* Logo + title */}
-            <div className="text-center mb-8">
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ type: 'spring', stiffness: 200, delay: 0.2 }}
-                className="inline-block mb-4 relative"
-              >
-                <div className="w-16 h-16 rounded-2xl overflow-hidden shadow-xl shadow-accent/20 mx-auto ring-2 ring-accent/30">
-                  <Image src="/images/karyasaarthi.png" alt="Karya Saarthi" width={64} height={64} className="w-full h-full object-cover" />
-                </div>
-                <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-400 rounded-full border-2 border-[#0a0f1e] flex items-center justify-center">
-                  <div className="w-2 h-2 bg-white rounded-full" />
-                </div>
-              </motion.div>
-
-              <h1 className="text-2xl font-bold text-white font-heading">Staff Portal</h1>
-              <p className="text-white/40 text-sm mt-1">Karya Saarthi Internal Access</p>
-
-              {/* Tabs */}
-              <div className="flex bg-white/5 p-1 rounded-xl mt-6">
-                <button onClick={() => { setActiveTab('login'); setError(''); setPending(false) }}
-                  className={`flex-1 py-2 text-sm font-medium rounded-lg transition-all cursor-pointer ${activeTab === 'login' ? 'bg-accent text-white shadow-lg' : 'text-white/40 hover:text-white'}`}>
-                  Login
-                </button>
-                <button onClick={() => { setActiveTab('register'); setError(''); setPending(false) }}
-                  className={`flex-1 py-2 text-sm font-medium rounded-lg transition-all cursor-pointer ${activeTab === 'register' ? 'bg-accent text-white shadow-lg' : 'text-white/40 hover:text-white'}`}>
-                  Register
-                </button>
-              </div>
+      {/* Left branding panel */}
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '60px 48px', borderRight: '1px solid var(--color-hairline-soft)' }} className="staff-login-brand">
+        <div style={{ textAlign: 'center', maxWidth: 360 }}>
+          <div style={{ width: 72, height: 72, borderRadius: 18, overflow: 'hidden', margin: '0 auto 24px', position: 'relative' }}>
+            <Image src="/images/karyasaarthi.png" alt="Karya Saarthi" width={72} height={72} style={{ width: '100%', height: '100%', objectFit: 'cover', }} />
+            <div style={{ position: 'absolute', bottom: -2, right: -2, width: 20, height: 20, borderRadius: '50%', backgroundColor: '#22c55e', border: '2px solid var(--color-canvas)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ width: 7, height: 7, borderRadius: '50%', backgroundColor: '#fff' }} />
             </div>
-
-            {/* Tab Content */}
-            <AnimatePresence mode="wait">
-              {activeTab === 'login' ? (
-                <motion.div key="login" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-                  {/* Error / Pending alerts */}
-                  <AnimatePresence>
-                    {error && (
-                      <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-                        className="bg-red-500/10 text-red-400 px-4 py-3 rounded-xl text-sm mb-5 flex items-start gap-2 border border-red-500/20">
-                        <span className="text-base mt-0.5">⚠️</span>
-                        <span>{error}</span>
-                      </motion.div>
-                    )}
-                    {pending && (
-                      <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-                        className="bg-amber-500/10 text-amber-400 px-4 py-3 rounded-xl text-sm mb-5 border border-amber-500/20">
-                        ⏳ Your account is pending approval by the administrator.
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-
-                  {/* Login Form */}
-                  <form onSubmit={handleLogin} className="space-y-5">
-                    {/* Email */}
-                    <div>
-                      <label className="block text-sm font-medium text-white/60 mb-1.5">Staff Email</label>
-                      <div className="relative">
-                        <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/30 text-sm">✉</span>
-                        <input
-                          type="email"
-                          name="email"
-                          required
-                          autoFocus
-                          placeholder="yourname@karyasaarthi.in"
-                          className="w-full pl-10 pr-4 py-3.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/20 focus:border-accent/50 focus:ring-2 focus:ring-accent/10 focus:outline-none text-sm transition-all"
-                        />
-                      </div>
-                    </div>
-
-                    {/* Password */}
-                    <div>
-                      <label className="block text-sm font-medium text-white/60 mb-1.5">Password</label>
-                      <div className="relative">
-                        <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/30 text-sm">🔒</span>
-                        <input
-                          type={showPassword ? 'text' : 'password'}
-                          name="password"
-                          required
-                          placeholder="Enter your password"
-                          className="w-full pl-10 pr-12 py-3.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/20 focus:border-accent/50 focus:ring-2 focus:ring-accent/10 focus:outline-none text-sm transition-all"
-                        />
-                        <button type="button" onClick={() => setShowPassword(!showPassword)}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/70 transition-colors cursor-pointer text-lg">
-                          {showPassword ? '🙈' : '👁️'}
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Forgot password */}
-                    <div className="flex justify-end">
-                      <Link href="/forgot-password" className="text-xs text-accent/70 hover:text-accent transition-colors">
-                        Forgot password?
-                      </Link>
-                    </div>
-
-                    {/* Submit */}
-                    <button
-                      type="submit"
-                      disabled={loading}
-                      className="w-full py-4 rounded-xl text-white font-bold text-base transition-all cursor-pointer disabled:opacity-50 relative overflow-hidden group"
-                      style={{ background: 'linear-gradient(135deg, #1B3A6B, #254d8a)' }}
-                    >
-                      <span className="absolute inset-0 bg-accent/0 group-hover:bg-accent/10 transition-colors" />
-                      <span className="relative flex items-center justify-center gap-2">
-                        {loading ? (
-                          <>
-                            <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
-                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                            </svg>
-                            Authenticating...
-                          </>
-                        ) : (
-                          <>🔐 Access Staff Portal</>
-                        )}
-                      </span>
-                    </button>
-                  </form>
-                </motion.div>
-              ) : (
-                <motion.div key="register" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }}>
-                  <RegisterForm />
-                </motion.div>
-              )}
-            </AnimatePresence>
           </div>
-
-          {/* Footer */}
-          <div className="px-8 pb-6 text-center">
-            <p className="text-white/20 text-xs">
-              🛡️ Secured access · Role-based permissions · Enterprise login
-            </p>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, color: 'var(--color-ink)', marginBottom: 10, letterSpacing: '-0.5px' }}>Staff Portal</h1>
+          <p style={{ color: 'var(--color-ink-muted)', fontSize: 14, lineHeight: 1.6, marginBottom: 28 }}>
+            Karya Saarthi internal access for team members, admins, and board directors.
+          </p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {['🔐 Role-based access control', '👥 Team collaboration tools', '📊 Real-time analytics', '🛡️ Enterprise-grade security'].map(f => (
+              <div key={f} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', borderRadius: 'var(--radius-md)', backgroundColor: 'var(--color-surface-1)', border: '1px solid var(--color-hairline-soft)' }}>
+                <span style={{ fontSize: 13, color: 'var(--color-ink)', fontWeight: 500 }}>{f}</span>
+              </div>
+            ))}
           </div>
         </div>
+      </div>
 
-        {/* Security badge */}
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6 }}
-          className="text-center text-white/20 text-xs mt-4"
-        >
-          Not a staff member?{' '}
-          <Link href="/login" className="text-accent/60 hover:text-accent transition-colors">
-            Go to customer login
-          </Link>
-        </motion.p>
-      </motion.div>
+      {/* Right form panel */}
+      <div style={{ width: 440, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '60px 40px' }} className="staff-login-form">
+        <div style={{ width: '100%', maxWidth: 380 }}>
+          {/* Top stripe */}
+          <div style={{ height: 2, borderRadius: 1, background: 'linear-gradient(90deg, var(--color-accent-blue), var(--color-ink-muted))', marginBottom: 28 }} />
+
+          {/* Tabs */}
+          <div style={{ display: 'flex', backgroundColor: 'var(--color-surface-1)', padding: 4, borderRadius: 'var(--radius-lg)', marginBottom: 24, border: '1px solid var(--color-hairline-soft)' }}>
+            {(['login', 'register'] as const).map(tab => (
+              <button key={tab} onClick={() => { setActiveTab(tab); setError(''); setPending(false) }} style={{ flex: 1, padding: '9px', borderRadius: 'var(--radius-md)', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-body)', fontSize: 13, fontWeight: 600, transition: 'all var(--dur-fast) var(--ease-out)', backgroundColor: activeTab === tab ? 'var(--color-ink)' : 'transparent', color: activeTab === tab ? 'var(--color-canvas)' : 'var(--color-ink-muted)', textTransform: 'capitalize' }}>
+                {tab}
+              </button>
+            ))}
+          </div>
+
+          {/* Login form */}
+          {activeTab === 'login' && (
+            <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+              {error   && <div style={{ backgroundColor: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 'var(--radius-md)', padding: '10px 14px', color: '#f87171', fontSize: 13 }}>⚠️ {error}</div>}
+              {pending && <div style={{ backgroundColor: 'rgba(251,191,36,0.08)', border: '1px solid rgba(251,191,36,0.2)', borderRadius: 'var(--radius-md)', padding: '10px 14px', color: 'rgba(251,191,36,0.9)', fontSize: 13 }}>⏳ Your account is pending approval by the administrator.</div>}
+
+              <div>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: 'var(--color-ink-muted)', marginBottom: 6 }}>Staff Email</label>
+                <div style={{ position: 'relative' }}>
+                  <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--color-ink-muted)', fontSize: 13 }}>✉</span>
+                  <input type="email" name="email" required autoFocus placeholder="yourname@karyasaarthi.in" style={{ ...inputSx, paddingLeft: 34 }} />
+                </div>
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: 'var(--color-ink-muted)', marginBottom: 6 }}>Password</label>
+                <div style={{ position: 'relative' }}>
+                  <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', fontSize: 13 }}>🔒</span>
+                  <input type={showPassword ? 'text' : 'password'} name="password" required placeholder="Enter your password" style={{ ...inputSx, paddingLeft: 34, paddingRight: 40 }} />
+                  <button type="button" onClick={() => setShowPassword(!showPassword)} style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', fontSize: 16 }}>
+                    {showPassword ? '🙈' : '👁️'}
+                  </button>
+                </div>
+              </div>
+
+              <div style={{ textAlign: 'right' }}>
+                <Link href="/forgot-password" style={{ fontSize: 12, color: 'var(--color-accent-blue)', textDecoration: 'none' }}>Forgot password?</Link>
+              </div>
+
+              <button type="submit" disabled={loading} className="btn-primary" style={{ width: '100%', justifyContent: 'center', opacity: loading ? 0.6 : 1, cursor: 'pointer', padding: '13px', fontSize: 14 }}>
+                {loading ? (
+                  <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <svg style={{ width: 16, height: 16, animation: 'spin 1s linear infinite' }} viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" opacity="0.25" /><path fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
+                    Authenticating…
+                  </span>
+                ) : '🔐 Access Staff Portal'}
+              </button>
+            </form>
+          )}
+
+          {/* Register form */}
+          {activeTab === 'register' && <RegisterForm />}
+
+          {/* Footer */}
+          <p style={{ textAlign: 'center', fontSize: 12, color: 'var(--color-ink-muted)', marginTop: 24 }}>
+            Not a staff member?{' '}
+            <a href="https://karyasaarthi.com/login" style={{ color: 'var(--color-accent-blue)', textDecoration: 'none' }}>Go to customer login →</a>
+          </p>
+          <p style={{ textAlign: 'center', fontSize: 11, color: 'var(--color-ink-muted)', marginTop: 8 }}>
+            🛡️ Staff portal · admin.karyasaarthi.com · Role-based access
+          </p>
+        </div>
+      </div>
+
+      <style>{`
+        @media (max-width: 768px) {
+          .staff-login-brand { display: none !important; }
+          .staff-login-form  { width: 100% !important; padding: 32px 20px !important; }
+        }
+      `}</style>
     </div>
   )
 }
-
 

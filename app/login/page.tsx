@@ -4,128 +4,70 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { motion } from 'framer-motion'
+
+const PILLAR_CONFIG: Record<string, { title: string; subtitle: string; icon: string; accentColor: string }> = {
+  campus:     { title: 'Campus Saarthi',     subtitle: 'Empowering Students',        icon: '🎓', accentColor: '#818cf8' },
+  digital:    { title: 'Digital Saarthi',    subtitle: 'Content & Presence',          icon: '💻', accentColor: '#a78bfa' },
+  calling:    { title: 'Calling Saarthi',    subtitle: 'Voice-First Outreach',         icon: '📞', accentColor: '#f97316' },
+  government: { title: 'Govt Saarthi',       subtitle: 'Public Sector Excellence',     icon: '🏛️', accentColor: '#22c55e' },
+  market:     { title: 'Market Saarthi',     subtitle: 'On-Ground Presence',           icon: '🗺️', accentColor: '#fbbf24' },
+}
 
 function LoginContent() {
-  const router = useRouter()
+  const router       = useRouter()
   const searchParams = useSearchParams()
-  const pillar = searchParams.get('pillar')
+  const pillar       = searchParams.get('pillar')
 
-  const [showPassword, setShowPassword] = useState(false)
+  const [showPw,  setShowPw]  = useState(false)
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+  const [error,   setError]   = useState('')
   const [pending, setPending] = useState(false)
 
-  // Pillar specific configurations
-  let title = "Welcome Back!"
-  let subtitle = "Sign in to your account"
-  let bgClass = "from-navy-dark via-navy to-navy-light"
-  let icon = null
-  let themeColor = "text-navy"
-  let focusRing = "focus:ring-navy/10 focus:border-navy"
-
-  switch(pillar) {
-    case 'campus':
-      title = "Campus Saarthi"
-      subtitle = "Empowering Students"
-      bgClass = "from-blue-900 via-indigo-900 to-blue-800"
-      icon = "🎓"
-      themeColor = "text-blue-600"
-      focusRing = "focus:ring-blue-500/20 focus:border-blue-500"
-      break;
-    case 'digital':
-      title = "Digital Saarthi"
-      subtitle = "Content & Presence"
-      bgClass = "from-violet-900 via-purple-900 to-violet-800"
-      icon = "💻"
-      themeColor = "text-violet-600"
-      focusRing = "focus:ring-violet-500/20 focus:border-violet-500"
-      break;
-    case 'calling':
-      title = "Calling Saarthi"
-      subtitle = "Voice-First Outreach"
-      bgClass = "from-orange-900 via-red-900 to-orange-800"
-      icon = "📞"
-      themeColor = "text-orange-600"
-      focusRing = "focus:ring-orange-500/20 focus:border-orange-500"
-      break;
-    case 'government':
-      title = "Govt Saarthi"
-      subtitle = "Public Sector Excellence"
-      bgClass = "from-emerald-900 via-teal-900 to-emerald-800"
-      icon = "🏛️"
-      themeColor = "text-emerald-600"
-      focusRing = "focus:ring-emerald-500/20 focus:border-emerald-500"
-      break;
-    case 'market':
-      title = "Market Saarthi"
-      subtitle = "On-Ground Presence"
-      bgClass = "from-amber-900 via-orange-900 to-amber-800"
-      icon = "🗺️"
-      themeColor = "text-amber-600"
-      focusRing = "focus:ring-amber-500/20 focus:border-amber-500"
-      break;
-  }
+  const cfg = pillar ? PILLAR_CONFIG[pillar] : null
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setLoading(true)
     setError('')
     setPending(false)
-    const formData = new FormData(e.currentTarget)
+    const fd = new FormData(e.currentTarget)
     try {
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
+      const res  = await fetch('/api/auth/login', {
+        method:  'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          email: formData.get('email'),
-          password: formData.get('password'),
-          remember: formData.get('remember') === 'on',
+          email:    fd.get('email'),
+          password: fd.get('password'),
+          remember: fd.get('remember') === 'on',
         }),
       })
       const data = await res.json()
       if (!res.ok) {
-        if (data.pending) {
-          setPending(true)
-        } else {
-          setError(data.error || 'Login failed')
-        }
+        if (data.pending) { setPending(true) }
+        else              { setError(data.error || 'Login failed') }
         setLoading(false)
         return
       }
-      // Redirect based on role
       const role = data.user?.role
-      const dept = data.user?.department
-
-      // Enforce portal login restrictions
       if (['super_admin', 'board_member', 'admin', 'pillar_member'].includes(role)) {
-        setError('Internal staff must use the Staff Portal to log in.')
+        setError('Internal staff must use the Staff Portal.')
         await fetch('/api/auth/logout', { method: 'POST' })
         setLoading(false)
         return
       }
-
       if (['customer', 'vendor'].includes(role) && pillar) {
-        setError('This portal is for Saarthi members. Please use the main customer login.')
+        setError('This portal is for Saarthi members. Use the main login.')
         await fetch('/api/auth/logout', { method: 'POST' })
         setLoading(false)
         return
       }
-
-      if (['campus', 'digital', 'calling', 'government', 'market'].includes(role)) {
-        if (role !== pillar) {
-          setError(`Please log in through the ${role.charAt(0).toUpperCase() + role.slice(1)} Saarthi portal.`)
-          await fetch('/api/auth/logout', { method: 'POST' })
-          setLoading(false)
-          return
-        }
+      if (['campus', 'digital', 'calling', 'government', 'market'].includes(role) && role !== pillar) {
+        setError(`Please log in through the ${role.charAt(0).toUpperCase() + role.slice(1)} Saarthi portal.`)
+        await fetch('/api/auth/logout', { method: 'POST' })
+        setLoading(false)
+        return
       }
-
-      if (role === 'vendor') {
-        router.push('/vendor')
-      } else {
-        router.push('/dashboard')
-      }
+      router.push(role === 'vendor' ? '/vendor' : '/dashboard')
     } catch {
       setError('Something went wrong.')
       setLoading(false)
@@ -133,94 +75,181 @@ function LoginContent() {
   }
 
   return (
-    <div className={`min-h-screen bg-gradient-to-br ${bgClass} flex items-center justify-center p-4 relative overflow-hidden transition-colors duration-500`}>
-      {/* Background shapes */}
-      {[...Array(3)].map((_, i) => (
-        <motion.div key={i} className="absolute w-64 h-64 rounded-full bg-white/5" style={{ top: `${20 + i * 30}%`, left: `${10 + i * 30}%` }}
-          animate={{ scale: [1, 1.2, 1], rotate: [0, 120, 240, 360] }}
-          transition={{ duration: 20 + i * 5, repeat: Infinity }}
-        />
-      ))}
+    <div style={{ minHeight: '100vh', backgroundColor: 'var(--color-canvas)', display: 'flex', alignItems: 'stretch' }}>
 
-      <Link href="/" className="absolute top-6 left-6 z-20 flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md text-white text-sm font-medium hover:bg-white/20 transition-all">
-        ← Back to Home
-      </Link>
+      {/* ── Left panel: brand / headline ───────────────────── */}
+      <div className="login-left" style={{
+        flex: 1,
+        padding: '64px 48px',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        borderRight: '1px solid var(--color-hairline-soft)',
+      }}>
+        <Link href="/" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, textDecoration: 'none', marginBottom: 64 }}>
+          <Image src="/images/karyasaarthi.png" alt="Karya Saarthi" width={24} height={24} style={{ borderRadius: 4 }} />
+          <span style={{ fontFamily: 'var(--font-display)', fontSize: 15, fontWeight: 600, color: 'var(--color-ink)', letterSpacing: '-0.4px' }}>Karya Saarthi</span>
+        </Link>
 
-      <motion.div initial={{ opacity: 0, y: 30, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 0.5 }}
-        className="relative z-10 w-full max-w-md bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl p-8 lg:p-10"
-      >
-        <div className="text-center mb-8">
-          <div className="flex justify-center mb-4 min-h-[60px] items-center">
-            {icon ? (
-              <div className="text-6xl drop-shadow-lg filter">{icon}</div>
-            ) : (
-              <Image src="/images/karyasaarthi.png" alt="Logo" width={60} height={60} className="rounded-xl shadow-lg" />
-            )}
-          </div>
-          <h2 className={`text-2xl font-bold font-heading ${themeColor}`}>{title}</h2>
-          <p className="text-slate-500 text-sm mt-1">{subtitle}</p>
+        {cfg ? (
+          <>
+            <p style={{ fontSize: 40, marginBottom: 24 }}>{cfg.icon}</p>
+            <h1 className="text-display-lg" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-ink)', marginBottom: 16 }}>
+              {cfg.title}
+            </h1>
+            <p className="text-body-lg" style={{ color: 'var(--color-ink-muted)', maxWidth: 340 }}>
+              {cfg.subtitle} — sign in to access your Saarthi dashboard.
+            </p>
+          </>
+        ) : (
+          <>
+            <h1 className="text-display-lg" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-ink)', marginBottom: 16 }}>
+              Welcome back
+            </h1>
+            <p className="text-body-lg" style={{ color: 'var(--color-ink-muted)', maxWidth: 360 }}>
+              Sign in to track your projects, communicate with specialists, and manage your account.
+            </p>
+          </>
+        )}
+
+        <div style={{ marginTop: 48, display: 'flex', flexDirection: 'column', gap: 16 }}>
+          {['500+ active projects', '98% satisfaction rate', 'Real-time progress tracking'].map(t => (
+            <div key={t} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: 'var(--color-semantic-success)', flexShrink: 0 }} />
+              <span className="text-body-sm" style={{ color: 'var(--color-ink-muted)' }}>{t}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Right panel: form ───────────────────────────────── */}
+      <div className="login-right" style={{
+        width: 460,
+        flexShrink: 0,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        padding: '64px 48px',
+      }}>
+        <div style={{ marginBottom: 36 }}>
+          <h2 className="text-display-md" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-ink)', marginBottom: 8 }}>Sign in</h2>
+          <p className="text-body" style={{ color: 'var(--color-ink-muted)' }}>
+            Don&apos;t have an account?{' '}
+            <Link href={`/signup${pillar ? `?pillar=${pillar}` : ''}`} style={{ color: 'var(--color-accent-blue)', textDecoration: 'none', fontWeight: 500 }}>
+              Create one
+            </Link>
+          </p>
         </div>
 
+        {/* Alerts */}
         {error && (
-          <div className="bg-red-50 text-red-600 px-4 py-3 rounded-xl text-sm mb-4 flex items-center gap-2">
-            ⚠️ {error}
+          <div style={{ backgroundColor: '#1a0808', border: '1px solid #7f1d1d', borderRadius: 'var(--radius-md)', padding: '12px 16px', marginBottom: 20 }}>
+            <p className="text-body-sm" style={{ color: '#fca5a5' }}>⚠ {error}</p>
           </div>
         )}
-
         {pending && (
-          <div className="bg-amber-50 text-amber-700 px-4 py-3 rounded-xl text-sm mb-4">
-            ⏳ Your admin registration is pending approval. You will be notified via email once approved.
+          <div style={{ backgroundColor: '#1a1200', border: '1px solid #78350f', borderRadius: 'var(--radius-md)', padding: '12px 16px', marginBottom: 20 }}>
+            <p className="text-body-sm" style={{ color: '#fde68a' }}>⏳ Your registration is pending approval. You'll be notified by email.</p>
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-5">
+        {/* Form */}
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1.5">Email</label>
-            <input type="email" name="email" required autoFocus placeholder="name@example.com"
-              className={`w-full px-4 py-3.5 rounded-xl bg-slate-50 border border-slate-200 focus:outline-none text-sm transition-all ${focusRing}`}
+            <label htmlFor="email" className="text-body-sm" style={{ color: 'var(--color-ink-muted)', display: 'block', marginBottom: 6 }}>Email</label>
+            <input
+              id="email" type="email" name="email" required autoFocus
+              placeholder="name@example.com"
+              className="ks-input"
+              autoComplete="email"
             />
           </div>
-          <div className="relative">
-            <label className="block text-sm font-medium text-slate-700 mb-1.5">Password</label>
-            <input type={showPassword ? 'text' : 'password'} name="password" required placeholder="Enter your password"
-              className={`w-full px-4 py-3.5 rounded-xl bg-slate-50 border border-slate-200 focus:outline-none text-sm transition-all pr-12 ${focusRing}`}
-            />
-            <button type="button" onClick={() => setShowPassword(!showPassword)} className={`absolute right-3 top-9 text-slate-400 hover:${themeColor} text-sm cursor-pointer`}>
-              {showPassword ? '🙈' : '👁️'}
-            </button>
+
+          <div>
+            <label htmlFor="password" className="text-body-sm" style={{ color: 'var(--color-ink-muted)', display: 'block', marginBottom: 6 }}>Password</label>
+            <div style={{ position: 'relative' }}>
+              <input
+                id="password" type={showPw ? 'text' : 'password'} name="password" required
+                placeholder="Enter your password"
+                className="ks-input"
+                style={{ paddingRight: 48 }}
+                autoComplete="current-password"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPw(v => !v)}
+                style={{
+                  position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)',
+                  background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-ink-muted)',
+                  fontSize: 16, lineHeight: 1,
+                }}
+                aria-label={showPw ? 'Hide password' : 'Show password'}
+              >
+                {showPw ? '🙈' : '👁'}
+              </button>
+            </div>
           </div>
-          <div className="flex justify-between items-center text-sm">
-            <label className="flex items-center gap-2 text-slate-600 cursor-pointer">
-              <input type="checkbox" name="remember" className={`rounded text-accent focus:ring-accent`} /> Remember me
+
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
+              <input type="checkbox" name="remember" style={{ accentColor: 'var(--color-accent-blue)', width: 14, height: 14 }} />
+              <span className="text-body-sm" style={{ color: 'var(--color-ink-muted)' }}>Remember me</span>
             </label>
-            <Link href="/forgot-password" className="text-accent font-medium hover:underline">Forgot?</Link>
+            <Link href="/forgot-password" className="text-body-sm" style={{ color: 'var(--color-accent-blue)', textDecoration: 'none' }}>
+              Forgot password?
+            </Link>
           </div>
-          <button type="submit" disabled={loading}
-            className="w-full py-4 rounded-xl bg-accent text-white font-bold text-base hover:bg-accent-dark shadow-lg shadow-accent/25 transition-all cursor-pointer disabled:opacity-50"
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="btn-primary"
+            style={{ justifyContent: 'center', marginTop: 4, width: '100%', opacity: loading ? 0.6 : 1 }}
           >
-            {loading ? '⏳ Signing in...' : 'Sign In →'}
+            {loading ? 'Signing in…' : 'Sign in'}
           </button>
         </form>
 
-        <div className="my-6 flex items-center gap-3"><div className="flex-1 h-px bg-slate-200" /><span className="text-slate-400 text-xs">or</span><div className="flex-1 h-px bg-slate-200" /></div>
-
-        <div className="flex gap-3">
-          <a href="https://wa.me/918595025753" target="_blank" rel="noopener noreferrer" className="flex-1 py-3 rounded-xl border border-slate-200 text-center text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors">💬 WhatsApp</a>
-          <a href="tel:+918595025753" className="flex-1 py-3 rounded-xl border border-slate-200 text-center text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors">📞 Call</a>
+        {/* Divider */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '24px 0' }}>
+          <div style={{ flex: 1, height: 1, backgroundColor: 'var(--color-hairline-soft)' }} />
+          <span className="text-micro" style={{ color: 'var(--color-ink-muted)' }}>or contact us</span>
+          <div style={{ flex: 1, height: 1, backgroundColor: 'var(--color-hairline-soft)' }} />
         </div>
 
-        <p className="text-center text-sm text-slate-500 mt-6 pt-6 border-t border-slate-100">
-          Don&apos;t have an account? <Link href={`/signup${pillar ? `?pillar=${pillar}` : ''}`} className="text-accent font-semibold hover:underline">Create Account</Link>
-        </p>
-      </motion.div>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <a href="https://wa.me/918595025753" target="_blank" rel="noopener noreferrer"
+            className="btn-secondary" style={{ flex: 1, justifyContent: 'center', fontSize: 13 }}>
+            💬 WhatsApp
+          </a>
+          <a href="tel:+918595025753"
+            className="btn-secondary" style={{ flex: 1, justifyContent: 'center', fontSize: 13 }}>
+            📞 Call
+          </a>
+        </div>
+
+
+      </div>
+
+      <style>{`
+        @media (max-width: 810px) {
+          .login-left { display: none !important; }
+          .login-right { width: 100% !important; max-width: 460px; margin: 0 auto; padding: 40px 24px !important; }
+        }
+      `}</style>
     </div>
   )
 }
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-navy flex items-center justify-center p-4">Loading login...</div>}>
+    <Suspense fallback={
+      <div style={{ minHeight: '100vh', backgroundColor: 'var(--color-canvas)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div className="skeleton" style={{ width: 320, height: 400, borderRadius: 'var(--radius-xl)' }} />
+      </div>
+    }>
       <LoginContent />
     </Suspense>
   )
 }
+

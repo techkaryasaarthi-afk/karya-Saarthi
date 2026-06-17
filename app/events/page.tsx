@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import EventsClient from '@/components/EventsClient'
+import PageCTABanner from '@/components/PageCTABanner'
 
 // ISR: Revalidate every hour — cached at the edge globally
 export const revalidate = 3600
@@ -50,6 +51,15 @@ export default async function EventsPage() {
     <>
       <Navbar />
       <EventsClient initialEvents={events} />
+      <PageCTABanner
+        headline="Want to Host or Sponsor an Event?"
+        subtext="Partner with Karya Saarthi to create impactful events, workshops, and hackathons. Reach thousands of students."
+        primaryLabel="Partner With Us →"
+        primaryHref="/contact?type=partner"
+        secondaryLabel="💬 WhatsApp Us"
+        secondaryHref="https://wa.me/918595025753"
+        variant="orange"
+      />
       <Footer />
     </>
   )

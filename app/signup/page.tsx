@@ -4,24 +4,26 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useState, useEffect, useCallback, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { motion } from 'framer-motion'
 
-type RegistrationType = 'customer' | 'vendor'
 type SignupStep = 'form' | 'otp' | 'complete'
 
+const PW_STRENGTH_COLORS = ['transparent', '#ef4444', '#f59e0b', '#22c55e']
+const PW_STRENGTH_WIDTHS = ['0%', '33%', '66%', '100%']
+
 function SignupContent() {
-  const router = useRouter()
+  const router       = useRouter()
   const searchParams = useSearchParams()
-  const pillar = searchParams.get('pillar')
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
-  const [success, setSuccess] = useState('')
+  const pillar       = searchParams.get('pillar')
+
+  const [loading,   setLoading]   = useState(false)
+  const [error,     setError]     = useState('')
+  const [success,   setSuccess]   = useState('')
   const [pwStrength, setPwStrength] = useState(0)
-  const [regType, setRegType] = useState<string>(pillar || 'customer')
-  const [step, setStep] = useState<SignupStep>('form')
-  const [otp, setOtp] = useState(['', '', '', '', '', ''])
+  const [regType,   setRegType]   = useState<string>(pillar || 'customer')
+  const [step,      setStep]      = useState<SignupStep>('form')
+  const [otp,       setOtp]       = useState(['', '', '', '', '', ''])
   const [countdown, setCountdown] = useState(0)
-  const [formData, setFormData] = useState<Record<string, string>>({})
+  const [formData,  setFormData]  = useState<Record<string, string>>({})
 
   useEffect(() => {
     if (countdown > 0) {
@@ -35,55 +37,38 @@ function SignupContent() {
     setPwStrength(len === 0 ? 0 : len < 6 ? 1 : len < 10 ? 2 : 3)
   }
 
-  // Step 1: Send OTP for email verification
   const handleSendOTP = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setLoading(true); setError(''); setSuccess('')
     const fd = new FormData(e.currentTarget)
     if (fd.get('password') !== fd.get('confirm_password')) { setError('Passwords do not match'); setLoading(false); return }
-
     const data: Record<string, string> = {
       fullname: fd.get('fullname') as string,
-      phone: fd.get('phone') as string,
-      email: fd.get('email') as string,
+      phone:    fd.get('phone')    as string,
+      email:    fd.get('email')    as string,
       password: fd.get('password') as string,
-      user_type: (fd.get('user_type') as string) || '',
+      user_type:  (fd.get('user_type')  as string) || '',
       department: (fd.get('department') as string) || '',
     }
     setFormData(data)
-
     try {
-      const res = await fetch('/api/auth/send-signup-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: data.email, fullname: data.fullname }),
-      })
+      const res    = await fetch('/api/auth/send-signup-otp', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: data.email, fullname: data.fullname }) })
       const result = await res.json()
       if (!res.ok) { setError(result.error || 'Failed to send OTP'); setLoading(false); return }
-      setStep('otp')
-      setCountdown(60)
+      setStep('otp'); setCountdown(60)
     } catch { setError('Something went wrong.') }
     setLoading(false)
   }
 
-  // Handle OTP input
   const handleOtpChange = useCallback((index: number, value: string) => {
     if (value.length > 1) value = value.slice(-1)
     if (value && !/^\d$/.test(value)) return
-    const newOtp = [...otp]
-    newOtp[index] = value
-    setOtp(newOtp)
-    if (value && index < 5) {
-      const next = document.getElementById(`signup-otp-${index + 1}`)
-      next?.focus()
-    }
+    const newOtp = [...otp]; newOtp[index] = value; setOtp(newOtp)
+    if (value && index < 5) { document.getElementById(`signup-otp-${index + 1}`)?.focus() }
   }, [otp])
 
   const handleOtpKeyDown = useCallback((index: number, e: React.KeyboardEvent) => {
-    if (e.key === 'Backspace' && !otp[index] && index > 0) {
-      const prev = document.getElementById(`signup-otp-${index - 1}`)
-      prev?.focus()
-    }
+    if (e.key === 'Backspace' && !otp[index] && index > 0) document.getElementById(`signup-otp-${index - 1}`)?.focus()
   }, [otp])
 
   const handleOtpPaste = useCallback((e: React.ClipboardEvent) => {
@@ -92,240 +77,223 @@ function SignupContent() {
     if (pasted.length === 6) setOtp(pasted.split(''))
   }, [])
 
-  // Step 2: Verify OTP and create account
   const handleVerifyAndSignup = async (e: React.FormEvent) => {
     e.preventDefault()
     const otpStr = otp.join('')
     if (otpStr.length !== 6) { setError('Please enter the complete 6-digit OTP'); return }
     setLoading(true); setError('')
-
     try {
-      // First verify the OTP
-      const verifyRes = await fetch('/api/auth/verify-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: formData.email, otp: otpStr, purpose: 'signup_verification' }),
-      })
+      const verifyRes  = await fetch('/api/auth/verify-otp', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: formData.email, otp: otpStr, purpose: 'signup_verification' }) })
       const verifyData = await verifyRes.json()
       if (!verifyRes.ok) { setError(verifyData.error || 'OTP verification failed'); setLoading(false); return }
-
-      // OTP verified — now create account
-      const signupRes = await fetch('/api/auth/signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          fullname: formData.fullname,
-          phone: formData.phone,
-          email: formData.email,
-          user_type: formData.user_type || null,
-          password: formData.password,
-          role: regType,
-          department: null,
-          email_verified: true,
-        }),
-      })
+      const signupRes  = await fetch('/api/auth/signup', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ fullname: formData.fullname, phone: formData.phone, email: formData.email, user_type: formData.user_type || null, password: formData.password, role: regType, department: null, email_verified: true }) })
       const signupData = await signupRes.json()
       if (!signupRes.ok) { setError(signupData.error || 'Signup failed'); setLoading(false); return }
-
       router.push('/login?registered=1')
     } catch { setError('Something went wrong.') }
     setLoading(false)
   }
 
-  // Resend OTP
   const handleResend = async () => {
     if (countdown > 0) return
     setLoading(true); setError('')
     try {
-      const res = await fetch('/api/auth/send-signup-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: formData.email, fullname: formData.fullname }),
-      })
+      const res  = await fetch('/api/auth/send-signup-otp', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: formData.email, fullname: formData.fullname }) })
       const data = await res.json()
       if (!res.ok) { setError(data.error); setLoading(false); return }
-      setOtp(['', '', '', '', '', ''])
-      setCountdown(60)
+      setOtp(['', '', '', '', '', '']); setCountdown(60)
     } catch { setError('Something went wrong') }
     setLoading(false)
   }
 
-  const strengthColors = ['', 'bg-red-500', 'bg-amber-500', 'bg-green-500']
-  const strengthWidths = ['w-0', 'w-1/3', 'w-2/3', 'w-full']
+  /* ── Shared form field style ─────────────────────────────── */
+  const inputStyle: React.CSSProperties = {
+    display: 'block', width: '100%', boxSizing: 'border-box',
+    backgroundColor: 'var(--color-surface-1)', color: 'var(--color-ink)',
+    fontSize: 'var(--text-body-sm-size)', fontWeight: 'var(--text-body-sm-weight)',
+    padding: '10px 14px', borderRadius: 'var(--radius-md)',
+    border: '1px solid var(--color-hairline)', outline: 'none',
+    transition: 'border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out)',
+    fontFamily: 'var(--font-body)',
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-navy-dark via-navy to-navy-light flex items-center justify-center p-4 relative overflow-hidden">
-      {[...Array(3)].map((_, i) => (
-        <motion.div key={i} className="absolute w-64 h-64 rounded-full bg-white/5" style={{ top: `${20 + i * 30}%`, left: `${10 + i * 30}%` }}
-          animate={{ scale: [1, 1.2, 1], rotate: [0, 120, 240, 360] }}
-          transition={{ duration: 20 + i * 5, repeat: Infinity }}
-        />
-      ))}
+    <div style={{ minHeight: '100vh', backgroundColor: 'var(--color-canvas)', display: 'flex', alignItems: 'stretch' }}>
 
-      <motion.div initial={{ opacity: 0, y: 30, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 0.5 }}
-        className="relative z-10 w-full max-w-4xl bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl overflow-hidden flex flex-col lg:flex-row"
-      >
-        {/* Left Panel */}
-        <div className="lg:w-2/5 bg-gradient-to-br from-navy to-navy-light p-8 lg:p-10 flex flex-col justify-center text-white relative overflow-hidden">
-          <motion.div className="absolute inset-0 bg-white/5 rounded-full w-[200%] h-[200%] -top-1/2 -right-1/2" animate={{ rotate: 360 }} transition={{ duration: 30, repeat: Infinity, ease: 'linear' }} />
-          <div className="relative z-10">
-            <h1 className="text-3xl font-bold mb-4 font-heading">Welcome to Karya Saarthi!</h1>
-            <p className="text-white/70 mb-8">Join thousands who trust us for their success</p>
-            <ul className="space-y-4">
-              {['500+ Happy Clients', 'Expert Assistance 24/7', '100% Secure & Confidential', 'Money Back Guarantee'].map(f => (
-                <li key={f} className="flex items-center gap-3 text-sm">
-                  <span className="text-green-400">✓</span> {f}
-                </li>
-              ))}
-            </ul>
+      {/* Left panel */}
+      <div className="signup-left" style={{ flex: 1, padding: '64px 48px', display: 'flex', flexDirection: 'column', justifyContent: 'center', borderRight: '1px solid var(--color-hairline-soft)' }}>
+        <Link href="/" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, textDecoration: 'none', marginBottom: 64 }}>
+          <Image src="/images/karyasaarthi.png" alt="Karya Saarthi" width={24} height={24} style={{ borderRadius: 4 }} />
+          <span style={{ fontFamily: 'var(--font-display)', fontSize: 15, fontWeight: 600, color: 'var(--color-ink)', letterSpacing: '-0.4px' }}>Karya Saarthi</span>
+        </Link>
+        <h1 className="text-display-lg" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-ink)', marginBottom: 16 }}>
+          Join Karya Saarthi
+        </h1>
+        <p className="text-body-lg" style={{ color: 'var(--color-ink-muted)', maxWidth: 340, marginBottom: 48 }}>
+          Thousands of students and businesses trust us. Your journey starts here.
+        </p>
+        {['500+ Happy Clients', 'Expert Assistance 24/7', '100% Secure & Confidential', 'Money Back Guarantee'].map(f => (
+          <div key={f} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
+            <div style={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: 'var(--color-semantic-success)', flexShrink: 0 }} />
+            <span className="text-body-sm" style={{ color: 'var(--color-ink-muted)' }}>{f}</span>
           </div>
-        </div>
+        ))}
+      </div>
 
-        {/* Right Panel */}
-        <div className="lg:w-3/5 p-8 lg:p-10">
-          <div className="text-center mb-4">
-            <Image src="/images/karyasaarthi.png" alt="Logo" width={50} height={50} className="mx-auto rounded-xl shadow-md mb-3" />
-            <h2 className="text-xl font-bold text-navy font-heading">
-              {step === 'otp' ? 'Verify Your Email' : step === 'complete' ? '🎉 Registration Submitted!' : 'Create Your Account'}
-            </h2>
-            {step === 'otp' && (
-              <p className="text-slate-500 text-sm mt-1">Enter the 6-digit code sent to<br/><strong className="text-navy">{formData.email}</strong></p>
+      {/* Right panel: forms */}
+      <div className="signup-right" style={{ width: 520, flexShrink: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '64px 48px', overflowY: 'auto' }}>
+
+        {step === 'form' && (
+          <>
+            <div style={{ marginBottom: 28 }}>
+              <h2 className="text-display-md" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-ink)', marginBottom: 8 }}>Create account</h2>
+              <p className="text-body" style={{ color: 'var(--color-ink-muted)' }}>
+                Already have one?{' '}
+                <Link href="/login" style={{ color: 'var(--color-accent-blue)', textDecoration: 'none', fontWeight: 500 }}>Sign in</Link>
+              </p>
+            </div>
+
+            {/* Account type toggle */}
+            {!pillar && (
+              <div style={{ display: 'flex', backgroundColor: 'var(--color-surface-1)', borderRadius: 'var(--radius-pill)', padding: 4, marginBottom: 24, gap: 4 }}>
+                {[{ key: 'customer', label: 'Customer' }, { key: 'vendor', label: 'Vendor' }].map(tab => (
+                  <button
+                    key={tab.key} type="button"
+                    onClick={() => { setRegType(tab.key); setError('') }}
+                    style={{
+                      flex: 1, padding: '8px 0', borderRadius: 'var(--radius-pill)', border: 'none', cursor: 'pointer',
+                      fontSize: 'var(--text-body-sm-size)', fontWeight: 500,
+                      backgroundColor: regType === tab.key ? 'var(--color-surface-2)' : 'transparent',
+                      color: regType === tab.key ? 'var(--color-ink)' : 'var(--color-ink-muted)',
+                      transition: 'all var(--dur-normal) var(--ease-out)',
+                    }}
+                  >{tab.label}</button>
+                ))}
+              </div>
             )}
-          </div>
 
-          {step === 'form' && (
-            <>
-              {/* Account Type Tabs */}
-              {!pillar && (
-                <div className="flex rounded-xl bg-slate-100 p-1 mb-5">
-                  {([
-                    { key: 'customer', label: '🎓 Customer' },
-                    { key: 'vendor', label: '🏪 Vendor' },
-                  ]).map(tab => (
-                    <button
-                      key={tab.key}
-                      type="button"
-                      onClick={() => { setRegType(tab.key); setError(''); setSuccess('') }}
-                      className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-all cursor-pointer ${
-                        regType === tab.key
-                          ? 'bg-white text-navy shadow-sm font-semibold'
-                          : 'text-slate-500 hover:text-navy'
-                      }`}
-                    >
-                      {tab.label}
-                    </button>
-                  ))}
+            {error && <div style={{ backgroundColor: '#1a0808', border: '1px solid #7f1d1d', borderRadius: 'var(--radius-md)', padding: '12px 16px', marginBottom: 16 }}><p className="text-body-sm" style={{ color: '#fca5a5' }}>⚠ {error}</p></div>}
+
+            <form onSubmit={handleSendOTP} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                <div>
+                  <label className="text-body-sm" style={{ color: 'var(--color-ink-muted)', display: 'block', marginBottom: 5 }}>Full Name</label>
+                  <input type="text" name="fullname" placeholder="Jane Doe" required style={inputStyle} />
+                </div>
+                <div>
+                  <label className="text-body-sm" style={{ color: 'var(--color-ink-muted)', display: 'block', marginBottom: 5 }}>Phone</label>
+                  <input type="tel" name="phone" placeholder="10-digit number" pattern="[0-9]{10}" required style={inputStyle} />
+                </div>
+              </div>
+              <div>
+                <label className="text-body-sm" style={{ color: 'var(--color-ink-muted)', display: 'block', marginBottom: 5 }}>Email</label>
+                <input type="email" name="email" placeholder="name@example.com" required style={inputStyle} />
+              </div>
+              {!pillar && regType === 'customer' && (
+                <div>
+                  <label className="text-body-sm" style={{ color: 'var(--color-ink-muted)', display: 'block', marginBottom: 5 }}>I am a…</label>
+                  <select name="user_type" required defaultValue="" style={{ ...inputStyle, color: 'var(--color-ink-muted)' }}>
+                    <option value="" disabled>Select type</option>
+                    <option value="student">Student</option>
+                    <option value="business">Business Owner</option>
+                    <option value="professional">Professional</option>
+                    <option value="freelancer">Freelancer</option>
+                  </select>
                 </div>
               )}
-
-              {error && <div className="bg-red-50 text-red-600 px-4 py-3 rounded-xl text-sm mb-4">⚠️ {error}</div>}
-
-              <form onSubmit={handleSendOTP} className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <input type="text" name="fullname" placeholder="Full Name" required className="px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:border-navy focus:ring-2 focus:ring-navy/10 focus:outline-none text-sm transition-all" />
-                  <input type="tel" name="phone" placeholder="Phone Number" pattern="[0-9]{10}" required className="px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:border-navy focus:ring-2 focus:ring-navy/10 focus:outline-none text-sm transition-all" />
-                </div>
-                <input type="email" name="email" placeholder="Email Address" required className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:border-navy focus:ring-2 focus:ring-navy/10 focus:outline-none text-sm transition-all" />
-
-                {(!pillar && regType === 'customer') && (
-                  <select name="user_type" required defaultValue="" className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:border-navy focus:outline-none text-sm text-slate-500">
-                    <option value="" disabled>I am a...</option>
-                    <option value="student">🎓 Student</option>
-                    <option value="business">💼 Business Owner</option>
-                    <option value="professional">👔 Professional</option>
-                    <option value="freelancer">💻 Freelancer</option>
-                  </select>
-                )}
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <input type="password" name="password" placeholder="Password" minLength={6} required onChange={handlePasswordChange}
-                      className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:border-navy focus:ring-2 focus:ring-navy/10 focus:outline-none text-sm transition-all" />
-                    <div className="mt-1.5 h-1 rounded-full bg-slate-100"><div className={`h-full rounded-full transition-all ${strengthColors[pwStrength]} ${strengthWidths[pwStrength]}`} /></div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                <div>
+                  <label className="text-body-sm" style={{ color: 'var(--color-ink-muted)', display: 'block', marginBottom: 5 }}>Password</label>
+                  <input type="password" name="password" placeholder="Min. 6 chars" minLength={6} required onChange={handlePasswordChange} style={inputStyle} />
+                  <div style={{ marginTop: 6, height: 3, backgroundColor: 'var(--color-surface-2)', borderRadius: 2 }}>
+                    <div style={{ height: '100%', borderRadius: 2, width: PW_STRENGTH_WIDTHS[pwStrength], backgroundColor: PW_STRENGTH_COLORS[pwStrength], transition: 'width 300ms var(--ease-out), background-color 300ms var(--ease-out)' }} />
                   </div>
-                  <input type="password" name="confirm_password" placeholder="Confirm Password" minLength={6} required
-                    className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:border-navy focus:ring-2 focus:ring-navy/10 focus:outline-none text-sm transition-all" />
                 </div>
-
-                <label className="flex items-center gap-2 text-sm text-slate-600"><input type="checkbox" required className="rounded" /> I agree to the Terms & Privacy Policy</label>
-
-                <button type="submit" disabled={loading} className="w-full py-3.5 rounded-xl bg-accent text-white font-bold hover:bg-accent-dark shadow-lg shadow-accent/25 transition-all cursor-pointer disabled:opacity-50">
-                  {loading ? '⏳ Sending OTP...' : 'Verify Email & Continue →'}
-                </button>
-              </form>
-
-
-            </>
-          )}
-
-          {step === 'otp' && (
-            <div className="space-y-5">
-              {error && <div className="bg-red-50 text-red-600 px-4 py-3 rounded-xl text-sm">⚠️ {error}</div>}
-
-              <form onSubmit={handleVerifyAndSignup} className="space-y-5">
-                <div className="flex justify-center gap-2" onPaste={handleOtpPaste}>
-                  {otp.map((digit, i) => (
-                    <input
-                      key={i}
-                      id={`signup-otp-${i}`}
-                      type="text"
-                      inputMode="numeric"
-                      maxLength={1}
-                      value={digit}
-                      onChange={e => handleOtpChange(i, e.target.value)}
-                      onKeyDown={e => handleOtpKeyDown(i, e)}
-                      autoFocus={i === 0}
-                      className="w-12 h-14 text-center text-xl font-bold rounded-xl border-2 border-slate-200 focus:border-accent focus:ring-2 focus:ring-accent/20 focus:outline-none bg-slate-50 transition-all"
-                    />
-                  ))}
+                <div>
+                  <label className="text-body-sm" style={{ color: 'var(--color-ink-muted)', display: 'block', marginBottom: 5 }}>Confirm Password</label>
+                  <input type="password" name="confirm_password" placeholder="Repeat password" minLength={6} required style={inputStyle} />
                 </div>
+              </div>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', marginTop: 4 }}>
+                <input type="checkbox" required style={{ accentColor: 'var(--color-accent-blue)', width: 14, height: 14 }} />
+                <span className="text-body-sm" style={{ color: 'var(--color-ink-muted)' }}>I agree to the <Link href="/terms" style={{ color: 'var(--color-accent-blue)', textDecoration: 'none' }}>Terms</Link> & <Link href="/privacy" style={{ color: 'var(--color-accent-blue)', textDecoration: 'none' }}>Privacy Policy</Link></span>
+              </label>
+              <button type="submit" disabled={loading} className="btn-primary" style={{ justifyContent: 'center', width: '100%', marginTop: 4, opacity: loading ? 0.6 : 1 }}>
+                {loading ? 'Sending OTP…' : 'Verify Email & Continue →'}
+              </button>
+            </form>
+          </>
+        )}
 
-                <div className="text-center text-sm text-slate-500">
-                  {countdown > 0 ? (
-                    <span>Resend in <strong className="text-navy">{countdown}s</strong></span>
-                  ) : (
-                    <button type="button" onClick={handleResend} disabled={loading}
-                      className="text-accent font-semibold hover:underline cursor-pointer disabled:opacity-50">
-                      Resend OTP
-                    </button>
-                  )}
-                </div>
+        {step === 'otp' && (
+          <div>
+            <h2 className="text-display-md" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-ink)', marginBottom: 8 }}>Verify email</h2>
+            <p className="text-body" style={{ color: 'var(--color-ink-muted)', marginBottom: 28 }}>
+              Enter the 6-digit code sent to <strong style={{ color: 'var(--color-ink)' }}>{formData.email}</strong>
+            </p>
+            {error && <div style={{ backgroundColor: '#1a0808', border: '1px solid #7f1d1d', borderRadius: 'var(--radius-md)', padding: '12px 16px', marginBottom: 16 }}><p className="text-body-sm" style={{ color: '#fca5a5' }}>⚠ {error}</p></div>}
+            <form onSubmit={handleVerifyAndSignup} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+              <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }} onPaste={handleOtpPaste}>
+                {otp.map((digit, i) => (
+                  <input
+                    key={i} id={`signup-otp-${i}`} type="text" inputMode="numeric" maxLength={1} value={digit}
+                    onChange={e => handleOtpChange(i, e.target.value)} onKeyDown={e => handleOtpKeyDown(i, e)} autoFocus={i === 0}
+                    style={{
+                      width: 44, height: 52, textAlign: 'center',
+                      fontSize: 20, fontWeight: 700,
+                      backgroundColor: 'var(--color-surface-1)', color: 'var(--color-ink)',
+                      border: `2px solid ${digit ? 'var(--color-accent-blue)' : 'var(--color-hairline)'}`,
+                      borderRadius: 'var(--radius-md)', outline: 'none',
+                      transition: 'border-color var(--dur-fast) var(--ease-out)',
+                    }}
+                  />
+                ))}
+              </div>
+              <div style={{ textAlign: 'center' }}>
+                {countdown > 0 ? (
+                  <span className="text-body-sm" style={{ color: 'var(--color-ink-muted)' }}>Resend in <strong style={{ color: 'var(--color-ink)' }}>{countdown}s</strong></span>
+                ) : (
+                  <button type="button" onClick={handleResend} disabled={loading} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-accent-blue)', fontSize: 'var(--text-body-sm-size)', fontWeight: 500 }}>Resend OTP</button>
+                )}
+              </div>
+              <button type="submit" disabled={loading || otp.join('').length !== 6} className="btn-primary" style={{ justifyContent: 'center', width: '100%', opacity: (loading || otp.join('').length !== 6) ? 0.5 : 1 }}>
+                {loading ? 'Creating account…' : 'Verify & Create Account →'}
+              </button>
+              <button type="button" onClick={() => { setStep('form'); setOtp(['', '', '', '', '', '']); setError('') }} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-ink-muted)', fontSize: 'var(--text-body-sm-size)' }}>
+                ← Back to form
+              </button>
+            </form>
+          </div>
+        )}
 
-                <button type="submit" disabled={loading || otp.join('').length !== 6}
-                  className="w-full py-3.5 rounded-xl bg-accent text-white font-bold hover:bg-accent-dark shadow-lg shadow-accent/25 transition-all cursor-pointer disabled:opacity-50">
-                  {loading ? '⏳ Creating Account...' : 'Verify & Create Account →'}
-                </button>
+        {step === 'complete' && (
+          <div style={{ textAlign: 'center' }}>
+            <p style={{ fontSize: 48, marginBottom: 20 }}>🎉</p>
+            <h2 className="text-display-md" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-ink)', marginBottom: 12 }}>You&apos;re in!</h2>
+            {success && <p className="text-body" style={{ color: 'var(--color-semantic-success)', marginBottom: 24 }}>{success}</p>}
+            <Link href="/login" className="btn-primary">Go to Sign in →</Link>
+          </div>
+        )}
 
-                <button type="button" onClick={() => { setStep('form'); setOtp(['', '', '', '', '', '']); setError('') }}
-                  className="w-full text-sm text-slate-500 hover:text-navy cursor-pointer">
-                  ← Back to form
-                </button>
-              </form>
-            </div>
-          )}
+      </div>
 
-          {step === 'complete' && (
-            <div className="text-center space-y-4">
-              {success && <div className="bg-green-50 text-green-700 px-4 py-3 rounded-xl text-sm">✅ {success}</div>}
-              <Link href="/login" className="inline-block px-8 py-3.5 rounded-xl bg-accent text-white font-bold hover:bg-accent-dark shadow-lg shadow-accent/25 transition-all">
-                Go to Login →
-              </Link>
-            </div>
-          )}
-
-          <p className="text-center text-sm text-slate-500 mt-6 pt-4 border-t border-slate-100">
-            Already have an account? <Link href="/login" className="text-accent font-semibold hover:underline">Sign In</Link>
-          </p>
-        </div>
-      </motion.div>
+      <style>{`
+        @media (max-width: 900px) { .signup-left { display: none !important; } .signup-right { width: 100% !important; max-width: 520px; margin: 0 auto; padding: 40px 24px !important; } }
+        select option { background-color: #1c1c1c; color: #ffffff; }
+      `}</style>
     </div>
   )
 }
 
 export default function SignupPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-navy flex items-center justify-center p-4">Loading signup...</div>}>
+    <Suspense fallback={
+      <div style={{ minHeight: '100vh', backgroundColor: 'var(--color-canvas)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div className="skeleton" style={{ width: 320, height: 400, borderRadius: 'var(--radius-xl)' }} />
+      </div>
+    }>
       <SignupContent />
     </Suspense>
   )
 }
+

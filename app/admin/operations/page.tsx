@@ -1,7 +1,7 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from '@/lib/motion'
 import DepartmentMeetings from '@/components/admin/DepartmentMeetings'
 
 interface Vendor { id: number; fullname: string; email: string; phone: string; activeJobs: number }
@@ -216,17 +216,17 @@ export default function OperationsPage() {
         </div>
         <div className="flex gap-2 flex-wrap">
           <button onClick={openGC} className="px-3 py-2 rounded-xl text-xs font-bold text-white cursor-pointer" style={{ background: '#8B5CF6' }}>💬 Group Chat</button>
-          <button onClick={openMeet} className="px-3 py-2 rounded-xl text-xs font-bold text-white cursor-pointer" style={{ background: '#1B3A6B' }}>📹 Meetings</button>
-          <button onClick={openDM} className="px-3 py-2 rounded-xl text-xs font-bold text-white cursor-pointer" style={{ background: '#FF6B35' }}>✉️ Direct Chat</button>
+          <button onClick={openMeet} className="px-3 py-2 rounded-xl text-xs font-bold text-white cursor-pointer" style={{ background: 'var(--color-accent-blue)' }}>📹 Meetings</button>
+          <button onClick={openDM} className="px-3 py-2 rounded-xl text-xs font-bold text-white cursor-pointer" style={{ background: '#ff7a3d' }}>✉️ Direct Chat</button>
         </div>
       </div>
 
       {/* SLA KPIs */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {[
-          { label: 'SLA Breached', v: slaData.breached, icon: '🔴', c: '#EF4444', bg: '#FEE2E2' },
-          { label: 'At Risk (< 24h)', v: slaData.atRisk, icon: '⚠️', c: '#F59E0B', bg: '#FEF3C7' },
-          { label: 'On Track', v: slaData.onTrack, icon: '✅', c: '#10B981', bg: '#D1FAE5' },
+          { label: 'SLA Breached', v: slaData.breached, icon: '🔴', c: '#EF4444', bg: 'rgba(239,68,68,0.15)' },
+          { label: 'At Risk (< 24h)', v: slaData.atRisk, icon: '⚠️', c: '#F59E0B', bg: 'rgba(245,158,11,0.15)' },
+          { label: 'On Track', v: slaData.onTrack, icon: '✅', c: '#10B981', bg: 'rgba(16,185,129,0.15)' },
         ].map((k, i) => (
           <motion.div key={k.label} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.06 }}
             className="rounded-2xl p-4 border" style={{ background: k.bg, borderColor: `${k.c}30` }}>
@@ -344,7 +344,7 @@ export default function OperationsPage() {
                 <motion.div key={v.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
                   className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
                   <div className="flex items-center gap-3 mb-3">
-                    <div className="w-10 h-10 rounded-xl bg-navy/10 flex items-center justify-center font-bold text-navy">{v.fullname.charAt(0)}</div>
+                    <div className="w-10 h-10 rounded-xl bg-[rgba(0,153,255,0.12)] flex items-center justify-center font-bold text-navy">{v.fullname.charAt(0)}</div>
                     <div>
                       <p className="font-bold text-navy text-sm">{v.fullname}</p>
                       <p className="text-[10px] text-slate-400">{v.email}</p>
@@ -366,7 +366,7 @@ export default function OperationsPage() {
         <div className="space-y-4">
           <div className="flex justify-between items-center">
             <p className="text-sm text-slate-500">{sops.length} SOP documents</p>
-            <button onClick={() => setShowSopForm(v => !v)} className="px-4 py-2 rounded-xl font-bold text-white text-sm cursor-pointer hover:opacity-90" style={{ background: '#FF6B35' }}>+ Create SOP</button>
+            <button onClick={() => setShowSopForm(v => !v)} className="px-4 py-2 rounded-xl font-bold text-white text-sm cursor-pointer hover:opacity-90" style={{ background: '#ff7a3d' }}>+ Create SOP</button>
           </div>
           <AnimatePresence>
             {showSopForm && (
@@ -382,7 +382,7 @@ export default function OperationsPage() {
                   <textarea rows={4} value={sopForm.content} onChange={e => setSopForm(p => ({ ...p, content: e.target.value }))} placeholder="Step-by-step content..." className="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none resize-none" />
                   <div className="flex items-center gap-4">
                     <label className="flex items-center gap-2 text-xs cursor-pointer"><input type="checkbox" checked={sopForm.is_published} onChange={e => setSopForm(p => ({ ...p, is_published: e.target.checked }))} className="rounded" /> Publish now</label>
-                    <button type="submit" disabled={savingSop} className="px-4 py-2 rounded-xl font-bold text-white text-sm cursor-pointer disabled:opacity-60" style={{ background: '#1B3A6B' }}>{savingSop ? '⏳' : '💾 Save'}</button>
+                    <button type="submit" disabled={savingSop} className="px-4 py-2 rounded-xl font-bold text-white text-sm cursor-pointer disabled:opacity-60" style={{ background: 'var(--color-accent-blue)' }}>{savingSop ? '⏳' : '💾 Save'}</button>
                     <button type="button" onClick={() => setShowSopForm(false)} className="text-sm text-slate-400 cursor-pointer">Cancel</button>
                   </div>
                 </form>
@@ -425,7 +425,7 @@ export default function OperationsPage() {
                 return (
                   <div key={v.id} className="p-4 rounded-xl border border-slate-100 bg-slate-50">
                     <div className="flex items-center gap-2 mb-3">
-                      <div className="w-8 h-8 rounded-lg bg-navy/10 flex items-center justify-center font-bold text-navy text-xs">{v.fullname.charAt(0)}</div>
+                      <div className="w-8 h-8 rounded-lg bg-[rgba(0,153,255,0.12)] flex items-center justify-center font-bold text-navy text-xs">{v.fullname.charAt(0)}</div>
                       <div>
                         <p className="text-xs font-bold text-navy">{v.fullname}</p>
                         <p className="text-[10px] text-slate-400">{v.activeJobs} / 6 projects</p>
@@ -451,7 +451,7 @@ export default function OperationsPage() {
               <p className="text-sm text-slate-500">{inventory.length} tools / subscriptions tracked</p>
               {expiringItems.length > 0 && <p className="text-xs text-amber-600 font-bold">⚠️ {expiringItems.length} expiring soon</p>}
             </div>
-            <button onClick={() => setShowInvForm(v => !v)} className="px-4 py-2 rounded-xl font-bold text-white text-sm cursor-pointer hover:opacity-90" style={{ background: '#1B3A6B' }}>+ Add Item</button>
+            <button onClick={() => setShowInvForm(v => !v)} className="px-4 py-2 rounded-xl font-bold text-white text-sm cursor-pointer hover:opacity-90" style={{ background: 'var(--color-accent-blue)' }}>+ Add Item</button>
           </div>
           <AnimatePresence>
             {showInvForm && (
@@ -544,7 +544,7 @@ export default function OperationsPage() {
               </div>
               <button type="submit" disabled={savingDoc}
                 className="px-6 py-3 rounded-xl font-bold text-white text-sm cursor-pointer disabled:opacity-60 hover:opacity-90"
-                style={{ background: '#1B3A6B' }}>
+                style={{ background: 'var(--color-accent-blue)' }}>
                 {savingDoc ? '⏳ Submitting...' : '📤 Submit for BOD Approval'}
               </button>
             </form>
@@ -584,7 +584,7 @@ export default function OperationsPage() {
               </div>
               <button onClick={() => { setShowServiceForm(true); setEditingServiceId(null); setServiceForm({ title: '', category: 'Academic', short_description: '', price_min: '', price_max: '', delivery_days: '3', featured_image: '', tags: '', is_featured: false, is_active: true }) }}
                 className="px-4 py-2.5 rounded-xl font-bold text-white text-sm cursor-pointer hover:opacity-90 flex items-center gap-2 self-start sm:self-auto"
-                style={{ background: '#FF6B35' }}>
+                style={{ background: '#ff7a3d' }}>
                 <span>+</span> Add New Service
               </button>
             </div>
@@ -683,7 +683,7 @@ export default function OperationsPage() {
                     className={`bg-white rounded-2xl border shadow-sm hover:shadow-md transition-shadow overflow-hidden ${!s.is_active ? 'opacity-60' : ''} ${s.is_featured ? 'border-accent/30' : 'border-slate-100'}`}>
                     {/* Image */}
                     <div className="h-32 relative overflow-hidden flex-shrink-0"
-                      style={{ background: `${CAT_COLORS[s.category] || '#1B3A6B'}15` }}>
+                      style={{ background: `${CAT_COLORS[s.category] || 'var(--color-accent-blue)'}15` }}>
                       {s.featured_image ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img src={s.featured_image} alt={s.title} className="w-full h-full object-cover" onError={e => (e.currentTarget.style.display='none')} />
@@ -699,7 +699,7 @@ export default function OperationsPage() {
                       <div className="flex items-start justify-between gap-2 mb-2">
                         <div>
                           <h4 className="font-bold text-navy text-sm line-clamp-1 font-heading">{s.title}</h4>
-                          <span className="inline-block mt-1 px-2 py-0.5 rounded-full text-[9px] font-bold text-white" style={{ background: CAT_COLORS[s.category] || '#1B3A6B' }}>{s.category}</span>
+                          <span className="inline-block mt-1 px-2 py-0.5 rounded-full text-[9px] font-bold text-white" style={{ background: CAT_COLORS[s.category] || 'var(--color-accent-blue)' }}>{s.category}</span>
                         </div>
                         <div className="text-right flex-shrink-0">
                           {s.price_min ? <p className="text-xs font-bold text-navy">₹{s.price_min.toLocaleString('en-IN')}{s.price_max ? ` – ₹${s.price_max.toLocaleString('en-IN')}` : '+'}</p> : <p className="text-xs text-slate-400">Custom</p>}
@@ -765,10 +765,10 @@ export default function OperationsPage() {
                   <tbody>
                     {contactLeads.map(lead => {
                       const statusCfg: Record<string,{bg:string;color:string}> = {
-                        new: { bg: '#DBEAFE', color: '#1D4ED8' },
-                        contacted: { bg: '#FEF3C7', color: '#92400E' },
-                        converted: { bg: '#D1FAE5', color: '#065F46' },
-                        closed: { bg: '#F3F4F6', color: '#6B7280' },
+                        new: { bg: 'rgba(59,130,246,0.15)', color: '#1D4ED8' },
+                        contacted: { bg: 'rgba(245,158,11,0.15)', color: '#92400E' },
+                        converted: { bg: 'rgba(16,185,129,0.15)', color: '#065F46' },
+                        closed: { bg: 'rgba(255,255,255,0.08)', color: '#6B7280' },
                       }
                       const cfg = statusCfg[lead.status] || statusCfg.new
                       return (
@@ -865,3 +865,4 @@ export default function OperationsPage() {
   )
 
 }
+

@@ -1,56 +1,151 @@
 'use client'
 
-import { motion } from 'framer-motion'
+import { useReveal } from '@/hooks/useReveal'
 
 const steps = [
-  { num: '01', icon: '📝', title: 'Request', desc: 'Submit your project requirements through our simple form or WhatsApp.' },
-  { num: '02', icon: '👨‍💼', title: 'Assign', desc: 'We match you with the best expert for your specific project needs.' },
-  { num: '03', icon: '🔄', title: 'Deliver', desc: 'Track progress in real-time and receive quality-checked deliverables.' },
-  { num: '04', icon: '⭐', title: 'Review', desc: 'Approve the work, request revisions, and leave your feedback.' },
+  {
+    number: '01',
+    title: 'Submit Your Requirement',
+    desc: 'Fill out our simple form with your project details, deadline, and budget. Takes less than 2 minutes.',
+    icon: '📋',
+  },
+  {
+    number: '02',
+    title: 'Get Matched to an Expert',
+    desc: 'We assign a vetted specialist with proven experience in your exact service category.',
+    icon: '🎯',
+  },
+  {
+    number: '03',
+    title: 'Track Progress Live',
+    desc: 'Monitor real-time progress in your dashboard, communicate directly, and approve milestones.',
+    icon: '📊',
+  },
+  {
+    number: '04',
+    title: 'Receive & Review',
+    desc: 'Get your deliverable, request revisions if needed, and rate your experience.',
+    icon: '✅',
+  },
 ]
 
 export default function HowItWorks() {
+  const ref = useReveal()
   return (
-    <section className="py-20 lg:py-28 bg-surface">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-14"
-        >
-          <span className="inline-block px-4 py-1.5 rounded-full bg-accent/10 text-accent text-sm font-semibold mb-4">
-            Simple Process
-          </span>
-          <h2 className="text-3xl lg:text-5xl font-bold text-navy font-heading">
+    <section
+      id="how-it-works"
+      ref={ref as React.RefObject<HTMLElement>}
+      className="hiw-section"
+      style={{
+        backgroundColor: 'var(--color-canvas)',
+        paddingTop: 'var(--space-section)',
+        paddingBottom: 'var(--space-section)',
+        paddingLeft: 'var(--space-xl)',
+        paddingRight: 'var(--space-xl)',
+        borderTop: '1px solid var(--color-hairline-soft)',
+      }}
+      aria-label="How it works"
+    >
+      <div style={{ maxWidth: 1199, margin: '0 auto' }}>
+        {/* Header */}
+        <div className="reveal" style={{ textAlign: 'center', marginBottom: 72 }}>
+          <span style={{
+            display: 'inline-block',
+            backgroundColor: 'var(--color-surface-1)',
+            color: 'var(--color-ink-muted)',
+            fontSize: 'var(--text-caption-size)',
+            fontWeight: 600,
+            letterSpacing: '0.08em',
+            textTransform: 'uppercase',
+            padding: '4px 12px',
+            borderRadius: 'var(--radius-pill)',
+            border: '1px solid var(--color-hairline)',
+            marginBottom: 20,
+          }}>
             How It Works
+          </span>
+          <h2 className="text-display-lg" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-ink)' }}>
+            From request to delivery
           </h2>
-        </motion.div>
+        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 relative">
-          {/* Connector line (desktop) — runs through the center of icon boxes */}
-          <div className="hidden md:block absolute top-8 left-[12.5%] right-[12.5%] h-0.5 bg-gradient-to-r from-accent/40 via-navy/30 to-accent/40" />
+        {/* Steps */}
+        <div className="hiw-grid">
+          {steps.map((step, i) => (
+            <div key={step.number} className="reveal hiw-step" style={{ transitionDelay: `${i * 80}ms` }}>
+              {/* Connector line (hidden on last) */}
+              {i < steps.length - 1 && (
+                <div
+                  className="hiw-connector"
+                  aria-hidden="true"
+                  style={{
+                    position: 'absolute',
+                    top: 20,
+                    left: 'calc(50% + 20px)',
+                    right: 'calc(-50% + 20px)',
+                    height: '1px',
+                    backgroundColor: 'var(--color-hairline)',
+                  }}
+                />
+              )}
 
-          {steps.map((s, i) => (
-            <motion.div
-              key={s.num}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.15 }}
-              className="relative text-center group"
-            >
-              {/* Number circle */}
-              <div className="w-16 h-16 mx-auto rounded-2xl bg-white shadow-lg border border-slate-100 flex items-center justify-center text-2xl mb-5 group-hover:bg-accent group-hover:shadow-accent/20 transition-all duration-300 relative z-10">
-                <span className="group-hover:scale-110 transition-transform">{s.icon}</span>
+              {/* Step icon circle */}
+              <div className="btn-icon" style={{ width: 40, height: 40, flexShrink: 0, fontSize: 18, marginBottom: 24, cursor: 'default' }} aria-hidden="true">
+                {step.icon}
               </div>
-              <div className="text-xs font-bold text-accent mb-2">{s.num}</div>
-              <h3 className="font-bold text-navy text-lg mb-2 font-heading">{s.title}</h3>
-              <p className="text-slate-500 text-sm leading-relaxed">{s.desc}</p>
-            </motion.div>
+
+              {/* Step number */}
+              <p className="text-display-md" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-hairline)', marginBottom: 12, lineHeight: 1 }}>
+                {step.number}
+              </p>
+
+              {/* Title */}
+              <h3 className="text-headline" style={{ color: 'var(--color-ink)', marginBottom: 12 }}>
+                {step.title}
+              </h3>
+
+              {/* Description */}
+              <p className="text-body" style={{ color: 'var(--color-ink-muted)', lineHeight: 1.6 }}>
+                {step.desc}
+              </p>
+            </div>
           ))}
         </div>
       </div>
+
+      <style>{`
+        .hiw-grid {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: var(--space-xl);
+          position: relative;
+        }
+        .hiw-step {
+          position: relative;
+          display: flex;
+          flex-direction: column;
+        }
+        .hiw-connector {
+          display: block;
+        }
+        @media (max-width: 810px) {
+          .hiw-grid {
+            grid-template-columns: repeat(2, 1fr);
+          }
+          .hiw-connector {
+            display: none;
+          }
+        }
+        @media (max-width: 480px) {
+          .hiw-grid {
+            grid-template-columns: 1fr;
+          }
+          .hiw-section {
+            padding-left: 16px !important;
+            padding-right: 16px !important;
+          }
+        }
+      `}</style>
     </section>
   )
 }

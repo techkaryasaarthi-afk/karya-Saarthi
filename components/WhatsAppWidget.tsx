@@ -22,7 +22,7 @@ export default function WhatsAppWidget() {
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0, opacity: 0 }}
           transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-          className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3"
+          className="fixed bottom-24 right-6 z-50 flex flex-col items-end gap-3"
         >
           {/* Tooltip popup */}
           <AnimatePresence>

@@ -61,14 +61,17 @@ const uploadFileWithProgress = (file: File, onProgress: (progress: number) => vo
   })
 }
 
-const statusColors: Record<string, string> = {
-  assigned: 'bg-blue-100 text-blue-700', in_progress: 'bg-cyan-100 text-cyan-700',
-  review: 'bg-purple-100 text-purple-700', delivered: 'bg-teal-100 text-teal-700',
-  completed: 'bg-green-100 text-green-700', pending: 'bg-amber-100 text-amber-700',
+const statusColors: Record<string, { bg: string; color: string }> = {
+  assigned: { bg: 'rgba(59, 130, 246, 0.1)', color: '#3B82F6' },
+  in_progress: { bg: 'rgba(6, 182, 212, 0.1)', color: '#06B6D4' },
+  review: { bg: 'rgba(168, 85, 247, 0.1)', color: '#A855F7' },
+  delivered: { bg: 'rgba(20, 184, 166, 0.1)', color: '#14B8A6' },
+  completed: { bg: 'rgba(34, 197, 94, 0.1)', color: '#22C55E' },
+  pending: { bg: 'rgba(245, 158, 11, 0.1)', color: '#F59E0B' },
 }
 
 function StarDisplay({ value }: { value: number }) {
-  return <span className="text-sm">{Array.from({ length: 5 }, (_, i) => <span key={i} className={i < value ? 'opacity-100' : 'opacity-25'}>⭐</span>)}</span>
+  return <span style={{ fontSize: 14 }}>{Array.from({ length: 5 }, (_, i) => <span key={i} style={{ opacity: i < value ? 1 : 0.25 }}>⭐</span>)}</span>
 }
 
 export default function VendorDashboard() {
@@ -257,32 +260,32 @@ export default function VendorDashboard() {
   const completed = projects.filter(p => p.status === 'completed')
 
   return (
-    <div className="space-y-6">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
         <div>
-          <h1 className="text-2xl font-bold text-navy font-heading">🏪 Vendor Dashboard</h1>
-          <p className="text-slate-500 text-sm mt-1">Your assigned projects & ratings</p>
+          <h1 className="text-display-md" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-ink)' }}>🏪 Vendor Dashboard</h1>
+          <p className="text-body-sm" style={{ color: 'var(--color-ink-muted)', marginTop: 4 }}>Your assigned projects & ratings</p>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="relative">
-            <button onClick={() => { const opening = !showNotifs; setShowNotifs(opening); if (opening && unreadCount > 0) markAllRead() }} className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center hover:bg-slate-50 cursor-pointer relative">
-              🔔 {unreadCount > 0 && <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-red-500 text-white text-[10px] flex items-center justify-center">{unreadCount}</span>}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ position: 'relative' }}>
+            <button onClick={() => { const opening = !showNotifs; setShowNotifs(opening); if (opening && unreadCount > 0) markAllRead() }} style={{ width: 40, height: 40, borderRadius: 'var(--radius-md)', backgroundColor: 'var(--color-surface-2)', border: '1px solid var(--color-hairline)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', position: 'relative' }}>
+              🔔 {unreadCount > 0 && <span style={{ position: 'absolute', top: -4, right: -4, width: 16, height: 16, borderRadius: '50%', backgroundColor: '#ef4444', color: '#fff', fontSize: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{unreadCount}</span>}
             </button>
             <AnimatePresence>{showNotifs && (
               <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }}
-                className="absolute right-0 top-12 w-80 bg-white rounded-2xl shadow-xl border border-slate-100 z-50 overflow-hidden">
-                <div className="flex items-center justify-between p-4 border-b border-slate-100">
-                  <h4 className="font-bold text-navy text-sm">Notifications</h4>
-                  {unreadCount > 0 && <button onClick={markAllRead} className="text-xs text-accent cursor-pointer">Mark all read</button>}
+                className="card-template" style={{ position: 'absolute', right: 0, top: 48, width: 320, zIndex: 50, padding: 0, overflow: 'hidden', border: '1px solid var(--color-hairline-soft)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px', borderBottom: '1px solid var(--color-hairline-soft)' }}>
+                  <h4 className="text-body-sm" style={{ fontWeight: 600, color: 'var(--color-ink)' }}>Notifications</h4>
+                  {unreadCount > 0 && <button onClick={markAllRead} style={{ fontSize: 12, color: 'var(--color-accent-blue)', background: 'none', border: 'none', cursor: 'pointer' }}>Mark all read</button>}
                 </div>
-                <div className="max-h-64 overflow-y-auto">
-                  {notifications.length === 0 ? <p className="p-4 text-sm text-slate-400 text-center">No notifications</p> :
+                <div style={{ maxHeight: 256, overflowY: 'auto' }}>
+                  {notifications.length === 0 ? <p className="text-body-sm" style={{ padding: 16, color: 'var(--color-ink-muted)', textAlign: 'center' }}>No notifications</p> :
                     notifications.slice(0, 10).map(n => (
-                      <div key={n.id} className={`px-4 py-3 border-b border-slate-50 text-sm ${!n.is_read ? 'bg-accent/5' : ''}`}>
-                        <p className="font-medium text-navy">{n.title}</p>
-                        <p className="text-xs text-slate-500 mt-0.5">{n.message}</p>
-                        <p className="text-[10px] text-slate-400 mt-1">{new Date(n.created_at).toLocaleString('en-IN')}</p>
+                      <div key={n.id} style={{ padding: '12px 16px', borderBottom: '1px solid var(--color-hairline-soft)', backgroundColor: !n.is_read ? 'rgba(0,153,255,0.05)' : 'transparent' }}>
+                        <p className="text-body-sm" style={{ fontWeight: 500, color: 'var(--color-ink)' }}>{n.title}</p>
+                        <p className="text-micro" style={{ color: 'var(--color-ink-muted)', marginTop: 2 }}>{n.message}</p>
+                        <p className="text-micro" style={{ color: 'var(--color-ink-muted)', marginTop: 4 }}>{new Date(n.created_at).toLocaleString('en-IN')}</p>
                       </div>
                     ))
                   }
@@ -292,39 +295,41 @@ export default function VendorDashboard() {
           </div>
           <button
             onClick={() => setShowDMPanel(v => !v)}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-sm cursor-pointer transition-all shadow-sm ${
-              showDMPanel ? 'bg-navy text-white' : 'bg-white border border-slate-200 text-navy hover:bg-navy/5'
-            }`}
+            className={showDMPanel ? 'btn-primary' : 'btn-secondary'}
+            style={{ padding: '10px 16px', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8 }}
           >
             💬 Chat Support
           </button>
         </div>
       </div>
 
-      {/* Stats + Rating Overview */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* Stats Overview */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16 }}>
         {[
-          { icon: '📋', label: 'Total', value: projects.length, color: 'from-blue-500 to-blue-600' },
-          { icon: '🔄', label: 'Active', value: active.length, color: 'from-cyan-500 to-cyan-600' },
-          { icon: '✅', label: 'Completed', value: completed.length, color: 'from-green-500 to-green-600' },
-          { icon: '⭐', label: 'Avg Rating', value: avgRating > 0 ? avgRating.toFixed(1) : '—', color: 'from-amber-500 to-amber-600' },
+          { icon: '📋', label: 'Total', value: projects.length, color: '#3B82F6' },
+          { icon: '🔄', label: 'Active', value: active.length, color: '#06B6D4' },
+          { icon: '✅', label: 'Completed', value: completed.length, color: '#22C55E' },
+          { icon: '⭐', label: 'Avg Rating', value: avgRating > 0 ? avgRating.toFixed(1) : '—', color: '#F59E0B' },
         ].map((s, i) => (
           <motion.div key={s.label} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }}
-            className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
-            <span className={`w-10 h-10 rounded-xl bg-gradient-to-br ${s.color} flex items-center justify-center text-white text-lg shadow-lg`}>{s.icon}</span>
-            <h3 className="text-2xl font-extrabold text-navy mt-2 font-heading">{s.value}</h3>
-            <p className="text-slate-500 text-xs mt-1">{s.label}</p>
+            className="card-template" style={{ padding: 20 }}>
+            <span style={{ fontSize: 24, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 48, height: 48, borderRadius: 'var(--radius-lg)', backgroundColor: 'var(--color-surface-2)' }}>{s.icon}</span>
+            <h3 className="text-display-md" style={{ fontFamily: 'var(--font-display)', color: s.color, marginTop: 12 }}>{s.value}</h3>
+            <p className="text-caption" style={{ color: 'var(--color-ink-muted)', marginTop: 4 }}>{s.label}</p>
           </motion.div>
         ))}
       </div>
 
       {/* Tab Navigation */}
-      <div className="flex gap-2 border-b border-slate-200 pb-0 overflow-x-auto">
+      <div style={{ display: 'flex', gap: 8, borderBottom: '1px solid var(--color-hairline-soft)', paddingBottom: 0, overflowX: 'auto' }} className="scrollbar-none">
         {(['projects', 'earnings', 'reviews'] as const).map(tab => (
           <button key={tab} onClick={() => setActiveTab(tab)}
-            className={`px-5 py-2.5 text-sm font-bold capitalize cursor-pointer transition-all border-b-2 -mb-px whitespace-nowrap ${
-              activeTab === tab ? 'border-accent text-accent' : 'border-transparent text-slate-500 hover:text-navy'
-            }`}>
+            style={{
+              padding: '10px 20px', fontSize: 14, fontWeight: 700, textTransform: 'capitalize', cursor: 'pointer', border: 'none', background: 'none', whiteSpace: 'nowrap',
+              borderBottom: activeTab === tab ? '2px solid var(--color-accent-blue)' : '2px solid transparent',
+              color: activeTab === tab ? 'var(--color-accent-blue)' : 'var(--color-ink-muted)',
+              transition: 'color var(--dur-fast), border-color var(--dur-fast)'
+            }}>
             {tab === 'projects' ? '📋' : tab === 'earnings' ? '💰' : '⭐'} {tab}
           </button>
         ))}
@@ -332,9 +337,11 @@ export default function VendorDashboard() {
 
       {/* Projects Tab Filter */}
       {activeTab === 'projects' && (
-        <div className="flex gap-2">
+        <div style={{ display: 'flex', gap: 8 }}>
           {(['all','active','completed'] as const).map(f => (
-            <button key={f} onClick={() => setFilter(f)} className={`px-4 py-2 rounded-full text-xs font-semibold transition-all cursor-pointer ${filter === f ? 'bg-navy text-white shadow-lg' : 'bg-white text-slate-600 border border-slate-200 hover:bg-navy/5'}`}>
+            <button key={f} onClick={() => setFilter(f)} 
+              className={filter === f ? 'btn-primary' : 'btn-secondary'}
+              style={{ padding: '6px 16px', fontSize: 12, fontWeight: 600, borderRadius: 'var(--radius-pill)', textTransform: 'capitalize', cursor: 'pointer' }}>
               {f === 'all' ? `All (${projects.length})` : f === 'active' ? `Active (${active.length})` : `Completed (${completed.length})`}
             </button>
           ))}
@@ -342,163 +349,172 @@ export default function VendorDashboard() {
       )}
 
       {/* Projects */}
-      {loading ? (
-        <div className="space-y-4">{Array.from({ length: 3 }).map((_, i) => <div key={i} className="h-32 bg-white rounded-2xl animate-pulse" />)}</div>
-      ) : filtered.length === 0 ? (
-        <div className="bg-white rounded-2xl p-10 text-center shadow-sm border border-slate-100"><span className="text-4xl block mb-3">📋</span><p className="text-slate-500">No projects found</p></div>
-      ) : (
-        <div className="space-y-4">
-          {filtered.map(p => (
-            <div key={p.id} className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
-              <div className="flex items-start justify-between mb-4">
-                <div>
-                  <h3 className="font-bold text-navy text-lg">{p.service_type}</h3>
-                  <p className="text-sm text-slate-500 mt-1">{p.description}</p>
-                  <p className="text-xs text-slate-400 mt-1">Client: {p.client?.fullname || 'N/A'} · {new Date(p.created_at).toLocaleDateString('en-IN')}</p>
+      {activeTab === 'projects' && (
+        <>
+        {loading ? (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>{Array.from({ length: 3 }).map((_, i) => <div key={i} className="skeleton" style={{ height: 128, borderRadius: 'var(--radius-lg)' }} />)}</div>
+        ) : filtered.length === 0 ? (
+          <div className="card-template" style={{ padding: 40, textAlign: 'center' }}><span style={{ fontSize: 40, display: 'block', marginBottom: 12 }}>📋</span><p className="text-body-sm" style={{ color: 'var(--color-ink-muted)' }}>No projects found</p></div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            {filtered.map(p => {
+              const sc = statusColors[p.status] || { bg: 'var(--color-surface-2)', color: 'var(--color-ink)' }
+              return (
+              <div key={p.id} className="card-template" style={{ padding: 24, transition: 'box-shadow var(--dur-fast)' }}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 16, flexWrap: 'wrap', gap: 12 }}>
+                  <div>
+                    <h3 className="text-headline" style={{ color: 'var(--color-ink)', fontWeight: 700 }}>{p.service_type}</h3>
+                    <p className="text-body-sm" style={{ color: 'var(--color-ink-muted)', marginTop: 4 }}>{p.description}</p>
+                    <p className="text-micro" style={{ color: 'var(--color-ink-muted)', marginTop: 6 }}>Client: {p.client?.fullname || 'N/A'} · {new Date(p.created_at).toLocaleDateString('en-IN')}</p>
+                  </div>
+                  <span style={{ padding: '4px 12px', borderRadius: 'var(--radius-pill)', fontSize: 11, fontWeight: 700, backgroundColor: sc.bg, color: sc.color, textTransform: 'capitalize' }}>
+                    {p.status.replace('_', ' ')}
+                  </span>
                 </div>
-                <span className={`px-3 py-1 rounded-full text-xs font-bold ${statusColors[p.status] || 'bg-slate-100 text-slate-600'}`}>{p.status.replace('_', ' ')}</span>
-              </div>
 
-              {/* Progress */}
-              <div className="mb-4">
-                <div className="flex justify-between text-sm mb-1"><span className="text-slate-500">Progress</span><span className="font-bold text-navy">{p.progress}%</span></div>
-                <input type="range" min="0" max="100" value={p.progress} onChange={e => updateProject(p.id, { progress: Number(e.target.value) })} className="w-full h-2 bg-slate-100 rounded-full appearance-none cursor-pointer accent-accent" />
-              </div>
+                {/* Progress */}
+                <div style={{ marginBottom: 16 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, marginBottom: 6 }}><span style={{ color: 'var(--color-ink-muted)' }}>Progress</span><span style={{ fontWeight: 700, color: 'var(--color-ink)' }}>{p.progress}%</span></div>
+                  <input type="range" min="0" max="100" value={p.progress} onChange={e => updateProject(p.id, { progress: Number(e.target.value) })} style={{ width: '100%', height: 6, borderRadius: 'var(--radius-pill)', appearance: 'none', backgroundColor: 'var(--color-surface-2)', cursor: 'pointer' }} />
+                </div>
 
-              {/* Actions */}
-              <div className="flex gap-2 flex-wrap">
-                {p.status === 'assigned' && <button onClick={() => updateProject(p.id, { status: 'in_progress', progress: 10 })} disabled={actionId === p.id} className="px-4 py-2 rounded-xl bg-blue-50 text-blue-600 text-sm font-medium hover:bg-blue-100 cursor-pointer">🚀 Start</button>}
-                {p.status === 'in_progress' && <button onClick={() => updateProject(p.id, { status: 'review' })} disabled={actionId === p.id} className="px-4 py-2 rounded-xl bg-purple-50 text-purple-600 text-sm font-medium hover:bg-purple-100 cursor-pointer">🔍 Review</button>}
-                {p.status === 'review' && <button onClick={() => updateProject(p.id, { status: 'delivered', progress: 100 })} disabled={actionId === p.id} className="px-4 py-2 rounded-xl bg-teal-50 text-teal-600 text-sm font-medium hover:bg-teal-100 cursor-pointer">📦 Deliver</button>}
+                {/* Actions */}
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                  {p.status === 'assigned' && <button onClick={() => updateProject(p.id, { status: 'in_progress', progress: 10 })} disabled={actionId === p.id} className="btn-secondary" style={{ color: '#3B82F6', borderColor: '#3B82F6', cursor: 'pointer' }}>🚀 Start</button>}
+                  {p.status === 'in_progress' && <button onClick={() => updateProject(p.id, { status: 'review' })} disabled={actionId === p.id} className="btn-secondary" style={{ color: '#A855F7', borderColor: '#A855F7', cursor: 'pointer' }}>🔍 Review</button>}
+                  {p.status === 'review' && <button onClick={() => updateProject(p.id, { status: 'delivered', progress: 100 })} disabled={actionId === p.id} className="btn-secondary" style={{ color: '#14B8A6', borderColor: '#14B8A6', cursor: 'pointer' }}>📦 Deliver</button>}
 
-                {/* Project File Upload */}
-                <input type="file" ref={projectFileRef} onChange={e => handleProjectFile(e, p.id)} className="hidden" accept="image/*,.pdf,.doc,.docx,.txt,.xls,.xlsx,.zip,.rar" />
-                <button onClick={() => projectFileRef.current?.click()} disabled={uploadingProject === p.id}
-                  className="px-4 py-2 rounded-xl bg-amber-50 text-amber-600 text-sm font-medium hover:bg-amber-100 cursor-pointer">
-                  {uploadingProject === p.id ? '⏳ Uploading...' : '📁 Upload File'}
-                </button>
+                  {/* Project File Upload */}
+                  <input type="file" ref={projectFileRef} onChange={e => handleProjectFile(e, p.id)} style={{ display: 'none' }} accept="image/*,.pdf,.doc,.docx,.txt,.xls,.xlsx,.zip,.rar" />
+                  <button onClick={() => projectFileRef.current?.click()} disabled={uploadingProject === p.id}
+                    className="btn-secondary" style={{ color: '#F59E0B', borderColor: '#F59E0B', cursor: 'pointer' }}>
+                    {uploadingProject === p.id ? '⏳ Uploading...' : '📁 Upload File'}
+                  </button>
 
-                <button onClick={() => openChat(p.id)} className={`px-4 py-2 rounded-xl text-sm font-medium cursor-pointer ${chatProject === p.id ? 'bg-accent text-white' : 'bg-slate-50 text-slate-600 hover:bg-slate-100'}`}>💬 Chat</button>
-              </div>
+                  <button onClick={() => openChat(p.id)} className={chatProject === p.id ? "btn-primary" : "btn-secondary"} style={{ cursor: 'pointer' }}>💬 Chat</button>
+                </div>
 
-              {/* Extra Panel (Tasks & Chat) */}
-              {chatProject === p.id && (
-                <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="mt-4 bg-slate-50 rounded-xl p-4 gap-4 flex flex-col lg:flex-row">
-                  {/* Tasks Section */}
-                  <div className="flex-1 bg-white p-4 rounded-xl border border-slate-100 h-96 overflow-y-auto">
-                    <h4 className="font-bold text-navy text-sm mb-3">📋 Project Tasks</h4>
-                    {tasks.length === 0 && <p className="text-xs text-slate-400">No tasks assigned yet.</p>}
-                    <div className="space-y-3">
-                      {tasks.map(t => (
-                        <div key={t.id} className="p-3 bg-slate-50 border border-slate-100 rounded-lg">
-                          <div className="flex items-start justify-between">
-                            <p className="text-sm font-semibold text-navy">{t.title}</p>
-                            <select value={t.status} onChange={e => updateTaskStatus(t.id, e.target.value as Task['status'])} className="px-2 py-1 text-[10px] uppercase font-bold rounded bg-white border border-slate-200 outline-none cursor-pointer">
-                              <option value="todo">To-Do</option><option value="in_progress">In Progress</option><option value="review">Review</option><option value="done">Done</option>
-                            </select>
-                          </div>
-                          <div className="flex gap-2 mt-2 text-[10px] font-bold">
-                            {t.priority === 'high' && <span className="text-red-500 bg-red-50 px-2 py-0.5 rounded">High Priority</span>}
-                            {t.deadline && <span className="text-amber-500 bg-amber-50 px-2 py-0.5 rounded">Due: {new Date(t.deadline).toLocaleDateString('en-IN')}</span>}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  {/* Chat Section */}
-                  <div className="flex-[2] flex flex-col bg-white p-4 rounded-xl border border-slate-100 h-96">
-                    <div className="flex-1 overflow-y-auto space-y-2 mb-3 pr-2">
-                      {messages.length === 0 && <p className="text-sm text-slate-400 text-center py-4">No messages yet</p>}
-                    {messages.map(m => (
-                      <div key={m.id} className="group relative">
-                        <div className={`p-3 rounded-xl text-sm max-w-[80%] ${m.sender?.role === 'vendor' ? 'bg-accent/10 text-navy ml-auto' : 'bg-white text-slate-700'}`}>
-                          <p className="text-xs font-bold text-slate-500 mb-1">{m.sender?.fullname} <span className="text-[10px] text-slate-400 ml-2">{new Date(m.created_at).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}</span></p>
-                          <p>{m.content}</p>
-                          {m.attachment_url && <div className="mt-2">{m.file_type === 'image' ? <a href={m.attachment_url} target="_blank" rel="noopener noreferrer"><img src={m.attachment_url} alt="" className="max-w-[180px] rounded-lg border border-slate-200" /></a> : m.file_type === 'video' ? <video controls className="max-w-[220px] rounded-lg border border-slate-200"><source src={m.attachment_url} /></video> : <a href={m.attachment_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-white border border-slate-200 text-xs font-medium text-accent hover:bg-slate-50">📎 Download</a>}</div>}
-                        </div>
-                        <button onClick={() => deleteMessage(m.id)} disabled={deletingMsg === m.id} className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 text-xs text-red-400 hover:text-red-600 cursor-pointer transition-opacity bg-white rounded-full w-5 h-5 flex items-center justify-center shadow">{deletingMsg === m.id ? '·' : '✕'}</button>
-                      </div>
-                    ))}
-                  </div>
-                            {/* Pending Attachments Tray */}
-                            {pendingFiles.length > 0 && (
-                              <div className="p-3 bg-slate-50 border-t border-slate-100 rounded-t-xl flex flex-wrap gap-2 max-h-40 overflow-y-auto w-full">
-                                {pendingFiles.map(pf => {
-                                  const isVideo = VIDEO_FILE_TYPES.includes(pf.file.type)
-                                  const fileExt = pf.file.name.split('.').pop()?.toUpperCase() || 'FILE'
-                                  return (
-                                    <div key={pf.id} className="relative flex items-center gap-2 p-2 bg-white border border-slate-200 rounded-lg shadow-sm group min-w-[200px] max-w-[250px]">
-                                      <div className="text-xl">{isVideo ? '🎥' : '📎'}</div>
-                                      <div className="flex-1 min-w-0">
-                                        <p className="text-xs font-semibold text-navy truncate">{pf.file.name}</p>
-                                        <p className="text-[10px] text-slate-400">{formatFileSize(pf.file.size)} • {fileExt}</p>
-                                        {pf.status === 'uploading' && (
-                                          <div className="w-full bg-slate-100 h-1 rounded-full overflow-hidden mt-1">
-                                            <div className="bg-accent h-full transition-all duration-300" style={{ width: `${pf.progress}%` }} />
-                                          </div>
-                                        )}
-                                        {pf.status === 'completed' && <span className="text-[9px] text-green-500 font-bold">Uploaded</span>}
-                                        {pf.status === 'failed' && <span className="text-[9px] text-red-500 font-bold font-mono">Failed</span>}
-                                      </div>
-                                      {!uploading && (
-                                        <button
-                                          type="button"
-                                          onClick={() => setPendingFiles(prev => prev.filter(f => f.id !== pf.id))}
-                                          className="absolute -top-1 -right-1 bg-red-100 text-red-500 rounded-full w-4 h-4 flex items-center justify-center text-[10px] font-bold shadow hover:bg-red-200 transition-colors cursor-pointer"
-                                        >
-                                          ✕
-                                        </button>
-                                      )}
-                                    </div>
-                                  )
-                                })}
+                {/* Extra Panel (Tasks & Chat) */}
+                {chatProject === p.id && (
+                  <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} style={{ marginTop: 16, backgroundColor: 'var(--color-surface-1)', borderRadius: 'var(--radius-lg)', padding: 16, gap: 16, display: 'flex', flexDirection: 'column' }}>
+                    <div style={{ display: 'flex', gap: 16, flexDirection: window.innerWidth < 1024 ? 'column' : 'row' }}>
+                      {/* Tasks Section */}
+                      <div style={{ flex: 1, backgroundColor: 'var(--color-surface-2)', padding: 16, borderRadius: 'var(--radius-md)', height: 400, overflowY: 'auto' }}>
+                        <h4 className="text-body-sm" style={{ fontWeight: 700, color: 'var(--color-ink)', marginBottom: 12 }}>📋 Project Tasks</h4>
+                        {tasks.length === 0 && <p className="text-micro" style={{ color: 'var(--color-ink-muted)' }}>No tasks assigned yet.</p>}
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                          {tasks.map(t => (
+                            <div key={t.id} style={{ padding: 12, backgroundColor: 'var(--color-surface-1)', border: '1px solid var(--color-hairline-soft)', borderRadius: 'var(--radius-md)' }}>
+                              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+                                <p className="text-body-sm" style={{ fontWeight: 600, color: 'var(--color-ink)' }}>{t.title}</p>
+                                <select value={t.status} onChange={e => updateTaskStatus(t.id, e.target.value as Task['status'])} className="ks-input" style={{ padding: '2px 8px', fontSize: 10, textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer' }}>
+                                  <option value="todo">To-Do</option><option value="in_progress">In Progress</option><option value="review">Review</option><option value="done">Done</option>
+                                </select>
                               </div>
-                            )}
-                            <div className="flex gap-2 shrink-0 w-full">
-                              <input type="file" ref={fileRef} onChange={handleChatFileUpload} className="hidden" multiple accept="image/*,video/mp4,video/webm,video/quicktime,.pdf,.doc,.docx,.txt,.xls,.xlsx,.zip,.rar" />
-                              <button type="button" onClick={() => fileRef.current?.click()} disabled={uploading} className="px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-500 hover:bg-slate-100 cursor-pointer text-lg flex-shrink-0">{uploading ? '⏳' : '📎'}</button>
-                              <input value={newMsg} onChange={e => setNewMsg(e.target.value)} placeholder="Type a message..." onKeyDown={e => e.key === 'Enter' && !uploading && sendMessage()} className="flex-1 px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:outline-none focus:border-navy" />
-                              <button type="button" onClick={() => sendMessage()} disabled={uploading || (!newMsg.trim() && pendingFiles.length === 0)} className="px-4 py-2.5 rounded-xl bg-accent text-white text-sm font-bold cursor-pointer disabled:opacity-50">Send</button>
+                              <div style={{ display: 'flex', gap: 8, marginTop: 8, fontSize: 10, fontWeight: 700 }}>
+                                {t.priority === 'high' && <span style={{ color: '#EF4444', backgroundColor: 'rgba(239, 68, 68, 0.1)', padding: '2px 8px', borderRadius: 'var(--radius-pill)' }}>High Priority</span>}
+                                {t.deadline && <span style={{ color: '#F59E0B', backgroundColor: 'rgba(245, 158, 11, 0.1)', padding: '2px 8px', borderRadius: 'var(--radius-pill)' }}>Due: {new Date(t.deadline).toLocaleDateString('en-IN')}</span>}
+                              </div>
                             </div>
-                    {uploadSummary && <p className="mt-2 text-[11px] text-slate-400">{uploadSummary}</p>}
-                  </div>
-                </motion.div>
-              )}
-            </div>
-          ))}
-        </div>
+                          ))}
+                        </div>
+                      </div>
+                      {/* Chat Section */}
+                      <div style={{ flex: 2, display: 'flex', flexDirection: 'column', backgroundColor: 'var(--color-surface-2)', padding: 16, borderRadius: 'var(--radius-md)', height: 400 }}>
+                        <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 12, paddingRight: 8 }}>
+                          {messages.length === 0 && <p className="text-body-sm" style={{ color: 'var(--color-ink-muted)', textAlign: 'center', padding: 16 }}>No messages yet</p>}
+                        {messages.map(m => (
+                          <div key={m.id} style={{ position: 'relative' }} className="group">
+                            <div style={{ padding: 12, borderRadius: 'var(--radius-md)', fontSize: 14, maxWidth: '80%', marginLeft: m.sender?.role === 'vendor' ? 'auto' : '0', backgroundColor: m.sender?.role === 'vendor' ? 'rgba(0,153,255,0.1)' : 'var(--color-surface-1)', color: 'var(--color-ink)' }}>
+                              <p style={{ fontSize: 12, fontWeight: 700, color: 'var(--color-ink-muted)', marginBottom: 4 }}>{m.sender?.fullname} <span style={{ fontSize: 10, color: 'var(--color-hairline)', marginLeft: 8 }}>{new Date(m.created_at).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}</span></p>
+                              <p>{m.content}</p>
+                              {m.attachment_url && <div style={{ marginTop: 8 }}>{m.file_type === 'image' ? <a href={m.attachment_url} target="_blank" rel="noopener noreferrer"><img src={m.attachment_url} alt="" style={{ maxWidth: 180, borderRadius: 'var(--radius-md)', border: '1px solid var(--color-hairline-soft)' }} /></a> : m.file_type === 'video' ? <video controls style={{ maxWidth: 220, borderRadius: 'var(--radius-md)', border: '1px solid var(--color-hairline-soft)' }}><source src={m.attachment_url} /></video> : <a href={m.attachment_url} target="_blank" rel="noopener noreferrer" className="btn-secondary" style={{ padding: '6px 12px', fontSize: 12 }}>📎 Download</a>}</div>}
+                            </div>
+                            <button onClick={() => deleteMessage(m.id)} disabled={deletingMsg === m.id} style={{ position: 'absolute', top: 4, right: 4, opacity: 0, color: '#f87171', background: 'var(--color-surface-1)', border: 'none', borderRadius: '50%', width: 20, height: 20, cursor: 'pointer' }} className="group-hover-opacity-100 transition-opacity">{deletingMsg === m.id ? '·' : '✕'}</button>
+                          </div>
+                        ))}
+                        </div>
+                        {/* Pending Attachments Tray */}
+                        {pendingFiles.length > 0 && (
+                          <div style={{ padding: 12, backgroundColor: 'var(--color-surface-1)', borderTop: '1px solid var(--color-hairline-soft)', borderRadius: '12px 12px 0 0', display: 'flex', flexWrap: 'wrap', gap: 8, maxHeight: 160, overflowY: 'auto' }}>
+                            {pendingFiles.map(pf => {
+                              const isVideo = VIDEO_FILE_TYPES.includes(pf.file.type)
+                              const fileExt = pf.file.name.split('.').pop()?.toUpperCase() || 'FILE'
+                              return (
+                                <div key={pf.id} style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: 8, padding: 8, backgroundColor: 'var(--color-surface-2)', border: '1px solid var(--color-hairline-soft)', borderRadius: 'var(--radius-md)', minWidth: 200, maxWidth: 250 }}>
+                                  <div style={{ fontSize: 20 }}>{isVideo ? '🎥' : '📎'}</div>
+                                  <div style={{ flex: 1, minWidth: 0 }}>
+                                    <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--color-ink)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{pf.file.name}</p>
+                                    <p style={{ fontSize: 10, color: 'var(--color-ink-muted)' }}>{formatFileSize(pf.file.size)} • {fileExt}</p>
+                                    {pf.status === 'uploading' && (
+                                      <div style={{ width: '100%', backgroundColor: 'var(--color-hairline)', height: 4, borderRadius: 'var(--radius-pill)', marginTop: 4, overflow: 'hidden' }}>
+                                        <div style={{ backgroundColor: 'var(--color-accent-blue)', height: '100%', transition: 'width 300ms', width: `${pf.progress}%` }} />
+                                      </div>
+                                    )}
+                                    {pf.status === 'completed' && <span style={{ fontSize: 9, color: '#22c55e', fontWeight: 700 }}>Uploaded</span>}
+                                    {pf.status === 'failed' && <span style={{ fontSize: 9, color: '#ef4444', fontWeight: 700, fontFamily: 'monospace' }}>Failed</span>}
+                                  </div>
+                                  {!uploading && (
+                                    <button
+                                      type="button"
+                                      onClick={() => setPendingFiles(prev => prev.filter(f => f.id !== pf.id))}
+                                      style={{ position: 'absolute', top: -4, right: -4, backgroundColor: '#fca5a5', color: '#991b1b', borderRadius: '50%', width: 16, height: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, fontWeight: 700, border: 'none', cursor: 'pointer' }}
+                                    >✕</button>
+                                  )}
+                                </div>
+                              )
+                            })}
+                          </div>
+                        )}
+                        <div style={{ display: 'flex', gap: 8, width: '100%' }}>
+                          <input type="file" ref={fileRef} onChange={handleChatFileUpload} style={{ display: 'none' }} multiple accept="image/*,video/mp4,video/webm,video/quicktime,.pdf,.doc,.docx,.txt,.xls,.xlsx,.zip,.rar" />
+                          <button type="button" onClick={() => fileRef.current?.click()} disabled={uploading} className="btn-secondary" style={{ padding: '10px 14px', fontSize: 18, cursor: 'pointer' }}>{uploading ? '⏳' : '📎'}</button>
+                          <input value={newMsg} onChange={e => setNewMsg(e.target.value)} placeholder="Type a message..." onKeyDown={e => e.key === 'Enter' && !uploading && sendMessage()} className="ks-input" style={{ flex: 1, backgroundColor: 'var(--color-surface-1)' }} />
+                          <button type="button" onClick={() => sendMessage()} disabled={uploading || (!newMsg.trim() && pendingFiles.length === 0)} className="btn-primary" style={{ padding: '10px 20px', cursor: 'pointer', opacity: (uploading || (!newMsg.trim() && pendingFiles.length === 0)) ? 0.5 : 1 }}>Send</button>
+                        </div>
+                        {uploadSummary && <p style={{ marginTop: 8, fontSize: 11, color: 'var(--color-ink-muted)' }}>{uploadSummary}</p>}
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </div>
+              )
+            })}
+          </div>
+        )}
+        </>
       )}
 
       {/* Earnings Tab */}
       {activeTab === 'earnings' && (
-        <div className="space-y-5">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16 }}>
             {[
               { label: 'Total Earned', value: `₹${(earnings?.totalEarned || 0).toLocaleString('en-IN')}`, icon: '💰', color: '#10B981' },
               { label: 'Released', value: `₹${(earnings?.totalPayments || 0).toLocaleString('en-IN')}`, icon: '✅', color: '#3B82F6' },
               { label: 'Pending', value: `₹${(earnings?.pendingAmount || 0).toLocaleString('en-IN')}`, icon: '⏳', color: '#F59E0B' },
               { label: 'Completed', value: earnings?.completedProjects || 0, icon: '📋', color: '#8B5CF6' },
             ].map(k => (
-              <div key={k.label} className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
-                <span className="text-xl">{k.icon}</span>
-                <p className="text-2xl font-extrabold font-heading mt-2" style={{ color: k.color }}>{k.value}</p>
-                <p className="text-xs text-slate-400">{k.label}</p>
+              <div key={k.label} className="card-template" style={{ padding: 20 }}>
+                <span style={{ fontSize: 20 }}>{k.icon}</span>
+                <p className="text-display-md" style={{ fontFamily: 'var(--font-display)', color: k.color, marginTop: 8 }}>{k.value}</p>
+                <p className="text-caption" style={{ color: 'var(--color-ink-muted)' }}>{k.label}</p>
               </div>
             ))}
           </div>
           {/* Monthly */}
           {earningsMonthly.length > 0 && (
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
-              <h3 className="font-bold text-navy font-heading mb-5">📊 Monthly Earnings</h3>
-              <div className="flex items-end gap-3 h-28">
+            <div className="card-template" style={{ padding: 24 }}>
+              <h3 className="text-headline" style={{ fontWeight: 700, color: 'var(--color-ink)', marginBottom: 20 }}>📊 Monthly Earnings</h3>
+              <div style={{ display: 'flex', alignItems: 'flex-end', gap: 12, height: 120 }}>
                 {earningsMonthly.map((m, i) => {
                   const maxAmt = Math.max(...earningsMonthly.map(x => x.amount), 1)
                   const pct = (m.amount / maxAmt) * 100
                   return (
-                    <div key={m.month} className="flex-1 flex flex-col items-center gap-1">
-                      <p className="text-[9px] text-slate-400 font-bold">₹{m.amount > 0 ? m.amount.toLocaleString('en-IN') : 0}</p>
-                      <div className="w-full rounded-t-lg" style={{ height: `${Math.max(pct, 4)}%`, background: i % 2 === 0 ? '#1B3A6B' : '#FF6B35', minHeight: '4px' }} />
-                      <span className="text-[9px] text-slate-400">{m.month}</span>
+                    <div key={m.month} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+                      <p style={{ fontSize: 10, color: 'var(--color-ink-muted)', fontWeight: 700 }}>₹{m.amount > 0 ? m.amount.toLocaleString('en-IN') : 0}</p>
+                      <div style={{ width: '100%', borderRadius: '8px 8px 0 0', height: `${Math.max(pct, 4)}%`, background: i % 2 === 0 ? 'var(--color-accent-blue)' : '#F59E0B', minHeight: 4 }} />
+                      <span style={{ fontSize: 10, color: 'var(--color-ink-muted)' }}>{m.month}</span>
                     </div>
                   )
                 })}
@@ -506,21 +522,21 @@ export default function VendorDashboard() {
             </div>
           )}
           {/* Payment History */}
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-            <div className="p-5 border-b border-slate-100"><h3 className="font-bold text-navy font-heading">💳 Payment History</h3></div>
+          <div className="card-template" style={{ padding: 0, overflow: 'hidden' }}>
+            <div style={{ padding: '20px', borderBottom: '1px solid var(--color-hairline-soft)' }}><h3 className="text-headline" style={{ fontWeight: 700, color: 'var(--color-ink)' }}>💳 Payment History</h3></div>
             {payments.length === 0 ? (
-              <p className="p-8 text-center text-slate-400 text-sm">No payments received yet</p>
+              <p style={{ padding: 32, textAlign: 'center', color: 'var(--color-ink-muted)', fontSize: 14 }}>No payments received yet</p>
             ) : (
-              <div className="divide-y divide-slate-50">
+              <div>
                 {payments.map(p => (
-                  <div key={p.id} className="px-5 py-3 flex items-center justify-between">
+                  <div key={p.id} style={{ padding: '16px 20px', borderBottom: '1px solid var(--color-hairline-soft)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <div>
-                      <p className="text-sm font-semibold text-navy">{p.description || 'Project Payment'}</p>
-                      <p className="text-[10px] text-slate-400">{new Date(p.created_at).toLocaleDateString('en-IN')} · {p.razorpay_payment_id || '—'}</p>
+                      <p className="text-body-sm" style={{ fontWeight: 600, color: 'var(--color-ink)' }}>{p.description || 'Project Payment'}</p>
+                      <p className="text-micro" style={{ color: 'var(--color-ink-muted)' }}>{new Date(p.created_at).toLocaleDateString('en-IN')} · {p.razorpay_payment_id || '—'}</p>
                     </div>
-                    <div className="text-right">
-                      <p className="font-bold text-green-600">₹{(p.amount || 0).toLocaleString('en-IN')}</p>
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-green-100 text-green-600">captured</span>
+                    <div style={{ textAlign: 'right' }}>
+                      <p style={{ fontWeight: 700, color: '#16a34a' }}>₹{(p.amount || 0).toLocaleString('en-IN')}</p>
+                      <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 'var(--radius-pill)', backgroundColor: 'rgba(22, 163, 74, 0.1)', color: '#16a34a' }}>captured</span>
                     </div>
                   </div>
                 ))}
@@ -532,24 +548,24 @@ export default function VendorDashboard() {
 
       {/* Reviews Tab */}
       {activeTab === 'reviews' && (
-        <div className="space-y-3">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {ratings.length === 0 ? (
-            <div className="bg-white rounded-2xl p-10 text-center shadow-sm border border-slate-100">
-              <span className="text-4xl block mb-3">⭐</span>
-              <p className="text-slate-400">No reviews yet. Complete projects to receive feedback!</p>
+            <div className="card-template" style={{ padding: 40, textAlign: 'center' }}>
+              <span style={{ fontSize: 40, display: 'block', marginBottom: 12 }}>⭐</span>
+              <p className="text-body-sm" style={{ color: 'var(--color-ink-muted)' }}>No reviews yet. Complete projects to receive feedback!</p>
             </div>
           ) : (
             ratings.map(r => (
-              <div key={r.id} className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-2">
+              <div key={r.id} className="card-template" style={{ padding: 20 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                     <StarDisplay value={r.rating} />
-                    <span className="text-xs text-slate-500">by {r.customer?.fullname || 'Customer'}</span>
+                    <span className="text-micro" style={{ color: 'var(--color-ink-muted)' }}>by {r.customer?.fullname || 'Customer'}</span>
                   </div>
-                  <span className="text-[10px] text-slate-400">{new Date(r.created_at).toLocaleDateString('en-IN')}</span>
+                  <span className="text-micro" style={{ color: 'var(--color-ink-muted)' }}>{new Date(r.created_at).toLocaleDateString('en-IN')}</span>
                 </div>
-                {r.review && <p className="text-sm text-slate-600">{r.review}</p>}
-                <p className="text-xs text-slate-400 mt-2">📋 {r.project?.service_type || 'Project'}</p>
+                {r.review && <p className="text-body-sm" style={{ color: 'var(--color-ink)', marginTop: 4 }}>{r.review}</p>}
+                <p className="text-micro" style={{ color: 'var(--color-ink-muted)', marginTop: 8 }}>📋 {r.project?.service_type || 'Project'}</p>
               </div>
             ))
           )}
