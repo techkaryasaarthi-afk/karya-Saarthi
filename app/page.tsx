@@ -54,21 +54,16 @@ export default async function Home() {
   }
 
   const defaultPartners = [
-    {
-      name: 'AMD',
-      logo_url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/AMD_Logo.svg/320px-AMD_Logo.svg.png',
-      website: 'https://www.amd.com',
-    },
-    {
-      name: 'VibCare',
-      logo_url: 'https://vibcare.in/wp-content/uploads/2023/10/vibcare-logo.png',
-      website: 'https://vibcare.in',
-    },
-    {
-      name: 'Amazon',
-      logo_url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Amazon_logo.svg/320px-Amazon_logo.svg.png',
-      website: 'https://www.amazon.in',
-    },
+    // Text-only entries (no logo_url) so the marquee renders brand names cleanly
+    // without broken external image requests hitting the console
+    { name: 'AMD',              website: 'https://www.amd.com' },
+    { name: 'VibCare',          website: 'https://vibcare.in' },
+    { name: 'Amazon',           website: 'https://www.amazon.in' },
+    { name: 'Google',           website: 'https://www.google.com' },
+    { name: 'Microsoft',        website: 'https://www.microsoft.com' },
+    { name: 'IIT Delhi',        website: 'https://home.iitd.ac.in' },
+    { name: 'DU',               website: 'https://www.du.ac.in' },
+    { name: 'IGNOU',            website: 'https://www.ignou.ac.in' },
   ]
 
   const displayPartners = partners.length > 0 ? partners : defaultPartners
@@ -76,23 +71,24 @@ export default async function Home() {
   return (
     <>
       <Navbar />
-      <HeroSection />
-      <ServiceTiles />
-      <HowItWorks />
-      <PillarsSection />
-      <StatsSection />
-      <EventsPreviewSection />
-      <HackathonsSection />
-      <PodcastsSection />
-      <BlogSection />
-      <TestimonialsSection />
-      <QuickAccessDashboard />
-      <FAQSection />
-      <CTABanner />
-      <NewsletterSection />
-      <PartnersMarquee partners={displayPartners} />
+      <main id="main-content">
+        <HeroSection />
+        <ServiceTiles />
+        <HowItWorks />
+        <PillarsSection />
+        <StatsSection />
+        <EventsPreviewSection />
+        <HackathonsSection />
+        <PodcastsSection />
+        <BlogSection />
+        <TestimonialsSection />
+        <QuickAccessDashboard />
+        <FAQSection />
+        <CTABanner />
+        <NewsletterSection />
+        <PartnersMarquee partners={displayPartners} />
+      </main>
       <Footer />
-
     </>
   )
 }

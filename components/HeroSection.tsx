@@ -202,6 +202,9 @@ export default function HeroSection() {
                 borderRadius: '0 0 var(--radius-xl) var(--radius-xl)',
                 overflow: 'hidden',
                 lineHeight: 0,
+                /* Reserve exact space so CLS is 0 — matches video maxHeight */
+                aspectRatio: '16/9',
+                maxHeight: 380,
               }}>
                 <video
                   src="/images/karyasaarthi.mp4"
@@ -210,8 +213,17 @@ export default function HeroSection() {
                   loop
                   playsInline
                   preload="metadata"
-                  style={{ width: '100%', display: 'block', maxHeight: 380, objectFit: 'cover' }}
-                />
+                  poster="/images/karyasaarthi.png"
+                  aria-label="Karya Saarthi platform demo"
+                  style={{ width: '100%', height: '100%', display: 'block', objectFit: 'cover' }}
+                  onError={(e) => {
+                    // Gracefully hide broken video — space is already reserved by aspect-ratio
+                    const el = e.currentTarget as HTMLVideoElement
+                    el.style.opacity = '0'
+                  }}
+                >
+                  <track kind="captions" src="" srcLang="en" label="English captions" />
+                </video>
               </div>
             </div>
 

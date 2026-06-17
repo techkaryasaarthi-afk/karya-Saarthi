@@ -21,6 +21,11 @@ const securityHeaders = [
     key: 'Strict-Transport-Security',
     value: 'max-age=63072000; includeSubDomains; preload',
   }] : []),
+  // Cross-Origin-Opener-Policy: isolate top-level context (prevents Spectre, XS-Leaks)
+  // 'same-origin-allow-popups' instead of 'same-origin' to allow Razorpay popup checkout
+  { key: 'Cross-Origin-Opener-Policy', value: 'same-origin-allow-popups' },
+  // Cross-Origin-Resource-Policy: prevent other origins from hotlinking our resources
+  { key: 'Cross-Origin-Resource-Policy', value: 'cross-origin' },
   // Content Security Policy
   {
     key: 'Content-Security-Policy',

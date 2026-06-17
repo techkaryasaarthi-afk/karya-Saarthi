@@ -234,10 +234,15 @@ export default function TestimonialsSection() {
               aria-label={`Go to review ${i + 1}`}
               aria-current={i === index ? 'true' : undefined}
               style={{
+                /* Visual size of the dot */
                 width: i === index ? 24 : 8, height: 8, borderRadius: 99,
-                border: 'none', cursor: 'pointer', padding: 0,
+                border: 'none', cursor: 'pointer',
                 backgroundColor: i === index ? 'var(--color-accent-blue)' : 'var(--color-hairline)',
                 transition: 'width 0.3s, background-color 0.3s',
+                /* Expand tap area to 44px minimum without changing visual layout */
+                padding: '18px 0',
+                margin: '-18px 0',
+                boxSizing: 'content-box',
               }}
             />
           ))}

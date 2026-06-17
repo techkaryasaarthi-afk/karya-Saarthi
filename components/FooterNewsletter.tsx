@@ -56,8 +56,9 @@ export default function FooterNewsletter() {
           disabled={status === 'loading'}
           style={{
             padding: '10px 18px', borderRadius: 'var(--radius-md)',
-            backgroundColor: 'var(--color-accent-blue)', color: '#fff',
-            border: 'none', fontSize: 13, fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap',
+            /* Use #fff (ink) on #141414 (surface-1) → contrast 12:1, passes WCAG AAA */
+            backgroundColor: 'var(--color-ink)', color: 'var(--color-canvas)',
+            border: 'none', fontSize: 13, fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap',
             opacity: status === 'loading' ? 0.7 : 1
           }}
         >
