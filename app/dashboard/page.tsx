@@ -128,6 +128,7 @@ function DashboardPage() {
   const [invoices, setInvoices] = useState<Invoice[]>([])
   const [invoicesLoaded, setInvoicesLoaded] = useState(false)
   const [pendingFiles, setPendingFiles] = useState<{ file: File; id: string; progress: number; status: 'pending' | 'uploading' | 'completed' | 'failed' }[]>([])
+  const [showDMPanel, setShowDMPanel] = useState(false)
 
   const fetchProjects = useCallback(async () => {
     const res = await fetch('/api/projects')
@@ -660,6 +661,10 @@ function DashboardPage() {
             </div>
           </div>
         </div>
+      )}
+
+      {showDMPanel && user && (
+        <DirectChatPanel currentUserId={user.id} mode="user" onClose={() => setShowDMPanel(false)} />
       )}
     </>
   )

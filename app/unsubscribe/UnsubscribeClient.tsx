@@ -58,7 +58,7 @@ export default function UnsubscribeClient() {
         <p className="text-[var(--color-ink-muted)] text-sm mb-8 leading-relaxed">
           {status === 'success' 
             ? message 
-            : 'We\\'re sorry to see you go! Enter your email below to unsubscribe from our newsletter and updates.'}
+            : "We're sorry to see you go! Enter your email below to unsubscribe from our newsletter and updates."}
         </p>
 
         {status !== 'success' && (

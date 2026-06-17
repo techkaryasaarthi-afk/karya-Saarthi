@@ -213,8 +213,8 @@ export default function UsersPage() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     style={{ borderBottom: '1px solid var(--color-hairline-soft)', transition: 'background-color var(--dur-fast)' }}
-                    onMouseEnter={e => e.currentTarget.style.backgroundColor = 'var(--color-surface-2)'}
-                    onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
+                    onMouseEnter={e => (e.currentTarget as HTMLElement).style.backgroundColor = 'var(--color-surface-2)'}
+                    onMouseLeave={e => (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent'}
                   >
                     <td style={{ padding: 16 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -234,8 +234,8 @@ export default function UsersPage() {
                               textDecoration: ['customer','vendor'].includes(user.role) ? 'underline transparent' : 'none',
                               transition: 'text-decoration var(--dur-fast)'
                             }}
-                            onMouseEnter={e => { if (['customer','vendor'].includes(user.role)) e.currentTarget.style.textDecorationColor = 'var(--color-accent-blue)' }}
-                            onMouseLeave={e => { if (['customer','vendor'].includes(user.role)) e.currentTarget.style.textDecorationColor = 'transparent' }}
+                            onMouseEnter={e => { if (['customer','vendor'].includes(user.role)) (e.currentTarget as HTMLElement).style.textDecorationColor = 'var(--color-accent-blue)' }}
+                            onMouseLeave={e => { if (['customer','vendor'].includes(user.role)) (e.currentTarget as HTMLElement).style.textDecorationColor = 'transparent' }}
                           >
                             {user.fullname}
                           </button>
