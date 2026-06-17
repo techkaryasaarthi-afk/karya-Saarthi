@@ -30,7 +30,7 @@ async function getBlog(slug: string): Promise<Blog | null> {
     .from('blogs')
     .select('id, title, content, excerpt, tags, views, created_at, published_at, featured_image, meta_title, meta_description, category:blog_categories(id, name, slug), author:users!blogs_author_id_fkey(id, fullname, avatar_url)')
     .eq('slug', slug)
-    .eq('status', 'published')
+    .eq('is_published', true)
     .single()
 
   return data as Blog | null
@@ -62,29 +62,29 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
   return (
     <>
       <Navbar />
-      <main className="pt-20 lg:pt-24 pb-20 bg-surface min-h-screen">
+      <main className="pt-20 lg:pt-24 pb-20 bg-[var(--color-canvas)] min-h-screen">
         <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div>
             {/* Category */}
             {blog.category && (
-              <span className="inline-block px-3 py-1 rounded-full bg-accent/10 text-accent text-xs font-bold mb-4">
+              <span className="inline-block px-3 py-1 rounded-full bg-[var(--color-surface-2)] text-[var(--color-accent-blue)] text-xs font-bold mb-4 font-heading uppercase tracking-wider">
                 {blog.category.name}
               </span>
             )}
 
             {/* Title */}
-            <h1 className="text-3xl lg:text-5xl font-bold text-navy font-heading leading-tight mb-6">
+            <h1 className="text-3xl lg:text-5xl font-bold text-[var(--color-ink)] font-heading leading-tight mb-6 tracking-tight">
               {blog.title}
             </h1>
 
             {/* Meta */}
-            <div className="flex items-center gap-4 text-sm text-slate-500 mb-8 pb-6 border-b border-slate-200">
+            <div className="flex items-center gap-4 text-sm text-[var(--color-ink-muted)] mb-8 pb-6 border-b border-[var(--color-hairline-soft)]">
               {blog.author && (
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center text-accent font-bold text-xs">
+                  <div className="w-8 h-8 rounded-full bg-[var(--color-surface-2)] flex items-center justify-center text-[var(--color-ink)] font-bold text-xs">
                     {blog.author.fullname.charAt(0)}
                   </div>
-                  <span className="font-medium text-navy">{blog.author.fullname}</span>
+                  <span className="font-medium text-[var(--color-ink)]">{blog.author.fullname}</span>
                 </div>
               )}
               <span>•</span>
@@ -109,21 +109,21 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
 
             {/* Content */}
             <div
-              className="prose prose-lg max-w-none text-slate-700 leading-relaxed
-                prose-headings:text-navy prose-headings:font-heading
-                prose-a:text-accent prose-a:no-underline hover:prose-a:underline
-                prose-strong:text-navy
+              className="prose prose-lg max-w-none text-[var(--color-ink)] leading-relaxed font-body
+                prose-headings:text-[var(--color-ink)] prose-headings:font-heading
+                prose-a:text-[var(--color-accent-blue)] prose-a:no-underline hover:prose-a:underline
+                prose-strong:text-[var(--color-ink)]
                 prose-img:rounded-xl"
               dangerouslySetInnerHTML={{ __html: blog.content }}
             />
 
             {/* Tags */}
             {blog.tags && blog.tags.length > 0 && (
-              <div className="mt-10 pt-6 border-t border-slate-200">
-                <h4 className="text-sm font-semibold text-slate-600 mb-3">Tags</h4>
+              <div className="mt-10 pt-6 border-t border-[var(--color-hairline-soft)]">
+                <h4 className="text-sm font-semibold text-[var(--color-ink-muted)] mb-3 uppercase tracking-wider">Tags</h4>
                 <div className="flex flex-wrap gap-2">
                   {blog.tags.map(tag => (
-                    <span key={tag} className="px-3 py-1.5 rounded-full bg-slate-100 text-slate-600 text-xs font-medium">
+                    <span key={tag} className="px-3 py-1.5 rounded-full bg-[var(--color-surface-1)] border border-[var(--color-hairline)] text-[var(--color-ink)] text-xs font-medium">
                       #{tag}
                     </span>
                   ))}

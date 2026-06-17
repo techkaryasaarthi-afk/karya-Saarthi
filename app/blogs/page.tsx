@@ -60,16 +60,16 @@ export default function BlogsPage() {
       <Navbar />
       <main className="min-h-screen bg-surface pb-20">
         {/* Hero Header */}
-        <div className="bg-navy pt-24 pb-12 px-4 text-white">
+        <div className="bg-[var(--color-surface-1)] pt-24 pb-12 px-4 border-b border-[var(--color-hairline-soft)] text-[var(--color-ink)]">
           <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-              <span className="inline-block px-4 py-1.5 rounded-full bg-white/10 text-white/80 text-sm font-semibold mb-4">
+              <span className="inline-block px-4 py-1.5 rounded-full bg-[var(--color-surface-2)] text-[var(--color-ink)] border border-[var(--color-hairline)] text-sm font-semibold mb-4">
                 📝 Blog & Resources
               </span>
-              <h1 className="text-3xl lg:text-5xl font-extrabold font-heading mb-3">
+              <h1 className="text-3xl lg:text-5xl font-extrabold font-heading mb-3 text-[var(--color-ink)]">
                 Insights &amp; Expert Guides
               </h1>
-              <p className="text-white/60 text-lg max-w-2xl">
+              <p className="text-[var(--color-ink-muted)] text-lg max-w-2xl">
                 Practical tips, in-depth guides, and industry insights from the Karya Saarthi team.
               </p>
             </motion.div>
@@ -84,7 +84,7 @@ export default function BlogsPage() {
               placeholder="Search articles..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full sm:max-w-sm px-5 py-3.5 rounded-xl bg-white border border-slate-200 focus:outline-none focus:border-navy focus:ring-2 focus:ring-navy/10 text-sm shadow-sm font-body"
+              className="w-full sm:max-w-sm px-5 py-3 rounded-xl bg-[var(--color-surface-1)] border border-[var(--color-hairline)] text-[var(--color-ink)] placeholder-[var(--color-ink-muted)] focus:outline-none focus:border-[var(--color-accent-blue)] transition-colors text-sm font-body"
             />
             <div className="flex flex-wrap gap-2">
               {['All', ...(categories.length > 0
@@ -96,8 +96,8 @@ export default function BlogsPage() {
                   onClick={() => setActiveCategory(cat)}
                   className={`px-4 py-2 rounded-full text-sm font-semibold transition-all cursor-pointer font-heading ${
                     activeCategory === cat
-                      ? 'bg-navy text-white shadow-lg shadow-navy/20'
-                      : 'bg-white text-slate-600 border border-slate-200 hover:bg-navy/5 hover:border-navy/30'
+                      ? 'bg-[var(--color-surface-2)] text-[var(--color-ink)] border border-[var(--color-hairline)]'
+                      : 'bg-[var(--color-canvas)] text-[var(--color-ink-muted)] border border-transparent hover:bg-[var(--color-surface-2)]'
                   }`}
                 >
                   {cat}
@@ -108,16 +108,15 @@ export default function BlogsPage() {
 
           {/* Blog count */}
           {!loading && (
-            <p className="text-sm text-slate-400 mb-6 font-medium">
+            <p className="text-sm text-[var(--color-ink-muted)] mb-6 font-medium">
               {filtered.length} article{filtered.length !== 1 ? 's' : ''} found
             </p>
           )}
 
           {loading ? (
-            /* Loading skeleton — square cards */
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
               {Array.from({ length: 8 }).map((_, i) => (
-                <div key={i} className="aspect-square bg-white rounded-2xl animate-pulse" />
+                <div key={i} className="aspect-square bg-[var(--color-surface-1)] rounded-2xl animate-pulse border border-[var(--color-hairline)]" />
               ))}
             </div>
           ) : filtered.length === 0 ? (
@@ -154,12 +153,9 @@ export default function BlogsPage() {
                     className="group cursor-pointer"
                   >
                     <div
-                      className="aspect-square rounded-2xl overflow-hidden relative flex flex-col justify-end p-4 shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
-                      style={{
-                        background: b.is_featured
-                          ? 'linear-gradient(135deg, #1B3A6B 0%, #0f2545 100%)'
-                          : `linear-gradient(135deg, ${getCatColor(b.category?.name)}22 0%, ${getCatColor(b.category?.name)}08 100%)`,
-                      }}
+                      className={`aspect-square rounded-2xl overflow-hidden relative flex flex-col justify-end p-4 shadow-sm border border-[var(--color-hairline-soft)] hover:border-[var(--color-hairline)] hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ${
+                        b.is_featured ? 'bg-[#6a4cf5]' : 'bg-[var(--color-surface-1)]'
+                      }`}
                     >
                       {/* Background pattern */}
                       <div
@@ -172,7 +168,7 @@ export default function BlogsPage() {
 
                       {/* Featured badge */}
                       {b.is_featured && (
-                        <span className="absolute top-3 left-3 px-2 py-0.5 rounded-full bg-accent text-white text-[9px] font-bold">
+                        <span className="absolute top-3 left-3 px-2 py-0.5 rounded-full bg-black/20 text-white text-[9px] font-bold">
                           ⭐ FEATURED
                         </span>
                       )}
@@ -180,22 +176,20 @@ export default function BlogsPage() {
                       {/* Category chip */}
                       <div className="relative z-10">
                         <span
-                          className="inline-block px-2 py-0.5 rounded-full text-[9px] font-bold mb-2"
-                          style={{
-                            background: b.is_featured ? 'rgba(255,107,53,0.3)' : `${getCatColor(b.category?.name)}20`,
-                            color: b.is_featured ? '#FF6B35' : getCatColor(b.category?.name),
-                          }}
+                          className={`inline-block px-2 py-0.5 rounded-full text-[9px] font-bold mb-2 uppercase tracking-wider ${
+                            b.is_featured ? 'bg-black/20 text-white' : 'bg-[var(--color-surface-2)] text-[var(--color-accent-blue)]'
+                          }`}
                         >
                           {b.category?.name || 'General'}
                         </span>
                         <h3
                           className={`font-bold text-sm leading-snug line-clamp-3 font-heading group-hover:opacity-80 transition-opacity ${
-                            b.is_featured ? 'text-white' : 'text-navy'
+                            b.is_featured ? 'text-white' : 'text-[var(--color-ink)]'
                           }`}
                         >
                           {b.title}
                         </h3>
-                        <div className={`flex items-center gap-2 mt-2 text-[10px] ${b.is_featured ? 'text-white/50' : 'text-slate-400'}`}>
+                        <div className={`flex items-center gap-2 mt-2 text-[10px] ${b.is_featured ? 'text-white/70' : 'text-[var(--color-ink-muted)]'}`}>
                           <span>{new Date(b.published_at || b.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}</span>
                           <span>·</span>
                           <span>{b.views} views</span>
