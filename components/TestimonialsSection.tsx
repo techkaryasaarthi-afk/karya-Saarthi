@@ -181,6 +181,7 @@ export default function TestimonialsSection() {
             <div style={{ display: 'flex', gap: 8 }}>
               <button
                 onClick={prev} disabled={index === 0} id="testimonials-prev-btn"
+                aria-label="Previous testimonial"
                 style={{
                   width: 40, height: 40, borderRadius: 'var(--radius-full)',
                   border: '1px solid var(--color-hairline)',
@@ -190,9 +191,10 @@ export default function TestimonialsSection() {
                   transition: 'opacity 0.15s, background-color 0.15s',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                 }}
-              >←</button>
+              ><span aria-hidden="true">←</span></button>
               <button
                 onClick={next} disabled={index >= maxIndex} id="testimonials-next-btn"
+                aria-label="Next testimonial"
                 style={{
                   width: 40, height: 40, borderRadius: 'var(--radius-full)',
                   border: '1px solid var(--color-hairline)',
@@ -202,7 +204,7 @@ export default function TestimonialsSection() {
                   transition: 'opacity 0.15s, background-color 0.15s',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                 }}
-              >→</button>
+              ><span aria-hidden="true">→</span></button>
             </div>
           </div>
         </div>
@@ -229,6 +231,8 @@ export default function TestimonialsSection() {
             <button
               key={i}
               onClick={() => setIndex(i)}
+              aria-label={`Go to review ${i + 1}`}
+              aria-current={i === index ? 'true' : undefined}
               style={{
                 width: i === index ? 24 : 8, height: 8, borderRadius: 99,
                 border: 'none', cursor: 'pointer', padding: 0,

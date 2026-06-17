@@ -65,6 +65,16 @@ export default function Navbar() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
+        // Skip network requests entirely when no session cookie exists.
+        // This eliminates the 401 → refresh → 401 waterfall on anonymous visits.
+        const hasCookie = document.cookie.split(';').some(c =>
+          c.trim().startsWith('access_token=') || c.trim().startsWith('refresh_token=')
+        )
+        if (!hasCookie) {
+          setAuthChecked(true)
+          return
+        }
+
         let res = await fetch('/api/auth/me')
         if (res.status === 401) {
           const r = await fetch('/api/auth/refresh', { method: 'POST' })

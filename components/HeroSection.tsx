@@ -259,7 +259,7 @@ export default function HeroSection() {
 
       <style>{`
         @keyframes hero-fade-up {
-          from { opacity: 0; transform: translateY(22px); }
+          from { opacity: 0; transform: translateY(16px); }
           to   { opacity: 1; transform: translateY(0); }
         }
         @keyframes hero-badge-float {
@@ -270,10 +270,17 @@ export default function HeroSection() {
           0%, 100% { opacity: 1; transform: scale(1); }
           50%       { opacity: 0.5; transform: scale(1.3); }
         }
-        .hero-reveal {
-          opacity: 0;
-          animation: hero-fade-up 0.65s var(--ease-out) forwards;
+
+        /* Content is VISIBLE immediately — animation is progressive enhancement only */
+        .hero-reveal { opacity: 1; }
+
+        /* Apply animation only when user has no motion preference */
+        @media (prefers-reduced-motion: no-preference) {
+          .hero-reveal {
+            animation: hero-fade-up 0.5s var(--ease-out) both;
+          }
         }
+
         .hero-video-card {
           border-radius: var(--radius-xl);
           border: 1px solid var(--color-hairline-soft);
