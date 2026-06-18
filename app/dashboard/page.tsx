@@ -335,7 +335,7 @@ function DashboardPage() {
             <div className="card-template" style={{ padding: '20px 24px', marginBottom: 20 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
                 <div>
-                  <h1 className="text-display-md" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-ink)', marginBottom: 4 }}>Welcome, {user?.fullname || 'User'} 👋</h1>
+                  <h1 className="text-display-md" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-ink)', marginBottom: 4 }}>Welcome, {user?.fullname || 'User'}</h1>
                   <p className="text-body-sm" style={{ color: 'var(--color-ink-muted)' }}>Here&apos;s your project overview</p>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -386,7 +386,7 @@ function DashboardPage() {
             )}
 
             {/* Stats */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 20 }} className="dash-stats-grid">
+            <div style={{ display: 'grid', gap: 12, marginBottom: 20 }} className="dash-stats-grid">
               {[
                 { icon: '📦', label: 'Total',     value: projects.length, accent: 'var(--color-accent-blue)' },
                 { icon: '🔄', label: 'Active',    value: activeCount,     accent: '#fbbf24' },
@@ -627,7 +627,7 @@ function DashboardPage() {
               </div>
             )}
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginTop: 20 }} className="dash-qa-grid">
+            <div style={{ display: 'grid', gap: 12, marginTop: 20 }} className="dash-qa-grid">
               {[
                 { icon: '📝', label: 'New Project', onClick: () => setShowNewProject(true), href: undefined },
                 { icon: '🎧', label: 'Chat Support', onClick: () => setShowDMPanel(v => !v), href: undefined },
@@ -666,6 +666,15 @@ function DashboardPage() {
       {showDMPanel && user && (
         <DirectChatPanel currentUserId={user.id} mode="user" onClose={() => setShowDMPanel(false)} />
       )}
+
+      <style>{`
+        .dash-stats-grid { grid-template-columns: repeat(4, 1fr); }
+        .dash-qa-grid    { grid-template-columns: repeat(4, 1fr); }
+        @media (max-width: 640px) {
+          .dash-stats-grid { grid-template-columns: repeat(2, 1fr); }
+          .dash-qa-grid    { grid-template-columns: repeat(2, 1fr); }
+        }
+      `}</style>
     </>
   )
 }

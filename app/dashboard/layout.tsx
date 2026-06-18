@@ -55,7 +55,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <style>{`
         @media (max-width: 768px) {
           .dash-sidebar { display: none !important; }
-          .dash-main { margin-left: 0 !important; padding: 20px 16px !important; }
+          .dash-main { margin-left: 0 !important; padding: 20px 16px !important; padding-top: 72px !important; }
           .dash-mobile-header { display: flex !important; }
         }
       `}</style>

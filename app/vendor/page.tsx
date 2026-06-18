@@ -267,7 +267,7 @@ export default function VendorDashboard() {
           <h1 className="text-display-md" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-ink)' }}>🏪 Vendor Dashboard</h1>
           <p className="text-body-sm" style={{ color: 'var(--color-ink-muted)', marginTop: 4 }}>Your assigned projects & ratings</p>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }} className="vendor-header-actions">
           <div style={{ position: 'relative' }}>
             <button onClick={() => { const opening = !showNotifs; setShowNotifs(opening); if (opening && unreadCount > 0) markAllRead() }} style={{ width: 40, height: 40, borderRadius: 'var(--radius-md)', backgroundColor: 'var(--color-surface-2)', border: '1px solid var(--color-hairline)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', position: 'relative' }}>
               🔔 {unreadCount > 0 && <span style={{ position: 'absolute', top: -4, right: -4, width: 16, height: 16, borderRadius: '50%', backgroundColor: '#ef4444', color: '#fff', fontSize: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{unreadCount}</span>}
@@ -582,6 +582,12 @@ export default function VendorDashboard() {
           />
         )}
       </AnimatePresence>
+
+      <style>{`
+        @media (max-width: 640px) {
+          .vendor-header-actions { flex-wrap: wrap; gap: 8px !important; }
+        }
+      `}</style>
     </div>
   )
 }

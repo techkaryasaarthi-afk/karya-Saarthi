@@ -54,7 +54,7 @@ const SOCIALS = [
   { label: 'Telegram',     href: 'https://t.me/karyasaarthi',                           icon: <TelegramIcon />  },
 ]
 
-const BADGES = ['ISO 9001', 'MCA Registered', 'GST Verified', 'SSL Secured']
+const BADGES = ['MCA Registered', 'GST Compliant']
 
 /* ── Component ─────────────────────────────────────────────────── */
 export default function Footer() {
@@ -174,10 +174,14 @@ export default function Footer() {
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
           gap: 16, flexWrap: 'wrap',
         }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-            <p style={{ fontSize: 11, color: 'var(--color-ink-muted)' }}>© {new Date().getFullYear()} Karya Saarthi (KARYASAARTHI PRIVATE LIMITED). All rights reserved.</p>
-            <p style={{ fontSize: 11, color: 'var(--color-ink-muted)' }}>CIN: U62099DL2025OPC444895 &nbsp;·&nbsp; GSTIN: 07ABMCK5849Q1ZK</p>
-            <p style={{ fontSize: 11, color: 'var(--color-ink-muted)' }}>Gali No 1, Block A, Uttarakhand Enclave, Nathupura, Burari, North Delhi — 110084</p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6, maxWidth: 600 }}>
+            <p style={{ fontSize: 11, color: 'var(--color-ink-muted)' }}><strong>Karya Saarthi</strong> &mdash; A brand of Karyanex Private Limited</p>
+            <p style={{ fontSize: 11, color: 'var(--color-ink-muted)' }}><strong>Registered company name:</strong> Karyanex Private Limited</p>
+            <p style={{ fontSize: 11, color: 'var(--color-ink-muted)' }}><strong>CIN:</strong> U85500BR2026PTC085054 &nbsp;&middot;&nbsp; <strong>GST number:</strong> 10AAMCK8870B1ZN</p>
+            <p style={{ fontSize: 11, color: 'var(--color-ink-muted)', lineHeight: 1.5 }}>
+              Karya Saarthi is the trade name operated by Karyanex Private Limited, a company incorporated under the Companies Act, 2013. All transactions, contracts, and legal obligations are governed under the name Karyanex Private Limited.
+            </p>
+            <p style={{ fontSize: 11, color: 'var(--color-ink-muted)', marginTop: 4 }}>&copy; 2026 Karyanex Private Limited. All rights reserved.</p>
           </div>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
             {BADGES.map(b => (

@@ -217,7 +217,7 @@ export default function HeroSection() {
                     el.style.opacity = '0'
                   }}
                 >
-                  <track kind="captions" src="" srcLang="en" label="English captions" />
+
                 </video>
               </div>
             </div>

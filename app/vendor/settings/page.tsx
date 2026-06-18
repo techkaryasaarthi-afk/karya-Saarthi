@@ -126,15 +126,6 @@ export default function VendorSettingsPage() {
         </div>
       </motion.div>
 
-      {/* Account Info */}
-      <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="card-template" style={{ padding: 24 }}>
-        <h3 className="text-headline" style={{ fontWeight: 700, color: 'var(--color-ink)', marginBottom: 20 }}>ℹ️ Account Info</h3>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16, fontSize: 14 }}>
-          <div><span style={{ color: 'var(--color-ink-muted)' }}>Role</span><p style={{ fontWeight: 600, color: 'var(--color-ink)', textTransform: 'capitalize', marginTop: 4 }}>{profile?.role}</p></div>
-          {profile?.department && <div><span style={{ color: 'var(--color-ink-muted)' }}>Department</span><p style={{ fontWeight: 600, color: 'var(--color-ink)', textTransform: 'capitalize', marginTop: 4 }}>{profile.department}</p></div>}
-          <div><span style={{ color: 'var(--color-ink-muted)' }}>Member Since</span><p style={{ fontWeight: 600, color: 'var(--color-ink)', marginTop: 4 }}>{profile ? new Date(profile.created_at).toLocaleDateString('en-IN') : '-'}</p></div>
-        </div>
-      </motion.div>
     </div>
   )
 }

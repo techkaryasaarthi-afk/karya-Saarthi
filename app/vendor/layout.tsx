@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useEffect, useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
@@ -145,8 +145,11 @@ export default function VendorLayout({ children }: { children: React.ReactNode }
       <style>{`
         @media (max-width: 768px) {
           .vendor-sidebar    { display: none !important; }
-          .vendor-main       { margin-left: 0 !important; padding: 20px 16px !important; padding-top: 64px !important; }
+          .vendor-main       { margin-left: 0 !important; padding: 16px !important; padding-top: 72px !important; }
           .vendor-hamburger  { display: flex !important; }
+        }
+        @media (min-width: 769px) {
+          .vendor-hamburger  { display: none !important; }
         }
       `}</style>
     </div>
