@@ -168,6 +168,14 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
       // Notify vendor on assignment
       if (updates.assigned_to && updates.assigned_to !== oldProject.assigned_to) {
         createNotification({ userId: Number(updates.assigned_to), type: 'project_assigned', title: 'New Project Assigned', message: `You've been assigned to "${projectName}"`, projectId: Number(id) })
+        // Auto-post system message to open the project group chat
+        const { data: newVendorData } = await supabase.from('users').select('fullname').eq('id', updates.assigned_to).single()
+        await supabase.from('messages').insert({
+          project_id: Number(id),
+          sender_id: user.userId,
+          content: `🟢 Project group chat started — ${newVendorData?.fullname || 'Vendor'} has been assigned. Client, Vendor, and Project Manager are now connected here.`,
+          file_type: 'system',
+        })
         const { data: newVendor } = await supabase.from('users').select('fullname, email').eq('id', updates.assigned_to).single()
         if (newVendor?.email) {
           sendEmail({

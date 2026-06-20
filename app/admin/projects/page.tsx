@@ -63,6 +63,7 @@ function ProjectDetailPanel({ project, onClose, team, updateProject }: { project
   const [tasks, setTasks] = useState<Task[]>([])
   const [commLogs, setCommLogs] = useState<CommLog[]>([])
   const [checklist, setChecklist] = useState<Checklist[]>([])
+  const progressVal = project.status === 'completed' ? 100 : (project.progress || 0)
   
   const [draftBudget, setDraftBudget] = useState(project.budget?.toString() || '')
   const [draftVendorPrice, setDraftVendorPrice] = useState(project.vendor_price?.toString() || '')
@@ -247,9 +248,9 @@ function ProjectDetailPanel({ project, onClose, team, updateProject }: { project
           </div>
           {/* Progress */}
           <div className="mt-3">
-            <div className="flex justify-between text-xs mb-1"><span className="text-[var(--color-ink-muted)]">Progress</span><span className="font-bold text-[var(--color-ink)]">{project.progress || 0}%</span></div>
+            <div className="flex justify-between text-xs mb-1"><span className="text-[var(--color-ink-muted)]">Progress</span><span className="font-bold text-[var(--color-ink)]">{progressVal}%</span></div>
             <div className="h-2 bg-[var(--color-surface-2)] border border-[var(--color-hairline-soft)] rounded-full overflow-hidden">
-              <div className="h-full bg-gradient-to-r from-navy to-accent rounded-full" style={{ width: `${project.progress || 0}%` }} />
+              <div className="h-full bg-gradient-to-r from-navy to-accent rounded-full" style={{ width: `${progressVal}%` }} />
             </div>
           </div>
         </div>
@@ -406,7 +407,7 @@ function ProjectDetailPanel({ project, onClose, team, updateProject }: { project
                   </div>
                   <div className="flex justify-between p-3 bg-[var(--color-surface-1)] rounded-xl border border-[var(--color-hairline-soft)]">
                     <span className="text-sm text-[var(--color-ink-muted)]">Completion</span>
-                    <span className="text-sm font-bold text-[var(--color-ink)]">{project.progress || 0}%</span>
+                    <span className="text-sm font-bold text-[var(--color-ink)]">{progressVal}%</span>
                   </div>
                 </div>
                 {!project.invoice_status && (
@@ -550,7 +551,7 @@ export default function ProjectManagerPage() {
     .map(p => ({ ...p, is_escalated: localStorage.getItem(`escalated_${p.id}`) === 'true' }))
     .filter(p => (filter === '' || p.status === filter) && (search === '' || p.service_type.toLowerCase().includes(search.toLowerCase()) || p.client?.fullname.toLowerCase().includes(search.toLowerCase())))
 
-  const COLS = ['pending', 'in_progress', 'review', 'completed'] as const
+  const COLS = ['pending', 'assigned', 'in_progress', 'review', 'completed'] as const
 
   return (
     <div className="space-y-5 max-w-7xl">
@@ -592,16 +593,16 @@ export default function ProjectManagerPage() {
       {/* ── KANBAN VIEW ── */}
       {activeTab === 'kanban' && (
         loading ? (
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">{Array.from({ length: 4 }).map((_, i) => <div key={i} className="h-64 bg-[var(--color-surface-1)] rounded-2xl animate-pulse border border-[var(--color-hairline-soft)]" />)}</div>
+          <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">{Array.from({ length: 5 }).map((_, i) => <div key={i} className="h-64 bg-[var(--color-surface-1)] rounded-2xl animate-pulse border border-[var(--color-hairline-soft)]" />)}</div>
         ) : (
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 flex-nowrap overflow-x-auto pb-4">
             {COLS.map(col => {
               const colProjects = filtered.filter(p => p.status === col)
               const cfg = STATUS_CFG[col]
-              const nextStatus: Record<string, string> = { pending: 'in_progress', in_progress: 'review', review: 'completed', completed: 'completed' }
-              const prevStatus: Record<string, string> = { pending: 'pending', in_progress: 'pending', review: 'in_progress', completed: 'review' }
+              const nextStatus: Record<string, string> = { pending: 'assigned', assigned: 'in_progress', in_progress: 'review', review: 'completed', completed: 'completed' }
+              const prevStatus: Record<string, string> = { pending: 'pending', assigned: 'pending', in_progress: 'assigned', review: 'in_progress', completed: 'review' }
               return (
-                <div key={col} className="bg-[var(--color-surface-2)] rounded-2xl p-3 border border-[var(--color-hairline)] min-h-[300px]">
+                <div key={col} className="bg-[var(--color-surface-2)] rounded-2xl p-3 border border-[var(--color-hairline)] min-w-[240px] min-h-[300px]">
                   <div className="flex items-center justify-between mb-3">
                     <span className="px-2.5 py-1 rounded-full text-[10px] font-bold" style={{ background: cfg.bg, color: cfg.color }}>{cfg.icon} {cfg.label}</span>
                     <span className="text-xs font-bold text-[var(--color-ink-muted)]">{colProjects.length}</span>

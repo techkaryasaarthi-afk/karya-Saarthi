@@ -8,8 +8,8 @@ import PageCTABanner from '@/components/PageCTABanner'
 export const revalidate = 3600
 
 export const metadata = {
-  title: 'Podcasts â€” Listen, Learn & Grow',
-  description: 'Expert conversations, industry insights, and inspiring stories â€” curated by Karya Saarthi for ambitious professionals.',
+  title: 'Podcasts — Listen, Learn & Grow',
+  description: 'Expert conversations, industry insights, and inspiring stories — curated by Karya Saarthi for ambitious professionals.',
 }
 
 async function getPodcasts() {
@@ -58,7 +58,7 @@ export default async function PodcastsPage() {
         subtext="Are you an expert, founder, or industry professional? Join our podcast and inspire millions of students and business owners."
         primaryLabel="Apply to Speak â†’"
         primaryHref="/contact"
-        secondaryLabel="ðŸ’¬ WhatsApp Host"
+        secondaryLabel="💬 WhatsApp Host"
         secondaryHref="https://wa.me/918595025753"
         variant="magenta"
       />

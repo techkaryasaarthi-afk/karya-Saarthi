@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Inter, Geist } from 'next/font/google'
+import { Inter, Geist, Sora } from 'next/font/google'
 import { GeistSans } from 'geist/font/sans'
 import './globals.css'
 import SilenceWarnings from '@/components/SilenceWarnings'
@@ -16,6 +16,14 @@ const inter = Inter({
   variable: '--font-inter',
   display: 'swap',
   axes: ['opsz'],
+})
+
+// Sora: display / heading typeface (Hero headings, section titles)
+const sora = Sora({
+  subsets: ['latin'],
+  variable: '--font-sora',
+  display: 'swap',
+  weight: ['500', '700'],
 })
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://karyasaarthi.vercel.app'
@@ -119,7 +127,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       lang="en"
       data-scroll-behavior="smooth"
       suppressHydrationWarning
-      className={cn(GeistSans.variable, inter.variable, "font-sans", geist.variable)}
+      className={cn(GeistSans.variable, inter.variable, sora.variable, "font-sans", geist.variable)}
       style={{ backgroundColor: '#090909', colorScheme: 'dark' }}
     >
       <head>

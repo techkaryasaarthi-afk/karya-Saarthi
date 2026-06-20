@@ -83,7 +83,12 @@ export default function HeroSection() {
             {/* Headline */}
             <h1
               className="text-display-xxl hero-headline hero-reveal"
-              style={{ color: 'var(--color-ink)', marginBottom: 'var(--space-md)' }}
+              style={{
+                color: 'var(--color-ink)',
+                marginBottom: 'var(--space-md)',
+                fontFamily: 'var(--font-sora, "Sora", sans-serif)',
+                fontWeight: 700,
+              }}
             >
               Your Trusted<br />Work Companion
             </h1>
@@ -94,7 +99,8 @@ export default function HeroSection() {
               style={{
                 color: 'var(--color-accent-blue)',
                 fontSize: 'var(--text-body-lg-size)',
-                fontWeight: 600,
+                fontWeight: 500,
+                fontFamily: 'var(--font-sora, "Sora", sans-serif)',
                 fontStyle: 'italic',
                 marginBottom: 'var(--space-lg)',
               }}
@@ -118,17 +124,17 @@ export default function HeroSection() {
 
             {/* CTA row */}
             <div
-              className="hero-reveal"
+              className="hero-reveal hero-cta-row"
               style={{
                 display: 'flex', gap: 'var(--space-xs)',
                 flexWrap: 'wrap', alignItems: 'center',
                 marginBottom: 'var(--space-xxl)',
               }}
             >
-              <Link href="/contact" className="btn-primary" style={{ minWidth: 148 }}>
+              <Link href="/contact" className="btn-primary" style={{ minWidth: 148, fontFamily: 'var(--font-inter, "Inter", sans-serif)', fontWeight: 500 }}>
                 Get Free Quote Now
               </Link>
-              <Link href="/login?role=vendor" className="btn-secondary" style={{ minWidth: 148 }}>
+              <Link href="/login?role=vendor" className="btn-secondary" style={{ minWidth: 148, fontFamily: 'var(--font-inter, "Inter", sans-serif)', fontWeight: 500 }}>
                 Vendor Login
               </Link>
             </div>
@@ -316,11 +322,36 @@ export default function HeroSection() {
         @media (max-width: 810px) {
           .hero-grid { grid-template-columns: 1fr; gap: 48px; }
           .hero-right { order: -1; max-width: 520px; margin: 0 auto; width: 100%; }
-          .hero-headline { font-size: clamp(36px, 9vw, 72px) !important; }
+          .hero-headline {
+            font-size: clamp(36px, 9vw, 64px) !important;
+            line-height: 1.1 !important;
+            letter-spacing: -1.5px !important;
+            word-break: break-word;
+          }
           .hero-stats-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
         }
         @media (max-width: 480px) {
-          .hero-grid { gap: 32px; }
+          .hero-section {
+            padding-left: 16px !important;
+            padding-right: 16px !important;
+            padding-top: calc(56px + 48px) !important;
+          }
+          .hero-grid { gap: 28px; }
+          .hero-headline {
+            font-size: clamp(32px, 10vw, 52px) !important;
+            line-height: 1.15 !important;
+            letter-spacing: -1px !important;
+          }
+          .hero-cta-row {
+            flex-direction: column;
+            align-items: stretch !important;
+          }
+          .hero-cta-row .btn-primary,
+          .hero-cta-row .btn-secondary {
+            width: 100%;
+            min-width: unset !important;
+            justify-content: center;
+          }
           .hero-stats-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
         }
       `}</style>

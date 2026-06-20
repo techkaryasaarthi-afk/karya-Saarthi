@@ -230,14 +230,17 @@ export default function DirectChatPanel({ currentUserId, mode, onClose }: Props)
   // ════════════════════════════════════════════════════════════════════════════
   if (mode === 'user') {
     return (
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: 10 }}
-        className="bg-surface-1 rounded-2xl shadow-2xl shadow-black/50 border border-hairline overflow-hidden flex flex-col"
-        style={{ height: '480px' }}
-      >
-        {/* Header */}
+      <div className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={onClose}>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.95 }}
+          transition={{ duration: 0.15 }}
+          onClick={e => e.stopPropagation()}
+          className="bg-surface-1 rounded-2xl shadow-2xl shadow-black/50 border border-hairline overflow-hidden flex flex-col w-full max-w-md"
+          style={{ height: '480px' }}
+        >
+          {/* Header */}
         <div className="bg-surface-1 text-ink px-5 py-4 flex items-center justify-between flex-shrink-0">
           <div className="flex items-center gap-3">
             <span className="text-lg">🎧</span>
@@ -250,8 +253,9 @@ export default function DirectChatPanel({ currentUserId, mode, onClose }: Props)
         </div>
 
         {loading ? (
-          <div className="flex-1 flex items-center justify-center">
-            <div className="w-8 h-8 border-4 border-hairline/20 border-t-navy rounded-full animate-spin" />
+          <div className="flex-1 flex flex-col items-center justify-center">
+            <div style={{ width: 40, height: 40, borderRadius: '50%', border: '3px solid rgba(255,255,255,0.1)', borderTopColor: '#0099ff', animation: 'spin 1s linear infinite' }} />
+            <p style={{ marginTop: 16, fontSize: 13, color: 'rgba(255,255,255,0.4)', fontWeight: 600 }}>Connecting to support...</p>
           </div>
         ) : (
           <>
@@ -259,7 +263,8 @@ export default function DirectChatPanel({ currentUserId, mode, onClose }: Props)
             {renderInput('Type your message...', opsReceiverId !== null)}
           </>
         )}
-      </motion.div>
+        </motion.div>
+      </div>
     )
   }
 
@@ -275,9 +280,10 @@ export default function DirectChatPanel({ currentUserId, mode, onClose }: Props)
       onClick={onClose}
     >
       <motion.div
-        initial={{ scale: 0.97, y: 10 }}
+        initial={{ scale: 0.95, y: 10 }}
         animate={{ scale: 1, y: 0 }}
-        exit={{ scale: 0.97, y: 10 }}
+        exit={{ scale: 0.95, y: 10 }}
+        transition={{ duration: 0.15 }}
         onClick={(e: React.MouseEvent) => e.stopPropagation()}
         className="bg-surface-1 rounded-2xl shadow-2xl shadow-black/50 border border-hairline overflow-hidden flex flex-col w-full max-w-2xl"
         style={{ height: '580px' }}

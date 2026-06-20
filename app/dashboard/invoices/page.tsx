@@ -185,9 +185,9 @@ export default function InvoicesPage() {
                   onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
                 >
                   <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
-                    <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ flex: '1 1 200px', minWidth: 0 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4, flexWrap: 'wrap' }}>
-                        <span style={{ fontFamily: 'monospace', fontWeight: 700, color: 'var(--color-ink)', fontSize: 14 }}>{inv.invoice_number}</span>
+                        <span style={{ fontFamily: 'monospace', fontWeight: 700, color: 'var(--color-ink)', fontSize: 14, whiteSpace: 'nowrap' }}>{inv.invoice_number}</span>
                         <span style={{ padding: '2px 8px', borderRadius: 'var(--radius-pill)', fontSize: 10, fontWeight: 700, background: inv.status === 'paid' ? '#0d1f17' : inv.status === 'overdue' ? '#1a0808' : '#1a1200', color: inv.status === 'paid' ? '#22c55e' : inv.status === 'overdue' ? '#f87171' : '#fde68a' }}>
                           {cfg.icon} {cfg.label}
                         </span>

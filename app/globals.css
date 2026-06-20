@@ -54,28 +54,28 @@ body {
   --color-admin-base:       #141414;
 
   /* Typography scale â€” DESIGN.md */
-  --font-display:       var(--font-geist-sans, 'Inter', system-ui, sans-serif);
+  --font-display:       var(--font-sora, 'Sora', 'Inter', system-ui, sans-serif);
   --font-body:          var(--font-inter, 'Inter', system-ui, sans-serif);
 
   --text-display-xxl-size:    clamp(52px, 9vw, 110px);
-  --text-display-xxl-weight:  500;
-  --text-display-xxl-lh:      0.85;
-  --text-display-xxl-ls:      -5.5px;
+  --text-display-xxl-weight:  700;
+  --text-display-xxl-lh:      0.95;
+  --text-display-xxl-ls:      -3px;
 
   --text-display-xl-size:     clamp(40px, 7vw, 85px);
-  --text-display-xl-weight:   500;
-  --text-display-xl-lh:       0.95;
-  --text-display-xl-ls:       -4.25px;
+  --text-display-xl-weight:   700;
+  --text-display-xl-lh:       1.0;
+  --text-display-xl-ls:       -2.5px;
 
   --text-display-lg-size:     clamp(32px, 5vw, 62px);
-  --text-display-lg-weight:   500;
-  --text-display-lg-lh:       1.00;
-  --text-display-lg-ls:       -3.1px;
+  --text-display-lg-weight:   700;
+  --text-display-lg-lh:       1.05;
+  --text-display-lg-ls:       -2px;
 
   --text-display-md-size:     32px;
   --text-display-md-weight:   500;
   --text-display-md-lh:       1.13;
-  --text-display-md-ls:       -1.0px;
+  --text-display-md-ls:       -0.5px;
 
   --text-headline-size:       22px;
   --text-headline-weight:     700;
@@ -211,7 +211,7 @@ body {
   --color-success:          #22c55e;
   --color-admin-base:       #141414;
 
-  --font-display: var(--font-geist-sans, 'Inter', system-ui, sans-serif);
+  --font-display: var(--font-sora, 'Sora', 'Inter', system-ui, sans-serif);
   --font-body:    var(--font-inter, 'Inter', system-ui, sans-serif);
 }
 
@@ -807,7 +807,6 @@ section {
 
 /* ── Dashboard Responsive ────────────────────────────────── */
 @media (max-width: 768px) {
-  .dash-sidebar       { display: none !important; }
   .dash-main          { margin-left: 0 !important; padding: 20px 16px !important; }
   .dash-mobile-header { display: flex !important; }
   .dash-stats-grid    { grid-template-columns: repeat(2, 1fr) !important; }

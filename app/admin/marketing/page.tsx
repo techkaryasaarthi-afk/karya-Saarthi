@@ -13,18 +13,18 @@ const RichTextEditor = dynamic(() => import('@/components/RichTextEditor'), { ss
 interface Campaign { id: number; name: string; type: string; channel: string; status: string; budget: number | null; start_date: string | null; end_date: string | null; leads_generated: number | null; created_at: string }
 
 const TABS = [
-  { key: 'campaigns', label: 'ðŸ“£ Campaigns' },
-  { key: 'blog', label: 'ðŸ“ Blog' },
-  { key: 'podcast', label: 'ðŸŽ™ï¸ Podcasts' },
-  { key: 'hackathon', label: 'ðŸ’» Hackathons' },
-  { key: 'schedule', label: 'ðŸ“… Schedule Event' },
-  { key: 'leads', label: 'ðŸ“Š Lead Sources' },
-  { key: 'calendar', label: 'ðŸ—“ï¸ Content Calendar' },
-  { key: 'referral', label: 'ðŸ¤ Referrals' },
-  { key: 'events', label: 'ðŸŽª All Events' },
-  { key: 'competitor', label: 'ðŸ” Competitor Intel' },
-  { key: 'brand', label: 'ðŸŽ¨ Brand Assets' },
-  { key: 'partners', label: 'ðŸ¤ Partnered Companies' },
+  { key: 'campaigns', label: '📢 Campaigns' },
+  { key: 'blog', label: '📝 Blog' },
+  { key: 'podcast', label: '🎙️ Podcasts' },
+  { key: 'hackathon', label: '💻 Hackathons' },
+  { key: 'schedule', label: '📅 Schedule Event' },
+  { key: 'leads', label: '📊 Lead Sources' },
+  { key: 'calendar', label: '🗓️ Content Calendar' },
+  { key: 'referral', label: '🤝 Referrals' },
+  { key: 'events', label: '🎪 All Events' },
+  { key: 'competitor', label: '🔍 Competitor Intel' },
+  { key: 'brand', label: '🎨 Brand Assets' },
+  { key: 'partners', label: '🤝 Partnered Companies' },
 ] as const
 type Tab = typeof TABS[number]['key']
 
@@ -352,8 +352,8 @@ export default function MarketingPage() {
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 max-w-7xl">
       <div className="lg:col-span-8 xl:col-span-9 space-y-5">
       <div>
-        <h1 className="text-2xl font-bold text-navy font-heading">ðŸ“£ Marketing Head</h1>
-        <p className="text-slate-500 text-sm">Campaigns Â· Lead analytics Â· Content calendar Â· Referrals Â· Events Â· Brand</p>
+        <h1 className="text-2xl font-bold text-navy font-heading">📢 Marketing Head</h1>
+        <p className="text-slate-500 text-sm">Campaigns · Lead analytics · Content calendar · Referrals · Events · Brand</p>
       </div>
 
       {/* Tabs */}
@@ -385,14 +385,14 @@ export default function MarketingPage() {
             {showBlogForm && (
               <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
                 <h4 className="font-bold text-navy mb-4 text-base flex items-center gap-2">
-                  {editingBlogId ? 'âœï¸ Edit Blog Post' : 'âœï¸ Create Blog Post'}
-                  <span className="text-xs font-normal text-slate-400 ml-2">Rich Text Editor â€” headings, tables, images, charts, links, code blocks &amp; more</span>
+                  {editingBlogId ? '✏️ Edit Blog Post' : 'âœï¸ Create Blog Post'}
+                  <span className="text-xs font-normal text-slate-400 ml-2">Rich Text Editor — headings, tables, images, charts, links, code blocks &amp; more</span>
                 </h4>
                 <form onSubmit={saveBlog} className="space-y-3">
                   <input required value={blogForm.title} onChange={e => setBlogForm(p => ({ ...p, title: e.target.value }))} placeholder="Blog title *" className="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none focus:border-navy font-semibold" />
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                     <select value={blogForm.category_id} onChange={e => setBlogForm(p => ({ ...p, category_id: e.target.value }))} className="px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none">
-                      <option value="">â€” Category â€”</option>
+                      <option value="">— Category —</option>
                       {blogCategories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                     </select>
                     <input value={blogForm.featured_image} onChange={e => setBlogForm(p => ({ ...p, featured_image: e.target.value }))} placeholder="Featured image URL (optional)" className="col-span-2 px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" />
@@ -400,7 +400,7 @@ export default function MarketingPage() {
                   <textarea required value={blogForm.excerpt} onChange={e => setBlogForm(p => ({ ...p, excerpt: e.target.value }))} placeholder="Short excerpt / meta description *" rows={2} className="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none resize-none" />
                   {/* Rich Text Editor */}
                   <div>
-                    <p className="text-xs font-semibold text-slate-500 mb-1.5">Blog Content * <span className="text-slate-400 font-normal">(supports charts ðŸ“Š, images ðŸ–¼, tables â–¦, links ðŸ”—, code blocks and more)</span></p>
+                    <p className="text-xs font-semibold text-slate-500 mb-1.5">Blog Content * <span className="text-slate-400 font-normal">(supports charts 📊, images 🖼, tables ▦, links 🔗, code blocks and more)</span></p>
                     <RichTextEditor
                       content={blogForm.content}
                       onChange={html => setBlogForm(p => ({ ...p, content: html }))}
@@ -413,7 +413,7 @@ export default function MarketingPage() {
                   </div>
                   <div className="flex gap-3 pt-1">
                     <button type="submit" disabled={savingBlog || !blogForm.content || blogForm.content === '<p></p>'} className="px-6 py-2.5 rounded-xl font-bold text-white text-sm cursor-pointer disabled:opacity-50 transition-all hover:opacity-90" style={{ background: 'var(--color-accent-blue)' }}>
-                      {savingBlog ? 'â³ Saving...' : editingBlogId ? 'âœï¸ Update Blog Post' : 'ðŸ“ Publish Blog Post'}
+                      {savingBlog ? '⏳ Saving...' : editingBlogId ? '✏️ Update Blog Post' : '📝 Publish Blog Post'}
                     </button>
                     <button type="button" onClick={() => { setShowBlogForm(false); setEditingBlogId(null); setBlogForm({ title: '', excerpt: '', content: '', category_id: '', is_published: false, is_featured: false, featured_image: '' }) }} className="px-4 py-2.5 rounded-xl bg-[rgba(255,255,255,0.06)] text-[var(--color-ink-muted)] text-sm cursor-pointer hover:bg-[rgba(255,255,255,0.1)]">Cancel</button>
                   </div>
@@ -425,21 +425,21 @@ export default function MarketingPage() {
             <table className="w-full text-xs">
               <thead><tr className="bg-slate-50 border-b border-slate-100">{['Title', 'Category', 'Status', 'Views', 'Actions'].map(h => <th key={h} className="px-4 py-3 text-left font-bold text-slate-400 uppercase text-[10px]">{h}</th>)}</tr></thead>
               <tbody>
-                {blogs.length === 0 ? <tr><td colSpan={5} className="px-4 py-12 text-center text-slate-400"><span className="text-3xl block mb-2">ðŸ“</span>No blog posts yet. Click &ldquo;+ New Blog Post&rdquo; to get started.</td></tr> :
+                {blogs.length === 0 ? <tr><td colSpan={5} className="px-4 py-12 text-center text-slate-400"><span className="text-3xl block mb-2">📝</span>No blog posts yet. Click &ldquo;+ New Blog Post&rdquo; to get started.</td></tr> :
                   blogs.map(b => (
                     <tr key={b.id} className="border-b border-slate-50 hover:bg-slate-50/60">
                       <td className="px-4 py-3 font-semibold text-navy max-w-xs">
                         <div className="truncate">{b.title}</div>
-                        {b.is_featured && <span className="text-[9px] text-orange-500 font-bold">â­ Featured</span>}
+                        {b.is_featured && <span className="text-[9px] text-orange-500 font-bold">⭐ Featured</span>}
                       </td>
-                      <td className="px-4 py-3"><span className="px-2 py-0.5 rounded-full bg-accent/10 text-accent text-[10px] font-bold">{b.category?.name || 'â€”'}</span></td>
+                      <td className="px-4 py-3"><span className="px-2 py-0.5 rounded-full bg-accent/10 text-accent text-[10px] font-bold">{b.category?.name || '—'}</span></td>
                       <td className="px-4 py-3"><span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${b.is_published ? 'bg-green-100 text-green-600' : 'bg-amber-100 text-amber-600'}`}>{b.is_published ? 'Published' : 'Draft'}</span></td>
                       <td className="px-4 py-3 text-slate-500">{b.views || 0}</td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
-                          <button onClick={() => startEditBlog(b)} className="text-blue-500 hover:text-blue-700 font-bold cursor-pointer transition-colors">âœï¸ Edit</button>
-                          {b.slug && <a href={`/blogs/${b.slug}`} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-navy font-bold transition-colors">ðŸ‘</a>}
-                          <button onClick={() => deleteBlog(b.id)} disabled={deletingBlogId === b.id} className="text-slate-300 hover:text-red-500 transition-colors cursor-pointer disabled:opacity-40">ðŸ—‘ï¸</button>
+                          <button onClick={() => startEditBlog(b)} className="text-blue-500 hover:text-blue-700 font-bold cursor-pointer transition-colors">✏️ Edit</button>
+                          {b.slug && <a href={`/blogs/${b.slug}`} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-navy font-bold transition-colors">👁</a>}
+                          <button onClick={() => deleteBlog(b.id)} disabled={deletingBlogId === b.id} className="text-slate-300 hover:text-red-500 transition-colors cursor-pointer disabled:opacity-40">🗑️</button>
                         </div>
                       </td>
                     </tr>
@@ -454,24 +454,24 @@ export default function MarketingPage() {
       {activeTab === 'podcast' && (
         <div className="space-y-4">
           <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
-            <h4 className="font-bold text-navy mb-4">ðŸŽ™ï¸ Create New Podcast Episode</h4>
+            <h4 className="font-bold text-navy mb-4">🎙️ Create New Podcast Episode</h4>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
               <input value={podForm.episode} onChange={e => setPodForm(p => ({ ...p, episode: e.target.value }))} placeholder="Episode # (e.g. 12)" className="px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" />
               <input value={podForm.guest} onChange={e => setPodForm(p => ({ ...p, guest: e.target.value }))} placeholder="Guest name" className="px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" />
               <input type="date" value={podForm.date} onChange={e => setPodForm(p => ({ ...p, date: e.target.value }))} className="px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" />
-              <input type="number" value={podForm.fee} onChange={e => setPodForm(p => ({ ...p, fee: e.target.value }))} placeholder="Fee â‚¹ (0=free)" className="px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" />
+              <input type="number" value={podForm.fee} onChange={e => setPodForm(p => ({ ...p, fee: e.target.value }))} placeholder="Fee ₹ (0=free)" className="px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" />
             </div>
             <input required value={podForm.title} onChange={e => setPodForm(p => ({ ...p, title: e.target.value }))} placeholder="Episode title *" className="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none mb-3" />
             <textarea value={podForm.short_desc} onChange={e => setPodForm(p => ({ ...p, short_desc: e.target.value }))} placeholder="Episode description / summary" rows={2} className="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none resize-none mb-3" />
             <input value={podForm.audio_url} onChange={e => setPodForm(p => ({ ...p, audio_url: e.target.value }))} placeholder="Audio / video URL (optional)" className="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none mb-3" />
-            <button onClick={savePodcast} disabled={savingPod} className="px-4 py-2 rounded-xl bg-purple-600 text-white text-xs font-bold cursor-pointer hover:opacity-90 disabled:opacity-60">{savingPod ? 'â³ Saving...' : 'ðŸŽ™ï¸ Publish Episode'}</button>
+            <button onClick={savePodcast} disabled={savingPod} className="px-4 py-2 rounded-xl bg-purple-600 text-white text-xs font-bold cursor-pointer hover:opacity-90 disabled:opacity-60">{savingPod ? '⏳ Saving...' : '🎙️ Publish Episode'}</button>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {podcasts.length === 0 ? <div className="col-span-3 bg-white rounded-2xl p-12 text-center border border-slate-100 text-slate-400"><span className="text-4xl block mb-3">ðŸŽ™ï¸</span><p>No podcast episodes yet</p></div> :
+            {podcasts.length === 0 ? <div className="col-span-3 bg-white rounded-2xl p-12 text-center border border-slate-100 text-slate-400"><span className="text-4xl block mb-3">🎙️</span><p>No podcast episodes yet</p></div> :
               podcasts.map((ep, i) => (
                 <motion.div key={ep.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }} className="bg-white rounded-2xl p-5 shadow-sm border border-purple-100">
                   <div className="flex items-center gap-3 mb-3">
-                    <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center text-xl">ðŸŽ™ï¸</div>
+                    <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center text-xl">🎙️</div>
                     <div className="flex-1 min-w-0"><p className="font-bold text-navy truncate text-sm">{ep.title}</p><p className="text-[10px] text-slate-400">{new Date(ep.event_date).toLocaleDateString('en-IN')}</p></div>
                   </div>
                   <p className="text-xs text-slate-500 line-clamp-2">{ep.short_description}</p>
@@ -485,16 +485,16 @@ export default function MarketingPage() {
       {activeTab === 'hackathon' && (
         <div className="space-y-4">
           <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
-            <h4 className="font-bold text-navy mb-4">ðŸ’» Create Hackathon</h4>
+            <h4 className="font-bold text-navy mb-4">💻 Create Hackathon</h4>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
               <input value={hackForm.title} onChange={e => setHackForm(p => ({ ...p, title: e.target.value }))} placeholder="Hackathon title *" className="col-span-2 px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" />
               <div><label className="text-[10px] text-slate-400 mb-1 block">Start Date *</label><input type="date" value={hackForm.date} onChange={e => setHackForm(p => ({ ...p, date: e.target.value }))} className="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" /></div>
               <div><label className="text-[10px] text-slate-400 mb-1 block">End Date</label><input type="date" value={hackForm.end_date} onChange={e => setHackForm(p => ({ ...p, end_date: e.target.value }))} className="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" /></div>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
-              <input value={hackForm.prize} onChange={e => setHackForm(p => ({ ...p, prize: e.target.value }))} placeholder="Prize pool (e.g. â‚¹1,00,000)" className="col-span-2 px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" />
+              <input value={hackForm.prize} onChange={e => setHackForm(p => ({ ...p, prize: e.target.value }))} placeholder="Prize pool (e.g. ₹1,00,000)" className="col-span-2 px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" />
               <input type="number" value={hackForm.capacity} onChange={e => setHackForm(p => ({ ...p, capacity: e.target.value }))} placeholder="Max participants" className="px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" />
-              <input type="number" value={hackForm.fee} onChange={e => setHackForm(p => ({ ...p, fee: e.target.value }))} placeholder="Reg. fee â‚¹ (0=free)" className="px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" />
+              <input type="number" value={hackForm.fee} onChange={e => setHackForm(p => ({ ...p, fee: e.target.value }))} placeholder="Reg. fee ₹ (0=free)" className="px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" />
             </div>
             <div className="grid grid-cols-2 gap-3 mb-3">
               <input value={hackForm.venue} onChange={e => setHackForm(p => ({ ...p, venue: e.target.value }))} placeholder="Venue (leave blank if online)" className="px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" />
@@ -502,18 +502,18 @@ export default function MarketingPage() {
             </div>
             <textarea value={hackForm.short_desc} onChange={e => setHackForm(p => ({ ...p, short_desc: e.target.value }))} placeholder="Short description" rows={2} className="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none resize-none mb-3" />
             <textarea value={hackForm.problem} onChange={e => setHackForm(p => ({ ...p, problem: e.target.value }))} placeholder="Problem statement (optional)" rows={2} className="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none resize-none mb-3" />
-            <button onClick={saveHackathon} disabled={savingHack} className="px-4 py-2 rounded-xl text-white text-xs font-bold cursor-pointer hover:opacity-90 disabled:opacity-60" style={{ background: '#ff7a3d' }}>{savingHack ? 'â³ Creating...' : 'ðŸ’» Launch Hackathon'}</button>
+            <button onClick={saveHackathon} disabled={savingHack} className="px-4 py-2 rounded-xl text-white text-xs font-bold cursor-pointer hover:opacity-90 disabled:opacity-60" style={{ background: '#ff7a3d' }}>{savingHack ? '⏳ Creating...' : '💻 Launch Hackathon'}</button>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {hackathons.length === 0 ? <div className="col-span-2 bg-white rounded-2xl p-12 text-center border border-slate-100 text-slate-400"><span className="text-4xl block mb-3">ðŸ’»</span><p>No hackathons yet</p></div> :
+            {hackathons.length === 0 ? <div className="col-span-2 bg-white rounded-2xl p-12 text-center border border-slate-100 text-slate-400"><span className="text-4xl block mb-3">💻</span><p>No hackathons yet</p></div> :
               hackathons.map((h, i) => (
                 <motion.div key={h.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.06 }} className="bg-white rounded-2xl p-5 shadow-sm border border-orange-100">
                   <div className="flex items-start justify-between mb-3">
                     <h3 className="font-bold text-navy">{h.title}</h3>
-                    <span className="px-2 py-0.5 rounded-full bg-orange-100 text-orange-600 text-[10px] font-bold">ðŸ’» Hackathon</span>
+                    <span className="px-2 py-0.5 rounded-full bg-orange-100 text-orange-600 text-[10px] font-bold">💻 Hackathon</span>
                   </div>
                   <div className="grid grid-cols-3 gap-2">
-                    <div className="p-2 rounded-xl bg-slate-50 text-center"><p className="text-xs font-bold text-orange-500">{h.prize_pool || 'â€”'}</p><p className="text-[10px] text-slate-400">Prize</p></div>
+                    <div className="p-2 rounded-xl bg-slate-50 text-center"><p className="text-xs font-bold text-orange-500">{h.prize_pool || '—'}</p><p className="text-[10px] text-slate-400">Prize</p></div>
                     <div className="p-2 rounded-xl bg-slate-50 text-center"><p className="text-xs font-bold text-navy">{h.max_participants || 'âˆž'}</p><p className="text-[10px] text-slate-400">Seats</p></div>
                     <div className="p-2 rounded-xl bg-slate-50 text-center"><p className="text-xs font-bold text-navy">{new Date(h.event_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}</p><p className="text-[10px] text-slate-400">Date</p></div>
                   </div>
@@ -527,7 +527,7 @@ export default function MarketingPage() {
       {activeTab === 'schedule' && (
         <div className="space-y-4">
           <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
-            <h4 className="font-bold text-navy mb-4">ðŸ“… Schedule Event (Seminar / Webinar / Workshop)</h4>
+            <h4 className="font-bold text-navy mb-4">📅 Schedule Event (Seminar / Webinar / Workshop)</h4>
             <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
               <input value={schedForm.title} onChange={e => setSchedForm(p => ({ ...p, title: e.target.value }))} placeholder="Event title *" className="col-span-2 px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" />
               <select value={schedForm.type} onChange={e => setSchedForm(p => ({ ...p, type: e.target.value }))} className="px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none">
@@ -536,13 +536,13 @@ export default function MarketingPage() {
               <input type="date" value={schedForm.date} onChange={e => setSchedForm(p => ({ ...p, date: e.target.value }))} className="px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" />
               <input type="number" value={schedForm.capacity} onChange={e => setSchedForm(p => ({ ...p, capacity: e.target.value }))} placeholder="Capacity" className="px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" />
               <input value={schedForm.venue} onChange={e => setSchedForm(p => ({ ...p, venue: e.target.value }))} placeholder="Venue / link (blank=online)" className="col-span-2 px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" />
-              <input type="number" value={schedForm.fee} onChange={e => setSchedForm(p => ({ ...p, fee: e.target.value }))} placeholder="Fee â‚¹ (0=free)" className="px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" />
+              <input type="number" value={schedForm.fee} onChange={e => setSchedForm(p => ({ ...p, fee: e.target.value }))} placeholder="Fee ₹ (0=free)" className="px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" />
               <textarea value={schedForm.short_desc} onChange={e => setSchedForm(p => ({ ...p, short_desc: e.target.value }))} placeholder="Short description" rows={2} className="col-span-5 px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none resize-none" />
             </div>
-            <button onClick={saveScheduledEvent} disabled={savingSched} className="mt-3 px-4 py-2 rounded-xl bg-navy text-white text-xs font-bold cursor-pointer hover:opacity-90 disabled:opacity-60">{savingSched ? 'â³ Scheduling...' : 'ðŸ“… Schedule Event'}</button>
+            <button onClick={saveScheduledEvent} disabled={savingSched} className="mt-3 px-4 py-2 rounded-xl bg-navy text-white text-xs font-bold cursor-pointer hover:opacity-90 disabled:opacity-60">{savingSched ? '⏳ Scheduling...' : '📅 Schedule Event'}</button>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {schedEvents.length === 0 ? <div className="col-span-3 bg-white rounded-2xl p-12 text-center border border-slate-100 text-slate-400"><span className="text-4xl block mb-3">ðŸ“…</span><p>No scheduled events yet</p></div> :
+            {schedEvents.length === 0 ? <div className="col-span-3 bg-white rounded-2xl p-12 text-center border border-slate-100 text-slate-400"><span className="text-4xl block mb-3">📅</span><p>No scheduled events yet</p></div> :
               schedEvents.map((ev, i) => (
                 <motion.div key={ev.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.06 }} className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
                   <div className="flex items-start justify-between mb-2">
@@ -551,9 +551,9 @@ export default function MarketingPage() {
                   </div>
                   <p className="text-xs text-slate-500 mb-2 line-clamp-2">{ev.short_description}</p>
                   <div className="flex gap-2 text-[10px] text-slate-400">
-                    <span>ðŸ“… {new Date(ev.event_date).toLocaleDateString('en-IN')}</span>
-                    {ev.venue && <span>ðŸ“ {ev.venue}</span>}
-                    {!ev.venue && <span className="text-green-500">ðŸŒ Online</span>}
+                    <span>📅 {new Date(ev.event_date).toLocaleDateString('en-IN')}</span>
+                    {ev.venue && <span>📍 {ev.venue}</span>}
+                    {!ev.venue && <span className="text-green-500">🌐 Online</span>}
                   </div>
                 </motion.div>
               ))}
@@ -588,14 +588,14 @@ export default function MarketingPage() {
                     <select value={campForm.channel} onChange={e => setCampForm(p => ({ ...p, channel: e.target.value }))} className="px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none">
                       {['social', 'email', 'whatsapp', 'google_ads', 'linkedin', 'field', 'referral'].map(c => <option key={c} value={c}>{c}</option>)}
                     </select>
-                    <input type="number" value={campForm.budget} onChange={e => setCampForm(p => ({ ...p, budget: e.target.value }))} placeholder="Budget (â‚¹)" className="px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" />
+                    <input type="number" value={campForm.budget} onChange={e => setCampForm(p => ({ ...p, budget: e.target.value }))} placeholder="Budget (₹)" className="px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" />
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div><label className="text-xs text-slate-400 mb-1 block">Start Date</label><input type="date" value={campForm.start_date} onChange={e => setCampForm(p => ({ ...p, start_date: e.target.value }))} className="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" /></div>
                     <div><label className="text-xs text-slate-400 mb-1 block">End Date</label><input type="date" value={campForm.end_date} onChange={e => setCampForm(p => ({ ...p, end_date: e.target.value }))} className="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" /></div>
                   </div>
                   <div className="flex gap-3">
-                    <button type="submit" disabled={savingCamp} className="px-5 py-2.5 rounded-xl font-bold text-white text-sm cursor-pointer disabled:opacity-60" style={{ background: 'var(--color-accent-blue)' }}>{savingCamp ? 'â³' : 'ðŸ“£ Launch Campaign'}</button>
+                    <button type="submit" disabled={savingCamp} className="px-5 py-2.5 rounded-xl font-bold text-white text-sm cursor-pointer disabled:opacity-60" style={{ background: 'var(--color-accent-blue)' }}>{savingCamp ? '⏳' : '📢 Launch Campaign'}</button>
                     <button type="button" onClick={() => setShowNewCamp(false)} className="px-4 py-2.5 rounded-xl bg-slate-100 text-slate-600 text-sm cursor-pointer">Cancel</button>
                   </div>
                 </form>
@@ -605,7 +605,7 @@ export default function MarketingPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {loading ? Array.from({ length: 3 }).map((_, i) => <div key={i} className="h-40 bg-white rounded-2xl animate-pulse border border-slate-100" />) :
-              campaigns.length === 0 ? <div className="col-span-3 bg-white rounded-2xl p-12 text-center border border-slate-100 text-slate-400"><span className="text-4xl block mb-3">ðŸ“£</span><p>No campaigns yet. Create your first campaign above.</p></div> :
+              campaigns.length === 0 ? <div className="col-span-3 bg-white rounded-2xl p-12 text-center border border-slate-100 text-slate-400"><span className="text-4xl block mb-3">📢</span><p>No campaigns yet. Create your first campaign above.</p></div> :
                 campaigns.map((c, i) => {
                   const sc = CAMPAIGN_STATUS[c.status] || CAMPAIGN_STATUS.draft
                   return (
@@ -615,7 +615,7 @@ export default function MarketingPage() {
                         <h3 className="font-bold text-navy truncate pr-2">{c.name}</h3>
                         <div className="flex items-center gap-2 flex-shrink-0">
                           <span className="px-2 py-0.5 rounded-full text-[10px] font-bold" style={{ background: sc.bg, color: sc.color }}>{sc.label}</span>
-                          <button onClick={() => deleteCampaign(c.id)} className="text-slate-300 hover:text-red-500 transition-colors">ðŸ—‘ï¸</button>
+                          <button onClick={() => deleteCampaign(c.id)} className="text-slate-300 hover:text-red-500 transition-colors">🗑️</button>
                         </div>
                       </div>
                       <div className="flex gap-2 mb-3">
@@ -623,10 +623,10 @@ export default function MarketingPage() {
                         <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 text-[10px] font-medium capitalize">{c.channel}</span>
                       </div>
                       <div className="grid grid-cols-2 gap-2 text-xs">
-                        {c.budget && <div className="p-2 rounded-xl bg-slate-50"><p className="text-[10px] text-slate-400">Budget</p><p className="font-bold text-navy">â‚¹{Number(c.budget).toLocaleString('en-IN')}</p></div>}
+                        {c.budget && <div className="p-2 rounded-xl bg-slate-50"><p className="text-[10px] text-slate-400">Budget</p><p className="font-bold text-navy">₹{Number(c.budget).toLocaleString('en-IN')}</p></div>}
                         {c.leads_generated !== null && <div className="p-2 rounded-xl bg-green-50"><p className="text-[10px] text-slate-400">Leads</p><p className="font-bold text-green-600">{c.leads_generated}</p></div>}
                       </div>
-                      {c.start_date && <p className="text-[10px] text-slate-400 mt-2">ðŸ“… {new Date(c.start_date).toLocaleDateString('en-IN')} {c.end_date && `â†’ ${new Date(c.end_date).toLocaleDateString('en-IN')}`}</p>}
+                      {c.start_date && <p className="text-[10px] text-slate-400 mt-2">📅 {new Date(c.start_date).toLocaleDateString('en-IN')} {c.end_date && `â†’ ${new Date(c.end_date).toLocaleDateString('en-IN')}`}</p>}
                     </motion.div>
                   )
                 })}
@@ -639,7 +639,7 @@ export default function MarketingPage() {
         <div className="space-y-5">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
-              <h3 className="font-bold text-navy font-heading mb-5">ðŸ“Š Lead Source Analytics</h3>
+              <h3 className="font-bold text-navy font-heading mb-5">📊 Lead Source Analytics</h3>
               <div className="space-y-4">
                 {leadSources.map((s: { source: string; count: number; pct: number; color: string }, i: number) => (
                   <motion.div key={s.source} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.08 }}>
@@ -656,7 +656,7 @@ export default function MarketingPage() {
               </div>
             </div>
             <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
-              <h3 className="font-bold text-navy font-heading mb-5">ðŸ† Top Performing Channels</h3>
+              <h3 className="font-bold text-navy font-heading mb-5">🏆 Top Performing Channels</h3>
               <div className="space-y-3">
                 {leadSources.sort((a, b) => b.count - a.count).map((s: { source: string; count: number; pct: number; color: string }, i: number) => (
                   <div key={s.source} className="flex items-center gap-3 p-3 rounded-xl bg-slate-50">
@@ -691,7 +691,7 @@ export default function MarketingPage() {
             <button onClick={saveCalItem} className="mt-3 px-4 py-2 rounded-xl bg-navy text-white text-xs font-bold cursor-pointer hover:opacity-90">+ Add to Calendar</button>
           </div>
           {calItems.length === 0 ? (
-            <div className="bg-white rounded-2xl p-12 text-center border border-slate-100 text-slate-400"><span className="text-4xl block mb-3">ðŸ“…</span><p>No content scheduled yet</p></div>
+            <div className="bg-white rounded-2xl p-12 text-center border border-slate-100 text-slate-400"><span className="text-4xl block mb-3">📅</span><p>No content scheduled yet</p></div>
           ) : (
             <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
               <table className="w-full text-xs">
@@ -706,9 +706,9 @@ export default function MarketingPage() {
                         <td className="px-4 py-3 font-semibold text-navy">{item.title}</td>
                         <td className="px-4 py-3"><span className="px-2 py-0.5 rounded-full bg-purple-100 text-purple-600 text-[10px] font-bold">{item.type}</span></td>
                         <td className="px-4 py-3 text-slate-500">{item.platform}</td>
-                        <td className="px-4 py-3 text-slate-500">{item.date ? new Date(item.date).toLocaleDateString('en-IN') : 'â€”'}</td>
+                        <td className="px-4 py-3 text-slate-500">{item.date ? new Date(item.date).toLocaleDateString('en-IN') : '—'}</td>
                         <td className="px-4 py-3"><span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${isPast ? 'bg-green-100 text-green-600' : 'bg-amber-100 text-amber-600'}`}>{isPast ? 'Published' : 'Scheduled'}</span></td>
-                        <td className="px-4 py-3"><button onClick={() => deleteItem('calendar', item.id)} className="text-slate-300 hover:text-red-500 transition-colors">ðŸ—‘ï¸</button></td>
+                        <td className="px-4 py-3"><button onClick={() => deleteItem('calendar', item.id)} className="text-slate-300 hover:text-red-500 transition-colors">🗑️</button></td>
                       </tr>
                     )
                   })}
@@ -731,7 +731,7 @@ export default function MarketingPage() {
             </div>
           </div>
           {referrals.length === 0 ? (
-            <div className="bg-white rounded-2xl p-12 text-center border border-slate-100 text-slate-400"><span className="text-4xl block mb-3">ðŸ¤</span><p>No referral partners yet</p></div>
+            <div className="bg-white rounded-2xl p-12 text-center border border-slate-100 text-slate-400"><span className="text-4xl block mb-3">🤝</span><p>No referral partners yet</p></div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {referrals.map((r, i) => (
@@ -740,11 +740,11 @@ export default function MarketingPage() {
                   <div className="flex items-center gap-3 mb-3">
                     <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center font-bold text-purple-600">{r.name.charAt(0)}</div>
                     <div className="flex-1"><p className="font-bold text-navy">{r.name}</p><p className="text-[10px] text-slate-400">Code: <span className="font-mono font-bold text-accent">{r.code}</span></p></div>
-                    <button onClick={() => deleteItem('referrals', r.id)} className="text-slate-300 hover:text-red-500 transition-colors">ðŸ—‘ï¸</button>
+                    <button onClick={() => deleteItem('referrals', r.id)} className="text-slate-300 hover:text-red-500 transition-colors">🗑️</button>
                   </div>
                   <div className="grid grid-cols-2 gap-2">
                     <div className="p-2 rounded-xl bg-slate-50 text-center"><p className="text-lg font-bold text-navy">{r.referrals}</p><p className="text-[10px] text-slate-400">Referrals</p></div>
-                    <div className="p-2 rounded-xl bg-green-50 text-center"><p className="text-lg font-bold text-green-600">â‚¹{r.commission.toLocaleString('en-IN')}</p><p className="text-[10px] text-slate-400">Commission</p></div>
+                    <div className="p-2 rounded-xl bg-green-50 text-center"><p className="text-lg font-bold text-green-600">₹{r.commission.toLocaleString('en-IN')}</p><p className="text-[10px] text-slate-400">Commission</p></div>
                   </div>
                 </motion.div>
               ))}
@@ -767,13 +767,13 @@ export default function MarketingPage() {
               <input type="number" value={newEvent.capacity} onChange={e => setNewEvent(p => ({ ...p, capacity: e.target.value }))} placeholder="Capacity" className="px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" />
               <input value={newEvent.venue} onChange={e => setNewEvent(p => ({ ...p, venue: e.target.value }))} placeholder="Venue / Link" className="col-span-2 px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" />
               <input value={newEvent.short_desc} onChange={e => setNewEvent(p => ({ ...p, short_desc: e.target.value }))} placeholder="Short Description" className="col-span-2 px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" />
-              <input type="number" value={newEvent.fee} onChange={e => setNewEvent(p => ({ ...p, fee: e.target.value }))} placeholder="Reg. Fee (â‚¹)" className="px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" />
-              <input value={newEvent.prize} onChange={e => setNewEvent(p => ({ ...p, prize: e.target.value }))} placeholder="Prize Pool (e.g. â‚¹5,000)" className="col-span-2 px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" />
+              <input type="number" value={newEvent.fee} onChange={e => setNewEvent(p => ({ ...p, fee: e.target.value }))} placeholder="Reg. Fee (₹)" className="px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" />
+              <input value={newEvent.prize} onChange={e => setNewEvent(p => ({ ...p, prize: e.target.value }))} placeholder="Prize Pool (e.g. ₹5,000)" className="col-span-2 px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" />
             </div>
-            <button onClick={saveEvent} className="mt-3 px-4 py-2 rounded-xl bg-navy text-white text-xs font-bold cursor-pointer hover:opacity-90">ðŸŽª Create Event</button>
+            <button onClick={saveEvent} className="mt-3 px-4 py-2 rounded-xl bg-navy text-white text-xs font-bold cursor-pointer hover:opacity-90">🎪 Create Event</button>
           </div>
           {events.length === 0 ? (
-            <div className="bg-white rounded-2xl p-12 text-center border border-slate-100 text-slate-400"><span className="text-4xl block mb-3">ðŸŽª</span><p>No events yet</p></div>
+            <div className="bg-white rounded-2xl p-12 text-center border border-slate-100 text-slate-400"><span className="text-4xl block mb-3">🎪</span><p>No events yet</p></div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {events.map((ev, i) => (
@@ -782,16 +782,16 @@ export default function MarketingPage() {
                     <h3 className="font-bold text-navy">{ev.title}</h3>
                     <div className="flex items-center gap-2 flex-shrink-0">
                       <span className="px-2 py-0.5 rounded-full bg-purple-100 text-purple-600 text-[10px] font-bold">{ev.type}</span>
-                      <button onClick={() => deleteItem('events', ev.id)} className="text-slate-300 hover:text-red-500 transition-colors">ðŸ—‘ï¸</button>
+                      <button onClick={() => deleteItem('events', ev.id)} className="text-slate-300 hover:text-red-500 transition-colors">🗑️</button>
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-2 mb-3">
                     <div className="p-2 rounded-xl bg-slate-50 text-center"><p className="text-sm font-bold text-navy">{ev.max_participants || 'Unlimited'}</p><p className="text-[10px] text-slate-400">Capacity</p></div>
-                    <div className="p-2 rounded-xl bg-slate-50 text-center"><p className="text-sm font-bold text-navy">â‚¹{ev.registration_fee || '0'}</p><p className="text-[10px] text-slate-400">Fee</p></div>
+                    <div className="p-2 rounded-xl bg-slate-50 text-center"><p className="text-sm font-bold text-navy">₹{ev.registration_fee || '0'}</p><p className="text-[10px] text-slate-400">Fee</p></div>
                   </div>
-                  {ev.prize_pool && <p className="text-xs text-orange-600 font-bold mb-2">ðŸ† {ev.prize_pool}</p>}
-                  {ev.venue && <p className="text-xs text-slate-500 line-clamp-1">ðŸ“ {ev.venue}</p>}
-                  {ev.event_date && <p className="text-xs text-slate-500 mt-0.5">ðŸ“… {new Date(ev.event_date).toLocaleDateString('en-IN')}</p>}
+                  {ev.prize_pool && <p className="text-xs text-orange-600 font-bold mb-2">🏆 {ev.prize_pool}</p>}
+                  {ev.venue && <p className="text-xs text-slate-500 line-clamp-1">📍 {ev.venue}</p>}
+                  {ev.event_date && <p className="text-xs text-slate-500 mt-0.5">📅 {new Date(ev.event_date).toLocaleDateString('en-IN')}</p>}
                 </motion.div>
               ))}
             </div>
@@ -812,13 +812,13 @@ export default function MarketingPage() {
             </div>
             <button onClick={saveCompNote} className="mt-3 px-4 py-2 rounded-xl bg-navy text-white text-xs font-bold cursor-pointer hover:opacity-90">+ Add Analysis</button>
           </div>
-          {compNotes.length === 0 ? <div className="bg-white rounded-2xl p-12 text-center border border-slate-100 text-slate-400"><span className="text-4xl block mb-3">ðŸ”</span><p>No competitor notes yet</p></div> :
+          {compNotes.length === 0 ? <div className="bg-white rounded-2xl p-12 text-center border border-slate-100 text-slate-400"><span className="text-4xl block mb-3">🔍</span><p>No competitor notes yet</p></div> :
             <div className="space-y-3">
               {compNotes.map(c => (
                 <div key={c.id} className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
                   <div className="flex justify-between items-start mb-3">
                     <h3 className="font-bold text-navy">{c.competitor}</h3>
-                    <button onClick={() => deleteItem('competitor', c.id)} className="text-slate-300 hover:text-red-500 transition-colors">ðŸ—‘ï¸</button>
+                    <button onClick={() => deleteItem('competitor', c.id)} className="text-slate-300 hover:text-red-500 transition-colors">🗑️</button>
                   </div>
                   <div className="grid grid-cols-2 gap-3 mb-3">
                     {c.strength && <div className="p-3 rounded-xl bg-green-50"><p className="text-[10px] font-bold text-green-600 mb-1">âœ… STRENGTHS</p><p className="text-xs text-slate-600">{c.strength}</p></div>}
@@ -844,23 +844,23 @@ export default function MarketingPage() {
               <input value={newAsset.url} onChange={e => setNewAsset(p => ({ ...p, url: e.target.value }))} placeholder="Asset URL / Drive link *" className="col-span-2 px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" />
               <input value={newAsset.description} onChange={e => setNewAsset(p => ({ ...p, description: e.target.value }))} placeholder="Description" className="col-span-4 px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" />
             </div>
-            <button onClick={saveBrandAsset} className="mt-3 px-4 py-2 rounded-xl bg-navy text-white text-xs font-bold cursor-pointer hover:opacity-90">ðŸŽ¨ Add Asset</button>
+            <button onClick={saveBrandAsset} className="mt-3 px-4 py-2 rounded-xl bg-navy text-white text-xs font-bold cursor-pointer hover:opacity-90">🎨 Add Asset</button>
           </div>
-          {brandAssets.length === 0 ? <div className="bg-white rounded-2xl p-12 text-center border border-slate-100 text-slate-400"><span className="text-4xl block mb-3">ðŸŽ¨</span><p>No brand assets yet</p></div> :
+          {brandAssets.length === 0 ? <div className="bg-white rounded-2xl p-12 text-center border border-slate-100 text-slate-400"><span className="text-4xl block mb-3">🎨</span><p>No brand assets yet</p></div> :
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {brandAssets.map((a, i) => (
                 <motion.div key={a.id} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: i * 0.05 }}
                   className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
                   <div className="flex items-start gap-3 mb-3">
-                    <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center text-xl">ðŸŽ¨</div>
+                    <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center text-xl">🎨</div>
                     <div className="flex-1 min-w-0">
                       <p className="font-bold text-navy truncate">{a.name}</p>
                       <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 text-[10px] font-bold">{a.type}</span>
                     </div>
-                    <button onClick={() => deleteItem('brand', a.id)} className="text-slate-300 hover:text-red-500 transition-colors">ðŸ—‘ï¸</button>
+                    <button onClick={() => deleteItem('brand', a.id)} className="text-slate-300 hover:text-red-500 transition-colors">🗑️</button>
                   </div>
                   {a.description && <p className="text-xs text-slate-400 mb-3">{a.description}</p>}
-                  <a href={a.url} target="_blank" rel="noreferrer" className="block w-full text-center py-2 rounded-xl bg-blue-50 text-blue-600 text-xs font-bold hover:bg-blue-100 cursor-pointer transition-colors">ðŸ“¥ Access Asset</a>
+                  <a href={a.url} target="_blank" rel="noreferrer" className="block w-full text-center py-2 rounded-xl bg-blue-50 text-blue-600 text-xs font-bold hover:bg-blue-100 cursor-pointer transition-colors">📥 Access Asset</a>
                 </motion.div>
               ))}
             </div>}
