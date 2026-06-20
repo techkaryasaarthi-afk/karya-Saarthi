@@ -290,7 +290,7 @@ export default function VendorDashboard() {
                 🔔{unreadCount>0&&<span style={{ position:'absolute', top:-2, right:-2, width:14, height:14, borderRadius:'50%', background:'#ef4444', color:'#fff', fontSize:9, display:'flex', alignItems:'center', justifyContent:'center' }}>{unreadCount}</span>}
               </button>
               {showNotifs&&(
-                <div style={{ position:'absolute', right:0, top:46, width:300, background:'#1c1c1c', border:'1px solid rgba(255,255,255,0.1)', borderRadius:16, zIndex:50, overflow:'hidden' }}>
+                <div className="notif-dropdown" style={{ position:'absolute', top:46, width:300, background:'#1c1c1c', border:'1px solid rgba(255,255,255,0.1)', borderRadius:16, zIndex:50, overflow:'hidden' }}>
                   <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'12px 16px', borderBottom:'1px solid rgba(255,255,255,0.06)' }}>
                     <span style={{ fontSize:13, fontWeight:600, color:'#fff' }}>Notifications</span>
                     {unreadCount>0&&<button onClick={markAllRead} style={{ background:'none', border:'none', cursor:'pointer', fontSize:12, color:'var(--color-accent-blue)' }}>Mark all read</button>}
@@ -427,7 +427,7 @@ export default function VendorDashboard() {
       )}
 
       {showDMPanel&&currentVendorUserId>0&&<DirectChatPanel currentUserId={currentVendorUserId} mode="user" onClose={()=>setShowDMPanel(false)} />}
-      <style>{`.vendor-earnings-grid{grid-template-columns:repeat(4,1fr)}@media(max-width:640px){.vendor-earnings-grid{grid-template-columns:repeat(2,1fr)}}`}</style>
+      <style>{`.vendor-earnings-grid{grid-template-columns:repeat(4,1fr)} .notif-dropdown { right: 0; } @media(max-width:640px){.vendor-earnings-grid{grid-template-columns:repeat(2,1fr)} .notif-dropdown { right: auto; left: -10px; max-width: calc(100vw - 32px); }}`}</style>
     </div>
   )
 }

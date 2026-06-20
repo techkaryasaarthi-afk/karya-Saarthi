@@ -54,9 +54,9 @@ export default function ProjectChatPage({ params }: { params: { id: string } }) 
             onChange={(e) => setNewMessage(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
             placeholder="Type a message or use @ to mention..."
-            className="flex-1 bg-transparent text-sm focus:outline-none"
+            className="flex-1 min-w-0 bg-transparent text-sm focus:outline-none"
           />
-          <button onClick={handleSendMessage} className="bg-navy text-white px-4 py-2 rounded-lg font-bold text-sm cursor-pointer hover:bg-opacity-90">Send</button>
+          <button onClick={handleSendMessage} className="bg-navy text-white px-4 py-2 rounded-lg font-bold text-sm cursor-pointer hover:bg-opacity-90 shrink-0">Send</button>
         </div>
       </div>
     </div>

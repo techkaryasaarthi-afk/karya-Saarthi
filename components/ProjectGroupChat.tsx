@@ -55,9 +55,9 @@ export default function ProjectGroupChat({ messages, tasks, newMsg, uploading, u
           <p style={{ marginTop: 16, fontSize: 13, color: 'rgba(255,255,255,0.4)', fontWeight: 600 }}>Loading chat history...</p>
         </div>
       ) : (
-      <div style={{ display:'flex', minHeight:320 }}>
+      <div className="flex flex-col sm:flex-row min-h-[320px]">
         {/* Tasks */}
-        <div style={{ width:200,flexShrink:0,borderRight:'1px solid rgba(255,255,255,0.06)',padding:14,overflowY:'auto' }}>
+        <div className="w-full sm:w-[200px] flex-shrink-0 border-b sm:border-b-0 sm:border-r border-white/10 p-3 sm:p-[14px] overflow-y-auto max-h-[140px] sm:max-h-none">
           <p style={{ fontSize:12,fontWeight:700,color:'rgba(255,255,255,0.5)',marginBottom:10,textTransform:'uppercase',letterSpacing:'0.06em' }}>Tasks</p>
           {tasks.length===0 && <p style={{ fontSize:12,color:'rgba(255,255,255,0.25)' }}>No tasks yet.</p>}
           <div style={{ display:'flex',flexDirection:'column',gap:6 }}>
@@ -126,7 +126,7 @@ export default function ProjectGroupChat({ messages, tasks, newMsg, uploading, u
           <div style={{ display:'flex',gap:6,padding:'10px 14px',borderTop:'1px solid rgba(255,255,255,0.06)',flexShrink:0 }}>
             <input type="file" ref={fileRef} onChange={onFileChange} style={{ display:'none' }} multiple accept="image/*,video/mp4,video/webm,video/quicktime,.pdf,.doc,.docx,.txt,.xls,.xlsx,.zip,.rar" />
             <button type="button" onClick={()=>fileRef.current?.click()} disabled={uploading} style={{ width:34,height:34,borderRadius:9,border:'1px solid rgba(255,255,255,0.1)',background:'rgba(255,255,255,0.05)',cursor:'pointer',fontSize:14,flexShrink:0,display:'flex',alignItems:'center',justifyContent:'center' }}>{uploading?'⏳':'📎'}</button>
-            <input value={newMsg} onChange={e=>onNewMsg(e.target.value)} placeholder="Type a message…" onKeyDown={e=>e.key==='Enter'&&!uploading&&onSend()} className="ks-input" style={{ flex:1,background:'rgba(255,255,255,0.05)',border:'1px solid rgba(255,255,255,0.08)',fontSize:13 }} />
+            <input value={newMsg} onChange={e=>onNewMsg(e.target.value)} placeholder="Type a message…" onKeyDown={e=>e.key==='Enter'&&!uploading&&onSend()} className="ks-input" style={{ flex:1,background:'rgba(255,255,255,0.05)',border:'1px solid rgba(255,255,255,0.08)',fontSize:13,minWidth:0 }} />
             <button type="button" onClick={onSend} disabled={uploading||(!newMsg.trim()&&pendingFiles.length===0)} style={{ padding:'0 16px',borderRadius:9,border:'none',background:'#0099ff',color:'#fff',fontSize:13,fontWeight:600,cursor:'pointer',opacity:uploading||(!newMsg.trim()&&pendingFiles.length===0)?0.4:1,flexShrink:0 }}>Send</button>
           </div>
           {uploadSummary && <p style={{ padding:'4px 14px 8px',fontSize:11,color:'rgba(255,255,255,0.3)' }}>{uploadSummary}</p>}
