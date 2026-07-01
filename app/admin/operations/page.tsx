@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useEffect, useState, useCallback } from 'react'
 import { motion, AnimatePresence } from '@/lib/motion'
@@ -89,6 +89,17 @@ export default function OperationsPage() {
   const [DMComp, setDMComp] = useState<React.ComponentType<{ currentUserId: number; mode: 'ops' | 'user'; onClose: () => void }> | null>(null)
   const [MeetComp, setMeetComp] = useState<React.ComponentType<{ currentUserId: number; onClose: () => void }> | null>(null)
   const [GCComp, setGCComp] = useState<React.ComponentType<{ currentUserId: number; isAdmin?: boolean; onClose: () => void }> | null>(null)
+
+  /** Convert any Google Drive share URL to a direct-renderable image URL */
+  function convertImageUrl(url: string): string {
+    if (!url) return url
+    // Pattern: https://drive.google.com/file/d/FILE_ID/view?...
+    const driveMatch = url.match(/drive\.google\.com\/(?:file\/d\/|open\?id=)([\w-]+)/)
+    if (driveMatch) {
+      return `https://lh3.googleusercontent.com/d/${driveMatch[1]}=w1200`
+    }
+    return url
+  }
 
   const fetchData = useCallback(async () => {
     setLoading(true)
@@ -632,8 +643,17 @@ export default function OperationsPage() {
                         placeholder="Delivery days" type="number" className="px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" />
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <input value={serviceForm.featured_image} onChange={e => setServiceForm(p => ({ ...p, featured_image: e.target.value }))}
-                        placeholder="Image URL (https://... or /images/...)" className="px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" />
+                      <input
+                        value={serviceForm.featured_image}
+                        onChange={e => {
+                          const converted = convertImageUrl(e.target.value.trim())
+                          setServiceForm(p => ({ ...p, featured_image: converted }))
+                        }}
+                        placeholder="Paste any image URL or Google Drive share link"
+                        className="px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" />
+                      {serviceForm.featured_image && serviceForm.featured_image.includes('lh3.googleusercontent.com') && (
+                        <p className="text-[10px] text-green-600 font-medium">✅ Google Drive link auto-converted</p>
+                      )}
                       <input value={serviceForm.tags} onChange={e => setServiceForm(p => ({ ...p, tags: e.target.value }))}
                         placeholder="Tags (comma-separated)" className="px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" />
                     </div>

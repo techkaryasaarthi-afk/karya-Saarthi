@@ -2,6 +2,16 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { getCurrentUser } from '@/lib/auth/middleware'
 
+/** Convert Google Drive share links to a direct-renderable image URL */
+function convertImageUrl(url: string | null | undefined): string | null {
+  if (!url) return null
+  const driveMatch = url.match(/drive\.google\.com\/(?:file\/d\/|open\?id=)([\w-]+)/)
+  if (driveMatch) {
+    return `https://lh3.googleusercontent.com/d/${driveMatch[1]}=w1200`
+  }
+  return url
+}
+
 // GET /api/admin/services — admin view (all services incl inactive)
 export async function GET(request: Request) {
   const user = await getCurrentUser()
@@ -71,7 +81,7 @@ export async function POST(request: Request) {
         tags: Array.isArray(tags) ? tags : (tags ? tags.split(',').map((t: string) => t.trim()).filter(Boolean) : []),
         is_featured: Boolean(is_featured),
         is_active: is_active !== false,
-        featured_image: featured_image || null,
+        featured_image: convertImageUrl(featured_image),
         rating: 0,
         total_orders: 0,
       })
@@ -114,8 +124,8 @@ export async function PATCH(request: Request) {
     if (updates.delivery_days !== undefined) updates.delivery_days = Number(updates.delivery_days)
     if (updates.is_featured !== undefined) updates.is_featured = Boolean(updates.is_featured)
     if (updates.is_active !== undefined) updates.is_active = Boolean(updates.is_active)
-    // featured_image: keep as-is (string | null)
-    if ('featured_image' in updates && !updates.featured_image) updates.featured_image = null
+    // featured_image: convert Drive links, keep null if empty
+    if ('featured_image' in updates) updates.featured_image = convertImageUrl(updates.featured_image)
 
     const { data, error } = await supabase
       .from('services')
