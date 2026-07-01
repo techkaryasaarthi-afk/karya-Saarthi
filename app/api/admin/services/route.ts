@@ -93,34 +93,47 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
   }
 
-  const body = await request.json()
-  const { id, ...updates } = body
-  if (!id) return NextResponse.json({ error: 'id required' }, { status: 400 })
+  try {
+    const body = await request.json()
+    const { id, ...updates } = body
+    if (!id) return NextResponse.json({ error: 'id required' }, { status: 400 })
 
-  const supabase = await createClient()
+    const supabase = await createClient()
 
-  // Process category
-  if (updates.category && typeof updates.category === 'string') {
-    updates.category = updates.category.toLowerCase()
+    // Process category — DB constraint requires lowercase
+    if (updates.category && typeof updates.category === 'string') {
+      updates.category = updates.category.toLowerCase()
+    }
+
+    // Process tags
+    if (updates.tags && typeof updates.tags === 'string') {
+      updates.tags = updates.tags.split(',').map((t: string) => t.trim()).filter(Boolean)
+    }
+    if (updates.price_min !== undefined) updates.price_min = updates.price_min ? Number(updates.price_min) : null
+    if (updates.price_max !== undefined) updates.price_max = updates.price_max ? Number(updates.price_max) : null
+    if (updates.delivery_days !== undefined) updates.delivery_days = Number(updates.delivery_days)
+    if (updates.is_featured !== undefined) updates.is_featured = Boolean(updates.is_featured)
+    if (updates.is_active !== undefined) updates.is_active = Boolean(updates.is_active)
+    // featured_image: keep as-is (string | null)
+    if ('featured_image' in updates && !updates.featured_image) updates.featured_image = null
+
+    const { data, error } = await supabase
+      .from('services')
+      .update({ ...updates, updated_at: new Date().toISOString() })
+      .eq('id', id)
+      .select()
+      .single()
+
+    if (error) {
+      console.error('[PATCH /api/admin/services] DB error:', error)
+      return NextResponse.json({ error: error.message, details: error.details }, { status: 500 })
+    }
+    return NextResponse.json({ service: data })
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : 'Failed to update service'
+    console.error('[PATCH /api/admin/services] Unexpected error:', err)
+    return NextResponse.json({ error: msg }, { status: 500 })
   }
-
-  // Process tags
-  if (updates.tags && typeof updates.tags === 'string') {
-    updates.tags = updates.tags.split(',').map((t: string) => t.trim()).filter(Boolean)
-  }
-  if (updates.price_min !== undefined) updates.price_min = updates.price_min ? Number(updates.price_min) : null
-  if (updates.price_max !== undefined) updates.price_max = updates.price_max ? Number(updates.price_max) : null
-  if (updates.delivery_days !== undefined) updates.delivery_days = Number(updates.delivery_days)
-
-  const { data, error } = await supabase
-    .from('services')
-    .update({ ...updates, updated_at: new Date().toISOString() })
-    .eq('id', id)
-    .select()
-    .single()
-
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  return NextResponse.json({ service: data })
 }
 
 // DELETE /api/admin/services — soft delete
