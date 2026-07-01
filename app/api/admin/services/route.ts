@@ -105,38 +105,41 @@ export async function PATCH(request: Request) {
 
   try {
     const body = await request.json()
-    const { id, ...updates } = body
+    const { id, ...raw } = body
     if (!id) return NextResponse.json({ error: 'id required' }, { status: 400 })
 
+    // Build a clean update payload — only known DB columns, no extras
+    // This prevents "column does not exist" errors if schema has drifted
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const patch: Record<string, any> = {}
+
+    if (raw.title !== undefined) patch.title = String(raw.title)
+    if (raw.short_description !== undefined) patch.short_description = String(raw.short_description || '')
+    if (raw.description !== undefined) patch.description = String(raw.description || '')
+    if (raw.category !== undefined) patch.category = String(raw.category).toLowerCase()
+    if (raw.price_min !== undefined) patch.price_min = raw.price_min ? Number(raw.price_min) : null
+    if (raw.price_max !== undefined) patch.price_max = raw.price_max ? Number(raw.price_max) : null
+    if (raw.delivery_days !== undefined) patch.delivery_days = Number(raw.delivery_days) || 3
+    if (raw.is_featured !== undefined) patch.is_featured = Boolean(raw.is_featured)
+    if (raw.is_active !== undefined) patch.is_active = Boolean(raw.is_active)
+    if ('featured_image' in raw) patch.featured_image = convertImageUrl(raw.featured_image)
+    if (raw.tags !== undefined) {
+      patch.tags = typeof raw.tags === 'string'
+        ? raw.tags.split(',').map((t: string) => t.trim()).filter(Boolean)
+        : Array.isArray(raw.tags) ? raw.tags : []
+    }
+
     const supabase = await createClient()
-
-    // Process category — DB constraint requires lowercase
-    if (updates.category && typeof updates.category === 'string') {
-      updates.category = updates.category.toLowerCase()
-    }
-
-    // Process tags
-    if (updates.tags && typeof updates.tags === 'string') {
-      updates.tags = updates.tags.split(',').map((t: string) => t.trim()).filter(Boolean)
-    }
-    if (updates.price_min !== undefined) updates.price_min = updates.price_min ? Number(updates.price_min) : null
-    if (updates.price_max !== undefined) updates.price_max = updates.price_max ? Number(updates.price_max) : null
-    if (updates.delivery_days !== undefined) updates.delivery_days = Number(updates.delivery_days)
-    if (updates.is_featured !== undefined) updates.is_featured = Boolean(updates.is_featured)
-    if (updates.is_active !== undefined) updates.is_active = Boolean(updates.is_active)
-    // featured_image: convert Drive links, keep null if empty
-    if ('featured_image' in updates) updates.featured_image = convertImageUrl(updates.featured_image)
-
     const { data, error } = await supabase
       .from('services')
-      .update({ ...updates, updated_at: new Date().toISOString() })
+      .update(patch)
       .eq('id', id)
       .select()
       .single()
 
     if (error) {
       console.error('[PATCH /api/admin/services] DB error:', error)
-      return NextResponse.json({ error: error.message, details: error.details }, { status: 500 })
+      return NextResponse.json({ error: error.message, details: error.details, hint: error.hint }, { status: 500 })
     }
     return NextResponse.json({ service: data })
   } catch (err: unknown) {

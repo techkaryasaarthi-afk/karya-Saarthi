@@ -576,14 +576,24 @@ export default function OperationsPage() {
 
         const saveService = async () => {
           setSavingService(true)
-          const method = editingServiceId ? 'PATCH' : 'POST'
-          const body = editingServiceId ? { id: editingServiceId, ...serviceForm } : serviceForm
-          await fetch('/api/admin/services', { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
-          const d = await fetch('/api/admin/services').then(r => r.json())
-          setServices(d.services || [])
-          setShowServiceForm(false); setEditingServiceId(null)
-          setServiceForm({ title: '', category: 'Academic', short_description: '', price_min: '', price_max: '', delivery_days: '3', featured_image: '', tags: '', is_featured: false, is_active: true })
-          setSavingService(false)
+          try {
+            const method = editingServiceId ? 'PATCH' : 'POST'
+            const body = editingServiceId ? { id: editingServiceId, ...serviceForm } : serviceForm
+            const res = await fetch('/api/admin/services', { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+            const result = await res.json()
+            if (!res.ok) {
+              alert(`❌ Error saving service:\n${result.error || 'Unknown error'}${result.details ? '\n' + result.details : ''}`)
+              return
+            }
+            const d = await fetch('/api/admin/services').then(r => r.json())
+            setServices(d.services || [])
+            setShowServiceForm(false); setEditingServiceId(null)
+            setServiceForm({ title: '', category: 'Academic', short_description: '', price_min: '', price_max: '', delivery_days: '3', featured_image: '', tags: '', is_featured: false, is_active: true })
+          } catch (e: unknown) {
+            alert(`❌ Network error: ${e instanceof Error ? e.message : String(e)}`)
+          } finally {
+            setSavingService(false)
+          }
         }
 
         return (
