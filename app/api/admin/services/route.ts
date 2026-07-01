@@ -62,7 +62,7 @@ export async function POST(request: Request) {
       .insert({
         title,
         slug,
-        category,
+        category: category.toLowerCase(),
         short_description: short_description || '',
         description: description || '',
         price_min: price_min ? Number(price_min) : null,
@@ -98,6 +98,11 @@ export async function PATCH(request: Request) {
   if (!id) return NextResponse.json({ error: 'id required' }, { status: 400 })
 
   const supabase = await createClient()
+
+  // Process category
+  if (updates.category && typeof updates.category === 'string') {
+    updates.category = updates.category.toLowerCase()
+  }
 
   // Process tags
   if (updates.tags && typeof updates.tags === 'string') {
