@@ -67,7 +67,11 @@ function LoginContent() {
         setLoading(false)
         return
       }
-      router.push(role === 'vendor' ? '/vendor' : '/dashboard')
+      if (role === 'vendor') {
+        router.push(data.user?.is_approved ? '/vendor' : '/vendor-apply')
+      } else {
+        router.push('/dashboard')
+      }
     } catch {
       setError('Something went wrong.')
       setLoading(false)
@@ -144,6 +148,12 @@ function LoginContent() {
             Don&apos;t have an account?{' '}
             <Link href={`/signup${pillar ? `?pillar=${pillar}` : ''}`} style={{ color: 'var(--color-accent-blue)', textDecoration: 'none', fontWeight: 500 }}>
               Create one
+            </Link>
+          </p>
+          <p className="text-body-sm" style={{ color: 'var(--color-ink-muted)', marginTop: 6 }}>
+            Applying as a Vendor?{' '}
+            <Link href="/vendor-apply" style={{ color: '#38bdf8', textDecoration: 'none', fontWeight: 500 }}>
+              Complete Application →
             </Link>
           </p>
         </div>

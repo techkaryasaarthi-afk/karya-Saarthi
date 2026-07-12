@@ -89,7 +89,11 @@ function SignupContent() {
       const signupRes  = await fetch('/api/auth/signup', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ fullname: formData.fullname, phone: formData.phone, email: formData.email, user_type: formData.user_type || null, password: formData.password, role: regType, department: null, email_verified: true }) })
       const signupData = await signupRes.json()
       if (!signupRes.ok) { setError(signupData.error || 'Signup failed'); setLoading(false); return }
-      router.push('/login?registered=1')
+      if (regType === 'vendor') {
+        router.push('/vendor-apply')
+      } else {
+        router.push('/login?registered=1')
+      }
     } catch { setError('Something went wrong.') }
     setLoading(false)
   }
@@ -176,6 +180,14 @@ function SignupContent() {
                     }}
                   >{tab.label}</button>
                 ))}
+              </div>
+            )}
+
+            {!pillar && regType === 'vendor' && (
+              <div style={{ backgroundColor: 'rgba(56, 189, 248, 0.08)', borderLeft: '3px solid var(--color-accent-blue)', padding: '12px 14px', borderRadius: 6, marginBottom: 16 }}>
+                <p className="text-body-sm" style={{ color: '#38bdf8', margin: 0 }}>
+                  ✨ <strong>Vendor Onboarding:</strong> After creating and verifying your account, you&apos;ll be directed to complete our quick 3-step application (Basic Info, Work Samples & Written Questions).
+                </p>
               </div>
             )}
 

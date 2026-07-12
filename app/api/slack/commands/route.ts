@@ -3,7 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 
 export async function POST(request: Request) {
   try {
-    const formData = await request.formData();
+    const formData = (await request.formData()) as any
     const command = formData.get('command'); // e.g., "/update-task"
     const text = formData.get('text'); // arguments e.g., "completed 12345"
     const userId = formData.get('user_id'); // slack user id

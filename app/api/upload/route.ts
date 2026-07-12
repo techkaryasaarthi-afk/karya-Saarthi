@@ -12,7 +12,7 @@ function getStorageClient() {
 export async function POST(request: Request) {
   try {
     const user = await requireAuth()
-    const formData = await request.formData()
+    const formData = (await request.formData()) as any
     const file = formData.get('file') as File | null
 
     if (!file) {

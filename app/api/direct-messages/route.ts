@@ -43,11 +43,11 @@ export async function GET(request: Request) {
           let orQuery = `and(sender_id.eq.${myId},receiver_id.eq.${contact.id}),and(sender_id.eq.${contact.id},receiver_id.eq.${myId})`
           
           if (isMeAdmin) {
-            // Admins see all messages to/from any admin and this customer
+            // Admins see all messages to/from any admin and this customer (who is contact.id)
             orQuery = `and(sender_id.in.${adminIdsStr},receiver_id.eq.${contact.id}),and(sender_id.eq.${contact.id},receiver_id.in.${adminIdsStr})`
           } else {
-            // Customer sees all messages to/from any admin and themselves
-            orQuery = `and(sender_id.eq.${myId},receiver_id.in.${adminIdsStr}),and(sender_id.in.${adminIdsStr},receiver_id.eq.${myId})`
+            // Customer sees all messages to/from any admin and themselves (contact is an admin)
+            orQuery = `and(sender_id.eq.${myId},receiver_id.eq.${contact.id}),and(sender_id.eq.${contact.id},receiver_id.eq.${myId})`
           }
 
           const { data: msgs } = await supabase
