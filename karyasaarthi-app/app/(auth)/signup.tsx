@@ -5,7 +5,7 @@
  */
 
 import React, { useState, useCallback } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, KeyboardAvoidingView, Platform, Linking } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -28,6 +28,7 @@ export default function SignupScreen() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const validate = (): string | null => {
@@ -38,6 +39,7 @@ export default function SignupScreen() {
       if (password.length < 8) return 'Password must be at least 8 characters';
       if (password !== confirmPassword) return 'Passwords do not match';
     }
+    if (!agreedToTerms) return 'You must agree to the Terms of Service & Privacy Policy';
     return null;
   };
 
@@ -164,6 +166,30 @@ export default function SignupScreen() {
               <Text style={styles.loginLink}>Login</Text>
             </TouchableOpacity>
           </View>
+
+          {/* Terms & Privacy Policy */}
+          <TouchableOpacity
+            style={styles.termsRow}
+            onPress={() => setAgreedToTerms(!agreedToTerms)}
+            activeOpacity={0.8}
+          >
+            <View style={[styles.checkbox, agreedToTerms && styles.checkboxChecked]}>
+              {agreedToTerms && <Ionicons name="checkmark" size={13} color={theme.white} />}
+            </View>
+            <Text style={styles.termsText}>
+              I agree to the{' '}
+              <Text
+                style={styles.termsLink}
+                onPress={(e) => { e.stopPropagation(); Linking.openURL('https://karyasaarthi.com/terms'); }}
+              >Terms of Service</Text>
+              {' '}and{' '}
+              <Text
+                style={styles.termsLink}
+                onPress={(e) => { e.stopPropagation(); Linking.openURL('https://karyasaarthi.com/privacy'); }}
+              >Privacy Policy</Text>
+              {' '}of Karyanex Pvt. Ltd.
+            </Text>
+          </TouchableOpacity>
         </ScrollView>
       </KeyboardAvoidingView>
     </View>
@@ -223,4 +249,14 @@ const useStyles = (theme: ThemeColors) => StyleSheet.create({
   loginRow: { flexDirection: 'row', justifyContent: 'center', marginTop: spacing.xl },
   loginText: { ...typography.bodyMd, color: theme.steel },
   loginLink: { ...typography.labelLg, color: theme.ink },
+
+  // Terms & Privacy Policy
+  termsRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, marginTop: spacing.lg, paddingHorizontal: 4 },
+  checkbox: {
+    width: 20, height: 20, borderRadius: 4, borderWidth: 1.5,
+    borderColor: theme.hairline, alignItems: 'center', justifyContent: 'center',
+  },
+  checkboxChecked: { backgroundColor: theme.brandGreen, borderColor: theme.brandGreen },
+  termsText: { ...typography.bodySm, color: theme.stone, flex: 1, lineHeight: 18 },
+  termsLink: { ...typography.labelSm, color: theme.brandGreen, fontWeight: '600' },
 });

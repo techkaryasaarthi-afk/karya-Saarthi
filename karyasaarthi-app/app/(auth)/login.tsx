@@ -7,7 +7,7 @@
 import React, { useState, useCallback } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
-  KeyboardAvoidingView, Platform, Alert,
+  KeyboardAvoidingView, Platform, Alert, Linking,
 } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -39,6 +39,7 @@ export default function LoginScreen() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [remember, setRemember] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
 
   const handleLogin = useCallback(async () => {
     if (!email.trim()) {
@@ -47,6 +48,10 @@ export default function LoginScreen() {
     }
     if (!password) {
       Toast.show({ type: 'error', text1: 'Password required', text2: 'Please enter your password' });
+      return;
+    }
+    if (!agreedToTerms) {
+      Toast.show({ type: 'error', text1: 'Agreement required', text2: 'Please agree to Terms & Privacy Policy to continue' });
       return;
     }
 
@@ -69,7 +74,7 @@ export default function LoginScreen() {
       const message = err instanceof Error ? err.message : 'Login failed';
       Toast.show({ type: 'error', text1: 'Login Failed', text2: message });
     }
-  }, [email, password, remember]);
+  }, [email, password, remember, agreedToTerms]);
 
   const roles: { key: LoginRole; label: string; icon: keyof typeof Ionicons.glyphMap; desc: string }[] = [
     { key: 'customer', label: 'Customer', icon: 'person', desc: 'Get services done' },
@@ -186,6 +191,30 @@ export default function LoginScreen() {
               <Text style={styles.signupLink}>Sign Up</Text>
             </TouchableOpacity>
           </View>
+
+          {/* Terms & Privacy Policy */}
+          <TouchableOpacity
+            style={styles.termsRow}
+            onPress={() => setAgreedToTerms(!agreedToTerms)}
+            activeOpacity={0.8}
+          >
+            <View style={[styles.checkbox, agreedToTerms && styles.checkboxChecked]}>
+              {agreedToTerms && <Ionicons name="checkmark" size={13} color={theme.white} />}
+            </View>
+            <Text style={styles.termsText}>
+              I agree to the{' '}
+              <Text
+                style={styles.termsLink}
+                onPress={(e) => { e.stopPropagation(); Linking.openURL('https://karyasaarthi.com/terms'); }}
+              >Terms of Service</Text>
+              {' '}and{' '}
+              <Text
+                style={styles.termsLink}
+                onPress={(e) => { e.stopPropagation(); Linking.openURL('https://karyasaarthi.com/privacy'); }}
+              >Privacy Policy</Text>
+              {' '}of Karyanex Pvt. Ltd.
+            </Text>
+          </TouchableOpacity>
         </ScrollView>
       </KeyboardAvoidingView>
     </View>
@@ -286,4 +315,9 @@ const useStyles = (theme: ThemeColors) => StyleSheet.create({
   signupRow: { flexDirection: 'row', justifyContent: 'center', marginTop: spacing.lg },
   signupText: { ...typography.bodyMd, color: theme.steel },
   signupLink: { ...typography.labelLg, color: theme.brandGreen, fontWeight: '700' },
+
+  // Terms & Privacy Policy
+  termsRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, marginTop: spacing.lg, paddingHorizontal: 4 },
+  termsText: { ...typography.bodySm, color: theme.stone, flex: 1, lineHeight: 18 },
+  termsLink: { ...typography.labelSm, color: theme.brandGreen, fontWeight: '600' },
 });

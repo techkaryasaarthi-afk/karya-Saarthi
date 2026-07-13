@@ -118,15 +118,6 @@ export default function WelcomeScreen() {
             fullWidth
             style={{ marginTop: spacing.sm }}
           />
-
-          {/* Explore link */}
-          <Button
-            title="Explore Karya Saarthi →"
-            onPress={() => router.push('/(auth)/explore')}
-            variant="ghost"
-            size="md"
-            style={{ marginTop: spacing.md, alignSelf: 'center' }}
-          />
         </ScrollView>
       </View>
     </View>

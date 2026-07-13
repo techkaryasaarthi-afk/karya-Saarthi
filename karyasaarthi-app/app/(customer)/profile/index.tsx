@@ -21,7 +21,7 @@ import { APP_INFO } from '@/utils/constants';
 import { getSecure, setSecure, deleteSecure } from '@/utils/storage';
 import Toast from 'react-native-toast-message';
 
-type ModalType = 'editProfile' | 'changePassword' | 'about' | null;
+type ModalType = 'editProfile' | 'changePassword' | 'aboutCompany' | null;
 
 export default function ProfileScreen() {
   const router = useRouter();
@@ -130,6 +130,7 @@ export default function ProfileScreen() {
         { icon: 'shield-checkmark-outline', label: 'Privacy Policy', sub: 'How we handle your data', action: () => Linking.openURL(`${APP_INFO.WEBSITE}/privacy`) },
         { icon: 'document-outline', label: 'Terms of Service', sub: 'Usage terms & conditions', action: () => Linking.openURL(`${APP_INFO.WEBSITE}/terms`) },
         { icon: 'alert-circle-outline', label: 'Disclaimer', sub: 'Legal disclaimer', action: () => Linking.openURL(`${APP_INFO.WEBSITE}/disclaimer`) },
+        { icon: 'business-outline', label: 'About Us', sub: 'Karyanex Private Limited', action: () => setActiveModal('aboutCompany') },
       ],
     },
   ];
@@ -280,6 +281,113 @@ export default function ProfileScreen() {
         </KeyboardAvoidingView>
       </Modal>
 
+      {/* ══════════ ABOUT COMPANY MODAL ══════════ */}
+      <Modal visible={activeModal === 'aboutCompany'} animationType="slide" transparent>
+        <View style={st.modalOverlay}>
+          <View style={[st.modalSheet, { maxHeight: '92%' }]}>
+            <View style={st.modalHeader}>
+              <Text style={st.modalTitle}>About Us</Text>
+              <TouchableOpacity onPress={() => setActiveModal(null)} style={st.modalClose}>
+                <Ionicons name="close" size={22} color={theme.ink} />
+              </TouchableOpacity>
+            </View>
+            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 20 }}>
+
+              {/* Brand header */}
+              <View style={st.aboutBrand}>
+                <View style={st.aboutLogoWrap}>
+                  <Ionicons name="briefcase" size={32} color={theme.brandGreen} />
+                </View>
+                <Text style={st.aboutBrandName}>Karya Saarthi</Text>
+                <Text style={st.aboutBrandLegal}>A Brand of Karyanex Private Limited</Text>
+                <Text style={st.aboutTagline}>Your digital growth partner — expert academic, technical &amp; business services for students and companies across India.</Text>
+              </View>
+
+              {/* Legal Info */}
+              <View style={st.aboutSection}>
+                <Text style={st.aboutSectionTitle}>🏛️ Legal Information</Text>
+                {[
+                  { label: 'Registered Company', value: 'Karyanex Private Limited' },
+                  { label: 'Trade Name', value: 'Karya Saarthi' },
+                  { label: 'CIN', value: 'U85500BR2026PTC085054' },
+                  { label: 'GST Number', value: '10AAMCK8870B1ZN' },
+                  { label: 'Incorporated Under', value: 'Companies Act, 2013' },
+                ].map((row, i) => (
+                  <View key={i} style={st.aboutInfoRow}>
+                    <Text style={st.aboutInfoLabel}>{row.label}</Text>
+                    <Text style={st.aboutInfoValue}>{row.value}</Text>
+                  </View>
+                ))}
+                <View style={st.aboutNotice}>
+                  <Ionicons name="information-circle-outline" size={14} color={theme.stone} />
+                  <Text style={st.aboutNoticeText}>
+                    All transactions, contracts, and legal obligations are governed under the name Karyanex Private Limited.
+                  </Text>
+                </View>
+              </View>
+
+              {/* Social Media */}
+              <View style={st.aboutSection}>
+                <Text style={st.aboutSectionTitle}>🌐 Connect With Us</Text>
+                <View style={st.socialGrid}>
+                  {[
+                    { icon: 'globe-outline', label: 'Website', url: 'https://karyasaarthi.com' },
+                    { icon: 'logo-instagram', label: 'Instagram', url: 'https://instagram.com/karyasaarthi' },
+                    { icon: 'logo-linkedin', label: 'LinkedIn', url: 'https://linkedin.com/company/karyasaarthi' },
+                    { icon: 'logo-youtube', label: 'YouTube', url: 'https://youtube.com/@karyasaarthi' },
+                    { icon: 'logo-twitter', label: 'Twitter / X', url: 'https://x.com/karyasaarthi' },
+                    { icon: 'chatbubble-ellipses-outline', label: 'WhatsApp', url: 'https://wa.me/918001234567' },
+                  ].map((s, i) => (
+                    <TouchableOpacity key={i} style={st.socialBtn} onPress={() => Linking.openURL(s.url)}>
+                      <Ionicons name={s.icon as any} size={22} color={theme.ink} />
+                      <Text style={st.socialBtnLabel}>{s.label}</Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </View>
+
+              {/* Contact */}
+              <View style={st.aboutSection}>
+                <Text style={st.aboutSectionTitle}>📬 Contact Us</Text>
+                {[
+                  { icon: 'mail-outline', label: 'support@karyasaarthi.com', url: 'mailto:support@karyasaarthi.com' },
+                  { icon: 'call-outline', label: '+91 800 123 4567', url: 'tel:+918001234567' },
+                ].map((c, i) => (
+                  <TouchableOpacity key={i} style={st.aboutContactRow} onPress={() => Linking.openURL(c.url)}>
+                    <Ionicons name={c.icon as any} size={18} color={theme.brandGreen} />
+                    <Text style={st.aboutContactText}>{c.label}</Text>
+                    <Ionicons name="chevron-forward" size={16} color={theme.stone} />
+                  </TouchableOpacity>
+                ))}
+              </View>
+
+              {/* Quick Links */}
+              <View style={st.aboutSection}>
+                <Text style={st.aboutSectionTitle}>📄 Legal Documents</Text>
+                {[
+                  { label: 'Privacy Policy', url: `${APP_INFO.WEBSITE}/privacy` },
+                  { label: 'Terms of Service', url: `${APP_INFO.WEBSITE}/terms` },
+                  { label: 'Disclaimer', url: `${APP_INFO.WEBSITE}/disclaimer` },
+                  { label: 'Refund Policy', url: `${APP_INFO.WEBSITE}/refund` },
+                ].map((l, i) => (
+                  <TouchableOpacity key={i} style={st.aboutContactRow} onPress={() => Linking.openURL(l.url)}>
+                    <Ionicons name="document-text-outline" size={18} color={theme.stone} />
+                    <Text style={st.aboutContactText}>{l.label}</Text>
+                    <Ionicons name="chevron-forward" size={16} color={theme.stone} />
+                  </TouchableOpacity>
+                ))}
+              </View>
+
+              {/* Footer */}
+              <Text style={st.aboutFooter}>
+                © 2026 Karyanex Private Limited. All rights reserved.{'
+'}Karya Saarthi v{APP_INFO.VERSION}
+              </Text>
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
+
     </View>
   );
 }
@@ -331,13 +439,27 @@ const useStyles = (theme: ThemeColors) => StyleSheet.create({
   primaryBtn: { backgroundColor: theme.primary, borderRadius: radius.full, paddingVertical: 16, alignItems: 'center', justifyContent: 'center', marginTop: 8, width: '100%' },
   primaryBtnText: { ...typography.labelLg, color: theme.white },
 
-  aboutLogo: { width: 64, height: 64, borderRadius: 18, backgroundColor: 'rgba(0,212,164,0.1)', alignItems: 'center', justifyContent: 'center', marginBottom: 16 },
-  aboutTitle: { ...typography.headlineLg, color: theme.ink },
-  aboutVersion: { ...typography.bodyMd, color: theme.stone, marginTop: 4 },
-  aboutDesc: { ...typography.bodyMd, color: theme.steel, textAlign: 'center', lineHeight: 22, marginTop: 16, paddingHorizontal: 10 },
-  aboutStats: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: theme.surfaceContainerLow, borderRadius: radius.lg, paddingVertical: 16, paddingHorizontal: 20, marginTop: 20, gap: 20, alignSelf: 'stretch', borderWidth: 1, borderColor: theme.hairline },
-  aboutStatItem: { alignItems: 'center', flex: 1 },
-  aboutStatValue: { ...typography.headlineSm, color: theme.ink },
-  aboutStatLabel: { ...typography.bodySm, color: theme.stone, marginTop: 2 },
-  aboutDivider: { width: 1, height: 30, backgroundColor: theme.hairline },
+  // About Company Modal
+  aboutBrand: { alignItems: 'center', paddingVertical: 20, borderBottomWidth: 1, borderBottomColor: theme.hairline, marginBottom: 16 },
+  aboutLogoWrap: { width: 72, height: 72, borderRadius: 20, backgroundColor: 'rgba(0,212,164,0.1)', alignItems: 'center', justifyContent: 'center', marginBottom: 10, borderWidth: 1, borderColor: theme.hairline },
+  aboutBrandName: { ...typography.headlineLg, color: theme.ink, textAlign: 'center' },
+  aboutBrandLegal: { ...typography.bodySm, color: theme.stone, textAlign: 'center', marginTop: 3 },
+  aboutTagline: { ...typography.bodyMd, color: theme.steel, textAlign: 'center', marginTop: 10, lineHeight: 22, paddingHorizontal: 8 },
+
+  aboutSection: { marginBottom: 20 },
+  aboutSectionTitle: { ...typography.labelLg, color: theme.ink, marginBottom: 10, fontWeight: '700' },
+  aboutInfoRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: theme.hairline },
+  aboutInfoLabel: { ...typography.bodySm, color: theme.stone, flex: 1 },
+  aboutInfoValue: { ...typography.labelMd, color: theme.ink, flex: 1.5, textAlign: 'right' },
+  aboutNotice: { flexDirection: 'row', gap: 6, alignItems: 'flex-start', marginTop: 10, backgroundColor: theme.surfaceContainerLow, borderRadius: radius.md, padding: 10 },
+  aboutNoticeText: { ...typography.bodySm, color: theme.stone, flex: 1, lineHeight: 18 },
+
+  socialGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
+  socialBtn: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: theme.surfaceContainerLow, borderRadius: radius.lg, paddingVertical: 10, paddingHorizontal: 14, borderWidth: 1, borderColor: theme.hairline },
+  socialBtnLabel: { ...typography.labelMd, color: theme.ink },
+
+  aboutContactRow: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: theme.hairline },
+  aboutContactText: { ...typography.bodyMd, color: theme.ink, flex: 1 },
+
+  aboutFooter: { ...typography.bodySm, color: theme.stone, textAlign: 'center', marginTop: 20, lineHeight: 20 },
 });
