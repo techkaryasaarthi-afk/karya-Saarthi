@@ -35,6 +35,9 @@ function VendorApplyContent() {
   const [companies, setCompanies] = useState('')
   const [certifications, setCertifications] = useState('')
   const [resumeLink, setResumeLink] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
 
   // Step 2 state
   const [samples, setSamples] = useState<WorkSample[]>([
@@ -76,6 +79,8 @@ function VendorApplyContent() {
     if (!email.trim() || !email.includes('@')) { setError('Valid email is required'); return }
     if (!phone.trim() || phone.length < 10) { setError('Valid 10-digit phone number is required'); return }
     if (!resumeLink.trim()) { setError('Please provide a link to your resume or CV'); return }
+    if (password.length < 8) { setError('Password must be at least 8 characters'); return }
+    if (password !== confirmPassword) { setError('Passwords do not match'); return }
 
     setLoading(true)
     setError('')
@@ -96,6 +101,7 @@ function VendorApplyContent() {
             previous_companies: companies.trim() || null,
             certifications: certifications.trim() || null,
             resume_link: resumeLink.trim(),
+            password: password,
           },
         }),
       })
@@ -370,6 +376,51 @@ function VendorApplyContent() {
                 <label style={labelStyle}>Resume / CV Link (Google Drive, Dropbox, etc.) *</label>
                 <input type="url" value={resumeLink} onChange={e => setResumeLink(e.target.value)} placeholder="https://drive.google.com/file/d/..." required style={inputStyle} />
                 <span style={{ fontSize: 12, color: 'var(--color-ink-muted)', marginTop: 4, display: 'block' }}>Make sure access permission is set to &quot;Anyone with the link can view&quot;.</span>
+              </div>
+
+              {/* Password section */}
+              <div style={{ borderTop: '1px solid var(--color-hairline)', paddingTop: 20 }}>
+                <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 16, fontWeight: 700, margin: '0 0 4px', color: 'var(--color-ink)' }}>
+                  🔐 Set Your Login Password
+                </h3>
+                <p style={{ fontSize: 13, color: 'var(--color-ink-muted)', margin: '0 0 14px' }}>
+                  You'll use this password to login once your application is approved by our team.
+                </p>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+                  <div>
+                    <label style={labelStyle}>Password *</label>
+                    <div style={{ position: 'relative' }}>
+                      <input
+                        type={showPassword ? 'text' : 'password'}
+                        value={password}
+                        onChange={e => setPassword(e.target.value)}
+                        placeholder="Min. 8 characters"
+                        minLength={8}
+                        required
+                        style={{ ...inputStyle, paddingRight: 44 }}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(v => !v)}
+                        style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-ink-muted)', fontSize: 14 }}
+                      >
+                        {showPassword ? '🙈' : '👁️'}
+                      </button>
+                    </div>
+                  </div>
+                  <div>
+                    <label style={labelStyle}>Confirm Password *</label>
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      value={confirmPassword}
+                      onChange={e => setConfirmPassword(e.target.value)}
+                      placeholder="Repeat password"
+                      minLength={8}
+                      required
+                      style={inputStyle}
+                    />
+                  </div>
+                </div>
               </div>
 
               <button type="submit" disabled={loading} className="btn-primary" style={{ justifyContent: 'center', width: '100%', padding: '14px', fontSize: 15, marginTop: 12, opacity: loading ? 0.6 : 1 }}>

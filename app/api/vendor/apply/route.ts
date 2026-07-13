@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { safeJson, sanitizeEmail, sanitizeName, sanitizePhone } from '@/lib/security/sanitize'
+import bcrypt from 'bcryptjs'
 
 export async function GET(request: Request) {
   try {
@@ -111,6 +112,12 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: 'Valid email and phone are required' }, { status: 400 })
       }
 
+      // Hash vendor's password if provided
+      let password_hash: string | null = null
+      if (data.password && typeof data.password === 'string' && data.password.length >= 8) {
+        password_hash = await bcrypt.hash(data.password, 12)
+      }
+
       // Check if user account exists
       const { data: existingUser } = await supabase
         .from('users')
@@ -123,6 +130,7 @@ export async function POST(request: Request) {
         user_id: existingUser?.id || null,
         status: 'pending',
         current_step: 2,
+        pipeline_step: 'application_received',
         fullname,
         email,
         phone,
@@ -132,6 +140,7 @@ export async function POST(request: Request) {
         previous_companies,
         certifications,
         resume_link,
+        password_hash,
         updated_at: new Date().toISOString(),
       }
 

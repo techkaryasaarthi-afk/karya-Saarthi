@@ -47,6 +47,9 @@ export default function VendorApplyScreen() {
   const [companies, setCompanies] = useState('');
   const [certifications, setCertifications] = useState('');
   const [resumeLink, setResumeLink] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   // Step 2 state
   const [samples, setSamples] = useState([
@@ -82,6 +85,8 @@ export default function VendorApplyScreen() {
     if (!fullname.trim()) return Toast.show({ type: 'error', text1: 'Full name is required' });
     if (!email.trim() || !email.includes('@')) return Toast.show({ type: 'error', text1: 'Valid email is required' });
     if (!phone.trim() || phone.length < 10) return Toast.show({ type: 'error', text1: 'Valid phone number is required' });
+    if (password.length < 8) return Toast.show({ type: 'error', text1: 'Password must be at least 8 characters' });
+    if (password !== confirmPassword) return Toast.show({ type: 'error', text1: 'Passwords do not match' });
 
     setLoading(true);
     try {
@@ -91,6 +96,7 @@ export default function VendorApplyScreen() {
         skills: skills.split(',').map((s) => s.trim()).filter(Boolean),
         previous_companies: companies.trim(), certifications: certifications.trim(),
         resume_link: resumeLink.trim(),
+        password: password,
       });
       setApplicationId(result.application.id);
       setCurrentStep(2);
@@ -99,7 +105,7 @@ export default function VendorApplyScreen() {
       const msg = err instanceof Error ? err.message : 'Failed to save';
       Toast.show({ type: 'error', text1: 'Error', text2: msg });
     } finally { setLoading(false); }
-  }, [fullname, email, phone, education, experience, skills, companies, certifications, resumeLink]);
+  }, [fullname, email, phone, education, experience, skills, companies, certifications, resumeLink, password, confirmPassword]);
 
   const handleStep2 = useCallback(async () => {
     const validSamples = samples.filter((s) => s.url.trim());
@@ -243,6 +249,26 @@ export default function VendorApplyScreen() {
                 <Input label="Previous Companies/Clients" icon="business-outline" value={companies} onChangeText={setCompanies} />
                 <Input label="Certifications/Achievements" icon="ribbon-outline" value={certifications} onChangeText={setCertifications} />
                 <Input label="Resume/CV Link (Google Drive, etc.)" icon="link-outline" value={resumeLink} onChangeText={setResumeLink} autoCapitalize="none" />
+                <View style={s.passwordSection}>
+                  <Text style={s.passwordSectionTitle}>🔐 Set Your Login Password</Text>
+                  <Text style={s.passwordSectionSubtitle}>You'll use this to login once your application is approved.</Text>
+                </View>
+                <Input
+                  label="Password *"
+                  icon="lock-closed-outline"
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry={!showPassword}
+                  rightIcon={showPassword ? 'eye-off-outline' : 'eye-outline'}
+                  onRightIconPress={() => setShowPassword(!showPassword)}
+                />
+                <Input
+                  label="Confirm Password *"
+                  icon="lock-closed-outline"
+                  value={confirmPassword}
+                  onChangeText={setConfirmPassword}
+                  secureTextEntry={!showPassword}
+                />
                 <Button title="Save & Continue →" onPress={handleStep1} loading={loading} variant="primary" size="lg" fullWidth style={{ marginTop: spacing.md }} />
               </>
             )}
@@ -392,4 +418,9 @@ const s = StyleSheet.create({
   timelineItem: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 10 },
   timelineDot: { width: 32, height: 32, borderRadius: 16, backgroundColor: 'rgba(0,212,164,0.12)', alignItems: 'center', justifyContent: 'center' },
   timelineText: { ...typography.bodyMd, color: colors.steel, flex: 1 },
+
+  // Password section
+  passwordSection: { marginTop: spacing.sm, marginBottom: 4, paddingTop: 12, borderTopWidth: 1, borderTopColor: colors.hairline },
+  passwordSectionTitle: { ...typography.labelLg, color: colors.ink, marginBottom: 2 },
+  passwordSectionSubtitle: { ...typography.bodySm, color: colors.steel, marginBottom: 8 },
 });

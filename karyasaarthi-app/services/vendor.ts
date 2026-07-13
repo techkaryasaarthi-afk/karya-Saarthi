@@ -49,6 +49,8 @@ export interface Step1Data {
   previous_companies?: string;
   certifications?: string;
   resume_link?: string;
+  /** Vendor's desired login password — will be hashed server-side and stored temporarily until admin approves */
+  password?: string;
 }
 
 export interface Step2Data {

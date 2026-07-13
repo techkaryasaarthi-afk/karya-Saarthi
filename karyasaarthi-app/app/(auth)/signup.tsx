@@ -34,8 +34,10 @@ export default function SignupScreen() {
     if (!fullname.trim()) return 'Full name is required';
     if (!email.trim() || !email.includes('@')) return 'Valid email is required';
     if (!phone.trim() || phone.length < 10) return 'Valid phone number is required';
-    if (password.length < 8) return 'Password must be at least 8 characters';
-    if (password !== confirmPassword) return 'Passwords do not match';
+    if (role === 'customer') {
+      if (password.length < 8) return 'Password must be at least 8 characters';
+      if (password !== confirmPassword) return 'Passwords do not match';
+    }
     return null;
   };
 
@@ -114,28 +116,40 @@ export default function SignupScreen() {
             ))}
           </View>
 
+          {role === 'vendor' && (
+            <View style={styles.vendorInfoCard}>
+              <Ionicons name="information-circle-outline" size={24} color={theme.primary} />
+              <Text style={styles.vendorInfoText}>Vendor registrations require additional verification. You will be redirected to the application form.</Text>
+            </View>
+          )}
+
           <Input label="Full Name" icon="person-outline" value={fullname} onChangeText={setFullname} autoCapitalize="words" />
           <Input label="Email Address" icon="mail-outline" value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" />
           <Input label="Phone Number" icon="call-outline" value={phone} onChangeText={setPhone} keyboardType="phone-pad" />
-          <Input
-            label="Password"
-            icon="lock-closed-outline"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry={!showPassword}
-            rightIcon={showPassword ? 'eye-off-outline' : 'eye-outline'}
-            onRightIconPress={() => setShowPassword(!showPassword)}
-          />
-          <Input
-            label="Confirm Password"
-            icon="lock-closed-outline"
-            value={confirmPassword}
-            onChangeText={setConfirmPassword}
-            secureTextEntry={!showPassword}
-          />
+          
+          {role === 'customer' && (
+            <>
+              <Input
+                label="Password"
+                icon="lock-closed-outline"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry={!showPassword}
+                rightIcon={showPassword ? 'eye-off-outline' : 'eye-outline'}
+                onRightIconPress={() => setShowPassword(!showPassword)}
+              />
+              <Input
+                label="Confirm Password"
+                icon="lock-closed-outline"
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
+                secureTextEntry={!showPassword}
+              />
+            </>
+          )}
 
           <Button
-            title="Send OTP & Continue"
+            title={role === 'customer' ? "Send OTP & Continue" : "Continue to Application"}
             onPress={handleSignup}
             loading={loading}
             variant="primary"
@@ -192,6 +206,18 @@ const useStyles = (theme: ThemeColors) => StyleSheet.create({
   roleBtnActive: { backgroundColor: theme.primary, borderColor: theme.primary },
   roleBtnText: { ...typography.labelMd, color: theme.stone },
   roleBtnTextActive: { color: theme.onPrimary, fontWeight: '600' },
+
+  // Vendor Info
+  vendorInfoCard: {
+    backgroundColor: theme.surfaceContainer,
+    padding: spacing.md,
+    borderRadius: radius.md,
+    marginBottom: spacing.lg,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  vendorInfoText: { ...typography.bodySm, color: theme.ink, flex: 1 },
 
   // Login link
   loginRow: { flexDirection: 'row', justifyContent: 'center', marginTop: spacing.xl },

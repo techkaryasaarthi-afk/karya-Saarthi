@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { motion, AnimatePresence } from '@/lib/motion'
 import DepartmentMeetings from '@/components/admin/DepartmentMeetings'
 
@@ -43,6 +43,67 @@ interface ContactLead {
   notes: string | null; created_at: string
 }
 interface Subscriber { id: number; email: string; status: string; created_at: string }
+
+function VendorApplicationsQuickView() {
+  const [pendingApps, setPendingApps] = React.useState<{ id: number; fullname: string; email: string; status: string; created_at: string }[]>([])
+  const [loadingApps, setLoadingApps] = React.useState(true)
+
+  React.useEffect(() => {
+    fetch('/api/admin/vendor-applications')
+      .then(r => r.json())
+      .then(d => { setPendingApps((d.applications || []).slice(0, 5)); setLoadingApps(false) })
+      .catch(() => setLoadingApps(false))
+  }, [])
+
+  const underReview = pendingApps.filter(a => a.status === 'under_review').length
+  const pending = pendingApps.filter(a => a.status === 'pending').length
+
+  return (
+    <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="font-bold text-navy font-heading">📋 Vendor Applications</h3>
+        <a href="/admin/vendors" className="text-xs font-bold text-accent hover:underline">View All & Manage →</a>
+      </div>
+      {loadingApps ? (
+        <div className="space-y-2">{[1,2,3].map(i => <div key={i} className="h-10 bg-slate-100 rounded-xl animate-pulse" />)}</div>
+      ) : pendingApps.length === 0 ? (
+        <div className="text-center py-6 text-slate-400"><span className="text-3xl block mb-2">✅</span><p className="text-sm">No pending applications</p></div>
+      ) : (
+        <>
+          <div className="grid grid-cols-2 gap-3 mb-4">
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 text-center">
+              <p className="text-2xl font-extrabold text-amber-700">{pending}</p>
+              <p className="text-xs text-amber-600 font-medium">New / Pending</p>
+            </div>
+            <div className="bg-blue-50 border border-blue-200 rounded-xl p-3 text-center">
+              <p className="text-2xl font-extrabold text-blue-700">{underReview}</p>
+              <p className="text-xs text-blue-600 font-medium">Under Review</p>
+            </div>
+          </div>
+          <div className="space-y-2">
+            {pendingApps.map(app => (
+              <div key={app.id} className="flex items-center gap-3 p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors">
+                <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold text-sm flex-shrink-0">
+                  {app.fullname.charAt(0)}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-navy truncate">{app.fullname}</p>
+                  <p className="text-[10px] text-slate-400">{app.email}</p>
+                </div>
+                <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold flex-shrink-0 ${app.status === 'under_review' ? 'bg-blue-100 text-blue-700' : 'bg-amber-100 text-amber-700'}`}>
+                  {app.status.replace('_', ' ')}
+                </span>
+              </div>
+            ))}
+          </div>
+          <a href="/admin/vendors" className="mt-3 flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-navy text-white text-xs font-bold hover:opacity-90 transition-opacity">
+            🏪 Open Vendor Applications Panel
+          </a>
+        </>
+      )}
+    </div>
+  )
+}
 
 export default function OperationsPage() {
   const [activeTab, setActiveTab] = useState<Tab>('dashboard')
@@ -348,27 +409,36 @@ export default function OperationsPage() {
 
       {/* ── VENDORS TAB ── */}
       {activeTab === 'vendors' && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {loading ? Array.from({ length: 6 }).map((_, i) => <div key={i} className="h-36 bg-white rounded-2xl animate-pulse border border-slate-100" />) :
-            vendors.length === 0 ? <div className="col-span-3 text-center py-12 text-slate-400"><span className="text-4xl block mb-3">👷</span><p>No vendors found</p></div> :
-              vendors.map((v, i) => (
-                <motion.div key={v.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
-                  className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-10 h-10 rounded-xl bg-[rgba(0,153,255,0.12)] flex items-center justify-center font-bold text-navy">{v.fullname.charAt(0)}</div>
-                    <div>
-                      <p className="font-bold text-navy text-sm">{v.fullname}</p>
-                      <p className="text-[10px] text-slate-400">{v.email}</p>
-                    </div>
-                  </div>
-                  <div className="flex justify-between text-xs mb-1"><span className="text-slate-400">Active Jobs</span><span className="font-bold" style={{ color: v.activeJobs > 5 ? '#EF4444' : v.activeJobs > 3 ? '#F59E0B' : '#10B981' }}>{v.activeJobs}</span></div>
-                  <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden"><div className="h-full rounded-full" style={{ width: `${Math.min((v.activeJobs / 8) * 100, 100)}%`, background: v.activeJobs > 5 ? '#EF4444' : v.activeJobs > 3 ? '#F59E0B' : '#10B981' }} /></div>
-                  <div className="flex gap-2 mt-3">
-                    <a href={`mailto:${v.email}`} className="flex-1 text-center py-1.5 rounded-lg bg-slate-50 text-xs text-slate-500 hover:bg-blue-50 hover:text-blue-600 cursor-pointer transition-colors">✉️ Email</a>
-                    {v.phone && <a href={`https://wa.me/${v.phone.replace(/\D/g, '')}`} target="_blank" rel="noreferrer" className="flex-1 text-center py-1.5 rounded-lg bg-green-50 text-xs text-green-600 font-bold cursor-pointer hover:bg-green-100 transition-colors">💬 WhatsApp</a>}
-                  </div>
-                </motion.div>
-              ))}
+        <div className="space-y-6">
+          {/* Pending Applications Alert */}
+          <VendorApplicationsQuickView />
+
+          {/* Approved Vendor Workload */}
+          <div>
+            <h3 className="font-bold text-navy font-heading mb-3">✅ Active Vendor Workload</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {loading ? Array.from({ length: 6 }).map((_, i) => <div key={i} className="h-36 bg-white rounded-2xl animate-pulse border border-slate-100" />) :
+                vendors.length === 0 ? <div className="col-span-3 text-center py-12 text-slate-400"><span className="text-4xl block mb-3">👷</span><p>No vendors found</p></div> :
+                  vendors.map((v, i) => (
+                    <motion.div key={v.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
+                      className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
+                      <div className="flex items-center gap-3 mb-3">
+                        <div className="w-10 h-10 rounded-xl bg-[rgba(0,153,255,0.12)] flex items-center justify-center font-bold text-navy">{v.fullname.charAt(0)}</div>
+                        <div>
+                          <p className="font-bold text-navy text-sm">{v.fullname}</p>
+                          <p className="text-[10px] text-slate-400">{v.email}</p>
+                        </div>
+                      </div>
+                      <div className="flex justify-between text-xs mb-1"><span className="text-slate-400">Active Jobs</span><span className="font-bold" style={{ color: v.activeJobs > 5 ? '#EF4444' : v.activeJobs > 3 ? '#F59E0B' : '#10B981' }}>{v.activeJobs}</span></div>
+                      <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden"><div className="h-full rounded-full" style={{ width: `${Math.min((v.activeJobs / 8) * 100, 100)}%`, background: v.activeJobs > 5 ? '#EF4444' : v.activeJobs > 3 ? '#F59E0B' : '#10B981' }} /></div>
+                      <div className="flex gap-2 mt-3">
+                        <a href={`mailto:${v.email}`} className="flex-1 text-center py-1.5 rounded-lg bg-slate-50 text-xs text-slate-500 hover:bg-blue-50 hover:text-blue-600 cursor-pointer transition-colors">✉️ Email</a>
+                        {v.phone && <a href={`https://wa.me/${v.phone.replace(/\D/g, '')}`} target="_blank" rel="noreferrer" className="flex-1 text-center py-1.5 rounded-lg bg-green-50 text-xs text-green-600 font-bold cursor-pointer hover:bg-green-100 transition-colors">💬 WhatsApp</a>}
+                      </div>
+                    </motion.div>
+                  ))}
+            </div>
+          </div>
         </div>
       )}
 
