@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import dynamic from 'next/dynamic'
 
@@ -21,6 +21,8 @@ export default function EditBlogPage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
+  const [uploadingImg, setUploadingImg] = useState(false)
+  const featuredImgRef = useRef<HTMLInputElement>(null)
   const [form, setForm] = useState({
     title: '',
     content: '',
@@ -58,6 +60,19 @@ export default function EditBlogPage() {
       setLoading(false)
     })
   }, [blogId])
+
+  const handleFeaturedImageUpload = async (file: File) => {
+    setUploadingImg(true)
+    try {
+      const fd = new FormData()
+      fd.append('file', file)
+      const res = await fetch('/api/admin/blogs/upload', { method: 'POST', body: fd })
+      const data = await res.json()
+      if (res.ok && data.url) setForm(f => ({ ...f, featured_image: data.url }))
+      else alert(data.error || 'Upload failed')
+    } catch { alert('Upload failed') }
+    finally { setUploadingImg(false) }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -132,9 +147,29 @@ export default function EditBlogPage() {
         </div>
 
         <div>
-          <label className="block text-sm font-semibold text-slate-700 mb-2">Featured Image URL</label>
-          <input type="text" value={form.featured_image} onChange={e => setForm(f => ({ ...f, featured_image: e.target.value }))}
-            className="w-full px-4 py-3.5 rounded-xl bg-white border border-slate-200 focus:outline-none text-sm" />
+          <label className="block text-sm font-semibold text-slate-700 mb-2">Featured Image</label>
+          <div className="space-y-3">
+            <div className="flex gap-2">
+              <input type="text" value={form.featured_image} onChange={e => setForm(f => ({ ...f, featured_image: e.target.value }))}
+                placeholder="Paste image URL, or click Upload Image →"
+                className="flex-1 px-4 py-3 rounded-xl bg-white border border-slate-200 focus:outline-none text-sm" />
+              <button type="button" onClick={() => featuredImgRef.current?.click()} disabled={uploadingImg}
+                className="px-4 py-3 rounded-xl bg-slate-100 text-slate-600 text-sm font-semibold hover:bg-slate-200 transition-colors cursor-pointer disabled:opacity-50 whitespace-nowrap">
+                {uploadingImg ? '⏳ Uploading…' : '📁 Upload Image'}
+              </button>
+            </div>
+            <input ref={featuredImgRef} type="file" accept="image/*" className="hidden"
+              onChange={e => { const f = e.target.files?.[0]; if (f) handleFeaturedImageUpload(f) }} />
+            {form.featured_image && (
+              <div className="relative inline-block">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={form.featured_image} alt="Featured preview" className="h-36 rounded-xl object-cover border border-slate-200 shadow-sm"
+                  onError={e => (e.currentTarget.style.display = 'none')} />
+                <button type="button" onClick={() => setForm(f => ({ ...f, featured_image: '' }))}
+                  className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-red-500 text-white text-xs flex items-center justify-center cursor-pointer hover:bg-red-600 shadow">✕</button>
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="bg-slate-50 rounded-xl p-5 space-y-4">

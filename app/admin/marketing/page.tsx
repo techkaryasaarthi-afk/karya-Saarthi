@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback, useMemo } from 'react'
+import { useEffect, useRef, useState, useCallback, useMemo } from 'react'
 import { motion, AnimatePresence } from '@/lib/motion'
 import InterdeptTaskInbox from '@/components/admin/InterdeptTaskInbox'
 import dynamic from 'next/dynamic'
@@ -70,6 +70,8 @@ export default function MarketingPage() {
   const [showBlogForm, setShowBlogForm] = useState(false)
   const [editingBlogId, setEditingBlogId] = useState<number | null>(null)
   const [deletingBlogId, setDeletingBlogId] = useState<number | null>(null)
+  const [uploadingBlogImg, setUploadingBlogImg] = useState(false)
+  const blogFeaturedImgRef = useRef<HTMLInputElement>(null)
   // Podcast (event type=podcast)
   const [podcasts, setPodcasts] = useState<any[]>([])
   const [podForm, setPodForm] = useState({ title: '', short_desc: '', date: '', episode: '', guest: '', audio_url: '', fee: '' })
@@ -160,6 +162,19 @@ export default function MarketingPage() {
     setEditingBlogId(b.id)
     setShowBlogForm(true)
     setTimeout(() => document.getElementById('blog-form-anchor')?.scrollIntoView({ behavior: 'smooth' }), 100)
+  }
+
+  const handleBlogFeaturedImageUpload = async (file: File) => {
+    setUploadingBlogImg(true)
+    try {
+      const fd = new FormData()
+      fd.append('file', file)
+      const res = await fetch('/api/admin/blogs/upload', { method: 'POST', body: fd })
+      const data = await res.json()
+      if (res.ok && data.url) setBlogForm(p => ({ ...p, featured_image: data.url }))
+      else alert(data.error || 'Upload failed')
+    } catch { alert('Upload failed') }
+    finally { setUploadingBlogImg(false) }
   }
 
   const deleteBlog = async (id: number) => {
@@ -395,7 +410,25 @@ export default function MarketingPage() {
                       <option value="">— Category —</option>
                       {blogCategories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                     </select>
-                    <input value={blogForm.featured_image} onChange={e => setBlogForm(p => ({ ...p, featured_image: e.target.value }))} placeholder="Featured image URL (optional)" className="col-span-2 px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" />
+                    {/* Featured Image — URL + Upload */}
+                    <div className="col-span-2 space-y-1.5">
+                      <div className="flex gap-2">
+                        <input value={blogForm.featured_image} onChange={e => setBlogForm(p => ({ ...p, featured_image: e.target.value }))} placeholder="Featured image URL (paste or upload →)" className="flex-1 px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" />
+                        <button type="button" onClick={() => blogFeaturedImgRef.current?.click()} disabled={uploadingBlogImg}
+                          className="px-3 py-2.5 rounded-xl bg-slate-200 text-slate-600 text-xs font-bold hover:bg-slate-300 cursor-pointer disabled:opacity-50 whitespace-nowrap">
+                          {uploadingBlogImg ? '⏳' : '📁 Upload'}
+                        </button>
+                      </div>
+                      <input ref={blogFeaturedImgRef} type="file" accept="image/*" className="hidden"
+                        onChange={e => { const f = e.target.files?.[0]; if (f) handleBlogFeaturedImageUpload(f) }} />
+                      {blogForm.featured_image && (
+                        <div className="relative inline-block">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={blogForm.featured_image} alt="preview" className="h-16 rounded-lg object-cover border border-slate-200" onError={e => (e.currentTarget.style.display='none')} />
+                          <button type="button" onClick={() => setBlogForm(p => ({ ...p, featured_image: '' }))} className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center cursor-pointer">✕</button>
+                        </div>
+                      )}
+                    </div>
                   </div>
                   <textarea required value={blogForm.excerpt} onChange={e => setBlogForm(p => ({ ...p, excerpt: e.target.value }))} placeholder="Short excerpt / meta description *" rows={2} className="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none resize-none" />
                   {/* Rich Text Editor */}

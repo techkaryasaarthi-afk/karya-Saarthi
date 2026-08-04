@@ -89,11 +89,14 @@ function ServiceCard({ service, wishlisted, onWishlist, onEnquire }: {
       }}
       className="svc-card"
     >
-      {/* Image / Placeholder */}
-      <div className="h-44 relative overflow-hidden flex items-center justify-center"
-        style={{ background: `linear-gradient(135deg, ${catColor}15, ${catColor}05)` }}>
+      {/* Image / Placeholder — portrait aspect for poster-style images */}
+      <div className="relative overflow-hidden flex items-center justify-center"
+        style={{
+          aspectRatio: '3/4',
+          background: `linear-gradient(135deg, ${catColor}15, ${catColor}05)`
+        }}>
         {service.featured_image ? (
-          <Image src={service.featured_image} alt={service.title} fill sizes="(max-width: 768px) 100vw, 400px" className="object-cover" />
+          <Image src={service.featured_image} alt={service.title} fill sizes="(max-width: 768px) 100vw, 400px" className="object-contain" />
         ) : (
           <span className="text-5xl opacity-30">
             {CATEGORIES.find(c => c.key === normCat(service.category))?.icon || '📁'}

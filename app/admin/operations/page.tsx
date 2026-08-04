@@ -638,7 +638,7 @@ export default function OperationsPage() {
       {activeTab === 'services' && (() => {
         const SERVICE_CATEGORIES = ['Academic', 'Technical', 'Business', 'Government', 'Design', 'Marketing', 'Legal', 'Other']
         const filteredServices = services.filter(s => {
-          const catMatch = servicesCatFilter === 'all' || s.category === servicesCatFilter
+          const catMatch = servicesCatFilter === 'all' || s.category.toLowerCase() === servicesCatFilter.toLowerCase()
           const searchMatch = !servicesSearch.trim() || s.title.toLowerCase().includes(servicesSearch.toLowerCase())
           return catMatch && searchMatch
         })
@@ -781,15 +781,15 @@ export default function OperationsPage() {
                 {filteredServices.map(s => (
                   <motion.div key={s.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
                     className={`bg-white rounded-2xl border shadow-sm hover:shadow-md transition-shadow overflow-hidden ${!s.is_active ? 'opacity-60' : ''} ${s.is_featured ? 'border-accent/30' : 'border-slate-100'}`}>
-                    {/* Image */}
-                    <div className="h-32 relative overflow-hidden flex-shrink-0"
-                      style={{ background: `${CAT_COLORS[s.category] || 'var(--color-accent-blue)'}15` }}>
+                    {/* Image — portrait aspect ratio for poster images */}
+                    <div className="relative overflow-hidden flex-shrink-0 rounded-t-2xl"
+                      style={{ aspectRatio: '3/4', background: `${CAT_COLORS[s.category] || 'var(--color-accent-blue)'}15` }}>
                       {s.featured_image ? (
                         // eslint-disable-next-line @next/next/no-img-element
-                        <img src={s.featured_image} alt={s.title} className="w-full h-full object-cover" onError={e => (e.currentTarget.style.display='none')} />
+                        <img src={s.featured_image} alt={s.title} className="w-full h-full object-contain" onError={e => (e.currentTarget.style.display='none')} />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
-                          <span className="text-4xl opacity-30">🛒</span>
+                          <span className="text-5xl opacity-25">🛒</span>
                         </div>
                       )}
                       {s.is_featured && <span className="absolute top-2 left-2 px-2 py-0.5 rounded-full bg-accent text-white text-[9px] font-bold">⭐ Featured</span>}
