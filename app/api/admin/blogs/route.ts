@@ -26,7 +26,7 @@ export async function GET(request: Request) {
     let query = supabase
       .from('blogs')
       .select(`
-        id, title, slug, excerpt, is_featured, is_published, views, created_at, published_at,
+        id, title, slug, excerpt, featured_image, is_featured, is_published, views, created_at, published_at,
         category:blog_categories(id, name, slug),
         author:users!blogs_author_id_fkey(id, fullname)
       `)
@@ -45,7 +45,7 @@ export async function GET(request: Request) {
       // ⚠️ IMPORTANT: Must assign the result of .eq() back — it's immutable chain
       let fallbackQuery = supabase
         .from('blogs')
-        .select('id, title, slug, excerpt, is_featured, is_published, views, created_at, published_at, category_id, author_id')
+        .select('id, title, slug, excerpt, featured_image, is_featured, is_published, views, created_at, published_at, category_id, author_id')
         .order('created_at', { ascending: false })
 
       if (isPublic) {
