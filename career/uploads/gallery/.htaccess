@@ -1,0 +1,16 @@
+# Allow image files only
+<FilesMatch "\.(?i:jpg|jpeg|png|gif|webp|svg)$">
+    Order Allow,Deny
+    Allow from all
+</FilesMatch>
+
+# Block everything else
+<FilesMatch "\.(?i:php|php5|phtml|html|htm|js|sh|py|pl|cgi)$">
+    Order Deny,Allow
+    Deny from all
+</FilesMatch>
+
+# Disable PHP execution in this folder
+<IfModule mod_php.c>
+    php_flag engine off
+</IfModule>

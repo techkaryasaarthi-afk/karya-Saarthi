@@ -8,9 +8,9 @@ import { usePathname, useRouter } from 'next/navigation'
 const navLinks = [
   { label: 'Home', href: '/' },
   { label: 'Services', href: '/services' },
-  { label: 'About', href: '/about' },
+  { label: '⚡ Saarthi Xpress', href: '/saarthi-xpress', badge: 'NEW', isExpress: true },
   { label: 'Blogs', href: '/blogs' },
-  { label: 'Contact', href: '/contact' },
+  { label: 'About Us', href: '/about' },
 ]
 
 
@@ -123,7 +123,7 @@ export default function Navbar() {
                 alt="Karya Saarthi logo"
                 width={28}
                 height={28}
-                style={{ width: 28, height: 28, borderRadius: 'var(--radius-sm)' }}
+                style={{ width: '28px', height: '28px', borderRadius: 'var(--radius-sm)', flexShrink: 0 }}
                 priority
               />
               <span
@@ -145,31 +145,47 @@ export default function Navbar() {
               style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-xxs)' }}
             >
               {navLinks.map(link => {
-                const isActive = pathname === link.href
+                const isActive = pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href.split('?')[0]))
+                const isExpress = (link as any).isExpress
                 return (
                   <Link
                     key={link.label}
                     href={link.href}
                     style={{
+                      display: 'inline-flex', alignItems: 'center', gap: 5,
                       padding: '6px 12px',
                       borderRadius: 'var(--radius-pill)',
                       fontSize: 'var(--text-body-sm-size)',
-                      fontWeight: 'var(--text-body-sm-weight)',
+                      fontWeight: isExpress ? 700 : 'var(--text-body-sm-weight)',
                       letterSpacing: 'var(--text-body-sm-ls)',
-                      color: isActive ? 'var(--color-ink)' : 'var(--color-ink-muted)',
+                      color: isActive ? (isExpress ? '#f59e0b' : 'var(--color-ink)') : (isExpress ? '#f59e0b' : 'var(--color-ink-muted)'),
                       textDecoration: 'none',
                       transition: 'color var(--dur-fast) var(--ease-out), background-color var(--dur-fast) var(--ease-out)',
-                      backgroundColor: isActive ? 'var(--color-surface-1)' : 'transparent',
+                      backgroundColor: isActive ? (isExpress ? 'rgba(245,158,11,0.1)' : 'var(--color-surface-1)') : 'transparent',
+                      border: isExpress ? '1px solid rgba(245,158,11,0.25)' : '1px solid transparent',
                     }}
                     onMouseEnter={e => {
-                      if (!isActive) (e.currentTarget as HTMLElement).style.color = 'var(--color-ink)'
+                      if (!isActive) {
+                        const el = e.currentTarget as HTMLElement
+                        el.style.color = isExpress ? '#f59e0b' : 'var(--color-ink)'
+                        if (isExpress) el.style.backgroundColor = 'rgba(245,158,11,0.08)'
+                      }
                     }}
                     onMouseLeave={e => {
-                      if (!isActive) (e.currentTarget as HTMLElement).style.color = 'var(--color-ink-muted)'
+                      if (!isActive) {
+                        const el = e.currentTarget as HTMLElement
+                        el.style.color = isExpress ? '#f59e0b' : 'var(--color-ink-muted)'
+                        if (isExpress) el.style.backgroundColor = 'transparent'
+                      }
                     }}
                     aria-current={isActive ? 'page' : undefined}
                   >
                     {link.label}
+                    {(link as any).badge && (
+                      <span style={{ fontSize: 9, fontWeight: 800, letterSpacing: '0.05em', textTransform: 'uppercase', padding: '2px 5px', borderRadius: 'var(--radius-pill)', backgroundColor: 'rgba(245,158,11,0.2)', color: '#f59e0b', border: '1px solid rgba(245,158,11,0.4)' }}>
+                        {(link as any).badge}
+                      </span>
+                    )}
                   </Link>
                 )
               })}
@@ -277,26 +293,34 @@ export default function Navbar() {
         {/* Nav links */}
         <nav style={{ padding: '0 var(--space-sm)' }}>
           {navLinks.map(link => {
-            const isActive = pathname === link.href
+            const isActive = pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href.split('?')[0]))
+            const isExpress = (link as any).isExpress
             return (
               <Link
                 key={link.label}
                 href={link.href}
                 onClick={() => setMobileOpen(false)}
                 style={{
-                  display: 'block',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
                   padding: '12px 16px',
                   borderRadius: 'var(--radius-md)',
                   marginBottom: 4,
                   fontSize: 'var(--text-body-size)',
-                  fontWeight: isActive ? 600 : 400,
-                  color: isActive ? 'var(--color-ink)' : 'var(--color-ink-muted)',
+                  fontWeight: isActive || isExpress ? 700 : 400,
+                  color: isActive ? (isExpress ? '#f59e0b' : 'var(--color-ink)') : (isExpress ? '#f59e0b' : 'var(--color-ink-muted)'),
                   textDecoration: 'none',
-                  backgroundColor: isActive ? 'var(--color-surface-2)' : 'transparent',
+                  backgroundColor: isActive ? (isExpress ? 'rgba(245,158,11,0.1)' : 'var(--color-surface-2)') : 'transparent',
                   transition: 'background-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out)',
                 }}
               >
                 {link.label}
+                {(link as any).badge && (
+                  <span style={{ fontSize: 9, fontWeight: 800, letterSpacing: '0.05em', textTransform: 'uppercase', padding: '2px 5px', borderRadius: 'var(--radius-pill)', backgroundColor: 'rgba(245,158,11,0.2)', color: '#f59e0b', border: '1px solid rgba(245,158,11,0.4)', marginLeft: 'auto' }}>
+                    {(link as any).badge}
+                  </span>
+                )}
               </Link>
             )
           })}

@@ -39,8 +39,7 @@ export default function Index() {
       case ROLES.SUPER_ADMIN:
       case ROLES.BOARD_MEMBER:
       case ROLES.PILLAR_MEMBER:
-        // Admin roles should use the separate admin app
-        router.replace('/(auth)/welcome');
+        router.replace('/(admin)/dashboard');
         break;
       default:
         router.replace('/(auth)/welcome');

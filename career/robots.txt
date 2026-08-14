@@ -1,0 +1,21 @@
+# Robots.txt for Karya Saarthi Career Portal
+# https://career.karyasaarthi.com
+
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+Disallow: /config/
+Disallow: /dashboard/
+Disallow: /database/
+Disallow: /dep/
+Disallow: /uploads/
+Disallow: /setup.php
+Disallow: /test.php
+Disallow: /test-db.php
+Disallow: /test-email.php
+Disallow: /test-smtp.php
+Disallow: /sw.js
+
+# Sitemap
+Sitemap: https://career.karyasaarthi.com/sitemap.xml

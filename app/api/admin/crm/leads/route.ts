@@ -119,7 +119,6 @@ export async function POST(req: Request) {
         assigned_to: assigned_to || null,
         score: score || 0,
         pillar: autoPillar,
-        notes: notes || null,
       })
       .select()
       .single()

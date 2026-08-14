@@ -64,6 +64,7 @@ function AppShell() {
         <Stack.Screen name="(auth)" options={{ animation: 'fade' }} />
         <Stack.Screen name="(customer)" options={{ animation: 'fade' }} />
         <Stack.Screen name="(vendor)" options={{ animation: 'fade' }} />
+        <Stack.Screen name="(admin)" options={{ animation: 'fade' }} />
       </Stack>
       <Toast />
     </>

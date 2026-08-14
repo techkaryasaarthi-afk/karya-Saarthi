@@ -187,3 +187,36 @@ export function newProjectMessageEmail({
     `),
   }
 }
+
+/** Sent to admin when a new service enquiry is received */
+export function newEnquiryEmail({
+  name,
+  email,
+  phone,
+  message,
+  serviceTitle,
+}: {
+  name: string
+  email: string
+  phone: string
+  message: string
+  serviceTitle?: string
+}) {
+  return {
+    subject: `New Service Enquiry from ${name} - Karya Saarthi`,
+    html: emailWrapper(`
+      <h2 style="color:#1B3A6B;margin-top:0;">📝 New Enquiry Received</h2>
+      <p style="color:#64748b;">You have received a new service enquiry.</p>
+      <div style="background:#f1f5f9;border-radius:10px;padding:16px;margin:20px 0;">
+        <p style="margin:4px 0;"><strong>Name:</strong> ${name}</p>
+        <p style="margin:4px 0;"><strong>Email:</strong> ${email}</p>
+        <p style="margin:4px 0;"><strong>Phone:</strong> ${phone}</p>
+        ${serviceTitle ? `<p style="margin:4px 0;"><strong>Service:</strong> ${serviceTitle}</p>` : ''}
+        <p style="margin:4px 0;"><strong>Message:</strong></p>
+        <p style="background:white;padding:12px;border-radius:6px;border:1px solid #e2e8f0;white-space:pre-wrap;">${message || 'No additional details provided.'}</p>
+      </div>
+      <a href="${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/admin" style="display:inline-block;background:#FF6B35;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">View in Admin Panel</a>
+    `),
+  }
+}
+

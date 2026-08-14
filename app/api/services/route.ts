@@ -1,4 +1,4 @@
-﻿export const dynamic = 'force-dynamic'
+export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
 import { NextResponse } from 'next/server'
@@ -46,7 +46,24 @@ export async function GET(request: Request) {
   const { data, error, count } = await query
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
-  return NextResponse.json({ services: data || [], total: count || 0, page, limit })
+  // Sanitize featured_image: reject plain page URLs that aren't actual image files
+  const IMAGE_EXT = /\.(png|jpe?g|webp|gif|svg|avif|bmp)(\?.*)?$/i
+  const SUPABASE_STORAGE = /supabase\.(co|in).*\/storage\//i
+  const GOOGLE_DRIVE = /lh3\.googleusercontent\.com/i
+  const sanitized = (data || []).map(svc => ({
+    ...svc,
+    featured_image: (() => {
+      const img = svc.featured_image
+      if (!img) return null
+      if (SUPABASE_STORAGE.test(img)) return img
+      if (GOOGLE_DRIVE.test(img)) return img
+      if (!img.startsWith('http')) return img
+      if (IMAGE_EXT.test(img)) return img
+      return null
+    })()
+  }))
+
+  return NextResponse.json({ services: sanitized, total: count || 0, page, limit })
 }
 
 // POST /api/services (admin)

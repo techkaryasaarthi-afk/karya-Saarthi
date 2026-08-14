@@ -17,6 +17,7 @@ const TestimonialsSection = dynamic(() => import('@/components/TestimonialsSecti
 const QuickAccessDashboard = dynamic(() => import('@/components/QuickAccessDashboard'))
 const FAQSection = dynamic(() => import('@/components/FAQSection'), { ssr: true })
 const CTABanner = dynamic(() => import('@/components/CTABanner'), { ssr: true })
+const SaarthiXpressBanner = dynamic(() => import('@/components/SaarthiXpressBanner'), { ssr: true })
 const NewsletterSection = dynamic(() => import('@/components/NewsletterSection'), { ssr: true })
 const Footer = dynamic(() => import('@/components/Footer'), { ssr: true })
 
@@ -84,6 +85,7 @@ export default async function Home() {
         <TestimonialsSection />
         <QuickAccessDashboard />
         <FAQSection />
+        <SaarthiXpressBanner />
         <CTABanner />
         <NewsletterSection />
         <PartnersMarquee partners={displayPartners} />

@@ -1,0 +1,20 @@
+{
+  "name": "Karya Saarthi Careers",
+  "short_name": "KS Careers",
+  "description": "Join India's fastest growing project solutions company. Explore career opportunities at Karya Saarthi.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#2563eb",
+  "orientation": "portrait-primary",
+  "categories": ["business", "education"],
+  "lang": "en-IN",
+  "icons": [
+    {
+      "src": "/images/karyasaarthi.png",
+      "sizes": "192x192",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ]
+}

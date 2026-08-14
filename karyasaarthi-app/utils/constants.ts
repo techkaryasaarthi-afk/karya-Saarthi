@@ -65,5 +65,30 @@ export const APP_INFO = {
 // ── Pagination ────────────────────────────────────────────────────────────────
 export const PAGE_SIZE = 20;
 
+// ── Admin Endpoints ───────────────────────────────────────────────────────────
+export const ADMIN_ENDPOINTS = {
+  DASHBOARD: '/api/admin/dashboard',
+  USERS: '/api/admin/users',
+  PROJECTS: '/api/admin/projects',
+  REQUESTS: '/api/admin/requests',
+  SERVICES: '/api/admin/services',
+  VENDORS: '/api/admin/vendors',
+  INVOICES: '/api/admin/invoices',
+  STAFF: '/api/admin/staff',
+  HR: '/api/admin/hr',
+  ANALYTICS: '/api/admin/analytics',
+  ANNOUNCEMENTS: '/api/admin/announcements',
+  BLOGS: '/api/admin/blogs',
+  CRM: '/api/admin/crm',
+  MEETINGS: '/api/admin/meetings',
+  RATINGS: '/api/admin/ratings',
+  FINANCE: '/api/admin/finance',
+  WORKSPACE: '/api/admin/workspace',
+  VENDOR_PIPELINE: '/api/admin/vendor-pipeline',
+} as const;
+
+// ── Admin Roles ───────────────────────────────────────────────────────────────
+export const ADMIN_ROLES = ['admin', 'super_admin', 'board_member', 'pillar_member'] as const;
+
 // ── Razorpay ──────────────────────────────────────────────────────────────────
 export const RAZORPAY_KEY = process.env.EXPO_PUBLIC_RAZORPAY_KEY || '';

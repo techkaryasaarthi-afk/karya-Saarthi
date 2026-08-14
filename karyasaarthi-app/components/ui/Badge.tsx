@@ -6,26 +6,14 @@
 
 import React from 'react';
 import { View, Text, StyleSheet, ViewStyle } from 'react-native';
-import { colors, radius, spacing } from '@/utils/theme';
+import { radius, spacing, useAppTheme } from '@/utils/theme';
 
 interface BadgeProps {
   text: string;
-  variant?: 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'info' | 'neutral' | 'mint' | 'tag';
+  variant?: 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'info' | 'neutral' | 'mint' | 'tag' | 'outline';
   size?: 'sm' | 'md';
   style?: ViewStyle;
 }
-
-const variantColors = {
-  primary: { bg: colors.primary, text: colors.onPrimary },
-  secondary: { bg: colors.surfaceContainer, text: colors.steel },
-  success: { bg: colors.successLight, text: '#065F46' },
-  warning: { bg: colors.warningLight, text: '#92400E' },
-  error: { bg: '#fee2e2', text: '#991B1B' },
-  info: { bg: colors.infoLight, text: '#1E40AF' },
-  neutral: { bg: colors.surfaceContainer, text: colors.steel },
-  mint: { bg: colors.brandGreen, text: colors.primary },  // badge-discount
-  tag: { bg: 'rgba(55, 114, 207, 0.15)', text: colors.brandTag }, // badge-tag
-};
 
 const variantRadius = {
   primary: radius.full,
@@ -40,13 +28,29 @@ const variantRadius = {
 };
 
 export default function Badge({ text, variant = 'neutral', size = 'sm', style }: BadgeProps) {
-  const colorScheme = variantColors[variant];
+  const theme = useAppTheme();
+  
+  const variantColors: Record<string, { bg: string, text: string, border?: string }> = {
+    primary: { bg: theme.primary, text: theme.onPrimary },
+    secondary: { bg: theme.surfaceContainer, text: theme.steel },
+    success: { bg: theme.success + '20', text: theme.success },
+    warning: { bg: theme.warning + '20', text: theme.warning },
+    error: { bg: theme.error + '20', text: theme.error },
+    info: { bg: theme.info + '20', text: theme.info },
+    neutral: { bg: theme.surfaceContainer, text: theme.steel },
+    mint: { bg: theme.brandGreen, text: theme.primary },
+    tag: { bg: theme.brandTag + '15', text: theme.brandTag },
+    outline: { bg: 'transparent', text: theme.stone, border: theme.hairline },
+  };
+
+  const colorScheme = variantColors[variant] || variantColors.neutral;
   return (
     <View
       style={[
         styles.base,
         size === 'md' && styles.md,
-        { backgroundColor: colorScheme.bg, borderRadius: variantRadius[variant] },
+        { backgroundColor: colorScheme.bg, borderRadius: variantRadius[variant] || radius.sm },
+        colorScheme.border ? { borderWidth: 1, borderColor: colorScheme.border } : null,
         style,
       ]}
     >
@@ -59,10 +63,11 @@ export default function Badge({ text, variant = 'neutral', size = 'sm', style }:
 
 /** Small count badge (notification dot) */
 export function CountBadge({ count, style }: { count: number; style?: ViewStyle }) {
+  const theme = useAppTheme();
   if (count <= 0) return null;
   return (
-    <View style={[styles.countBadge, style]}>
-      <Text style={styles.countText}>{count > 99 ? '99+' : count}</Text>
+    <View style={[styles.countBadge, { backgroundColor: theme.error }, style]}>
+      <Text style={[styles.countText, { color: theme.primary }]}>{count > 99 ? '99+' : count}</Text>
     </View>
   );
 }
@@ -77,7 +82,6 @@ const styles = StyleSheet.create({
   text: { fontSize: 11, fontWeight: '600', fontFamily: 'Inter_600SemiBold' },
   textMd: { fontSize: 13 },
   countBadge: {
-    backgroundColor: colors.brandError,
     borderRadius: radius.full,
     minWidth: 18,
     height: 18,
@@ -85,5 +89,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 4,
   },
-  countText: { color: colors.white, fontSize: 10, fontWeight: '700' },
+  countText: { fontSize: 10, fontWeight: '700' },
 });

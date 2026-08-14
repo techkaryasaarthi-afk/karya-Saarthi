@@ -380,8 +380,8 @@ export default function ProfileScreen() {
 
               {/* Footer */}
               <Text style={st.aboutFooter}>
-                © 2026 Karyanex Private Limited. All rights reserved.{'
-'}Karya Saarthi v{APP_INFO.VERSION}
+                © 2026 Karyanex Private Limited. All rights reserved.{'\n'}
+                Karya Saarthi v{APP_INFO.VERSION}
               </Text>
             </ScrollView>
           </View>

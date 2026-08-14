@@ -81,7 +81,7 @@ export default function Footer() {
                 src="/images/karyasaarthi.png"
                 alt="Karya Saarthi"
                 width={28} height={28}
-                style={{ borderRadius: 6 }}
+                style={{ width: '28px', height: '28px', borderRadius: 6, flexShrink: 0 }}
               />
               <span style={{ fontFamily: 'var(--font-display)', fontSize: 16, fontWeight: 700, color: 'var(--color-ink)', letterSpacing: '-0.5px' }}>
                 Karya Saarthi

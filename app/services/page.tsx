@@ -6,6 +6,7 @@ import Image from 'next/image'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import PageCTABanner from '@/components/PageCTABanner'
+import SaarthiXpressBanner from '@/components/SaarthiXpressBanner'
 
 interface Service {
   id: number
@@ -283,6 +284,11 @@ export default function ServicesPage() {
             <input type="text" placeholder="Search — thesis, website, business plan…" value={search} onChange={e => { setSearch(e.target.value); setPage(1) }}
               style={{ width: '100%', boxSizing: 'border-box', paddingLeft: 44, paddingRight: 16, paddingTop: 14, paddingBottom: 14, borderRadius: 'var(--radius-pill)', border: '1px solid var(--color-hairline)', backgroundColor: 'var(--color-surface-2)', color: 'var(--color-ink)', fontSize: 14, outline: 'none' }} />
           </div>
+        </div>
+
+        {/* Saarthi Xpress Banner */}
+        <div style={{ maxWidth: 1199, margin: '0 auto', padding: '0 32px' }}>
+          <SaarthiXpressBanner />
         </div>
 
         <div style={{ maxWidth: 1199, margin: '0 auto', padding: '32px 32px' }}>

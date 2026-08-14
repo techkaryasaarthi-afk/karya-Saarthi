@@ -1,0 +1,56 @@
+/**
+ * Network Status Banner — Shows when the device goes offline.
+ * Automatically hides when connectivity is restored.
+ */
+
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, Animated } from 'react-native';
+import NetInfo from '@react-native-community/netinfo';
+import { Ionicons } from '@expo/vector-icons';
+import { colors, typography } from '@/utils/theme';
+
+export default function NetworkBanner() {
+  const [isOffline, setIsOffline] = useState(false);
+  const [slideAnim] = useState(new Animated.Value(-50));
+
+  useEffect(() => {
+    const unsubscribe = NetInfo.addEventListener((state) => {
+      const offline = !(state.isConnected && state.isInternetReachable !== false);
+      setIsOffline(offline);
+
+      Animated.timing(slideAnim, {
+        toValue: offline ? 0 : -50,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  if (!isOffline) return null;
+
+  return (
+    <Animated.View style={[styles.banner, { transform: [{ translateY: slideAnim }] }]}>
+      <Ionicons name="cloud-offline" size={16} color={colors.white} />
+      <Text style={styles.text}>No internet connection</Text>
+    </Animated.View>
+  );
+}
+
+const styles = StyleSheet.create({
+  banner: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: colors.error,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    paddingVertical: 8,
+    zIndex: 999,
+  },
+  text: { ...typography.labelMd, color: colors.white },
+});

@@ -13,6 +13,7 @@ const RichTextEditor = dynamic(() => import('@/components/RichTextEditor'), { ss
 interface Campaign { id: number; name: string; type: string; channel: string; status: string; budget: number | null; start_date: string | null; end_date: string | null; leads_generated: number | null; created_at: string }
 
 const TABS = [
+  { key: 'saarthi_xpress', label: '⚡ Saarthi Xpress' },
   { key: 'campaigns', label: '📢 Campaigns' },
   { key: 'blog', label: '📝 Blog' },
   { key: 'podcast', label: '🎙️ Podcasts' },
@@ -44,6 +45,20 @@ export default function MarketingPage() {
   const [showNewCamp, setShowNewCamp] = useState(false)
   const [campForm, setCampForm] = useState({ name: '', type: 'digital', channel: 'social', budget: '', start_date: '', end_date: '' })
   const [savingCamp, setSavingCamp] = useState(false)
+
+  // Saarthi Xpress
+
+  const [xServices, setXServices] = useState<any[]>([])
+
+  const [xLoading, setXLoading] = useState(false)
+
+  const [xForm, setXForm] = useState({ title: '', category: 'express', short_description: '', delivery_hours: 24, price_min: '', price_max: '', featured_image: '', is_featured: false, is_active: true, sort_order: 0 })
+
+  const [xSaving, setXSaving] = useState(false)
+
+  const [xEditing, setXEditing] = useState<number | null>(null)
+
+  const [showXForm, setShowXForm] = useState(false)
   // Content calendar
   const [calItems, setCalItems] = useState<{ id: string; title: string; type: string; date: string; status: string; platform: string }[]>([])
   const [newCal, setNewCal] = useState({ title: '', type: 'Blog Post', date: '', platform: 'Instagram', status: 'planned' })
@@ -85,6 +100,43 @@ export default function MarketingPage() {
   const [schedForm, setSchedForm] = useState({ title: '', type: 'seminar', short_desc: '', date: '', venue: '', capacity: '', fee: '' })
   const [savingSched, setSavingSched] = useState(false)
 
+
+  const fetchXServices = async () => {
+    setXLoading(true)
+    try {
+      const res = await fetch('/api/admin/saarthi-xpress')
+      const d = await res.json()
+      setXServices(d.services || [])
+    } catch {} finally { setXLoading(false) }
+  }
+
+  const saveXService = async (e: React.FormEvent) => {
+    e.preventDefault(); setXSaving(true)
+    try {
+      const payload = { ...xForm, price_min: xForm.price_min ? Number(xForm.price_min) : null, price_max: xForm.price_max ? Number(xForm.price_max) : null }
+      const url = xEditing ? '/api/admin/saarthi-xpress' : '/api/admin/saarthi-xpress'
+      const method = xEditing ? 'PATCH' : 'POST'
+      const body = xEditing ? { ...payload, id: xEditing } : payload
+      const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+      if (res.ok) {
+        fetchXServices()
+        setXForm({ title: '', category: 'express', short_description: '', delivery_hours: 24, price_min: '', price_max: '', featured_image: '', is_featured: false, is_active: true, sort_order: 0 })
+        setXEditing(null); setShowXForm(false)
+      }
+    } catch {} finally { setXSaving(false) }
+  }
+
+  const deleteXService = async (id: number) => {
+    if (!confirm('Delete this Saarthi Xpress service?')) return
+    await fetch('/api/admin/saarthi-xpress', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }) })
+    setXServices(p => p.filter(s => s.id !== id))
+  }
+
+  const startEditX = (s: any) => {
+    setXForm({ title: s.title, category: s.category, short_description: s.short_description || '', delivery_hours: s.delivery_hours, price_min: s.price_min || '', price_max: s.price_max || '', featured_image: s.featured_image || '', is_featured: s.is_featured, is_active: s.is_active, sort_order: s.sort_order })
+    setXEditing(s.id); setShowXForm(true)
+  }
+
   const loadSubData = useCallback(async () => {
     try {
       const routes = ['calendar', 'referrals', 'competitor', 'brand', 'partners']
@@ -113,7 +165,7 @@ export default function MarketingPage() {
     } catch (e) { console.error(e) }
   }, [])
 
-  useEffect(() => { loadSubData() }, [loadSubData])
+  useEffect(() => { loadSubData(); fetchXServices() }, [loadSubData])
 
   const fetchCampaigns = useCallback(async () => {
     setLoading(true)
@@ -382,6 +434,91 @@ export default function MarketingPage() {
       </div>
 
       {/* â”€â”€ BLOG â”€â”€ */}
+      {activeTab === 'saarthi_xpress' && (
+        <div className="space-y-4">
+          <div className="flex justify-between items-center">
+            <div>
+              <h2 className="text-xl font-bold" style={{ color: '#f59e0b' }}>⚡ Saarthi Xpress Services</h2>
+              <p className="text-sm text-slate-500">Manage quick-delivery service cards shown on the Saarthi Xpress page</p>
+            </div>
+            <button onClick={() => setShowXForm(v => !v)} className="px-4 py-2.5 rounded-xl font-bold text-white text-sm cursor-pointer hover:opacity-90" style={{ background: 'linear-gradient(135deg, #ff7a3d, #f59e0b)' }}>
+              + New Express Service
+            </button>
+          </div>
+
+          {showXForm && (
+            <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm" style={{ borderColor: 'rgba(245,158,11,0.3)' }}>
+              <h4 className="font-bold mb-4" style={{ color: '#f59e0b' }}>⚡ {xEditing ? 'Edit' : 'New'} Express Service</h4>
+              <form onSubmit={saveXService} className="space-y-3">
+                <div className="grid grid-cols-2 gap-3">
+                  <input required value={xForm.title} onChange={e => setXForm(p => ({ ...p, title: e.target.value }))} placeholder="Service title *" className="col-span-2 px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" />
+                  <input value={xForm.short_description} onChange={e => setXForm(p => ({ ...p, short_description: e.target.value }))} placeholder="Short description" className="col-span-2 px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" />
+                  <div>
+                    <label className="text-xs text-slate-400 mb-1 block">Delivery Time</label>
+                    <select value={xForm.delivery_hours} onChange={e => setXForm(p => ({ ...p, delivery_hours: Number(e.target.value) }))} className="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none">
+                      <option value={1}>1 Hour (Quick Fix)</option>
+                      <option value={4}>4 Hours (Fast Delivery)</option>
+                      <option value={24}>24 Hours (Same Day)</option>
+                      <option value={0}>Expert (Quality assured)</option>
+                    </select>
+                  </div>
+                  <input value={xForm.category} onChange={e => setXForm(p => ({ ...p, category: e.target.value }))} placeholder="Category (e.g. design, academic)" className="px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" />
+                  <input type="number" value={xForm.price_min} onChange={e => setXForm(p => ({ ...p, price_min: e.target.value }))} placeholder="Price Min ₹" className="px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" />
+                  <input type="number" value={xForm.price_max} onChange={e => setXForm(p => ({ ...p, price_max: e.target.value }))} placeholder="Price Max ₹" className="px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" />
+                  <input value={xForm.featured_image} onChange={e => setXForm(p => ({ ...p, featured_image: e.target.value }))} placeholder="Featured image URL" className="col-span-2 px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" />
+                  <input type="number" value={xForm.sort_order} onChange={e => setXForm(p => ({ ...p, sort_order: Number(e.target.value) }))} placeholder="Sort order (0=first)" className="px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" />
+                </div>
+                <div className="flex gap-6 text-sm">
+                  <label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" checked={xForm.is_featured} onChange={e => setXForm(p => ({ ...p, is_featured: e.target.checked }))} className="w-4 h-4" /> <span className="text-slate-600">Featured</span></label>
+                  <label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" checked={xForm.is_active} onChange={e => setXForm(p => ({ ...p, is_active: e.target.checked }))} className="w-4 h-4 accent-green-500" /> <span className="text-slate-600">Active</span></label>
+                </div>
+                <div className="flex gap-3">
+                  <button type="submit" disabled={xSaving} className="px-6 py-2.5 rounded-xl font-bold text-white text-sm cursor-pointer disabled:opacity-50" style={{ background: 'linear-gradient(135deg, #ff7a3d, #f59e0b)' }}>
+                    {xSaving ? '⏳ Saving...' : xEditing ? '✏️ Update Service' : '⚡ Create Service'}
+                  </button>
+                  <button type="button" onClick={() => { setShowXForm(false); setXEditing(null); setXForm({ title: '', category: 'express', short_description: '', delivery_hours: 24, price_min: '', price_max: '', featured_image: '', is_featured: false, is_active: true, sort_order: 0 }) }} className="px-4 py-2.5 rounded-xl bg-slate-100 text-slate-600 text-sm cursor-pointer">Cancel</button>
+                </div>
+              </form>
+            </div>
+          )}
+
+          <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+            {xLoading ? (
+              <div className="p-12 text-center text-slate-400"><span className="text-4xl block mb-3">⚡</span><p>Loading...</p></div>
+            ) : xServices.length === 0 ? (
+              <div className="p-12 text-center text-slate-400"><span className="text-4xl block mb-3">⚡</span><p>No Saarthi Xpress services yet. Click &ldquo;+ New Express Service&rdquo; to get started.</p></div>
+            ) : (
+              <table className="w-full text-xs">
+                <thead><tr className="bg-slate-50 border-b border-slate-100">{['Title', 'Category', 'Delivery', 'Price', 'Status', 'Actions'].map(h => <th key={h} className="px-4 py-3 text-left font-bold text-slate-400 uppercase text-[10px]">{h}</th>)}</tr></thead>
+                <tbody>
+                  {xServices.map(s => {
+                    const dLabel = s.delivery_hours === 0 ? 'Expert' : s.delivery_hours === 1 ? '1 Hour' : s.delivery_hours === 4 ? '4 Hours' : '24 Hours'
+                    return (
+                      <tr key={s.id} className="border-b border-slate-50 hover:bg-slate-50/60">
+                        <td className="px-4 py-3 font-semibold" style={{ color: '#1a1a2e' }}>
+                          <div className="truncate max-w-xs">{s.title}</div>
+                          {s.is_featured && <span className="text-[9px] text-orange-500 font-bold">⭐ Featured</span>}
+                        </td>
+                        <td className="px-4 py-3"><span className="px-2 py-0.5 rounded-full bg-orange-100 text-orange-600 text-[10px] font-bold capitalize">{s.category}</span></td>
+                        <td className="px-4 py-3"><span className="px-2 py-0.5 rounded-full text-[10px] font-bold" style={{ background: 'rgba(245,158,11,0.15)', color: '#d97706' }}>⚡ {dLabel}</span></td>
+                        <td className="px-4 py-3 text-slate-600">{s.price_min ? `₹${s.price_min}+` : '—'}</td>
+                        <td className="px-4 py-3"><span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${s.is_active ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-500'}`}>{s.is_active ? 'Active' : 'Hidden'}</span></td>
+                        <td className="px-4 py-3">
+                          <div className="flex items-center gap-2">
+                            <button onClick={() => startEditX(s)} className="text-blue-500 hover:text-blue-700 font-bold cursor-pointer">✏️ Edit</button>
+                            <button onClick={() => deleteXService(s.id)} className="text-slate-300 hover:text-red-500 transition-colors cursor-pointer">🗑️</button>
+                          </div>
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            )}
+          </div>
+        </div>
+      )}
+
       {activeTab === 'blog' && (
         <div className="space-y-4">
           <div className="flex justify-between items-center">

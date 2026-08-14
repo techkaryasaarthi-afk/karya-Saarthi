@@ -115,6 +115,15 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: '**.cloudinary.com' },
       { protocol: 'https', hostname: 'drive.google.com' },
       { protocol: 'https', hostname: '**.googleusercontent.com' },
+      // Own domain assets (services, blogs, marketing images)
+      { protocol: 'https', hostname: 'karyasaarthi.com' },
+      { protocol: 'https', hostname: 'www.karyasaarthi.com' },
+      { protocol: 'http', hostname: 'www.karyasaarthi.com' },
+      { protocol: 'http', hostname: 'karyasaarthi.com' },
+      // Any subdomain of karyasaarthi.com (e.g., cdn.karyasaarthi.com)
+      { protocol: 'https', hostname: '**.karyasaarthi.com' },
+      // Vercel deployment previews
+      { protocol: 'https', hostname: '**.vercel.app' },
     ],
     // Vercel free plan: minimize transforms to save bandwidth
     formats: ['image/avif', 'image/webp'],

@@ -1,0 +1,45 @@
+2026-04-02 16:02:18 | SMTP ERROR: AUTH failed: 535 5.7.8 Error: authentication failed: (reason unavailable) (Check SMTP_PASS in mailer.php)
+2026-04-02 16:02:18 | FALLBACK mail() SENT to: rajeshcrystalmmu@gmail.com
+2026-04-02 16:02:18 | To: rajeshcrystalmmu@gmail.com | Subject: Reset Your Password - Karya Saarthi | SENT
+2026-04-02 16:04:02 | SMTP ERROR: AUTH failed: 535 5.7.8 Error: authentication failed: (reason unavailable) (Check SMTP_PASS in mailer.php)
+2026-04-02 16:04:04 | FALLBACK mail() SENT to: rajeshcrystalmmu@gmail.com
+2026-04-02 16:04:04 | To: rajeshcrystalmmu@gmail.com | Subject: Password Changed - Karya Saarthi | SENT
+2026-04-02 16:04:28 | SMTP ERROR: AUTH failed: 535 5.7.8 Error: authentication failed: (reason unavailable) (Check SMTP_PASS in mailer.php)
+2026-04-02 16:04:28 | FALLBACK mail() SENT to: rajeshcrystalmmu@gmail.com
+2026-04-02 16:04:28 | To: rajeshcrystalmmu@gmail.com | Subject: Reset Your Password - Karya Saarthi | SENT
+2026-04-02 16:24:24 | SMTP ERROR: AUTH failed: 535 5.7.8 Error: authentication failed: (reason unavailable) (Check SMTP_PASS in mailer.php)
+2026-04-02 16:24:24 | FALLBACK mail() SENT to: newagescience2@gmail.com
+2026-04-02 16:24:24 | To: newagescience2@gmail.com | Subject: Reset Your Password - Karya Saarthi | SENT
+2026-04-02 16:25:12 | SMTP ERROR: AUTH failed: 535 5.7.8 Error: authentication failed: (reason unavailable) (Check SMTP_PASS in mailer.php)
+2026-04-02 16:25:12 | FALLBACK mail() SENT to: newagescience2@gmail.com
+2026-04-02 16:25:12 | To: newagescience2@gmail.com | Subject: Password Changed - Karya Saarthi | SENT
+2026-07-17 13:41:40 | To: danish01@gmail.com | Subject: Verify your Karya Saarthi Account | SENT
+2026-07-17 13:44:21 | To: danishansar981@gmail.com | Subject: Verify your Karya Saarthi Account | SENT
+2026-07-29 04:56:16 | To: RANDHIRRANA2006@GMAIL.COM | Subject: Verify your Karya Saarthi Account | SENT
+2026-07-29 04:57:18 | To: RANDHIRRANA3705@GMAIL.COM | Subject: Verify your Karya Saarthi Account | SENT
+2026-07-29 06:12:56 | To: abhi969382@gmail.com | Subject: Verify your Karya Saarthi Account | SENT
+2026-07-29 09:00:22 | To: monamahajan097@gmail.com | Subject: Your OTP for Password Change | SENT
+2026-07-31 06:27:29 | To: tamannamahajan519@gmail.com | Subject: Verify your Karya Saarthi Account | SENT
+2026-07-31 07:25:15 | To: krishgarg.official@gmail.com | Subject: Verify your Karya Saarthi Account | SENT
+2026-07-31 07:25:31 | To: harleen9368@gmail.com | Subject: Verify your Karya Saarthi Account | SENT
+2026-07-31 07:27:10 | To: sakshammahajan572@gmail.com | Subject: Verify your Karya Saarthi Account | SENT
+2026-07-31 07:27:44 | To: palakmahajnn@gmail.com | Subject: Verify your Karya Saarthi Account | SENT
+2026-07-31 07:28:47 | To: pavanpoli2001@gmail.com | Subject: Verify your Karya Saarthi Account | SENT
+2026-07-31 07:28:52 | To: geddajayaram4@gmail.com | Subject: Verify your Karya Saarthi Account | SENT
+2026-07-31 07:42:55 | To: jasmeenjessie1111@gmail.com | Subject: Verify your Karya Saarthi Account | SENT
+2026-07-31 08:12:05 | To: amanmishra121502@gmail.com | Subject: Welcome Aboard! Selection & Next Steps - Karya Saarthi | SENT
+2026-07-31 08:28:39 | To: guptaakarsh8437@gmail.com | Subject: Verify your Karya Saarthi Account | SENT
+2026-07-31 09:04:55 | To: mahajansgirl124@gmail.com | Subject: Verify your Karya Saarthi Account | SENT
+2026-07-31 09:19:08 | To: ndurgarao18@gmail.com | Subject: Verify your Karya Saarthi Account | SENT
+2026-07-31 09:37:25 | To: palanjha07@gmail.com | Subject: Verify your Karya Saarthi Account | SENT
+2026-07-31 10:33:53 | To: vaishalishali8@gmail.com | Subject: Verify your Karya Saarthi Account | SENT
+2026-07-31 10:34:10 | To: vaishalishali8@gmail.com | Subject: Your OTP Verification Code | SENT
+2026-07-31 10:35:12 | To: vaishalishali8@gmail.com | Subject: Your OTP Verification Code | SENT
+2026-07-31 10:35:36 | To: vaishalishali8@gmail.com | Subject: Your OTP Verification Code | SENT
+2026-07-31 10:54:13 | To: hipness.snare-3u@icloud.com | Subject: Verify your Karya Saarthi Account | SENT
+2026-07-31 10:58:10 | To: palaksharmaa1131@gmail.com | Subject: Verify your Karya Saarthi Account | SENT
+2026-07-31 12:26:33 | To: vaishaligannoju@gmail.com | Subject: Verify your Karya Saarthi Account | SENT
+2026-07-31 12:45:31 | To: manichander288@gmail.com | Subject: Verify your Karya Saarthi Account | SENT
+2026-07-31 14:28:22 | To: yuvikagro2@gmail.com | Subject: Verify your Karya Saarthi Account | SENT
+2026-07-31 16:46:34 | To: guptaakarsh8437@gmail.com | Subject: Verify your Karya Saarthi Account | SENT
+2026-08-01 07:40:40 | To: yuvikagro2@gmail.com | Subject: Verify your Karya Saarthi Account | SENT

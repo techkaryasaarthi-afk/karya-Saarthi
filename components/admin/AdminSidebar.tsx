@@ -130,6 +130,7 @@ function buildNavGroups(user: UserData): NavGroup[] {
     all.push({
       title: 'Marketing',
       items: [
+        { icon: '⚡', label: 'Saarthi Xpress', href: '/admin/marketing?tab=saarthi_xpress' },
         { icon: '📣', label: 'Campaign Planner', href: '/admin/marketing?tab=campaigns' },
         { icon: '📊', label: 'Lead Source Analytics', href: '/admin/marketing?tab=leads' },
         { icon: '📅', label: 'Content Calendar', href: '/admin/marketing?tab=calendar' },
