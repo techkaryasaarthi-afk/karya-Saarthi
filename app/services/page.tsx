@@ -6,7 +6,7 @@ import Image from 'next/image'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import PageCTABanner from '@/components/PageCTABanner'
-import SaarthiXpressBanner from '@/components/SaarthiXpressBanner'
+
 
 interface Service {
   id: number
@@ -286,10 +286,7 @@ export default function ServicesPage() {
           </div>
         </div>
 
-        {/* Saarthi Xpress Banner */}
-        <div style={{ maxWidth: 1199, margin: '0 auto', padding: '0 32px' }}>
-          <SaarthiXpressBanner />
-        </div>
+
 
         <div style={{ maxWidth: 1199, margin: '0 auto', padding: '32px 32px' }}>
           <div style={{ display: 'flex', gap: 24, alignItems: 'flex-start' }} className="svc-layout">

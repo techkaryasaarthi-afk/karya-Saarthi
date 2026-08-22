@@ -59,7 +59,21 @@ export default function MarketingPage() {
   const [xEditing, setXEditing] = useState<number | null>(null)
 
   const [showXForm, setShowXForm] = useState(false)
-  // Content calendar
+
+  // Xpress banner poster management
+  const [xPressBannerUrl, setXPressBannerUrl] = useState('')
+  const [xPressBannerSaving, setXPressBannerSaving] = useState(false)
+  const [xPressBannerLoaded, setXPressBannerLoaded] = useState(false)
+
+  /** Convert any Google Drive share URL to a direct-renderable image URL */
+  function convertImageUrl(url: string): string {
+    if (!url) return url
+    const driveMatch = url.match(/drive\.google\.com\/(?:file\/d\/|open\?id=)([\w-]+)/)
+    if (driveMatch) return `https://lh3.googleusercontent.com/d/${driveMatch[1]}=w1200`
+    return url
+  }
+
+
   const [calItems, setCalItems] = useState<{ id: string; title: string; type: string; date: string; status: string; platform: string }[]>([])
   const [newCal, setNewCal] = useState({ title: '', type: 'Blog Post', date: '', platform: 'Instagram', status: 'planned' })
   // Referrals
@@ -108,6 +122,27 @@ export default function MarketingPage() {
       const d = await res.json()
       setXServices(d.services || [])
     } catch {} finally { setXLoading(false) }
+  }
+
+  const fetchXPressBanner = async () => {
+    try {
+      const res = await fetch('/api/admin/settings?key=xpress_banner_poster')
+      const d = await res.json()
+      setXPressBannerUrl(d.value || '')
+    } catch {}
+    setXPressBannerLoaded(true)
+  }
+
+  const saveXPressBanner = async () => {
+    setXPressBannerSaving(true)
+    try {
+      await fetch('/api/admin/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key: 'xpress_banner_poster', value: convertImageUrl(xPressBannerUrl.trim()) })
+      })
+    } catch {}
+    setXPressBannerSaving(false)
   }
 
   const saveXService = async (e: React.FormEvent) => {
@@ -165,7 +200,7 @@ export default function MarketingPage() {
     } catch (e) { console.error(e) }
   }, [])
 
-  useEffect(() => { loadSubData(); fetchXServices() }, [loadSubData])
+  useEffect(() => { loadSubData(); fetchXServices(); fetchXPressBanner() }, [loadSubData])
 
   const fetchCampaigns = useCallback(async () => {
     setLoading(true)
@@ -465,7 +500,17 @@ export default function MarketingPage() {
                   <input value={xForm.category} onChange={e => setXForm(p => ({ ...p, category: e.target.value }))} placeholder="Category (e.g. design, academic)" className="px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" />
                   <input type="number" value={xForm.price_min} onChange={e => setXForm(p => ({ ...p, price_min: e.target.value }))} placeholder="Price Min ₹" className="px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" />
                   <input type="number" value={xForm.price_max} onChange={e => setXForm(p => ({ ...p, price_max: e.target.value }))} placeholder="Price Max ₹" className="px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" />
-                  <input value={xForm.featured_image} onChange={e => setXForm(p => ({ ...p, featured_image: e.target.value }))} placeholder="Featured image URL" className="col-span-2 px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" />
+                  <input value={xForm.featured_image} onChange={e => {
+                    const converted = convertImageUrl(e.target.value.trim())
+                    setXForm(p => ({ ...p, featured_image: converted }))
+                  }} placeholder="Featured image URL or Google Drive share link" className="col-span-2 px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" />
+                  {xForm.featured_image && xForm.featured_image.includes('lh3.googleusercontent.com') && (
+                    <p className="col-span-2 text-[10px] text-green-600 font-medium">✅ Google Drive link auto-converted</p>
+                  )}
+                  {xForm.featured_image && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={xForm.featured_image} alt="preview" className="col-span-2 h-16 rounded-lg object-cover border border-slate-200" onError={e => (e.currentTarget.style.display='none')} />
+                  )}
                   <input type="number" value={xForm.sort_order} onChange={e => setXForm(p => ({ ...p, sort_order: Number(e.target.value) }))} placeholder="Sort order (0=first)" className="px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" />
                 </div>
                 <div className="flex gap-6 text-sm">
@@ -516,6 +561,45 @@ export default function MarketingPage() {
               </table>
             )}
           </div>
+
+          {/* ── Xpress Banner Poster Management ── */}
+          {xPressBannerLoaded && (
+            <div className="bg-white rounded-2xl p-5 border shadow-sm" style={{ borderColor: 'rgba(245,158,11,0.3)' }}>
+              <h4 className="font-bold mb-1" style={{ color: '#f59e0b' }}>🖼️ Xpress Banner Poster</h4>
+              <p className="text-xs text-slate-500 mb-4">This image appears on the Saarthi Xpress promotional banner wherever it is displayed on the site. Paste a direct image URL or a Google Drive share link.</p>
+              <div className="flex gap-3 items-start">
+                <input
+                  value={xPressBannerUrl}
+                  onChange={e => setXPressBannerUrl(e.target.value)}
+                  placeholder="Paste image URL or Google Drive share link..."
+                  className="flex-1 px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none"
+                />
+                <button
+                  onClick={saveXPressBanner}
+                  disabled={xPressBannerSaving}
+                  className="px-5 py-2.5 rounded-xl font-bold text-white text-sm cursor-pointer disabled:opacity-50 whitespace-nowrap"
+                  style={{ background: 'linear-gradient(135deg, #ff7a3d, #f59e0b)' }}
+                >
+                  {xPressBannerSaving ? '⏳ Saving...' : '💾 Save Poster'}
+                </button>
+              </div>
+              {xPressBannerUrl && xPressBannerUrl.includes('drive.google.com') && (
+                <p className="text-[10px] text-amber-600 font-medium mt-1">⚠️ Drive link will be auto-converted to a direct image URL on save.</p>
+              )}
+              {xPressBannerUrl && (
+                <div className="mt-3">
+                  <p className="text-xs text-slate-400 mb-1.5">Preview:</p>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={convertImageUrl(xPressBannerUrl)}
+                    alt="Banner poster preview"
+                    className="h-28 rounded-xl object-cover border border-slate-200"
+                    onError={e => (e.currentTarget.style.display = 'none')}
+                  />
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
 

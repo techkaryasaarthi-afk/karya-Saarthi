@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
+import { useEffect, useState } from 'react'
 
 const QUICK_LINKS = [
   'PPTs', 'Reels', 'Designs', 'Resumes', 'Research Support',
@@ -9,6 +10,17 @@ const QUICK_LINKS = [
 ]
 
 export default function SaarthiXpressBanner() {
+  const [posterUrl, setPosterUrl] = useState<string | null>(null)
+
+  useEffect(() => {
+    fetch('/api/admin/settings?key=xpress_banner_poster')
+      .then(r => r.json())
+      .then(d => { if (d.value) setPosterUrl(d.value) })
+      .catch(() => {})
+  }, [])
+
+  const imageSrc = posterUrl || '/images/saarthi-xpress-banner.png'
+
   return (
     <section
       style={{
@@ -22,16 +34,29 @@ export default function SaarthiXpressBanner() {
       }}
       aria-label="Saarthi Xpress — Quick Services Banner"
     >
-      {/* AI Banner Image as background layer */}
-      <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
+      {/* Poster image — right-aligned, contained within right portion */}
+      <div style={{
+        position: 'absolute',
+        top: 0, right: 0, bottom: 0,
+        width: '40%',
+        maxWidth: 320,
+        zIndex: 0,
+        overflow: 'hidden',
+      }}>
         <Image
-          src="/images/saarthi-xpress-banner.png"
+          src={imageSrc}
           alt="Saarthi Xpress — Fast Delivery"
           fill
-          style={{ objectFit: 'cover', objectPosition: 'center right', opacity: 0.35 }}
+          style={{ objectFit: 'cover', objectPosition: 'center center', opacity: 0.4 }}
           priority
           loading="eager"
         />
+        {/* Fade gradient so image blends into dark bg */}
+        <div style={{
+          position: 'absolute', inset: 0,
+          background: 'linear-gradient(to right, #0d0d0d 0%, transparent 40%, transparent 100%)',
+          pointerEvents: 'none',
+        }} />
       </div>
 
       {/* Orange glow bottom */}

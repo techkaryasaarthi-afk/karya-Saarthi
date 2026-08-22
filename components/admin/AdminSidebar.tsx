@@ -293,8 +293,8 @@ export default function AdminSidebar({ user }: { user: UserData }) {
 
   const roleBadge = getRoleBadge()
 
-  const SidebarContent = () => (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
+  const sidebarInner = (
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
       {/* Logo */}
       <div style={{ padding: '18px 16px', borderBottom: '1px solid var(--color-hairline-soft)', flexShrink: 0 }}>
         <Link href="/admin" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
@@ -322,7 +322,7 @@ export default function AdminSidebar({ user }: { user: UserData }) {
       </div>
 
       {/* Navigation */}
-      <nav style={{ flex: 1, overflowY: 'auto', padding: '8px 8px' }} className="scrollbar-none">
+      <nav style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', padding: '8px 8px', minHeight: 0 }} className="scrollbar-thin">
         {navGroups.map(group => (
           <div key={group.title} style={{ marginBottom: 4 }}>
             <button
@@ -391,7 +391,7 @@ export default function AdminSidebar({ user }: { user: UserData }) {
       {/* Desktop sidebar */}
       <aside style={{ width: 232, height: '100vh', position: 'fixed', top: 0, left: 0, zIndex: 30, display: 'flex', flexDirection: 'column', overflow: 'hidden', backgroundColor: 'var(--color-surface-1)', borderRight: '1px solid var(--color-hairline-soft)' }}
         className="admin-sidebar-desktop">
-        <SidebarContent />
+        {sidebarInner}
       </aside>
 
       {/* Mobile toggle button */}
@@ -413,7 +413,7 @@ export default function AdminSidebar({ user }: { user: UserData }) {
         style={{ position: 'fixed', top: 0, left: 0, bottom: 0, width: 260, zIndex: 50, display: 'flex', flexDirection: 'column', overflow: 'hidden', backgroundColor: 'var(--color-surface-1)', borderRight: '1px solid var(--color-hairline)', transform: mobileOpen ? 'translateX(0)' : 'translateX(-100%)', transition: 'transform var(--dur-slow) var(--ease-out)' }}
         className="admin-sidebar-mobile"
       >
-        <SidebarContent />
+        {sidebarInner}
       </aside>
 
       <style>{`
@@ -421,8 +421,12 @@ export default function AdminSidebar({ user }: { user: UserData }) {
           .admin-sidebar-desktop { display: none !important; }
           .admin-mobile-toggle   { display: flex !important; }
         }
+        .scrollbar-thin::-webkit-scrollbar { width: 4px; }
+        .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+        .scrollbar-thin::-webkit-scrollbar-thumb { background: var(--color-hairline); border-radius: 2px; }
+        .scrollbar-thin::-webkit-scrollbar-thumb:hover { background: var(--color-ink-muted); }
+        .scrollbar-thin { scrollbar-width: thin; scrollbar-color: var(--color-hairline) transparent; }
       `}</style>
     </>
   )
 }
-

@@ -44,6 +44,29 @@ interface ContactLead {
 }
 interface Subscriber { id: number; email: string; status: string; created_at: string }
 
+function MessageCell({ message }: { message: string }) {
+  const [expanded, setExpanded] = React.useState(false)
+  const LIMIT = 120
+  if (!message) return <span className="text-slate-300">—</span>
+  if (message.length <= LIMIT) {
+    return <p style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', fontSize: 11 }}>{message}</p>
+  }
+  return (
+    <div>
+      <p style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', fontSize: 11 }}>
+        {expanded ? message : message.slice(0, LIMIT) + '…'}
+      </p>
+      <button
+        onClick={() => setExpanded(v => !v)}
+        style={{ fontSize: 10, color: 'var(--color-accent-blue)', background: 'none', border: 'none', cursor: 'pointer', padding: '2px 0', fontWeight: 600 }}
+      >
+        {expanded ? '▲ Show less' : '▼ Read more'}
+      </button>
+    </div>
+  )
+}
+
+
 function VendorApplicationsQuickView() {
   const [pendingApps, setPendingApps] = React.useState<{ id: number; fullname: string; email: string; status: string; created_at: string }[]>([])
   const [loadingApps, setLoadingApps] = React.useState(true)
@@ -877,7 +900,8 @@ export default function OperationsPage() {
                           <td className="px-3 py-3 text-blue-600"><a href={`mailto:${lead.email}`}>{lead.email}</a></td>
                           <td className="px-3 py-3 text-slate-500">{lead.phone ? <a href={`tel:${lead.phone}`} className="text-green-600 font-medium">{lead.phone}</a> : '—'}</td>
                           <td className="px-3 py-3 text-slate-500 max-w-[100px] truncate">{lead.service || '—'}</td>
-                          <td className="px-3 py-3 text-slate-500 max-w-[200px]"><p className="truncate" title={lead.message}>{lead.message}</p></td>
+                          <td className="px-3 py-3 text-slate-500" style={{ maxWidth: 260 }}>
+                            <MessageCell message={lead.message} /></td>
                           <td className="px-3 py-3">
                             <span className="px-2 py-1 rounded-full text-[10px] font-bold capitalize" style={{ background: cfg.bg, color: cfg.color }}>{lead.status}</span>
                           </td>

@@ -44,6 +44,13 @@ const FOOTER_LINKS = [
       { label: 'Disclaimer',        href: '/disclaimer'  },
     ],
   },
+  {
+    heading: 'KS Websites',
+    links: [
+      { label: '💼 Career Portal',  href: 'https://career.karyasaarthi.com' },
+      { label: '🌐 KsHub Portal',   href: 'https://karyasaarthi.in'         },
+    ],
+  },
 ]
 
 const SOCIALS = [
@@ -200,7 +207,7 @@ export default function Footer() {
       <style>{`
         .footer-main-grid {
           display: grid;
-          grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+          grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr;
           gap: 40px;
         }
         .footer-link {
@@ -215,7 +222,11 @@ export default function Footer() {
           border-color: var(--color-accent-blue) !important;
           color: var(--color-accent-blue) !important;
         }
-        @media (max-width: 1100px) {
+        @media (max-width: 1200px) {
+          .footer-main-grid { grid-template-columns: 1fr 1fr 1fr 1fr; }
+          .footer-brand-col { grid-column: span 2 !important; }
+        }
+        @media (max-width: 900px) {
           .footer-main-grid { grid-template-columns: 1fr 1fr 1fr; }
           .footer-brand-col { grid-column: span 1 !important; }
         }
