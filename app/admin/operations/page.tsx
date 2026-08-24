@@ -168,6 +168,8 @@ export default function OperationsPage() {
   const [servicesCatFilter, setServicesCatFilter] = useState('all')
   const [servicesSearch, setServicesSearch] = useState('')
   const [servicesAudienceFilter, setServicesAudienceFilter] = useState<'all'|'student'|'business'>('all')
+  const [selectedServices, setSelectedServices] = useState<Set<number>>(new Set())
+  const [bulkDeleting, setBulkDeleting] = useState(false)
   const [showServiceForm, setShowServiceForm] = useState(false)
   const [editingServiceId, setEditingServiceId] = useState<number|null>(null)
   const [savingService, setSavingService] = useState(false)
@@ -229,7 +231,7 @@ export default function OperationsPage() {
     }
     if (activeTab === 'services') {
       setServicesLoading(true)
-      fetch('/api/admin/services').then(r => r.json()).then(d => setServices(d.services || [])).catch(() => {}).finally(() => setServicesLoading(false))
+      fetch('/api/admin/services?limit=200').then(r => r.json()).then(d => setServices(d.services || [])).catch(() => {}).finally(() => setServicesLoading(false))
     }
     if (activeTab === 'contact_leads') {
       setContactLoading(true)
@@ -714,7 +716,7 @@ export default function OperationsPage() {
               alert(`❌ Error saving service:\n${result.error || 'Unknown error'}${result.details ? '\n' + result.details : ''}`)
               return
             }
-            const d = await fetch('/api/admin/services').then(r => r.json())
+            const d = await fetch('/api/admin/services?limit=200').then(r => r.json())
             setServices(d.services || [])
             setShowServiceForm(false); setEditingServiceId(null)
             setServiceForm(BLANK_FORM)
@@ -725,18 +727,59 @@ export default function OperationsPage() {
           }
         }
 
+        const bulkDelete = async () => {
+          if (selectedServices.size === 0) return
+          if (!confirm(`Delete ${selectedServices.size} service(s)? This cannot be undone.`)) return
+          setBulkDeleting(true)
+          try {
+            await Promise.all([...selectedServices].map(id =>
+              fetch(`/api/admin/services?id=${id}`, { method: 'DELETE' })
+            ))
+            setServices(p => p.filter(s => !selectedServices.has(s.id)))
+            setSelectedServices(new Set())
+          } finally { setBulkDeleting(false) }
+        }
+
         return (
           <div className="space-y-5">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
                 <h2 className="text-xl font-bold text-navy font-heading">🛒 Services Manager</h2>
-                <p className="text-slate-400 text-sm mt-0.5">{services.length} services · {services.filter(s=>s.is_active).length} active</p>
+                <p className="text-slate-400 text-sm mt-0.5">{services.length} services total · {filteredServices.length} shown · {services.filter(s=>s.is_active).length} active</p>
               </div>
               <button onClick={() => { setShowServiceForm(true); setEditingServiceId(null); setServiceForm(BLANK_FORM) }}
                 className="px-4 py-2.5 rounded-xl font-bold text-white text-sm cursor-pointer hover:opacity-90 flex items-center gap-2 self-start sm:self-auto"
                 style={{ background: '#ff7a3d' }}>
                 <span>+</span> Add New Service
               </button>
+            </div>
+
+            {/* Bulk select toolbar */}
+            <div className="flex flex-wrap items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-200">
+              <label className="flex items-center gap-2 text-sm font-semibold text-slate-600 cursor-pointer">
+                <input type="checkbox"
+                  checked={selectedServices.size === filteredServices.length && filteredServices.length > 0}
+                  onChange={e => {
+                    if (e.target.checked) setSelectedServices(new Set(filteredServices.map(s => s.id)))
+                    else setSelectedServices(new Set())
+                  }}
+                  className="w-4 h-4 rounded cursor-pointer" />
+                Select All ({filteredServices.length})
+              </label>
+              {selectedServices.size > 0 && (
+                <>
+                  <span className="text-xs text-slate-400">{selectedServices.size} selected</span>
+                  <button onClick={bulkDelete} disabled={bulkDeleting}
+                    className="px-4 py-2 rounded-lg text-xs font-bold text-white cursor-pointer disabled:opacity-60"
+                    style={{ background: '#EF4444' }}>
+                    {bulkDeleting ? '⏳ Deleting...' : `🗑 Delete ${selectedServices.size} Selected`}
+                  </button>
+                  <button onClick={() => setSelectedServices(new Set())}
+                    className="px-3 py-2 rounded-lg text-xs font-bold text-slate-500 bg-white border border-slate-200 cursor-pointer">
+                    Clear
+                  </button>
+                </>
+              )}
             </div>
 
             {/* Audience filter bar */}
@@ -887,7 +930,7 @@ export default function OperationsPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {filteredServices.map(s => (
                   <motion.div key={s.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-                    className={`bg-white rounded-2xl border shadow-sm hover:shadow-md transition-shadow overflow-hidden ${!s.is_active ? 'opacity-60' : ''} ${s.is_featured ? 'border-accent/30' : 'border-slate-100'}`}
+                    className={`bg-white rounded-2xl border shadow-sm hover:shadow-md transition-shadow overflow-hidden ${!s.is_active ? 'opacity-60' : ''} ${selectedServices.has(s.id) ? 'border-blue-400 ring-2 ring-blue-200' : s.is_featured ? 'border-accent/30' : 'border-slate-100'}`}
                     style={{ display: 'flex', flexDirection: 'column' }}>
                     {/* Image */}
                     <div className="relative overflow-hidden flex-shrink-0 rounded-t-2xl"
@@ -902,6 +945,17 @@ export default function OperationsPage() {
                       )}
                       {s.is_featured && <span className="absolute top-2 left-2 px-2 py-0.5 rounded-full bg-accent text-white text-[9px] font-bold">⭐ Featured</span>}
                       {!s.is_active && <span className="absolute top-2 right-2 px-2 py-0.5 rounded-full bg-black/50 text-white text-[9px] font-bold">Inactive</span>}
+                      {/* Select checkbox */}
+                      <label className="absolute top-2 left-2 cursor-pointer z-10" onClick={e => e.stopPropagation()}>
+                        <input type="checkbox"
+                          checked={selectedServices.has(s.id)}
+                          onChange={e => {
+                            const next = new Set(selectedServices)
+                            if (e.target.checked) next.add(s.id); else next.delete(s.id)
+                            setSelectedServices(next)
+                          }}
+                          className="w-4 h-4 rounded cursor-pointer accent-blue-500" />
+                      </label>
                       {/* Audience badge */}
                       {s.tags?.includes('student') && !s.tags?.includes('business') && (
                         <span className="absolute bottom-2 left-2 px-2 py-0.5 rounded-full bg-blue-500 text-white text-[9px] font-bold">🎓 Student</span>
