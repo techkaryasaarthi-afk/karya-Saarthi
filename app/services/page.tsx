@@ -226,6 +226,7 @@ export default function ServicesPage() {
   const [wishlist, setWishlist] = useState<Set<number>>(new Set())
   const [enquireService, setEnquireService] = useState<Service | null>(null)
   const [showFilters, setShowFilters] = useState(false)
+  const [audience, setAudience] = useState<'all' | 'student' | 'business'>('all')
 
 
   const fetchServices = useCallback(async () => {
@@ -233,6 +234,7 @@ export default function ServicesPage() {
     const params = new URLSearchParams({
       category, sort, page: page.toString(), limit: '12',
       ...(search ? { q: search } : {}),
+      ...(audience !== 'all' ? { audience } : {}),
     })
     try {
       const res = await fetch(`/api/services?${params}`)
@@ -240,7 +242,7 @@ export default function ServicesPage() {
       setServices(data.services || [])
       setTotal(data.total || 0)
     } catch {} finally { setLoading(false) }
-  }, [category, sort, search, page])
+  }, [category, sort, search, page, audience])
 
   useEffect(() => { fetchServices() }, [fetchServices])
 
@@ -279,6 +281,63 @@ export default function ServicesPage() {
           <span style={{ display: 'inline-block', fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '4px 12px', borderRadius: 'var(--radius-pill)', backgroundColor: 'rgba(0,153,255,0.1)', color: 'var(--color-accent-blue)', border: '1px solid rgba(0,153,255,0.2)', marginBottom: 16 }}>🛍️ Service Marketplace</span>
           <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(28px, 4vw, 52px)', fontWeight: 700, color: 'var(--color-ink)', letterSpacing: '-2px', marginBottom: 12 }}>Professional <span style={{ color: 'var(--color-accent-blue)' }}>Services</span></h1>
           <p style={{ fontSize: 15, color: 'var(--color-ink-muted)', maxWidth: 480, margin: '0 auto 28px' }}>Thesis Writing, Web Development, Digital Marketing &amp; More — All Under One Platform</p>
+
+          {/* ── Audience Toggle ── */}
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 28 }}>
+            <div style={{
+              display: 'inline-flex',
+              backgroundColor: 'var(--color-surface-2)',
+              border: '1px solid var(--color-hairline)',
+              borderRadius: 'var(--radius-pill)',
+              padding: 4,
+              gap: 4,
+              position: 'relative',
+            }}>
+              {([
+                { key: 'all',     label: 'All',        icon: '🌐', desc: 'All Services' },
+                { key: 'student', label: 'Students',   icon: '🎓', desc: 'For Students' },
+                { key: 'business',label: 'Businesses', icon: '💼', desc: 'For Businesses' },
+              ] as const).map(opt => (
+                <button
+                  key={opt.key}
+                  onClick={() => { setAudience(opt.key); setPage(1) }}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: 6,
+                    padding: '10px 22px', borderRadius: 'var(--radius-pill)',
+                    fontSize: 13, fontWeight: 700, border: 'none', cursor: 'pointer',
+                    transition: 'all 0.25s cubic-bezier(0.16,1,0.3,1)',
+                    background: audience === opt.key
+                      ? (opt.key === 'student' ? 'linear-gradient(135deg,#3B82F6,#6366f1)'
+                        : opt.key === 'business' ? 'linear-gradient(135deg,#10B981,#059669)'
+                        : 'linear-gradient(135deg,var(--color-accent-blue),#6366f1)')
+                      : 'transparent',
+                    color: audience === opt.key ? '#fff' : 'var(--color-ink-muted)',
+                    boxShadow: audience === opt.key ? '0 4px 16px rgba(0,0,0,0.2)' : 'none',
+                    transform: audience === opt.key ? 'scale(1.04)' : 'scale(1)',
+                  }}
+                >
+                  <span style={{ fontSize: 16 }}>{opt.icon}</span>
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Audience context badge */}
+          {audience !== 'all' && (
+            <div style={{
+              display: 'inline-flex', alignItems: 'center', gap: 8, marginBottom: 20,
+              padding: '6px 16px', borderRadius: 'var(--radius-pill)',
+              background: audience === 'student' ? 'rgba(59,130,246,0.1)' : 'rgba(16,185,129,0.1)',
+              border: `1px solid ${audience === 'student' ? 'rgba(59,130,246,0.25)' : 'rgba(16,185,129,0.25)'}`,
+              fontSize: 12, fontWeight: 600,
+              color: audience === 'student' ? '#3B82F6' : '#10B981',
+            }}>
+              {audience === 'student' ? '🎓 Showing services curated for Students' : '💼 Showing services curated for Businesses'}
+              <button onClick={() => { setAudience('all'); setPage(1) }} style={{ fontSize: 12, color: 'inherit', background: 'none', border: 'none', cursor: 'pointer', opacity: 0.7, marginLeft: 4 }}>✕</button>
+            </div>
+          )}
+
           <div style={{ position: 'relative', maxWidth: 520, margin: '0 auto' }}>
             <span style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', color: 'var(--color-ink-muted)', fontSize: 15 }}>🔍</span>
             <input type="text" placeholder="Search — thesis, website, business plan…" value={search} onChange={e => { setSearch(e.target.value); setPage(1) }}

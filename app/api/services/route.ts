@@ -3,7 +3,6 @@ export const revalidate = 0
 
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { getCurrentUser } from '@/lib/auth/middleware'
 
 // GET /api/services
 export async function GET(request: Request) {
@@ -15,6 +14,7 @@ export async function GET(request: Request) {
   const page = parseInt(searchParams.get('page') || '1')
   const minPrice = searchParams.get('minPrice')
   const maxPrice = searchParams.get('maxPrice')
+  const audience = searchParams.get('audience') // 'student' | 'business' | null
   const offset = (page - 1) * limit
 
   const supabase = await createClient()
@@ -33,6 +33,14 @@ export async function GET(request: Request) {
   if (minPrice) query = query.gte('price_min', parseFloat(minPrice))
   if (maxPrice) query = query.lte('price_max', parseFloat(maxPrice))
 
+  // Audience filter via tags — services tagged 'student' appear in Student view,
+  // 'business' in Business view. Untagged services appear in ALL views.
+  if (audience === 'student') {
+    query = query.contains('tags', ['student'])
+  } else if (audience === 'business') {
+    query = query.contains('tags', ['business'])
+  }
+
   // Sorting
   switch (sort) {
     case 'price_asc': query = query.order('price_min', { ascending: true }); break
@@ -46,7 +54,7 @@ export async function GET(request: Request) {
   const { data, error, count } = await query
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
-  // Sanitize featured_image: reject plain page URLs that aren't actual image files
+  // Sanitize featured_image
   const IMAGE_EXT = /\.(png|jpe?g|webp|gif|svg|avif|bmp)(\?.*)?$/i
   const SUPABASE_STORAGE = /supabase\.(co|in).*\/storage\//i
   const GOOGLE_DRIVE = /lh3\.googleusercontent\.com/i

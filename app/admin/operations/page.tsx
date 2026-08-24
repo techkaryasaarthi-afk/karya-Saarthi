@@ -167,10 +167,11 @@ export default function OperationsPage() {
   const [servicesLoading, setServicesLoading] = useState(false)
   const [servicesCatFilter, setServicesCatFilter] = useState('all')
   const [servicesSearch, setServicesSearch] = useState('')
+  const [servicesAudienceFilter, setServicesAudienceFilter] = useState<'all'|'student'|'business'>('all')
   const [showServiceForm, setShowServiceForm] = useState(false)
   const [editingServiceId, setEditingServiceId] = useState<number|null>(null)
   const [savingService, setSavingService] = useState(false)
-  const [serviceForm, setServiceForm] = useState({ title: '', category: 'Academic', short_description: '', price_min: '', price_max: '', delivery_days: '3', featured_image: '', tags: '', is_featured: false, is_active: true })
+  const [serviceForm, setServiceForm] = useState({ title: '', category: 'Academic', short_description: '', price_min: '', price_max: '', delivery_days: '3', featured_image: '', tags: '', audience: 'both' as 'student'|'business'|'both', is_featured: false, is_active: true })
   // Chat/meetings
   const [showDMChat, setShowDMChat] = useState(false)
   const [showMeetings, setShowMeetings] = useState(false)
@@ -673,15 +674,40 @@ export default function OperationsPage() {
         const filteredServices = services.filter(s => {
           const catMatch = servicesCatFilter === 'all' || s.category.toLowerCase() === servicesCatFilter.toLowerCase()
           const searchMatch = !servicesSearch.trim() || s.title.toLowerCase().includes(servicesSearch.toLowerCase())
-          return catMatch && searchMatch
+          const audienceMatch = servicesAudienceFilter === 'all' || s.tags?.includes(servicesAudienceFilter)
+          return catMatch && searchMatch && audienceMatch
         })
         const CAT_COLORS: Record<string,string> = { Academic:'#8B5CF6', Technical:'#3B82F6', Business:'#10B981', Government:'#F59E0B', Design:'#EC4899', Marketing:'#EF4444', Legal:'#6B7280', Other:'#FF6B35' }
+
+        // Helper: get audience from tags
+        const getAudienceFromTags = (tags: string[]) => {
+          const hasStudent = tags.includes('student')
+          const hasBusiness = tags.includes('business')
+          if (hasStudent && hasBusiness) return 'both'
+          if (hasStudent) return 'student'
+          if (hasBusiness) return 'business'
+          return 'both'
+        }
+
+        // Helper: build tags string from audience
+        const buildTagsWithAudience = (rawTags: string, audience: string) => {
+          const baseTags = rawTags.split(',').map(t => t.trim()).filter(t => t && t !== 'student' && t !== 'business')
+          if (audience === 'student') baseTags.push('student')
+          else if (audience === 'business') baseTags.push('business')
+          else { baseTags.push('student'); baseTags.push('business') }
+          return baseTags
+        }
+
+        const BLANK_FORM = { title: '', category: 'Academic', short_description: '', price_min: '', price_max: '', delivery_days: '3', featured_image: '', tags: '', audience: 'both' as 'student'|'business'|'both', is_featured: false, is_active: true }
 
         const saveService = async () => {
           setSavingService(true)
           try {
             const method = editingServiceId ? 'PATCH' : 'POST'
-            const body = editingServiceId ? { id: editingServiceId, ...serviceForm } : serviceForm
+            const finalTags = buildTagsWithAudience(serviceForm.tags, serviceForm.audience)
+            const body = editingServiceId
+              ? { id: editingServiceId, ...serviceForm, tags: finalTags }
+              : { ...serviceForm, tags: finalTags }
             const res = await fetch('/api/admin/services', { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
             const result = await res.json()
             if (!res.ok) {
@@ -691,7 +717,7 @@ export default function OperationsPage() {
             const d = await fetch('/api/admin/services').then(r => r.json())
             setServices(d.services || [])
             setShowServiceForm(false); setEditingServiceId(null)
-            setServiceForm({ title: '', category: 'Academic', short_description: '', price_min: '', price_max: '', delivery_days: '3', featured_image: '', tags: '', is_featured: false, is_active: true })
+            setServiceForm(BLANK_FORM)
           } catch (e: unknown) {
             alert(`❌ Network error: ${e instanceof Error ? e.message : String(e)}`)
           } finally {
@@ -706,11 +732,29 @@ export default function OperationsPage() {
                 <h2 className="text-xl font-bold text-navy font-heading">🛒 Services Manager</h2>
                 <p className="text-slate-400 text-sm mt-0.5">{services.length} services · {services.filter(s=>s.is_active).length} active</p>
               </div>
-              <button onClick={() => { setShowServiceForm(true); setEditingServiceId(null); setServiceForm({ title: '', category: 'Academic', short_description: '', price_min: '', price_max: '', delivery_days: '3', featured_image: '', tags: '', is_featured: false, is_active: true }) }}
+              <button onClick={() => { setShowServiceForm(true); setEditingServiceId(null); setServiceForm(BLANK_FORM) }}
                 className="px-4 py-2.5 rounded-xl font-bold text-white text-sm cursor-pointer hover:opacity-90 flex items-center gap-2 self-start sm:self-auto"
                 style={{ background: '#ff7a3d' }}>
                 <span>+</span> Add New Service
               </button>
+            </div>
+
+            {/* Audience filter bar */}
+            <div className="flex flex-wrap gap-2 items-center">
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider mr-1">Audience:</span>
+              {(['all', 'student', 'business'] as const).map(a => (
+                <button key={a} onClick={() => setServicesAudienceFilter(a)}
+                  className="px-3 py-1.5 rounded-full text-xs font-bold cursor-pointer transition-all border"
+                  style={{
+                    background: servicesAudienceFilter === a
+                      ? (a === 'student' ? '#3B82F6' : a === 'business' ? '#10B981' : '#1a1a2e')
+                      : 'white',
+                    color: servicesAudienceFilter === a ? '#fff' : '#64748b',
+                    borderColor: servicesAudienceFilter === a ? 'transparent' : '#e2e8f0',
+                  }}>
+                  {a === 'all' ? '🌐 All' : a === 'student' ? '🎓 Students' : '💼 Businesses'}
+                </button>
+              ))}
             </div>
 
             {/* Filter bar */}
@@ -768,7 +812,37 @@ export default function OperationsPage() {
                         <p className="text-[10px] text-green-600 font-medium">✅ Google Drive link auto-converted</p>
                       )}
                       <input value={serviceForm.tags} onChange={e => setServiceForm(p => ({ ...p, tags: e.target.value }))}
-                        placeholder="Tags (comma-separated)" className="px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" />
+                        placeholder="Extra tags (comma-separated, optional)" className="px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none" />
+                    </div>
+                    {/* Audience Selector */}
+                    <div>
+                      <p className="text-xs font-bold text-slate-500 mb-2 uppercase tracking-wider">Who is this service for? *</p>
+                      <div className="flex gap-3 flex-wrap">
+                        {([
+                          { key: 'student',  icon: '🎓', label: 'Students',    color: '#3B82F6', bg: 'rgba(59,130,246,0.1)',  border: 'rgba(59,130,246,0.3)'  },
+                          { key: 'business', icon: '💼', label: 'Businesses', color: '#10B981', bg: 'rgba(16,185,129,0.1)', border: 'rgba(16,185,129,0.3)' },
+                          { key: 'both',     icon: '🌐', label: 'Both',       color: '#6366f1', bg: 'rgba(99,102,241,0.1)',  border: 'rgba(99,102,241,0.3)'  },
+                        ] as const).map(opt => (
+                          <button
+                            key={opt.key}
+                            type="button"
+                            onClick={() => setServiceForm(p => ({ ...p, audience: opt.key }))}
+                            style={{
+                              display: 'flex', alignItems: 'center', gap: 6,
+                              padding: '10px 18px', borderRadius: 12, border: '2px solid',
+                              fontSize: 13, fontWeight: 700, cursor: 'pointer',
+                              background: serviceForm.audience === opt.key ? opt.bg : 'white',
+                              color: serviceForm.audience === opt.key ? opt.color : '#94a3b8',
+                              borderColor: serviceForm.audience === opt.key ? opt.border : '#e2e8f0',
+                              transition: 'all 0.18s',
+                              boxShadow: serviceForm.audience === opt.key ? `0 0 0 3px ${opt.bg}` : 'none',
+                            }}
+                          >
+                            <span style={{ fontSize: 18 }}>{opt.icon}</span>
+                            {opt.label}
+                          </button>
+                        ))}
+                      </div>
                     </div>
                     <div className="flex gap-4">
                       <label className="flex items-center gap-2 text-sm text-slate-600 cursor-pointer">
@@ -815,7 +889,7 @@ export default function OperationsPage() {
                   <motion.div key={s.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
                     className={`bg-white rounded-2xl border shadow-sm hover:shadow-md transition-shadow overflow-hidden ${!s.is_active ? 'opacity-60' : ''} ${s.is_featured ? 'border-accent/30' : 'border-slate-100'}`}
                     style={{ display: 'flex', flexDirection: 'column' }}>
-                    {/* Image — landscape aspect ratio for better card layout */}
+                    {/* Image */}
                     <div className="relative overflow-hidden flex-shrink-0 rounded-t-2xl"
                       style={{ aspectRatio: '16/9', background: `${CAT_COLORS[s.category] || 'var(--color-accent-blue)'}15` }}>
                       {s.featured_image ? (
@@ -828,6 +902,16 @@ export default function OperationsPage() {
                       )}
                       {s.is_featured && <span className="absolute top-2 left-2 px-2 py-0.5 rounded-full bg-accent text-white text-[9px] font-bold">⭐ Featured</span>}
                       {!s.is_active && <span className="absolute top-2 right-2 px-2 py-0.5 rounded-full bg-black/50 text-white text-[9px] font-bold">Inactive</span>}
+                      {/* Audience badge */}
+                      {s.tags?.includes('student') && !s.tags?.includes('business') && (
+                        <span className="absolute bottom-2 left-2 px-2 py-0.5 rounded-full bg-blue-500 text-white text-[9px] font-bold">🎓 Student</span>
+                      )}
+                      {s.tags?.includes('business') && !s.tags?.includes('student') && (
+                        <span className="absolute bottom-2 left-2 px-2 py-0.5 rounded-full bg-emerald-500 text-white text-[9px] font-bold">💼 Business</span>
+                      )}
+                      {s.tags?.includes('student') && s.tags?.includes('business') && (
+                        <span className="absolute bottom-2 left-2 px-2 py-0.5 rounded-full bg-indigo-500 text-white text-[9px] font-bold">🌐 Both</span>
+                      )}
                     </div>
                     <div className="p-4 flex flex-col flex-1">
                       <div className="flex items-start justify-between gap-2 mb-2">
@@ -843,7 +927,8 @@ export default function OperationsPage() {
                       {s.short_description && <p className="text-xs text-slate-400 line-clamp-2 mb-3">{s.short_description}</p>}
                       <div className="flex gap-2 mt-auto pt-3 border-t border-slate-50">
                         <button onClick={() => {
-                          setServiceForm({ title: s.title, category: s.category, short_description: s.short_description || '', price_min: s.price_min?.toString() || '', price_max: s.price_max?.toString() || '', delivery_days: s.delivery_days.toString(), featured_image: s.featured_image || '', tags: (s.tags || []).join(', '), is_featured: s.is_featured, is_active: s.is_active })
+                          const aud = getAudienceFromTags(s.tags || [])
+                          setServiceForm({ title: s.title, category: s.category, short_description: s.short_description || '', price_min: s.price_min?.toString() || '', price_max: s.price_max?.toString() || '', delivery_days: s.delivery_days.toString(), featured_image: s.featured_image || '', tags: (s.tags || []).filter((t: string) => t !== 'student' && t !== 'business').join(', '), audience: aud, is_featured: s.is_featured, is_active: s.is_active })
                           setEditingServiceId(s.id); setShowServiceForm(true)
                         }} className="flex-1 py-2 rounded-lg bg-blue-50 text-blue-600 text-xs font-bold cursor-pointer hover:bg-blue-100 flex items-center justify-center gap-1">✏️ Edit</button>
                         <button onClick={async () => {
