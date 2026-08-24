@@ -182,13 +182,16 @@ function buildNavGroups(user: UserData): NavGroup[] {
     all.push({ title: 'Saarthi Pillars', items: pillarItems })
   }
 
-  // ── Operations ──────────────────────────────────────
+  // ── Operations ──────────────────────────────────────────
   const isProjectManager = dept === 'operations' && pillar === 'project_manager'
   if (isSuperAdmin || (dept === 'operations' && !isProjectManager)) {
     all.push({
       title: 'Operations Management',
       items: [
         { icon: '⚙️', label: 'Operations Board', href: '/admin/operations' },
+        { icon: '🛒', label: 'Services Manager', href: '/admin/operations?tab=services' },
+        { icon: '📬', label: 'Contact Leads', href: '/admin/operations?tab=contact_leads' },
+        { icon: '📧', label: 'Subscribers', href: '/admin/operations?tab=subscribers' },
       ],
     })
   }

@@ -534,29 +534,25 @@ export default function MarketingPage() {
               <div className="p-12 text-center text-slate-400"><span className="text-4xl block mb-3">⚡</span><p>No Saarthi Xpress services yet. Click &ldquo;+ New Express Service&rdquo; to get started.</p></div>
             ) : (
               <table className="w-full text-xs">
-                <thead><tr className="bg-slate-50 border-b border-slate-100">{['Title', 'Category', 'Delivery', 'Price', 'Status', 'Actions'].map(h => <th key={h} className="px-4 py-3 text-left font-bold text-slate-400 uppercase text-[10px]">{h}</th>)}</tr></thead>
+                <thead><tr className="bg-slate-50 border-b border-slate-100">{['Title', 'Category', 'Price', 'Status', 'Actions'].map(h => <th key={h} className="px-4 py-3 text-left font-bold text-slate-400 uppercase text-[10px]">{h}</th>)}</tr></thead>
                 <tbody>
-                  {xServices.map(s => {
-                    const dLabel = s.delivery_hours === 0 ? 'Expert' : s.delivery_hours === 1 ? '1 Hour' : s.delivery_hours === 4 ? '4 Hours' : '24 Hours'
-                    return (
-                      <tr key={s.id} className="border-b border-slate-50 hover:bg-slate-50/60">
-                        <td className="px-4 py-3 font-semibold" style={{ color: '#1a1a2e' }}>
-                          <div className="truncate max-w-xs">{s.title}</div>
-                          {s.is_featured && <span className="text-[9px] text-orange-500 font-bold">⭐ Featured</span>}
-                        </td>
-                        <td className="px-4 py-3"><span className="px-2 py-0.5 rounded-full bg-orange-100 text-orange-600 text-[10px] font-bold capitalize">{s.category}</span></td>
-                        <td className="px-4 py-3"><span className="px-2 py-0.5 rounded-full text-[10px] font-bold" style={{ background: 'rgba(245,158,11,0.15)', color: '#d97706' }}>⚡ {dLabel}</span></td>
-                        <td className="px-4 py-3 text-slate-600">{s.price_min ? `₹${s.price_min}+` : '—'}</td>
-                        <td className="px-4 py-3"><span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${s.is_active ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-500'}`}>{s.is_active ? 'Active' : 'Hidden'}</span></td>
-                        <td className="px-4 py-3">
-                          <div className="flex items-center gap-2">
-                            <button onClick={() => startEditX(s)} className="text-blue-500 hover:text-blue-700 font-bold cursor-pointer">✏️ Edit</button>
-                            <button onClick={() => deleteXService(s.id)} className="text-slate-300 hover:text-red-500 transition-colors cursor-pointer">🗑️</button>
-                          </div>
-                        </td>
-                      </tr>
-                    )
-                  })}
+                  {xServices.map(s => (
+                    <tr key={s.id} className="border-b border-slate-50 hover:bg-slate-50/60">
+                      <td className="px-4 py-3 font-semibold" style={{ color: '#1a1a2e' }}>
+                        <div className="truncate max-w-xs">{s.title}</div>
+                        {s.is_featured && <span className="text-[9px] text-orange-500 font-bold">⭐ Featured</span>}
+                      </td>
+                      <td className="px-4 py-3"><span className="px-2 py-0.5 rounded-full bg-orange-100 text-orange-600 text-[10px] font-bold capitalize">{s.category}</span></td>
+                      <td className="px-4 py-3 text-slate-600">{s.price_min ? `₹${s.price_min}+` : '—'}</td>
+                      <td className="px-4 py-3"><span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${s.is_active ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-500'}`}>{s.is_active ? 'Active' : 'Hidden'}</span></td>
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-2">
+                          <button onClick={() => startEditX(s)} className="text-blue-500 hover:text-blue-700 font-bold cursor-pointer">✏️ Edit</button>
+                          <button onClick={() => deleteXService(s.id)} className="text-slate-300 hover:text-red-500 transition-colors cursor-pointer">🗑️</button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             )}

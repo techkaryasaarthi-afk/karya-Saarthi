@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useEffect, useState, useCallback } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { motion, AnimatePresence } from '@/lib/motion'
 import DepartmentMeetings from '@/components/admin/DepartmentMeetings'
 
@@ -129,7 +130,11 @@ function VendorApplicationsQuickView() {
 }
 
 export default function OperationsPage() {
-  const [activeTab, setActiveTab] = useState<Tab>('dashboard')
+  const searchParams = useSearchParams()
+  const [activeTab, setActiveTab] = useState<Tab>(() => {
+    const tab = searchParams.get('tab')
+    return (tab && TABS.some(t => t.key === tab) ? tab : 'dashboard') as Tab
+  })
   const [slaData, setSlaData] = useState<SLAData>({ breached: 0, atRisk: 0, onTrack: 0 })
   const [vendors, setVendors] = useState<Vendor[]>([])
   const [sops, setSops] = useState<SOP[]>([])
@@ -202,6 +207,11 @@ export default function OperationsPage() {
   }, [])
 
   useEffect(() => { fetchData() }, [fetchData])
+  // Sync tab from URL query param (e.g. sidebar links use ?tab=services)
+  useEffect(() => {
+    const tab = searchParams.get('tab')
+    if (tab && TABS.some(t => t.key === tab)) setActiveTab(tab as Tab)
+  }, [searchParams])
   useEffect(() => { 
     fetch('/api/auth/me').then(r => r.json()).then(d => { 
       setMeId(d.id || 0); 
@@ -803,25 +813,26 @@ export default function OperationsPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {filteredServices.map(s => (
                   <motion.div key={s.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-                    className={`bg-white rounded-2xl border shadow-sm hover:shadow-md transition-shadow overflow-hidden ${!s.is_active ? 'opacity-60' : ''} ${s.is_featured ? 'border-accent/30' : 'border-slate-100'}`}>
-                    {/* Image — portrait aspect ratio for poster images */}
+                    className={`bg-white rounded-2xl border shadow-sm hover:shadow-md transition-shadow overflow-hidden ${!s.is_active ? 'opacity-60' : ''} ${s.is_featured ? 'border-accent/30' : 'border-slate-100'}`}
+                    style={{ display: 'flex', flexDirection: 'column' }}>
+                    {/* Image — landscape aspect ratio for better card layout */}
                     <div className="relative overflow-hidden flex-shrink-0 rounded-t-2xl"
-                      style={{ aspectRatio: '3/4', background: `${CAT_COLORS[s.category] || 'var(--color-accent-blue)'}15` }}>
+                      style={{ aspectRatio: '16/9', background: `${CAT_COLORS[s.category] || 'var(--color-accent-blue)'}15` }}>
                       {s.featured_image ? (
                         // eslint-disable-next-line @next/next/no-img-element
-                        <img src={s.featured_image} alt={s.title} className="w-full h-full object-contain" onError={e => (e.currentTarget.style.display='none')} />
+                        <img src={s.featured_image} alt={s.title} className="w-full h-full object-cover" onError={e => (e.currentTarget.style.display='none')} />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
-                          <span className="text-5xl opacity-25">🛒</span>
+                          <span className="text-4xl opacity-25">🛒</span>
                         </div>
                       )}
                       {s.is_featured && <span className="absolute top-2 left-2 px-2 py-0.5 rounded-full bg-accent text-white text-[9px] font-bold">⭐ Featured</span>}
                       {!s.is_active && <span className="absolute top-2 right-2 px-2 py-0.5 rounded-full bg-black/50 text-white text-[9px] font-bold">Inactive</span>}
                     </div>
-                    <div className="p-4">
+                    <div className="p-4 flex flex-col flex-1">
                       <div className="flex items-start justify-between gap-2 mb-2">
-                        <div>
-                          <h4 className="font-bold text-navy text-sm line-clamp-1 font-heading">{s.title}</h4>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-bold text-navy text-sm line-clamp-2 font-heading">{s.title}</h4>
                           <span className="inline-block mt-1 px-2 py-0.5 rounded-full text-[9px] font-bold text-white" style={{ background: CAT_COLORS[s.category] || 'var(--color-accent-blue)' }}>{s.category}</span>
                         </div>
                         <div className="text-right flex-shrink-0">
@@ -830,15 +841,15 @@ export default function OperationsPage() {
                         </div>
                       </div>
                       {s.short_description && <p className="text-xs text-slate-400 line-clamp-2 mb-3">{s.short_description}</p>}
-                      <div className="flex gap-2">
+                      <div className="flex gap-2 mt-auto pt-3 border-t border-slate-50">
                         <button onClick={() => {
                           setServiceForm({ title: s.title, category: s.category, short_description: s.short_description || '', price_min: s.price_min?.toString() || '', price_max: s.price_max?.toString() || '', delivery_days: s.delivery_days.toString(), featured_image: s.featured_image || '', tags: (s.tags || []).join(', '), is_featured: s.is_featured, is_active: s.is_active })
                           setEditingServiceId(s.id); setShowServiceForm(true)
-                        }} className="flex-1 py-1.5 rounded-lg bg-blue-50 text-blue-500 text-xs font-bold cursor-pointer hover:bg-blue-100">✏️ Edit</button>
+                        }} className="flex-1 py-2 rounded-lg bg-blue-50 text-blue-600 text-xs font-bold cursor-pointer hover:bg-blue-100 flex items-center justify-center gap-1">✏️ Edit</button>
                         <button onClick={async () => {
                           await fetch(`/api/admin/services?id=${s.id}`, { method: 'DELETE' })
                           setServices(p => p.filter(x => x.id !== s.id))
-                        }} className="w-8 h-8 rounded-lg bg-red-50 text-red-400 text-xs flex items-center justify-center cursor-pointer hover:bg-red-100">🗑</button>
+                        }} className="w-9 h-9 rounded-lg bg-red-50 text-red-400 text-sm flex items-center justify-center cursor-pointer hover:bg-red-100">🗑</button>
                       </div>
                     </div>
                   </motion.div>
