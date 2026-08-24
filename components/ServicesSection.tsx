@@ -1,41 +1,50 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useReveal } from '@/hooks/useReveal'
 
-const serviceCategories = [
-  { key: 'all',       label: 'All' },
-  { key: 'academic',  label: 'Academic' },
-  { key: 'tech',      label: 'Web & Tech' },
-  { key: 'design',    label: 'Design' },
-  { key: 'marketing', label: 'Marketing' },
-  { key: 'writing',   label: 'Writing' },
-]
+interface Service {
+  id: number
+  title: string
+  slug: string
+  category: string
+  short_description: string
+  price_min: number | null
+  featured_image: string | null
+  is_featured: boolean
+  tags: string[]
+}
 
-const serviceCards = [
-  { category: 'academic',  icon: '📖', title: 'Thesis & Research',      desc: 'Complete thesis support from topic selection to final submission with expert guidance.', badge: 'BESTSELLER', spotlight: false },
-  { category: 'tech',      icon: '💻', title: 'Professional Website',    desc: 'Responsive, modern business websites built with the latest technologies.',                badge: 'HOT',        spotlight: false },
-  { category: 'design',    icon: '🎨', title: 'Logo & Brand Design',     desc: 'Unique, professional logo design with unlimited revisions.',                               badge: '',           spotlight: false },
-  { category: 'academic',  icon: '📝', title: 'Assignment Help',         desc: 'Subject-wise assignment help with detailed explanations and learning.',                    badge: 'POPULAR',    spotlight: false },
-  { category: 'marketing', icon: '📈', title: 'SEO & Digital Marketing', desc: 'Improve your ranking and online presence with proven strategies.',                        badge: '',           spotlight: true  }, /* gradient card */
-  { category: 'writing',   icon: '✍️', title: 'Blog & Article Writing',  desc: 'SEO-optimized content that engages readers and drives organic traffic.',                  badge: '',           spotlight: false },
-  { category: 'design',    icon: '🎬', title: 'Video Editing',           desc: 'YouTube videos, reels, and promotional videos with cinematic quality.',                   badge: '',           spotlight: false },
-  { category: 'writing',   icon: '📄', title: 'Resume & Cover Letter',   desc: 'ATS-friendly professional resumes that get you noticed by top recruiters.',               badge: '',           spotlight: false },
-  { category: 'tech',      icon: '🤖', title: 'AI & Automation',         desc: 'Custom AI solutions and workflow automation that scale with your business.',              badge: '',           spotlight: true  }, /* gradient card */
-]
+const CAT_COLORS: Record<string, string> = {
+  academic:   '#8B5CF6',
+  technical:  '#3B82F6',
+  business:   '#10B981',
+  government: '#F59E0B',
+  design:     '#EC4899',
+  marketing:  '#EF4444',
+  legal:      '#6B7280',
+  other:      '#FF6B35',
+}
 
-const badgeStyle: Record<string, React.CSSProperties> = {
-  BESTSELLER: { backgroundColor: '#0d1f17', color: '#22c55e' },
-  HOT:        { backgroundColor: '#1a0808', color: '#f87171' },
-  POPULAR:    { backgroundColor: '#0d1020', color: '#818cf8' },
-  NEW:        { backgroundColor: '#001a1a', color: '#2dd4bf' },
+const CAT_ICONS: Record<string, string> = {
+  academic: '🎓', technical: '💻', business: '💼',
+  government: '🏛️', design: '🎨', marketing: '📣', legal: '⚖️', other: '📁',
 }
 
 export default function ServicesSection() {
-  const [active, setActive] = useState('all')
+  const [services, setServices] = useState<Service[]>([])
+  const [loading, setLoading] = useState(true)
   const sectionRef = useReveal()
-  const filtered = active === 'all' ? serviceCards : serviceCards.filter(s => s.category === active)
+
+  useEffect(() => {
+    fetch('/api/services?limit=6&sort=featured')
+      .then(r => r.json())
+      .then(d => setServices(d.services || []))
+      .catch(() => {})
+      .finally(() => setLoading(false))
+  }, [])
 
   return (
     <section
@@ -78,130 +87,88 @@ export default function ServicesSection() {
           </p>
         </div>
 
-        {/* Category Tab Pills */}
-        <div className="reveal" style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 8, marginBottom: 48 }}>
-          {serviceCategories.map(c => (
-            <button
-              key={c.key}
-              onClick={() => setActive(c.key)}
-              className={`tab-pill${active === c.key ? ' active' : ''}`}
-            >
-              {c.label}
-            </button>
-          ))}
-        </div>
-
         {/* Service Cards Grid */}
         <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(3, 1fr)',
-            gap: 'var(--space-sm)',
-          }}
+          style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'var(--space-sm)' }}
           className="services-grid"
         >
-          {filtered.map((s, i) =>
-            s.spotlight ? (
-              /* Gradient spotlight card */
-              <div
-                key={s.title}
-                className={`reveal card-spotlight ${s.title.includes('AI') ? 'card-spotlight-violet' : 'card-spotlight-orange'}`}
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'flex-end',
-                  minHeight: 200,
-                  transitionDelay: `${i * 40}ms`,
-                }}
-              >
-                <span style={{ fontSize: 36, marginBottom: 12 }}>{s.icon}</span>
-                <h3 className="text-headline" style={{ color: 'var(--color-ink)', marginBottom: 8 }}>{s.title}</h3>
-                <p className="text-body-sm" style={{ color: 'rgba(255,255,255,0.75)', marginBottom: 20 }}>{s.desc}</p>
-                <Link href="/services" className="btn-translucent" style={{ alignSelf: 'flex-start' }}>
-                  Learn more
-                </Link>
-              </div>
-            ) : (
-              /* Standard template-card */
-              <div
-                key={s.title}
-                className="reveal card-template"
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  minHeight: 200,
-                  padding: 20,
-                  transitionDelay: `${i * 40}ms`,
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 16 }}>
-                  <div style={{
-                    width: 40, height: 40,
-                    backgroundColor: 'var(--color-surface-2)',
-                    borderRadius: 'var(--radius-md)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: 20,
-                    flexShrink: 0,
-                  }}>
-                    {s.icon}
-                  </div>
-                  {s.badge && (
-                    <span style={{
-                      fontSize: 10, fontWeight: 700,
-                      padding: '3px 7px',
-                      borderRadius: 'var(--radius-pill)',
-                      letterSpacing: '0.04em',
-                      ...badgeStyle[s.badge],
-                    }}>
-                      {s.badge}
-                    </span>
-                  )}
+          {loading
+            ? Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="card-template" style={{ minHeight: 200, padding: 20, opacity: 0.5, animation: 'pulse 1.5s ease-in-out infinite' }}>
+                  <div style={{ width: 40, height: 40, borderRadius: 8, backgroundColor: 'var(--color-surface-2)', marginBottom: 16 }} />
+                  <div style={{ height: 14, borderRadius: 6, backgroundColor: 'var(--color-surface-2)', marginBottom: 10, width: '70%' }} />
+                  <div style={{ height: 10, borderRadius: 6, backgroundColor: 'var(--color-surface-2)', marginBottom: 6 }} />
+                  <div style={{ height: 10, borderRadius: 6, backgroundColor: 'var(--color-surface-2)', width: '80%' }} />
                 </div>
-                <h3 className="text-body-sm" style={{ color: 'var(--color-ink)', marginBottom: 8, fontWeight: 600 }}>{s.title}</h3>
-                <p className="text-body-sm" style={{ color: 'var(--color-ink-muted)', lineHeight: 1.5, flex: 1 }}>{s.desc}</p>
-                <Link
-                  href="/services"
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: 4,
-                    marginTop: 16,
-                    fontSize: 13,
-                    fontWeight: 500,
-                    color: 'var(--color-accent-blue)',
-                    textDecoration: 'none',
-                    transition: 'gap var(--dur-fast) var(--ease-out)',
-                  }}
-                  onMouseEnter={e => (e.currentTarget.style.gap = '8px')}
-                  onMouseLeave={e => (e.currentTarget.style.gap = '4px')}
-                >
-                  Explore →
-                </Link>
-              </div>
-            )
-          )}
+              ))
+            : services.length === 0
+            ? null
+            : services.map((s, i) => {
+                const catKey = s.category.toLowerCase()
+                const color = CAT_COLORS[catKey] || CAT_COLORS.other
+                const icon  = CAT_ICONS[catKey]  || '📁'
+                return (
+                  <Link
+                    key={s.id}
+                    href={`/services/${s.slug}`}
+                    className="reveal card-template"
+                    style={{
+                      display: 'flex', flexDirection: 'column',
+                      minHeight: 200, padding: 0,
+                      textDecoration: 'none', overflow: 'hidden',
+                      transitionDelay: `${i * 40}ms`,
+                    }}
+                  >
+                    {/* Image or color block */}
+                    {s.featured_image ? (
+                      <div style={{ position: 'relative', aspectRatio: '16/9', flexShrink: 0, background: `${color}15` }}>
+                        <Image src={s.featured_image} alt={s.title} fill style={{ objectFit: 'cover' }} sizes="400px" />
+                      </div>
+                    ) : (
+                      <div style={{ aspectRatio: '16/9', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: `linear-gradient(135deg,${color}18,${color}06)`, fontSize: 36 }}>
+                        {icon}
+                      </div>
+                    )}
+                    {/* Content */}
+                    <div style={{ padding: '16px 18px', display: 'flex', flexDirection: 'column', flex: 1 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+                        <span style={{ fontSize: 10, fontWeight: 700, textTransform: 'capitalize', padding: '2px 8px', borderRadius: 'var(--radius-pill)', background: `${color}18`, color }}>{s.category}</span>
+                        {s.is_featured && <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 7px', borderRadius: 'var(--radius-pill)', backgroundColor: '#0d1f17', color: '#22c55e' }}>⭐ Featured</span>}
+                      </div>
+                      <h3 className="text-body-sm" style={{ color: 'var(--color-ink)', marginBottom: 6, fontWeight: 700, fontFamily: 'var(--font-display)' }}>{s.title}</h3>
+                      <p className="text-body-sm" style={{ color: 'var(--color-ink-muted)', lineHeight: 1.5, flex: 1, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{s.short_description}</p>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 14 }}>
+                        {s.price_min
+                          ? <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--color-ink)' }}>From ₹{s.price_min.toLocaleString('en-IN')}</span>
+                          : <span style={{ fontSize: 12, color: 'var(--color-ink-muted)' }}>Custom pricing</span>}
+                        <span style={{ fontSize: 13, fontWeight: 500, color: 'var(--color-accent-blue)' }}>Explore →</span>
+                      </div>
+                    </div>
+                  </Link>
+                )
+              })}
         </div>
 
         {/* View all CTA */}
-        <div className="reveal" style={{ textAlign: 'center', marginTop: 48 }}>
-          <Link href="/services" className="btn-secondary">
-            View All Services
-          </Link>
-        </div>
+        {!loading && (
+          <div className="reveal" style={{ textAlign: 'center', marginTop: 48 }}>
+            <Link href="/services" className="btn-secondary">
+              View All Services
+            </Link>
+          </div>
+        )}
       </div>
 
       <style>{`
-        .services-grid {
-          grid-template-columns: repeat(3, 1fr);
-        }
-        @media (max-width: 1024px) {
-          .services-grid { grid-template-columns: repeat(2, 1fr); }
-        }
+        .services-grid { grid-template-columns: repeat(3, 1fr); }
+        @media (max-width: 1024px) { .services-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 640px) {
           .services-grid { grid-template-columns: 1fr; }
           .services-section { padding-left: 16px !important; padding-right: 16px !important; }
         }
+        @keyframes pulse { 0%,100% { opacity: 0.5 } 50% { opacity: 0.8 } }
       `}</style>
     </section>
   )
 }
+
