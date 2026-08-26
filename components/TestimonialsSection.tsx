@@ -417,7 +417,7 @@ export default function TestimonialsSection() {
         /* Card width by column count */
         .t-slider > .tcard { flex-shrink: 0; width: calc((100% - 40px) / 3); }
         @media (max-width: 1100px) { .t-slider > .tcard { width: calc((100% - 20px) / 2) !important; } }
-        @media (max-width: 768px)  { .t-slider > .tcard { width: calc((100% - 20px) / 2) !important; } }
+        @media (max-width: 768px)  { .t-slider > .tcard { width: calc((100% - 16px) / 2) !important; } }
         @media (max-width: 480px)  { .t-slider > .tcard { width: 100% !important; } }
 
         /* ── Testimonial card ───────────────────────────────── */
@@ -542,17 +542,29 @@ export default function TestimonialsSection() {
 
         /* ── Responsive overrides ───────────────────────────── */
         @media (max-width: 768px) {
-          .t-container { padding: 0 20px; }
-          .t-header { margin-bottom: 36px; }
-          .t-heading { font-size: clamp(24px, 6vw, 36px); }
-          .t-rating-block { text-align: left; }
-          .t-rating-block__score { justify-content: flex-start; }
-          .tcard { padding: 22px 20px 20px; }
+          .t-container    { padding: 0 16px; }
+          .t-header       { margin-bottom: 28px; flex-direction: column; align-items: flex-start; gap: 16px; }
+          .t-heading      { font-size: clamp(22px, 6vw, 32px); margin-bottom: 6px; }
+          .t-rating-block { text-align: left; width: 100%; }
+          .t-rating-block__score  { justify-content: flex-start; }
+          .t-rating-block__number { font-size: 32px; }
+          .tcard          { padding: 20px 16px 16px; border-radius: 16px; }
+          .tcard__text    { font-size: 13px; -webkit-line-clamp: 4; margin-bottom: 16px; }
+          .tcard__footer  { padding-top: 14px; }
+          .t-controls     { gap: 20px; margin-top: 24px; }
         }
         @media (max-width: 480px) {
-          .t-header { flex-direction: column; align-items: flex-start; }
-          .t-rating-block { width: 100%; }
-          .testimonials-section { padding: 56px 0; }
+          .testimonials-section   { padding: 48px 0; }
+          .t-container            { padding: 0 16px; }
+          .t-header               { margin-bottom: 24px; }
+          /* On very small screens, collapse rating row to hide the large 42px number */
+          .t-rating-block__number { font-size: 28px; }
+          .t-rating-block__score  { gap: 8px; }
+          /* Remove edge fade on single-col to prevent clipping */
+          .t-track {
+            mask-image: none !important;
+            -webkit-mask-image: none !important;
+          }
         }
       `}</style>
     </section>

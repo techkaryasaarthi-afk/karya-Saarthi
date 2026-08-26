@@ -336,26 +336,26 @@ export default function HeroSection() {
             padding-right: 16px !important;
             padding-top: calc(56px + 32px) !important;
           }
-          .hero-grid { gap: 24px; }
+          /* Hide the video column completely on small phones — text only */
+          .hero-right { display: none !important; }
+          .hero-grid { grid-template-columns: 1fr !important; gap: 0 !important; }
           .hero-headline {
-            font-size: clamp(28px, 9vw, 44px) !important;
+            font-size: clamp(30px, 9vw, 44px) !important;
             line-height: 1.15 !important;
             letter-spacing: -0.8px !important;
           }
           .hero-cta-row {
-            flex-direction: column;
+            flex-direction: column !important;
             align-items: stretch !important;
             gap: 10px !important;
           }
           .hero-cta-row .btn-primary,
           .hero-cta-row .btn-secondary {
-            width: 100%;
+            width: 100% !important;
             min-width: unset !important;
-            justify-content: center;
+            justify-content: center !important;
           }
-          .hero-stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-          /* Hide floating decorative badges — they overflow on small screens */
-          .hero-right > div:not(.hero-video-card) { display: none !important; }
+          .hero-stats-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important; }
         }
       `}</style>
     </section>
