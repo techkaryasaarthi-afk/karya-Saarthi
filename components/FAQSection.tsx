@@ -134,6 +134,7 @@ export default function FAQSection() {
         borderTop: '1px solid var(--color-hairline-soft)',
       }}
       aria-label="Frequently asked questions"
+      className="faq-section"
     >
       {/* JSON-LD FAQ structured data */}
       <script
@@ -189,6 +190,17 @@ export default function FAQSection() {
           </a>
         </div>
       </div>
+
+      <style>{`
+        @media (max-width: 640px) {
+          .faq-section {
+            padding-left: 16px !important;
+            padding-right: 16px !important;
+          }
+          .faq-section > div { padding-left: 0 !important; padding-right: 0 !important; }
+          .faq-section h2 { font-size: clamp(22px, 7vw, 36px) !important; }
+        }
+      `}</style>
     </section>
   )
 }

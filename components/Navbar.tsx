@@ -8,7 +8,7 @@ import { usePathname, useRouter } from 'next/navigation'
 const navLinks = [
   { label: 'Home', href: '/' },
   { label: 'Services', href: '/services' },
-  { label: '⚡ Saarthi Xpress', href: '/saarthi-xpress', badge: 'NEW', isExpress: true },
+  { label: '⚡ Saarthi Xpress', href: '/saarthi-xpress', isExpress: true },
   { label: 'Blogs', href: '/blogs' },
   { label: 'About Us', href: '/about' },
 ]

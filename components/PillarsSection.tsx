@@ -3,56 +3,54 @@
 import Link from 'next/link'
 import { useReveal } from '@/hooks/useReveal'
 
-const pillars = [
+const reasons = [
   {
-    id: 'campus',
-    name: 'Campus Saarthi',
-    tagline: 'Empowering Students',
-    description: 'Campus ambassadors network connecting students with academic excellence, internships, and college projects.',
     icon: '🎓',
+    title: 'Learn While We Deliver',
+    description: 'We don\'t just complete your project — we teach you the concepts behind it, so you grow with every service.',
     accent: '#6a4cf5',
-    features: ['College Ambassador Program', 'Academic Project Support', 'Campus Workshops', 'Student Referral Rewards'],
-    stat: '200+ Colleges',
+    stat: '1000+',
+    statLabel: 'Students Mentored',
   },
   {
-    id: 'digital',
-    name: 'Digital Saarthi',
-    tagline: 'Content & Presence',
-    description: 'Full-stack digital solutions for websites, SEO, content creation, social media and brand building.',
-    icon: '💻',
-    accent: '#0099ff',
-    features: ['Website Development', 'SEO & Digital Marketing', 'Content Creation', 'Social Media Management'],
-    stat: '1000+ Websites',
-  },
-  {
-    id: 'calling',
-    name: 'Calling Saarthi',
-    tagline: 'Voice-First Outreach',
-    description: 'Dedicated calling team for lead generation, customer follow-up, and relationship management.',
-    icon: '📞',
+    icon: '⚡',
+    title: 'Fast Turnaround',
+    description: 'Our Saarthi Express team handles urgent tasks within 1–24 hours without compromising on quality.',
     accent: '#ff7a3d',
-    features: ['Lead Generation Calls', 'Customer Follow-up', 'Survey & Feedback', 'Appointment Setting'],
-    stat: '50K+ Calls/yr',
+    stat: '500+',
+    statLabel: 'Express Orders',
   },
   {
-    id: 'government',
-    name: 'Government Saarthi',
-    tagline: 'Public Sector Excellence',
-    description: 'Specialised services for government schemes, tender documentation, and compliance management.',
-    icon: '🏛️',
+    icon: '🔒',
+    title: 'Secure & Confidential',
+    description: 'Your data, projects, and submissions remain strictly confidential. We sign NDAs upon request.',
     accent: '#22c55e',
-    features: ['Tender Documentation', 'Government Scheme Advisory', 'Compliance Management', 'Policy Research'],
-    stat: '500+ Tenders',
+    stat: '100%',
+    statLabel: 'Data Privacy',
   },
   {
-    id: 'market',
-    name: 'Market Saarthi',
-    tagline: 'On-Ground Presence',
-    description: 'Field agents network for hyperlocal marketing, offline lead generation, and on-ground business development.',
-    icon: '🗺️',
+    icon: '👨‍💼',
+    title: 'Expert Professionals',
+    description: 'Every project is handled by domain experts — engineers, researchers, designers, and digital marketers.',
+    accent: '#0099ff',
+    stat: '50+',
+    statLabel: 'Expert Professionals',
+  },
+  {
+    icon: '💰',
+    title: 'Transparent Pricing',
+    description: 'No hidden fees. Get clear quotes upfront with flexible payment options and student-friendly plans.',
     accent: '#f59e0b',
-    features: ['Field Sales Agents', 'Hyperlocal Marketing', 'Offline Lead Capture', 'Territory Management'],
-    stat: '12 States',
+    stat: '98%',
+    statLabel: 'Satisfaction Rate',
+  },
+  {
+    icon: '🌍',
+    title: 'All-in-One Platform',
+    description: 'From academics to business — web development, research, SEO, video editing, and more under one roof.',
+    accent: '#e11d48',
+    stat: '100+',
+    statLabel: 'Services Available',
   },
 ]
 
@@ -62,7 +60,7 @@ export default function PillarsSection() {
   return (
     <section
       ref={ref as React.RefObject<HTMLElement>}
-      className="pillars-section"
+      className="why-section"
       style={{
         backgroundColor: 'var(--color-canvas)',
         borderTop: '1px solid var(--color-hairline-soft)',
@@ -71,106 +69,104 @@ export default function PillarsSection() {
         overflow: 'hidden',
       }}
     >
-      {/* Faint dot grid */}
-      <div style={{ position: 'absolute', inset: 0, opacity: 0.025, backgroundImage: 'radial-gradient(circle at 1px 1px, #fff 1px, transparent 0)', backgroundSize: '28px 28px', pointerEvents: 'none' }} />
+      {/* Subtle background gradient */}
+      <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse 70% 50% at 50% 0%, rgba(106,76,245,0.04) 0%, transparent 70%)', pointerEvents: 'none' }} />
 
       <div style={{ maxWidth: 1199, margin: '0 auto', position: 'relative' }}>
 
         {/* Header */}
         <div className="reveal" style={{ textAlign: 'center', marginBottom: 56 }}>
-          <span style={{ display: 'inline-block', fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '4px 12px', borderRadius: 'var(--radius-pill)', backgroundColor: 'rgba(0,153,255,0.1)', color: 'var(--color-accent-blue)', border: '1px solid rgba(0,153,255,0.2)', marginBottom: 16 }}>
-            Our Saarthi
+          <span style={{ display: 'inline-block', fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '4px 12px', borderRadius: 'var(--radius-pill)', backgroundColor: 'rgba(106,76,245,0.1)', color: '#6a4cf5', border: '1px solid rgba(106,76,245,0.2)', marginBottom: 16 }}>
+            Why Us
           </span>
           <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700, color: 'var(--color-ink)', letterSpacing: '-1.5px', marginBottom: 14 }}>
-            Five Specialised <span style={{ color: 'var(--color-accent-blue)' }}>Pillars</span>
+            Why Choose <span style={{ color: '#6a4cf5' }}>Karya Saarthi</span>?
           </h2>
-          <p style={{ fontSize: 'var(--text-body-size)', color: 'var(--color-ink-muted)', maxWidth: 520, margin: '0 auto', lineHeight: 1.6 }}>
-            Specialised verticals working together to deliver comprehensive solutions across student and business success.
+          <p style={{ fontSize: 'var(--text-body-size)', color: 'var(--color-ink-muted)', maxWidth: 540, margin: '0 auto', lineHeight: 1.6 }}>
+            We&apos;re not just a service provider — we&apos;re your growth partner. Here&apos;s what sets us apart from the rest.
           </p>
         </div>
 
         {/* Cards grid */}
-        <div className="pillars-grid">
-          {pillars.map((pillar, i) => (
+        <div className="why-grid">
+          {reasons.map((r, i) => (
             <div
-              key={pillar.id}
-              className="reveal pillar-card"
-              style={{ animationDelay: `${i * 80}ms`, '--accent': pillar.accent } as React.CSSProperties}
+              key={r.title}
+              className="reveal why-card"
+              style={{ animationDelay: `${i * 80}ms`, '--accent': r.accent } as React.CSSProperties}
             >
               {/* Top accent bar */}
-              <div style={{ height: 2, backgroundColor: pillar.accent, borderRadius: '2px 2px 0 0', marginBottom: 20 }} />
+              <div style={{ height: 3, background: `linear-gradient(90deg, ${r.accent}, ${r.accent}88)`, borderRadius: '3px 3px 0 0', marginBottom: 20 }} />
 
               {/* Icon + stat */}
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 16 }}>
-                <div style={{ width: 44, height: 44, borderRadius: 'var(--radius-md)', backgroundColor: `${pillar.accent}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22 }}>
-                  {pillar.icon}
+                <div style={{ width: 48, height: 48, borderRadius: 'var(--radius-md)', backgroundColor: `${r.accent}15`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, border: `1px solid ${r.accent}30` }}>
+                  {r.icon}
                 </div>
-                <span style={{ fontSize: 10, fontWeight: 700, padding: '3px 8px', borderRadius: 'var(--radius-pill)', backgroundColor: 'var(--color-surface-2)', color: 'var(--color-ink-muted)', border: '1px solid var(--color-hairline)', whiteSpace: 'nowrap' }}>
-                  {pillar.stat}
-                </span>
+                <div style={{ textAlign: 'right' }}>
+                  <p style={{ fontSize: 18, fontWeight: 800, color: r.accent, lineHeight: 1, marginBottom: 2 }}>{r.stat}</p>
+                  <p style={{ fontSize: 9, fontWeight: 600, color: 'var(--color-ink-muted)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{r.statLabel}</p>
+                </div>
               </div>
 
               {/* Content */}
-              <h3 style={{ fontSize: 15, fontWeight: 700, color: 'var(--color-ink)', marginBottom: 4, fontFamily: 'var(--font-display)', letterSpacing: '-0.3px' }}>{pillar.name}</h3>
-              <p style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: pillar.accent, marginBottom: 10 }}>{pillar.tagline}</p>
-              <p style={{ fontSize: 12, color: 'var(--color-ink-muted)', lineHeight: 1.55, marginBottom: 14 }}>{pillar.description}</p>
-
-              {/* Features list */}
-              <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 20px', display: 'flex', flexDirection: 'column', gap: 6 }}>
-                {pillar.features.map(f => (
-                  <li key={f} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: 'var(--color-ink-muted)' }}>
-                    <div style={{ width: 5, height: 5, borderRadius: '50%', backgroundColor: pillar.accent, flexShrink: 0 }} />
-                    {f}
-                  </li>
-                ))}
-              </ul>
-
-              {/* CTA */}
-              <Link
-                href={`/contact?pillar=${pillar.id}`}
-                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', padding: '9px 0', borderRadius: 'var(--radius-md)', border: `1px solid ${pillar.accent}40`, backgroundColor: `${pillar.accent}12`, color: pillar.accent, fontSize: 12, fontWeight: 600, textDecoration: 'none', transition: 'background-color var(--dur-fast)' }}
-              >
-                Connect →
-              </Link>
+              <h3 style={{ fontSize: 15, fontWeight: 700, color: 'var(--color-ink)', marginBottom: 8, fontFamily: 'var(--font-display)', letterSpacing: '-0.3px' }}>{r.title}</h3>
+              <p style={{ fontSize: 12, color: 'var(--color-ink-muted)', lineHeight: 1.6 }}>{r.description}</p>
             </div>
           ))}
         </div>
 
         {/* Bottom CTA */}
-        <div className="reveal" style={{ textAlign: 'center', marginTop: 48 }}>
-          <p style={{ fontSize: 13, color: 'var(--color-ink-muted)', marginBottom: 16 }}>All Saarthi teams work together under one platform: Karya Saarthi</p>
-          <Link
-            href="/contact"
-            className="btn-primary"
-            style={{ display: 'inline-flex', padding: '14px 32px' }}
-          >
-            Start Your Journey with Us
-          </Link>
+        <div className="reveal" style={{ textAlign: 'center', marginTop: 52 }}>
+          <p style={{ fontSize: 13, color: 'var(--color-ink-muted)', marginBottom: 16 }}>Join 1000+ students and businesses who chose Karya Saarthi</p>
+          <div style={{ display: 'inline-flex', gap: 12, flexWrap: 'wrap', justifyContent: 'center' }}>
+            <Link
+              href="/services"
+              className="btn-primary"
+              style={{ display: 'inline-flex', padding: '14px 32px' }}
+            >
+              Explore Services →
+            </Link>
+            <Link
+              href="/contact"
+              className="btn-secondary"
+              style={{ display: 'inline-flex', padding: '14px 32px' }}
+            >
+              Talk to Us
+            </Link>
+          </div>
         </div>
       </div>
 
       <style>{`
-        .pillars-grid {
+        .why-grid {
           display: grid;
-          grid-template-columns: repeat(5, 1fr);
-          gap: 12px;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 16px;
         }
-        .pillar-card {
+        .why-card {
           background: var(--color-surface-1);
           border: 1px solid var(--color-hairline-soft);
           border-radius: var(--radius-lg);
           padding: 20px;
           display: flex;
           flex-direction: column;
-          transition: border-color var(--dur-fast), transform var(--dur-fast);
+          transition: border-color var(--dur-fast), transform var(--dur-fast), box-shadow var(--dur-fast);
         }
-        .pillar-card:hover {
+        .why-card:hover {
           border-color: var(--accent, var(--color-hairline));
-          transform: translateY(-4px);
+          transform: translateY(-5px);
+          box-shadow: 0 12px 32px rgba(0,0,0,0.08);
         }
-        @media (max-width: 1200px) { .pillars-grid { grid-template-columns: repeat(3, 1fr); } }
-        @media (max-width: 768px)  { .pillars-grid { grid-template-columns: repeat(2, 1fr); } .pillars-section { padding-left: 16px !important; padding-right: 16px !important; } }
-        @media (max-width: 480px)  { .pillars-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 1024px) { .why-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 768px)  {
+          .why-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+          .why-section { padding-left: 16px !important; padding-right: 16px !important; }
+        }
+        @media (max-width: 480px)  {
+          .why-grid { grid-template-columns: 1fr; gap: 10px; }
+          .why-card { padding: 16px; }
+        }
       `}</style>
     </section>
   )

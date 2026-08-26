@@ -5,59 +5,70 @@ import { useState } from 'react'
 
 const categories = [
   {
-    title: 'Programming & Tech',
+    title: 'Website Development',
     color: '#0099ff',
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" width={28} height={28}>
-        <polyline points="16 18 22 12 16 6" /><polyline points="8 6 2 12 8 18" />
+        <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+        <line x1="8" y1="21" x2="16" y2="21" /><line x1="12" y1="17" x2="12" y2="21" />
       </svg>
     ),
   },
   {
-    title: 'Graphics & Design',
-    color: '#d44df0',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" width={28} height={28}>
-        <circle cx="13.5" cy="6.5" r=".5" fill="currentColor" /><circle cx="17.5" cy="10.5" r=".5" fill="currentColor" />
-        <circle cx="8.5" cy="7.5" r=".5" fill="currentColor" /><circle cx="6.5" cy="12.5" r=".5" fill="currentColor" />
-        <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.476-1.125-.29-.289-.48-.7-.48-1.187 0-.926.71-1.687 1.648-1.687H16c2.757 0 5-2.104 5-4.702C21 6.376 16.973 2 12 2z" />
-      </svg>
-    ),
-  },
-  {
-    title: 'Digital Marketing',
-    color: '#ff7a3d',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" width={28} height={28}>
-        <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-      </svg>
-    ),
-  },
-  {
-    title: 'Writing & Translation',
+    title: 'Research Paper Writing',
     color: '#22c55e',
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" width={28} height={28}>
-        <path d="M12 20h9" /><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+        <polyline points="14 2 14 8 20 8" /><line x1="16" y1="13" x2="8" y2="13" /><line x1="16" y1="17" x2="8" y2="17" /><line x1="10" y1="9" x2="8" y2="9" />
       </svg>
     ),
   },
   {
-    title: 'Video & Animation',
+    title: 'Assignment Help',
     color: '#f59e0b',
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" width={28} height={28}>
-        <polygon points="23 7 16 12 23 17 23 7" /><rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
+        <path d="M9 11l3 3L22 4" /><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
       </svg>
     ),
   },
   {
-    title: 'AI Services',
+    title: '3D Model Design',
+    color: '#d44df0',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" width={28} height={28}>
+        <path d="M12 2L2 7l10 5 10-5-10-5z" /><path d="M2 17l10 5 10-5" /><path d="M2 12l10 5 10-5" />
+      </svg>
+    ),
+  },
+  {
+    title: 'SEO Services & Ads',
+    color: '#ff7a3d',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" width={28} height={28}>
+        <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+        <line x1="11" y1="8" x2="11" y2="14" /><line x1="8" y1="11" x2="14" y2="11" />
+      </svg>
+    ),
+  },
+  {
+    title: 'API Integration & Automation',
     color: '#6a4cf5',
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" width={28} height={28}>
-        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-        <path d="M7 11V7a5 5 0 0 1 10 0v4" /><circle cx="12" cy="16" r="1" fill="currentColor" />
+        <polyline points="16 18 22 12 16 6" /><polyline points="8 6 2 12 8 18" />
+        <line x1="12" y1="2" x2="12" y2="22" />
+      </svg>
+    ),
+  },
+  {
+    title: 'Video/Reel Editing',
+    color: '#e11d48',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" width={28} height={28}>
+        <polygon points="23 7 16 12 23 17 23 7" /><rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
+        <line x1="5" y1="9" x2="9" y2="9" />
       </svg>
     ),
   },
@@ -134,10 +145,10 @@ export default function ServiceTiles() {
           </h2>
         </div>
 
-        {/* 6-card grid */}
+        {/* 7-card grid */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(6, 1fr)',
+          gridTemplateColumns: 'repeat(7, 1fr)',
           gap: 14,
         }} className="tiles-grid">
           {categories.map((cat, i) => (
@@ -159,12 +170,30 @@ export default function ServiceTiles() {
           to   { opacity: 1; transform: translateY(0); }
         }
         .tiles-grid {
-          grid-template-columns: repeat(6, 1fr);
+          grid-template-columns: repeat(7, 1fr);
         }
-        @media (max-width: 1024px) { .tiles-grid { grid-template-columns: repeat(3, 1fr) !important; } }
-        @media (max-width: 768px) { .tiles-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 10px !important; } .tiles-section { padding-left: 16px !important; padding-right: 16px !important; } }
-        @media (max-width: 640px)  { .tiles-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important; } }
-        @media (max-width: 380px)  { .tiles-grid { grid-template-columns: repeat(2, 1fr) !important; } }
+        @media (max-width: 1200px) { .tiles-grid { grid-template-columns: repeat(4, 1fr) !important; } }
+        @media (max-width: 1024px) { .tiles-grid { grid-template-columns: repeat(4, 1fr) !important; } }
+        @media (max-width: 768px)  {
+          .tiles-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 10px !important; }
+          .tiles-section { padding-left: 16px !important; padding-right: 16px !important; }
+        }
+        @media (max-width: 540px)  {
+          .tiles-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
+        }
+        /* Tile card compact on mobile */
+        @media (max-width: 540px) {
+          .tiles-grid a {
+            padding: 18px 10px !important;
+          }
+          .tiles-grid a span {
+            font-size: 11px !important;
+          }
+          .tiles-grid a svg {
+            width: 22px !important;
+            height: 22px !important;
+          }
+        }
       `}</style>
     </section>
   )

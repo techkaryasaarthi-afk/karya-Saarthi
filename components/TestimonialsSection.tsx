@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 
+/* ── Google "G" logo ──────────────────────────────────────────── */
 const GoogleG = () => (
   <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
     <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -11,6 +12,14 @@ const GoogleG = () => (
   </svg>
 )
 
+/* ── Quote icon ───────────────────────────────────────────────── */
+const QuoteIcon = ({ color }: { color: string }) => (
+  <svg width="32" height="24" viewBox="0 0 32 24" fill="none" aria-hidden="true">
+    <path d="M0 24V14.4C0 6.4 4.8 1.6 14.4 0L16 3.2C11.2 4.267 8.533 6.933 8 11.2H14.4V24H0ZM17.6 24V14.4C17.6 6.4 22.4 1.6 32 0L33.6 3.2C28.8 4.267 26.133 6.933 25.6 11.2H32V24H17.6Z" fill={color} fillOpacity="0.18"/>
+  </svg>
+)
+
+/* ── Types ────────────────────────────────────────────────────── */
 interface GoogleReview {
   author_name: string
   profile_photo_url: string
@@ -19,6 +28,7 @@ interface GoogleReview {
   text: string
 }
 
+/* ── Fallback data ────────────────────────────────────────────── */
 const FALLBACK_REVIEWS: GoogleReview[] = [
   { author_name: 'Priya Sharma',   profile_photo_url: '', rating: 5, relative_time_description: '2 weeks ago',  text: 'Karya Saarthi helped me with my MBA thesis. The quality was outstanding and delivered before deadline. Highly recommend to anyone looking for academic support!' },
   { author_name: 'Rahul Verma',    profile_photo_url: '', rating: 5, relative_time_description: '1 month ago',  text: 'Got my website developed by their team. Professional, responsive, and the design exceeded my expectations. Best investment I\'ve made for my business.' },
@@ -29,79 +39,119 @@ const FALLBACK_REVIEWS: GoogleReview[] = [
   { author_name: 'Kavya Reddy',    profile_photo_url: '', rating: 5, relative_time_description: '1 week ago',   text: 'Excellent service! They guided me through every step of my dissertation. The support is genuinely unmatched. 10/10 would recommend.' },
 ]
 
-const AVATAR_COLORS = ['#6366f1','#0ea5e9','#10b981','#f59e0b','#ef4444','#8b5cf6','#ec4899']
-const VISIBLE = 4 // number of cards visible at once (desktop)
+/* ── Accent colours per card ──────────────────────────────────── */
+const ACCENTS = ['#6366f1', '#0ea5e9', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899']
 
-function getVisibleCount() {
-  if (typeof window === 'undefined') return VISIBLE
-  if (window.innerWidth <= 480) return 1
-  if (window.innerWidth <= 768) return 2
-  if (window.innerWidth <= 1024) return 3
-  return VISIBLE
+function getAccent(name: string) {
+  return ACCENTS[name.charCodeAt(0) % ACCENTS.length]
 }
 
-function ReviewCard({ review, active }: { review: GoogleReview; active: boolean }) {
-  const initial = review.author_name?.charAt(0)?.toUpperCase() || '?'
-  const color   = AVATAR_COLORS[review.author_name.charCodeAt(0) % AVATAR_COLORS.length]
-
+/* ── Star row ─────────────────────────────────────────────────── */
+function Stars({ rating, size = 14 }: { rating: number; size?: number }) {
   return (
-    <div style={{
-      backgroundColor: 'var(--color-surface-1)',
-      border: `1px solid ${active ? 'rgba(0,153,255,0.25)' : 'var(--color-hairline-soft)'}`,
-      borderRadius: 'var(--radius-lg)',
-      padding: '24px 22px',
-      display: 'flex', flexDirection: 'column', gap: 14,
-      flexShrink: 0,
-      width: undefined,
-      /* Use opacity transition (GPU-composited) instead of box-shadow/border-color (non-composited) */
-      opacity: active ? 1 : 0.75,
-      transition: 'opacity 0.3s',
-      willChange: 'opacity',
-    }}>
-      {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-        <div style={{ width: 38, height: 38, borderRadius: '50%', backgroundColor: color, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: 15, fontWeight: 700, color: '#fff' }}>
-          {initial}
-        </div>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--color-ink)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{review.author_name}</p>
-          <p style={{ fontSize: 11, color: 'var(--color-ink-muted)' }}>{review.relative_time_description}</p>
-        </div>
-        <div style={{ width: 26, height: 26, backgroundColor: 'var(--color-surface-2)', borderRadius: 'var(--radius-sm)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-          <GoogleG />
-        </div>
-      </div>
-
-      {/* Stars */}
-      <div style={{ display: 'flex', gap: 2 }}>
-        {Array.from({ length: 5 }).map((_, i) => (
-          <svg key={i} viewBox="0 0 24 24" width="13" height="13" aria-hidden="true">
-            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" fill={i < review.rating ? '#fbbc04' : 'var(--color-hairline)'} />
-          </svg>
-        ))}
-      </div>
-
-      {/* Text */}
-      <p style={{ fontSize: 13, color: 'var(--color-ink-muted)', lineHeight: 1.65, flex: 1, display: '-webkit-box', WebkitLineClamp: 4, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-        "{review.text}"
-      </p>
+    <div style={{ display: 'flex', gap: 2 }} aria-label={`${rating} out of 5 stars`}>
+      {Array.from({ length: 5 }).map((_, i) => (
+        <svg key={i} viewBox="0 0 24 24" width={size} height={size} aria-hidden="true">
+          <path
+            d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
+            fill={i < rating ? '#fbbc04' : 'rgba(255,255,255,0.12)'}
+          />
+        </svg>
+      ))}
     </div>
   )
 }
 
-export default function TestimonialsSection() {
-  const [reviews,  setReviews]  = useState<GoogleReview[]>(FALLBACK_REVIEWS)
-  const [index,    setIndex]    = useState(0)
-  const [paused,   setPaused]   = useState(false)
-  const [visibleCount, setVisibleCount] = useState(VISIBLE)
+/* ── Single testimonial card ──────────────────────────────────── */
+function TestimonialCard({
+  review, index, isActive,
+}: {
+  review: GoogleReview
+  index: number
+  isActive: boolean
+}) {
+  const accent  = getAccent(review.author_name)
+  const initial = review.author_name.charAt(0).toUpperCase()
 
+  return (
+    <div
+      className={`tcard${isActive ? ' tcard--active' : ''}`}
+      style={{ '--accent': accent } as React.CSSProperties}
+    >
+      {/* Quote decoration */}
+      <div style={{ marginBottom: 16 }}>
+        <QuoteIcon color={accent} />
+      </div>
+
+      {/* Review text */}
+      <p className="tcard__text">
+        {review.text}
+      </p>
+
+      {/* Footer */}
+      <div className="tcard__footer">
+        {/* Avatar + name */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div
+            style={{
+              width: 44, height: 44, borderRadius: '50%',
+              background: `linear-gradient(135deg, ${accent}cc, ${accent}66)`,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: 17, fontWeight: 800, color: '#fff', flexShrink: 0,
+              border: `2px solid ${accent}44`,
+            }}
+          >
+            {initial}
+          </div>
+          <div style={{ minWidth: 0 }}>
+            <p style={{ fontSize: 14, fontWeight: 700, color: '#fff', marginBottom: 2, lineHeight: 1.2 }}>
+              {review.author_name}
+            </p>
+            <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', lineHeight: 1 }}>
+              {review.relative_time_description}
+            </p>
+          </div>
+        </div>
+
+        {/* Stars + Google badge */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 5, flexShrink: 0 }}>
+          <Stars rating={review.rating} size={13} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '3px 8px', borderRadius: 'var(--radius-pill)', backgroundColor: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)' }}>
+            <GoogleG />
+            <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)', fontWeight: 600 }}>Google</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom accent line */}
+      <div className="tcard__line" />
+    </div>
+  )
+}
+
+/* ── Main section ─────────────────────────────────────────────── */
+export default function TestimonialsSection() {
+  const [reviews,      setReviews]      = useState<GoogleReview[]>(FALLBACK_REVIEWS)
+  const [index,        setIndex]        = useState(0)
+  const [paused,       setPaused]       = useState(false)
+  const [cols,         setCols]         = useState(3)
+  const sliderRef                       = useRef<HTMLDivElement>(null)
+
+  /* ── Responsive column count ──────────────────────────────── */
   useEffect(() => {
-    const update = () => setVisibleCount(getVisibleCount())
+    const update = () => {
+      const w = window.innerWidth
+      if (w <= 480)  setCols(1)
+      else if (w <= 768)  setCols(2)
+      else if (w <= 1100) setCols(2)
+      else setCols(3)
+    }
     update()
     window.addEventListener('resize', update)
     return () => window.removeEventListener('resize', update)
   }, [])
 
+  /* ── Fetch real reviews ───────────────────────────────────── */
   useEffect(() => {
     fetch('/api/reviews')
       .then(r => r.ok ? r.json() : null)
@@ -109,10 +159,9 @@ export default function TestimonialsSection() {
       .catch(() => {})
   }, [])
 
-  // Total pages based on visible cards
-  const maxIndex = Math.max(0, reviews.length - visibleCount)
+  const total    = reviews.length
+  const maxIndex = Math.max(0, total - cols)
 
-  // Clamp index if visibleCount changes
   useEffect(() => {
     setIndex(i => Math.min(i, maxIndex))
   }, [maxIndex])
@@ -120,157 +169,392 @@ export default function TestimonialsSection() {
   const prev = useCallback(() => setIndex(i => Math.max(0, i - 1)), [])
   const next = useCallback(() => setIndex(i => Math.min(maxIndex, i + 1)), [maxIndex])
 
-  // Auto-advance every 4s
+  /* ── Touch / drag swipe ──────────────────────────────────── */
+  const touchStart = useRef(0)
+  const onTouchStart = (e: React.TouchEvent) => { touchStart.current = e.touches[0].clientX }
+  const onTouchEnd   = (e: React.TouchEvent) => {
+    const diff = touchStart.current - e.changedTouches[0].clientX
+    if (Math.abs(diff) > 40) diff > 0 ? next() : prev()
+  }
+
+  /* ── Auto-advance ────────────────────────────────────────── */
   useEffect(() => {
     if (paused) return
-    const t = setInterval(() => {
-      setIndex(i => (i >= maxIndex ? 0 : i + 1))
-    }, 4000)
+    const t = setInterval(() => setIndex(i => i >= maxIndex ? 0 : i + 1), 4500)
     return () => clearInterval(t)
   }, [paused, maxIndex])
 
-  // Rating summary
   const avg = (reviews.reduce((s, r) => s + r.rating, 0) / reviews.length).toFixed(1)
 
   return (
     <section
       id="testimonials"
-      aria-label="Customer reviews"
-      style={{
-        backgroundColor: 'var(--color-surface-1)',
-        paddingTop: 'var(--space-section)',
-        paddingBottom: 'var(--space-section)',
-        borderTop: '1px solid var(--color-hairline-soft)',
-        overflow: 'hidden',
-      }}
+      aria-label="Customer testimonials"
+      className="testimonials-section"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      <div style={{ maxWidth: 1199, margin: '0 auto', paddingLeft: 'var(--space-xl)', paddingRight: 'var(--space-xl)' }}>
+      {/* ── Background decoration ─────────────────────────── */}
+      <div className="t-bg-glow t-bg-glow--left"  aria-hidden="true" />
+      <div className="t-bg-glow t-bg-glow--right" aria-hidden="true" />
+      <div className="t-bg-grid" aria-hidden="true" />
 
-        {/* Header */}
-        <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 44, flexWrap: 'wrap', gap: 20 }}>
-          <div>
-            <span style={{ display: 'inline-block', fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '4px 12px', borderRadius: 'var(--radius-pill)', backgroundColor: 'rgba(251,188,4,0.1)', color: '#fbbc04', border: '1px solid rgba(251,188,4,0.25)', marginBottom: 14 }}>
-              ⭐ Customer Reviews
-            </span>
-            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(24px, 3.5vw, 40px)', fontWeight: 700, color: 'var(--color-ink)', letterSpacing: '-1.5px', marginBottom: 4 }}>
-              What Our Clients Say
+      <div className="t-container">
+
+        {/* ── Header ────────────────────────────────────────── */}
+        <div className="t-header">
+          <div className="t-header__left">
+            <span className="t-badge">⭐ Client Reviews</span>
+            <h2 className="t-heading">
+              What Our <span className="t-heading__accent">Clients Say</span>
             </h2>
-            <p style={{ fontSize: 14, color: 'var(--color-ink-muted)' }}>
+            <p className="t-subheading">
               Trusted by 500+ students and businesses across India
             </p>
           </div>
 
-          {/* Rating summary + nav */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
-            <div style={{ textAlign: 'right' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6, justifyContent: 'flex-end', marginBottom: 4 }}>
-                <span style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 800, color: 'var(--color-ink)', letterSpacing: '-1px' }}>{avg}</span>
-                <div>
-                  <div style={{ display: 'flex', gap: 2 }}>
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <svg key={i} viewBox="0 0 24 24" width="14" height="14"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" fill="#fbbc04" /></svg>
-                    ))}
-                  </div>
-                  <p style={{ fontSize: 10, color: 'var(--color-ink-muted)', fontWeight: 600 }}>on Google</p>
-                </div>
+          {/* Rating summary */}
+          <div className="t-rating-block">
+            <div className="t-rating-block__score">
+              <span className="t-rating-block__number">{avg}</span>
+              <div>
+                <Stars rating={5} size={16} />
+                <p className="t-rating-block__label">on Google</p>
               </div>
-              <p style={{ fontSize: 11, color: 'var(--color-ink-muted)' }}>{reviews.length} reviews</p>
             </div>
-
-            {/* Prev/Next */}
-            <div style={{ display: 'flex', gap: 8 }}>
-              <button
-                onClick={prev} disabled={index === 0} id="testimonials-prev-btn"
-                aria-label="Previous testimonial"
-                style={{
-                  width: 40, height: 40, borderRadius: 'var(--radius-full)',
-                  border: '1px solid var(--color-hairline)',
-                  backgroundColor: 'var(--color-surface-2)',
-                  color: 'var(--color-ink)', fontSize: 16, cursor: 'pointer',
-                  opacity: index === 0 ? 0.35 : 1,
-                  transition: 'opacity 0.15s, background-color 0.15s',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                }}
-              ><span aria-hidden="true">←</span></button>
-              <button
-                onClick={next} disabled={index >= maxIndex} id="testimonials-next-btn"
-                aria-label="Next testimonial"
-                style={{
-                  width: 40, height: 40, borderRadius: 'var(--radius-full)',
-                  border: '1px solid var(--color-hairline)',
-                  backgroundColor: 'var(--color-surface-2)',
-                  color: 'var(--color-ink)', fontSize: 16, cursor: 'pointer',
-                  opacity: index >= maxIndex ? 0.35 : 1,
-                  transition: 'opacity 0.15s, background-color 0.15s',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                }}
-              ><span aria-hidden="true">→</span></button>
-            </div>
+            <p className="t-rating-block__count">{reviews.length} verified reviews</p>
           </div>
         </div>
 
-        {/* Slider */}
-        <div style={{ overflow: 'hidden', position: 'relative' }}>
+        {/* ── Slider track ──────────────────────────────────── */}
+        <div
+          className="t-track"
+          ref={sliderRef}
+          onTouchStart={onTouchStart}
+          onTouchEnd={onTouchEnd}
+        >
           <div
-            className="testimonials-slider"
+            className="t-slider"
             style={{
-              display: 'flex', gap: 16,
-              transform: `translateX(calc(-${index} * (100% / ${visibleCount} + ${16 / visibleCount}px)))`,
-              transition: 'transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+              transform: `translateX(calc(-${index} * (100% / ${cols} + 20px / ${cols})))`,
             }}
           >
             {reviews.map((r, i) => (
-              <ReviewCard key={i} review={r} active={i >= index && i < index + visibleCount} />
+              <TestimonialCard
+                key={i}
+                review={r}
+                index={i}
+                isActive={i >= index && i < index + cols}
+              />
             ))}
           </div>
         </div>
 
-        {/* Dots */}
-        <div style={{ display: 'flex', gap: 6, justifyContent: 'center', marginTop: 28 }}>
-          {Array.from({ length: maxIndex + 1 }).map((_, i) => (
+        {/* ── Controls ──────────────────────────────────────── */}
+        <div className="t-controls">
+          {/* Dot indicators */}
+          <div className="t-dots" role="tablist" aria-label="Review navigation">
+            {Array.from({ length: maxIndex + 1 }).map((_, i) => (
+              <button
+                key={i}
+                role="tab"
+                aria-selected={i === index}
+                aria-label={`Go to review set ${i + 1}`}
+                onClick={() => setIndex(i)}
+                className={`t-dot${i === index ? ' t-dot--active' : ''}`}
+              />
+            ))}
+          </div>
+
+          {/* Arrow buttons */}
+          <div className="t-arrows">
             <button
-              key={i}
-              onClick={() => setIndex(i)}
-              aria-label={`Go to review ${i + 1}`}
-              aria-current={i === index ? 'true' : undefined}
-              style={{
-                /* Visual size of the dot */
-                width: i === index ? 24 : 8, height: 8, borderRadius: 99,
-                border: 'none', cursor: 'pointer',
-                backgroundColor: i === index ? 'var(--color-accent-blue)' : 'var(--color-hairline)',
-                transition: 'width 0.3s, background-color 0.3s',
-                /* Expand tap area to 44px minimum without changing visual layout */
-                padding: '18px 0',
-                margin: '-18px 0',
-                boxSizing: 'content-box',
-              }}
-            />
-          ))}
-          <style>{`
-          .testimonials-slider > div {
-            width: calc((100% - ${(VISIBLE - 1) * 16}px) / ${VISIBLE});
-            flex-shrink: 0;
-          }
-          @media (max-width: 1024px) {
-            .testimonials-slider > div {
-              width: calc((100% - ${(3 - 1) * 16}px) / 3);
-            }
-          }
-          @media (max-width: 768px) {
-            .testimonials-slider > div {
-              width: calc((100% - 16px) / 2);
-            }
-          }
-          @media (max-width: 480px) {
-            .testimonials-slider > div {
-              width: 100%;
-            }
-          }
-        `}</style>
+              onClick={prev}
+              disabled={index === 0}
+              id="testimonials-prev-btn"
+              aria-label="Previous reviews"
+              className="t-arrow"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                <polyline points="15 18 9 12 15 6"/>
+              </svg>
+            </button>
+            <button
+              onClick={next}
+              disabled={index >= maxIndex}
+              id="testimonials-next-btn"
+              aria-label="Next reviews"
+              className="t-arrow"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                <polyline points="9 18 15 12 9 6"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
       </div>
-      </div>
+
+      {/* ── All styles scoped to this section ─────────────────── */}
+      <style>{`
+        /* ── Section shell ──────────────────────────────────── */
+        .testimonials-section {
+          position: relative;
+          overflow: hidden;
+          background: #0a0a0a;
+          padding: var(--space-section) 0;
+          border-top: 1px solid rgba(255,255,255,0.06);
+        }
+
+        /* ── Background elements ────────────────────────────── */
+        .t-bg-grid {
+          position: absolute;
+          inset: 0;
+          opacity: 0.025;
+          background-image:
+            linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px);
+          background-size: 48px 48px;
+          pointer-events: none;
+        }
+        .t-bg-glow {
+          position: absolute;
+          width: 600px;
+          height: 600px;
+          border-radius: 50%;
+          filter: blur(80px);
+          pointer-events: none;
+        }
+        .t-bg-glow--left  { top: -20%; left: -10%; background: radial-gradient(circle, rgba(99,102,241,0.12) 0%, transparent 70%); }
+        .t-bg-glow--right { bottom: -20%; right: -10%; background: radial-gradient(circle, rgba(14,165,233,0.08) 0%, transparent 70%); }
+
+        /* ── Container ──────────────────────────────────────── */
+        .t-container {
+          max-width: 1199px;
+          margin: 0 auto;
+          padding: 0 var(--space-xl);
+          position: relative;
+          z-index: 1;
+        }
+
+        /* ── Header ─────────────────────────────────────────── */
+        .t-header {
+          display: flex;
+          align-items: flex-end;
+          justify-content: space-between;
+          gap: 24px;
+          margin-bottom: 52px;
+          flex-wrap: wrap;
+        }
+        .t-header__left { flex: 1; min-width: 200px; }
+        .t-badge {
+          display: inline-block;
+          font-size: 11px;
+          font-weight: 700;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+          padding: 5px 14px;
+          border-radius: 999px;
+          background: rgba(251,188,4,0.1);
+          color: #fbbc04;
+          border: 1px solid rgba(251,188,4,0.25);
+          margin-bottom: 16px;
+        }
+        .t-heading {
+          font-family: var(--font-display);
+          font-size: clamp(28px, 3.5vw, 44px);
+          font-weight: 700;
+          color: #fff;
+          letter-spacing: -1.5px;
+          line-height: 1.1;
+          margin-bottom: 10px;
+        }
+        .t-heading__accent { color: #6366f1; }
+        .t-subheading { font-size: 14px; color: rgba(255,255,255,0.45); }
+
+        /* ── Rating block ───────────────────────────────────── */
+        .t-rating-block {
+          text-align: right;
+          flex-shrink: 0;
+        }
+        .t-rating-block__score {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          justify-content: flex-end;
+          margin-bottom: 6px;
+        }
+        .t-rating-block__number {
+          font-family: var(--font-display);
+          font-size: 42px;
+          font-weight: 800;
+          color: #fff;
+          letter-spacing: -2px;
+          line-height: 1;
+        }
+        .t-rating-block__label {
+          font-size: 10px;
+          color: rgba(255,255,255,0.35);
+          font-weight: 600;
+          margin-top: 4px;
+        }
+        .t-rating-block__count { font-size: 12px; color: rgba(255,255,255,0.4); }
+
+        /* ── Slider track ───────────────────────────────────── */
+        .t-track {
+          overflow: hidden;
+          position: relative;
+          /* Fade edges */
+          mask-image: linear-gradient(90deg, transparent 0%, #000 3%, #000 97%, transparent 100%);
+          -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 3%, #000 97%, transparent 100%);
+        }
+        .t-slider {
+          display: flex;
+          gap: 20px;
+          transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+          will-change: transform;
+        }
+        /* Card width by column count */
+        .t-slider > .tcard { flex-shrink: 0; width: calc((100% - 40px) / 3); }
+        @media (max-width: 1100px) { .t-slider > .tcard { width: calc((100% - 20px) / 2) !important; } }
+        @media (max-width: 768px)  { .t-slider > .tcard { width: calc((100% - 20px) / 2) !important; } }
+        @media (max-width: 480px)  { .t-slider > .tcard { width: 100% !important; } }
+
+        /* ── Testimonial card ───────────────────────────────── */
+        .tcard {
+          position: relative;
+          background: linear-gradient(145deg, rgba(255,255,255,0.055) 0%, rgba(255,255,255,0.02) 100%);
+          border: 1px solid rgba(255,255,255,0.08);
+          border-radius: 20px;
+          padding: 28px 26px 24px;
+          display: flex;
+          flex-direction: column;
+          gap: 0;
+          cursor: default;
+          backdrop-filter: blur(12px);
+          transition: transform 0.3s cubic-bezier(0.16,1,0.3,1), border-color 0.3s, box-shadow 0.3s, opacity 0.3s;
+          opacity: 0.6;
+          overflow: hidden;
+        }
+        .tcard--active {
+          opacity: 1;
+          border-color: rgba(255,255,255,0.13);
+        }
+        .tcard:hover {
+          transform: translateY(-6px);
+          border-color: var(--accent, rgba(99,102,241,0.5)) !important;
+          box-shadow: 0 20px 48px rgba(0,0,0,0.4), 0 0 0 1px var(--accent, #6366f1) inset;
+        }
+
+        /* Card text */
+        .tcard__text {
+          font-size: 14px;
+          color: rgba(255,255,255,0.72);
+          line-height: 1.7;
+          flex: 1;
+          display: -webkit-box;
+          -webkit-line-clamp: 5;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+          margin-bottom: 24px;
+          font-style: italic;
+        }
+
+        /* Card footer */
+        .tcard__footer {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 12px;
+          padding-top: 20px;
+          border-top: 1px solid rgba(255,255,255,0.07);
+          flex-wrap: wrap;
+        }
+
+        /* Bottom accent line */
+        .tcard__line {
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          height: 2px;
+          background: linear-gradient(90deg, transparent, var(--accent, #6366f1), transparent);
+          opacity: 0;
+          transition: opacity 0.3s;
+        }
+        .tcard:hover .tcard__line { opacity: 1; }
+
+        /* ── Controls ───────────────────────────────────────── */
+        .t-controls {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 32px;
+          margin-top: 36px;
+          flex-wrap: wrap;
+        }
+
+        /* Dots */
+        .t-dots { display: flex; gap: 8px; align-items: center; }
+        .t-dot {
+          height: 6px;
+          width: 6px;
+          border-radius: 99px;
+          border: none;
+          background: rgba(255,255,255,0.2);
+          cursor: pointer;
+          transition: width 0.35s cubic-bezier(0.16,1,0.3,1), background 0.35s;
+          padding: 10px 0;
+          margin: -10px 0;
+          box-sizing: content-box;
+        }
+        .t-dot--active {
+          width: 28px;
+          background: #6366f1;
+        }
+
+        /* Arrows */
+        .t-arrows { display: flex; gap: 10px; }
+        .t-arrow {
+          width: 44px;
+          height: 44px;
+          border-radius: 50%;
+          border: 1px solid rgba(255,255,255,0.12);
+          background: rgba(255,255,255,0.04);
+          color: rgba(255,255,255,0.7);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.2s;
+          flex-shrink: 0;
+        }
+        .t-arrow:hover:not(:disabled) {
+          background: rgba(99,102,241,0.15);
+          border-color: rgba(99,102,241,0.5);
+          color: #fff;
+          transform: scale(1.08);
+        }
+        .t-arrow:disabled {
+          opacity: 0.25;
+          cursor: not-allowed;
+        }
+
+        /* ── Responsive overrides ───────────────────────────── */
+        @media (max-width: 768px) {
+          .t-container { padding: 0 20px; }
+          .t-header { margin-bottom: 36px; }
+          .t-heading { font-size: clamp(24px, 6vw, 36px); }
+          .t-rating-block { text-align: left; }
+          .t-rating-block__score { justify-content: flex-start; }
+          .tcard { padding: 22px 20px 20px; }
+        }
+        @media (max-width: 480px) {
+          .t-header { flex-direction: column; align-items: flex-start; }
+          .t-rating-block { width: 100%; }
+          .testimonials-section { padding: 56px 0; }
+        }
+      `}</style>
     </section>
   )
 }

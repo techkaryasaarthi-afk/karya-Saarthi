@@ -835,21 +835,170 @@ section {
 }
 @media (max-width: 600px) { .svc-grid { grid-template-columns: 1fr !important; } }
 
-/* ── Global Mobile Responsive Fixes ──────────────────────── */
-@media (max-width: 640px) {
-  .hero-section {
-    padding-left: 16px !important;
-    padding-right: 16px !important;
+/* ── Global Mobile Responsive Fixes ──────────────────────────────────── */
+
+/* Prevent horizontal overflow on all devices */
+html, body { overflow-x: hidden; max-width: 100vw; }
+* { box-sizing: border-box; }
+
+/* ── Mobile token overrides (≤480px) ─────────────────────────────────── */
+@media (max-width: 480px) {
+  :root {
+    --space-section:  52px;
+    --space-xl:       16px;
+    --space-xxl:      28px;
+    --text-body-size: 14px;
+    --text-body-lg-size: 16px;
+    --text-display-md-size: 24px;
+    --text-headline-size:   18px;
   }
-  /* Prevent horizontal scroll */
-  body {
+}
+
+/* ── Tablet token overrides (481–768px) ─────────────────────────────── */
+@media (min-width: 481px) and (max-width: 768px) {
+  :root {
+    --space-section: 64px;
+    --space-xl:      20px;
+  }
+}
+
+/* ── Universal section padding clamp ─────────────────────────────────── */
+/* Every section that uses var(--space-xl) for L/R padding gets 16px min on mobile */
+@media (max-width: 640px) {
+  section {
+    padding-left:  max(16px, env(safe-area-inset-left))  !important;
+    padding-right: max(16px, env(safe-area-inset-right)) !important;
+  }
+  /* Inner containers should never overflow */
+  section > div, section > .t-container {
+    max-width: 100% !important;
     overflow-x: hidden;
   }
 }
 
-@media (max-width: 480px) {
-  :root {
-    --space-section: 56px;
+/* ── Hero section ─────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .hero-section {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    padding-top: calc(56px + 40px) !important;
+  }
+  .hero-cta-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+  }
+  .hero-cta-row .btn-primary,
+  .hero-cta-row .btn-secondary {
+    width: 100% !important;
+    min-width: unset !important;
+    justify-content: center !important;
+  }
+  .hero-stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+  }
+}
+
+/* ── Service tiles ────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .tiles-section {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+  .tiles-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+}
+@media (max-width: 360px) {
+  .tiles-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+}
+
+/* ── Why/Pillars section ─────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .why-section {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+  .why-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+}
+
+/* ── How It Works section ────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .hiw-section {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+  .hiw-grid {
+    grid-template-columns: 1fr !important;
+    gap: 28px !important;
+  }
+  .hiw-connector { display: none !important; }
+}
+
+/* ── FAQ section ─────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  #faq {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+  .faq-row button {
+    padding: 16px 16px !important;
+    font-size: 14px !important;
+  }
+  .accordion-inner p {
+    padding: 0 16px 16px !important;
+    font-size: 13px !important;
+  }
+}
+
+/* ── Testimonials section ─────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .testimonials-section {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+  .t-container {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+}
+
+/* ── Footer ──────────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  footer > div {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+  .footer-main-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 24px !important;
+  }
+  .footer-brand-col {
+    grid-column: span 2 !important;
+  }
+}
+@media (max-width: 380px) {
+  .footer-main-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .footer-brand-col {
+    grid-column: span 1 !important;
+  }
+}
+
+/* ── Buttons — bigger tap targets on mobile ──────────────────────────── */
+@media (max-width: 640px) {
+  .btn-primary, .btn-secondary {
+    min-height: 48px !important;
+    font-size: 15px !important;
   }
 }
 

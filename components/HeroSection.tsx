@@ -320,10 +320,10 @@ export default function HeroSection() {
         }
         @media (max-width: 1024px) { .hero-grid { gap: 48px; } }
         @media (max-width: 810px) {
-          .hero-grid { grid-template-columns: 1fr; gap: 48px; }
-          .hero-right { order: -1; max-width: 520px; margin: 0 auto; width: 100%; }
+          .hero-grid { grid-template-columns: 1fr; gap: 36px; }
+          .hero-right { order: -1; max-width: 480px; margin: 0 auto; width: 100%; }
           .hero-headline {
-            font-size: clamp(36px, 9vw, 64px) !important;
+            font-size: clamp(32px, 8vw, 56px) !important;
             line-height: 1.1 !important;
             letter-spacing: -1.5px !important;
             word-break: break-word;
@@ -334,17 +334,18 @@ export default function HeroSection() {
           .hero-section {
             padding-left: 16px !important;
             padding-right: 16px !important;
-            padding-top: calc(56px + 48px) !important;
+            padding-top: calc(56px + 32px) !important;
           }
-          .hero-grid { gap: 28px; }
+          .hero-grid { gap: 24px; }
           .hero-headline {
-            font-size: clamp(32px, 10vw, 52px) !important;
+            font-size: clamp(28px, 9vw, 44px) !important;
             line-height: 1.15 !important;
-            letter-spacing: -1px !important;
+            letter-spacing: -0.8px !important;
           }
           .hero-cta-row {
             flex-direction: column;
             align-items: stretch !important;
+            gap: 10px !important;
           }
           .hero-cta-row .btn-primary,
           .hero-cta-row .btn-secondary {
@@ -352,7 +353,9 @@ export default function HeroSection() {
             min-width: unset !important;
             justify-content: center;
           }
-          .hero-stats-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+          .hero-stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+          /* Hide floating decorative badges — they overflow on small screens */
+          .hero-right > div:not(.hero-video-card) { display: none !important; }
         }
       `}</style>
     </section>

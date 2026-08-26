@@ -5,6 +5,7 @@ import './globals.css'
 import SilenceWarnings from '@/components/SilenceWarnings'
 import { cn } from "@/lib/utils";
 import ChatbotLoader from '@/components/ChatbotLoader'
+import CustomCursor from '@/components/CustomCursor'
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
@@ -191,6 +192,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         suppressHydrationWarning
       >
         <SilenceWarnings />
+        <CustomCursor />
         {children}
         <ChatbotLoader />
       </body>
