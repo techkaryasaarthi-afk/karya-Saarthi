@@ -78,5 +78,6 @@ export async function GET(request: Request) {
       totalBlogViews,
     },
     monthly,
+    lookerUrl: process.env.LOOKER_STUDIO_URL || '',
   })
 }

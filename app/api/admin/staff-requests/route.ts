@@ -19,6 +19,15 @@ export async function GET() {
     .eq('role', 'pending_admin')
     .order('created_at', { ascending: false })
 
+  // Also catch admins stuck in limbo: role was changed away from pending_admin
+  // but is_approved was never set (bug: approved via users page without is_approved=true)
+  const { data: stuckAdmins } = await supabase
+    .from('users')
+    .select('id, fullname, email, phone, department, pillar_role, role, designation, created_at')
+    .in('role', ['admin', 'board_member'])
+    .eq('is_approved', false)
+    .order('created_at', { ascending: false })
+
   // Pending pillar members (role = 'pillar_member', is_approved = false)
   const { data: pendingPillar } = await supabase
     .from('users')
@@ -35,7 +44,7 @@ export async function GET() {
     .order('created_at', { ascending: false })
 
   return NextResponse.json({
-    pendingAdmins: pendingAdmins || [],
+    pendingAdmins: [...(pendingAdmins || []), ...(stuckAdmins || [])],
     pendingPillar: pendingPillar || [],
     adminRequests: adminRequests || [],
   })

@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useEffect, useState } from 'react'
 import { motion } from '@/lib/motion'
@@ -55,13 +55,14 @@ function BarChart({ data, valueKey, color = '#FF6B35' }: { data: MonthlyData[]; 
 export default function AnalyticsPage() {
   const [stats, setStats] = useState<Stats | null>(null)
   const [monthly, setMonthly] = useState<MonthlyData[]>([])
+  const [lookerUrl, setLookerUrl] = useState('')
   const [loading, setLoading] = useState(true)
   const [range, setRange] = useState<'7d' | '30d' | '90d' | '1y'>('30d')
 
   useEffect(() => {
     fetch(`/api/admin/analytics?range=${range}`)
       .then(r => r.json())
-      .then(d => { setStats(d.stats); setMonthly(d.monthly || []); setLoading(false) })
+      .then(d => { setStats(d.stats); setMonthly(d.monthly || []); setLookerUrl(d.lookerUrl || ''); setLoading(false) })
       .catch(() => setLoading(false))
   }, [range])
 
@@ -192,6 +193,77 @@ export default function AnalyticsPage() {
           )}
         </>
       )}
+      </div>
+
+      {/* ── Google Analytics Section ── */}
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+          <div className="flex items-center gap-3">
+            <span className="text-xl">📊</span>
+            <div>
+              <h3 className="font-bold text-navy font-heading text-sm">Google Analytics</h3>
+              <p className="text-[11px] text-slate-400">Live website traffic from GA4 · Property G-N2BL9SLZ8R</p>
+            </div>
+          </div>
+          {lookerUrl && (
+            <a href="https://lookerstudio.google.com" target="_blank" rel="noopener noreferrer"
+              className="text-[11px] text-blue-500 hover:underline font-medium">
+              Open in Looker Studio ↗
+            </a>
+          )}
+        </div>
+
+        {lookerUrl ? (
+          <div className="relative w-full" style={{ paddingBottom: '62%' }}>
+            <iframe
+              src={lookerUrl}
+              className="absolute inset-0 w-full h-full border-0"
+              allowFullScreen
+              loading="lazy"
+              title="Google Analytics — Karyasaarthi"
+            />
+          </div>
+        ) : (
+          <div className="p-8">
+            <div className="max-w-2xl mx-auto text-center">
+              <div className="w-16 h-16 rounded-2xl bg-orange-50 flex items-center justify-center mx-auto mb-4 text-3xl">📈</div>
+              <h4 className="font-bold text-navy font-heading text-base mb-2">Connect Google Analytics</h4>
+              <p className="text-slate-500 text-sm mb-6">Follow these steps to embed your GA4 dashboard here in 5 minutes.</p>
+
+              <div className="text-left space-y-3 mb-8">
+                {[
+                  { step: '1', title: 'Go to Looker Studio', desc: 'Visit lookerstudio.google.com and sign in with your Google account.' },
+                  { step: '2', title: 'Create a new report', desc: 'Click "+" → Blank Report → Add Data → Google Analytics → Select "karyasaarthi" property (G-N2BL9SLZ8R).' },
+                  { step: '3', title: 'Build your dashboard', desc: 'Add charts: Scorecard (Sessions, Users, Pageviews), Time Series, Table of top pages, etc.' },
+                  { step: '4', title: 'Get the embed URL', desc: 'Click Share → Embed → Enable embedding → Copy the embed URL (starts with lookerstudio.google.com/embed/...).' },
+                  { step: '5', title: 'Add to Vercel/Env', desc: 'Add: LOOKER_STUDIO_URL=<your-embed-url> to your environment variables and redeploy.' },
+                ].map(item => (
+                  <div key={item.step} className="flex gap-4 p-4 rounded-xl bg-slate-50 border border-slate-100">
+                    <div className="w-7 h-7 rounded-full bg-navy text-white text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">
+                      {item.step}
+                    </div>
+                    <div>
+                      <p className="font-semibold text-navy text-sm">{item.title}</p>
+                      <p className="text-slate-500 text-xs mt-0.5">{item.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-left">
+                <p className="text-amber-800 text-xs font-bold mb-1">📝 Environment variable snippet</p>
+                <code className="text-amber-700 text-xs block font-mono bg-amber-100 rounded-lg p-3 mt-1 break-all">
+                  LOOKER_STUDIO_URL=https://lookerstudio.google.com/embed/reporting/YOUR-REPORT-ID/page/PAGE-ID
+                </code>
+              </div>
+
+              <a href="https://lookerstudio.google.com" target="_blank" rel="noopener noreferrer"
+                className="mt-6 inline-flex items-center gap-2 px-5 py-2.5 bg-navy text-white text-sm font-bold rounded-xl hover:opacity-90 transition-opacity">
+                🚀 Open Looker Studio
+              </a>
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="lg:col-span-4 xl:col-span-3">

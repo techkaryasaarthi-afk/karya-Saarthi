@@ -1,11 +1,11 @@
 import type { Metadata, Viewport } from 'next'
+import Script from 'next/script'
 import { Inter, Geist, Sora } from 'next/font/google'
 import { GeistSans } from 'geist/font/sans'
 import './globals.css'
 import SilenceWarnings from '@/components/SilenceWarnings'
 import { cn } from "@/lib/utils";
 import ChatbotLoader from '@/components/ChatbotLoader'
-import CustomCursor from '@/components/CustomCursor'
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
@@ -191,8 +191,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         }}
         suppressHydrationWarning
       >
+        {/* Google Analytics GA4 */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-N2BL9SLZ8R"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-N2BL9SLZ8R');
+          `}
+        </Script>
         <SilenceWarnings />
-        <CustomCursor />
         {children}
         <ChatbotLoader />
       </body>

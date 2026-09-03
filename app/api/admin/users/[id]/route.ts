@@ -46,6 +46,20 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
       if (body.pillar_role !== undefined) updates.pillar_role = body.pillar_role
       if (body.designation !== undefined) updates.designation = body.designation
       if (body.is_approved !== undefined) updates.is_approved = body.is_approved
+
+      // Auto-approve: if role is being changed away from pending_admin to a real staff role,
+      // ensure is_approved is set to true so the user can actually log in.
+      if (body.role && body.role !== 'pending_admin' && body.role !== 'customer') {
+        // Fetch the current role to check if they were pending
+        const { data: currentUser } = await supabase
+          .from('users')
+          .select('role, is_approved')
+          .eq('id', id)
+          .single()
+        if (currentUser && (currentUser.role === 'pending_admin' || !currentUser.is_approved)) {
+          updates.is_approved = true
+        }
+      }
     }
 
     if (Object.keys(updates).length === 0) {
