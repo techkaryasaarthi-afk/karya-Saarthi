@@ -224,6 +224,7 @@ function buildNavGroups(user: UserData): NavGroup[] {
         { icon: '👤', label: 'All Users', href: '/admin/users' },
         { icon: '📩', label: 'Staff Requests', href: '/admin/staff-requests' },
         { icon: '📢', label: 'Announcements', href: '/admin/announcements' },
+        { icon: '🏠', label: 'Homepage Styling', href: '/admin/homepage' },
         { icon: '⚙️', label: 'Settings', href: '/admin/settings' },
       ],
     })

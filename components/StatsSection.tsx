@@ -2,6 +2,13 @@
 
 import { useEffect, useRef, useState } from 'react'
 
+export interface StatItem {
+  icon: string
+  value: number
+  suffix: string
+  label: string
+}
+
 function Counter({ target, suffix = '' }: { target: number; suffix?: string }) {
   const [display, setDisplay] = useState(0)
   const ref     = useRef<HTMLSpanElement>(null)
@@ -30,14 +37,20 @@ function Counter({ target, suffix = '' }: { target: number; suffix?: string }) {
   return <span ref={ref}>{display}{suffix}</span>
 }
 
-const stats = [
+const DEFAULT_STATS: StatItem[] = [
   { icon: '🏆', value: 500,  suffix: '+', label: 'Projects Completed' },
   { icon: '⭐', value: 98,   suffix: '%', label: 'Client Satisfaction' },
   { icon: '👥', value: 2000, suffix: '+', label: 'Happy Clients'      },
   { icon: '🎓', value: 50,   suffix: '+', label: 'Service Categories'  },
 ]
 
-export default function StatsSection() {
+interface StatsSectionProps {
+  stats?: StatItem[]
+}
+
+export default function StatsSection({ stats = DEFAULT_STATS }: StatsSectionProps) {
+  const displayStats = stats.length > 0 ? stats : DEFAULT_STATS
+
   return (
     <section
       className="stats-section"
@@ -66,7 +79,7 @@ export default function StatsSection() {
 
         {/* Stats grid */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, width: '100%' }} className="stats-section-grid">
-          {stats.map((s) => (
+          {displayStats.map((s) => (
             <div
               key={s.label}
               style={{

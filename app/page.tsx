@@ -3,6 +3,8 @@ import HeroSection from '@/components/HeroSection'
 import dynamic from 'next/dynamic'
 import { createClient } from '@/lib/supabase/server'
 import PartnersMarquee from '@/components/PartnersMarquee'
+import TickerBanner from '@/components/TickerBanner'
+import { DEFAULT_HOMEPAGE_SETTINGS } from '@/app/api/homepage-settings/route'
 
 // Lazy load below-the-fold components to improve initial load performance
 const ServiceTiles = dynamic(() => import('@/components/ServiceTiles'), { ssr: true })
@@ -39,20 +41,37 @@ export const metadata = {
   },
 }
 
-export default async function Home() {
-  let partners: any[] = []
+async function getHomepageSettings() {
   try {
     const supabase = await createClient()
-    const { data } = await supabase
-      .from('marketing_partnered_companies')
-      .select('id, name, logo_url, website')
-      .order('created_at', { ascending: false })
-    if (data) {
-      partners = data
-    }
-  } catch (e) {
-    console.error('Error fetching partnered companies:', e)
+    const { data, error } = await supabase
+      .from('homepage_settings')
+      .select('*')
+      .eq('id', 1)
+      .single()
+    if (error || !data) return DEFAULT_HOMEPAGE_SETTINGS
+    return { ...DEFAULT_HOMEPAGE_SETTINGS, ...data }
+  } catch {
+    return DEFAULT_HOMEPAGE_SETTINGS
   }
+}
+
+export default async function Home() {
+  // Fetch homepage settings + partners in parallel
+  const [settings, partnersResult] = await Promise.allSettled([
+    getHomepageSettings(),
+    (async () => {
+      const supabase = await createClient()
+      const { data } = await supabase
+        .from('marketing_partnered_companies')
+        .select('id, name, logo_url, website')
+        .order('created_at', { ascending: false })
+      return data || []
+    })(),
+  ])
+
+  const homepageSettings = settings.status === 'fulfilled' ? settings.value : DEFAULT_HOMEPAGE_SETTINGS
+  const partners = partnersResult.status === 'fulfilled' ? partnersResult.value : []
 
   const defaultPartners = [
     // Text-only entries (no logo_url) so the marquee renders brand names cleanly
@@ -71,13 +90,22 @@ export default async function Home() {
 
   return (
     <>
+      {/* Ticker banner — above the navbar */}
+      {homepageSettings.ticker_enabled && (
+        <TickerBanner
+          text={homepageSettings.ticker_text}
+          color={homepageSettings.ticker_color}
+          bg={homepageSettings.ticker_bg}
+          enabled={homepageSettings.ticker_enabled}
+        />
+      )}
       <Navbar />
       <main id="main-content">
-        <HeroSection />
-        <ServiceTiles />
+        <HeroSection heroStats={homepageSettings.hero_stats} />
+        <ServiceTiles tiles={homepageSettings.service_tiles} />
         <HowItWorks />
         <PillarsSection />
-        <StatsSection />
+        <StatsSection stats={homepageSettings.stats_section} />
         <EventsPreviewSection />
         <HackathonsSection />
         <PodcastsSection />

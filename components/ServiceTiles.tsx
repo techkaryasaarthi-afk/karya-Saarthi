@@ -3,78 +3,33 @@
 import Link from 'next/link'
 import { useState } from 'react'
 
-const categories = [
-  {
-    title: 'Website Development',
-    color: '#0099ff',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" width={28} height={28}>
-        <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
-        <line x1="8" y1="21" x2="16" y2="21" /><line x1="12" y1="17" x2="12" y2="21" />
-      </svg>
-    ),
-  },
-  {
-    title: 'Research Paper Writing',
-    color: '#22c55e',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" width={28} height={28}>
-        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-        <polyline points="14 2 14 8 20 8" /><line x1="16" y1="13" x2="8" y2="13" /><line x1="16" y1="17" x2="8" y2="17" /><line x1="10" y1="9" x2="8" y2="9" />
-      </svg>
-    ),
-  },
-  {
-    title: 'Assignment Help',
-    color: '#f59e0b',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" width={28} height={28}>
-        <path d="M9 11l3 3L22 4" /><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
-      </svg>
-    ),
-  },
-  {
-    title: '3D Model Design',
-    color: '#d44df0',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" width={28} height={28}>
-        <path d="M12 2L2 7l10 5 10-5-10-5z" /><path d="M2 17l10 5 10-5" /><path d="M2 12l10 5 10-5" />
-      </svg>
-    ),
-  },
-  {
-    title: 'SEO Services & Ads',
-    color: '#ff7a3d',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" width={28} height={28}>
-        <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
-        <line x1="11" y1="8" x2="11" y2="14" /><line x1="8" y1="11" x2="14" y2="11" />
-      </svg>
-    ),
-  },
-  {
-    title: 'API Integration & Automation',
-    color: '#6a4cf5',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" width={28} height={28}>
-        <polyline points="16 18 22 12 16 6" /><polyline points="8 6 2 12 8 18" />
-        <line x1="12" y1="2" x2="12" y2="22" />
-      </svg>
-    ),
-  },
-  {
-    title: 'Video/Reel Editing',
-    color: '#e11d48',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" width={28} height={28}>
-        <polygon points="23 7 16 12 23 17 23 7" /><rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
-        <line x1="5" y1="9" x2="9" y2="9" />
-      </svg>
-    ),
-  },
+export interface ServiceTile {
+  title: string
+  color: string
+  icon: string
+  audience: string[]
+}
+
+const DEFAULT_TILES: ServiceTile[] = [
+  { title: 'Website & App Development',           color: '#0099ff', icon: '💻', audience: ['all', 'students', 'professionals', 'businesses'] },
+  { title: 'Research Paper & Thesis Writing',     color: '#22c55e', icon: '📄', audience: ['all', 'students', 'professionals'] },
+  { title: 'Assignment Help & Handmade Projects', color: '#f59e0b', icon: '✍️', audience: ['all', 'students'] },
+  { title: 'SEO & Digital Marketing',             color: '#ff7a3d', icon: '📣', audience: ['all', 'businesses', 'professionals'] },
+  { title: '3D Design & Video Editing',           color: '#d44df0', icon: '🎨', audience: ['all', 'businesses', 'professionals'] },
+  { title: 'API Integration & Automation',        color: '#6a4cf5', icon: '⚙️', audience: ['all', 'businesses', 'professionals'] },
+  { title: 'Government & Business Solutions',     color: '#FF6B35', icon: '🏛️', audience: ['all', 'businesses', 'government'] },
+  { title: 'Study Abroad & Visa Consulting',      color: '#06b6d4', icon: '🌍', audience: ['all', 'students', 'professionals'] },
 ]
 
-function CategoryCard({ cat, index }: { cat: typeof categories[0]; index: number }) {
+const AUDIENCE_FILTERS = [
+  { key: 'all',           label: 'All Services',        emoji: '🏷️' },
+  { key: 'students',      label: 'For Students',        emoji: '🎓' },
+  { key: 'professionals', label: 'For Professionals',   emoji: '👨‍💼' },
+  { key: 'businesses',    label: 'For Businesses',      emoji: '🏢' },
+  { key: 'government',    label: 'For Government',      emoji: '🏛️' },
+]
+
+function CategoryCard({ tile, index }: { tile: ServiceTile; index: number }) {
   const [hovered, setHovered] = useState(false)
 
   return (
@@ -84,10 +39,10 @@ function CategoryCard({ cat, index }: { cat: typeof categories[0]; index: number
       onMouseLeave={() => setHovered(false)}
       style={{
         display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-        padding: '28px 16px',
+        padding: '24px 14px',
         borderRadius: 'var(--radius-lg)',
-        border: `1px solid ${hovered ? cat.color + '40' : 'var(--color-hairline-soft)'}`,
-        backgroundColor: hovered ? `${cat.color}0d` : 'var(--color-surface-1)',
+        border: `1px solid ${hovered ? tile.color + '40' : 'var(--color-hairline-soft)'}`,
+        backgroundColor: hovered ? `${tile.color}0d` : 'var(--color-surface-1)',
         textDecoration: 'none',
         cursor: 'pointer',
         transition: 'border-color 0.2s, background-color 0.2s, transform 0.2s',
@@ -97,25 +52,45 @@ function CategoryCard({ cat, index }: { cat: typeof categories[0]; index: number
       }}
     >
       <div style={{
-        color: hovered ? cat.color : 'var(--color-ink-muted)',
-        marginBottom: 14,
-        transition: 'color 0.2s',
+        fontSize: 28,
+        marginBottom: 12,
+        transition: 'transform 0.2s',
+        transform: hovered ? 'scale(1.15)' : 'scale(1)',
       }}>
-        {cat.icon}
+        {tile.icon}
       </div>
       <span style={{
-        fontSize: 12, fontWeight: 600,
+        fontSize: 11.5, fontWeight: 600,
         color: hovered ? 'var(--color-ink)' : 'var(--color-ink-muted)',
         textAlign: 'center', lineHeight: 1.35,
         transition: 'color 0.2s',
       }}>
-        {cat.title}
+        {tile.title}
       </span>
+      {/* Accent underline on hover */}
+      {hovered && (
+        <div style={{
+          marginTop: 8, height: 2, width: 24, borderRadius: 2,
+          backgroundColor: tile.color,
+          transition: 'width 0.2s',
+        }} />
+      )}
     </Link>
   )
 }
 
-export default function ServiceTiles() {
+interface ServiceTilesProps {
+  tiles?: ServiceTile[]
+}
+
+export default function ServiceTiles({ tiles = DEFAULT_TILES }: ServiceTilesProps) {
+  const [activeAudience, setActiveAudience] = useState('all')
+  const allTiles = tiles.length > 0 ? tiles : DEFAULT_TILES
+
+  const filtered = activeAudience === 'all'
+    ? allTiles
+    : allTiles.filter(t => t.audience.includes(activeAudience))
+
   return (
     <section className="tiles-section" style={{
       padding: 'var(--space-section) var(--space-xl)',
@@ -126,7 +101,7 @@ export default function ServiceTiles() {
       <div style={{ maxWidth: 1199, margin: '0 auto' }}>
 
         {/* Header */}
-        <div style={{ textAlign: 'center', marginBottom: 48 }}>
+        <div style={{ textAlign: 'center', marginBottom: 32 }}>
           <span style={{
             display: 'inline-block', fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
             textTransform: 'uppercase', padding: '4px 12px', borderRadius: 'var(--radius-pill)',
@@ -145,16 +120,51 @@ export default function ServiceTiles() {
           </h2>
         </div>
 
-        {/* 7-card grid */}
+        {/* Audience Filter Tabs */}
         <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(7, 1fr)',
-          gap: 14,
-        }} className="tiles-grid">
-          {categories.map((cat, i) => (
-            <CategoryCard key={cat.title} cat={cat} index={i} />
+          display: 'flex', justifyContent: 'center', gap: 8,
+          flexWrap: 'wrap', marginBottom: 36,
+        }}>
+          {AUDIENCE_FILTERS.map(filter => (
+            <button
+              key={filter.key}
+              onClick={() => setActiveAudience(filter.key)}
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: 6,
+                padding: '7px 16px', borderRadius: 'var(--radius-pill)',
+                fontSize: 12, fontWeight: 600, cursor: 'pointer',
+                transition: 'all 0.2s cubic-bezier(0.16,1,0.3,1)',
+                border: `1px solid ${activeAudience === filter.key ? 'var(--color-accent-blue)' : 'var(--color-hairline)'}`,
+                backgroundColor: activeAudience === filter.key
+                  ? 'var(--color-accent-blue)'
+                  : 'var(--color-surface-1)',
+                color: activeAudience === filter.key ? '#fff' : 'var(--color-ink-muted)',
+                transform: activeAudience === filter.key ? 'scale(1.04)' : 'scale(1)',
+                boxShadow: activeAudience === filter.key ? '0 4px 16px rgba(0,153,255,0.25)' : 'none',
+              }}
+            >
+              <span style={{ fontSize: 15 }}>{filter.emoji}</span>
+              {filter.label}
+            </button>
           ))}
         </div>
+
+        {/* Tile grid */}
+        {filtered.length > 0 ? (
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: `repeat(${Math.min(filtered.length, 4)}, 1fr)`,
+            gap: 14,
+          }} className="tiles-grid">
+            {filtered.map((tile, i) => (
+              <CategoryCard key={tile.title} tile={tile} index={i} />
+            ))}
+          </div>
+        ) : (
+          <div style={{ textAlign: 'center', padding: '40px 0', color: 'var(--color-ink-muted)', fontSize: 14 }}>
+            No services found for this category.
+          </div>
+        )}
 
         {/* CTA */}
         <div style={{ textAlign: 'center', marginTop: 40 }}>
@@ -170,29 +180,17 @@ export default function ServiceTiles() {
           to   { opacity: 1; transform: translateY(0); }
         }
         .tiles-grid {
-          grid-template-columns: repeat(7, 1fr);
+          grid-template-columns: repeat(4, 1fr) !important;
         }
-        @media (max-width: 1200px) { .tiles-grid { grid-template-columns: repeat(4, 1fr) !important; } }
-        @media (max-width: 1024px) { .tiles-grid { grid-template-columns: repeat(4, 1fr) !important; } }
+        @media (max-width: 1024px) { .tiles-grid { grid-template-columns: repeat(3, 1fr) !important; } }
         @media (max-width: 768px)  {
-          .tiles-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 10px !important; }
+          .tiles-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important; }
           .tiles-section { padding-left: 16px !important; padding-right: 16px !important; }
         }
-        @media (max-width: 540px)  {
+        @media (max-width: 480px) {
           .tiles-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
-        }
-        /* Tile card compact on mobile */
-        @media (max-width: 540px) {
-          .tiles-grid a {
-            padding: 18px 10px !important;
-          }
-          .tiles-grid a span {
-            font-size: 11px !important;
-          }
-          .tiles-grid a svg {
-            width: 22px !important;
-            height: 22px !important;
-          }
+          .tiles-grid a { padding: 18px 10px !important; }
+          .tiles-grid a span { font-size: 11px !important; }
         }
       `}</style>
     </section>

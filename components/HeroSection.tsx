@@ -3,14 +3,24 @@
 import Link from 'next/link'
 import { useEffect, useRef } from 'react'
 
-const stats = [
-  { value: '500+', label: 'Projects Completed' },
+export interface HeroStat {
+  value: string
+  label: string
+}
+
+const DEFAULT_HERO_STATS: HeroStat[] = [
+  { value: '500+',  label: 'Projects Completed' },
   { value: '2000+', label: 'Happy Clients' },
-  { value: '98%', label: 'Satisfaction Rate' },
-  { value: '5★', label: 'Average Rating' },
+  { value: '98%',   label: 'Satisfaction Rate' },
+  { value: '5★',    label: 'Average Rating' },
 ]
 
-export default function HeroSection() {
+interface HeroSectionProps {
+  heroStats?: HeroStat[]
+}
+
+export default function HeroSection({ heroStats = DEFAULT_HERO_STATS }: HeroSectionProps) {
+  const stats = heroStats.length > 0 ? heroStats : DEFAULT_HERO_STATS
   const sectionRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
@@ -146,7 +156,7 @@ export default function HeroSection() {
               </p>
             </div>
 
-            {/* Stats row */}
+            {/* Stats row — driven by server-fetched data */}
             <div
               className="hero-stats-grid hero-reveal"
               style={{
