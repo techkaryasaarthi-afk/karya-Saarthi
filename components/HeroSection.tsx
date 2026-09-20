@@ -44,7 +44,7 @@ export default function HeroSection({ heroStats = DEFAULT_HERO_STATS }: HeroSect
       className="hero-section"
       style={{
         backgroundColor: 'var(--color-canvas)',
-        paddingTop: 'calc(56px + 80px)',
+        paddingTop: 'calc(56px + var(--ticker-h, 0px) + 80px)',
         paddingBottom: 'var(--space-section)',
         paddingLeft: 'var(--space-xl)',
         paddingRight: 'var(--space-xl)',

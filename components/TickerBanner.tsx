@@ -1,6 +1,8 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
+
+const TICKER_HEIGHT = 36
 
 interface TickerBannerProps {
   text: string
@@ -20,11 +22,22 @@ export default function TickerBanner({
 
   useEffect(() => {
     setMounted(true)
-    // Check session storage — hide if already dismissed this session
     try {
-      if (sessionStorage.getItem('ticker-dismissed') === '1') setDismissed(true)
+      if (sessionStorage.getItem('ticker-dismissed') === '1') {
+        setDismissed(true)
+      }
     } catch {}
   }, [])
+
+  // Tell the rest of the page whether ticker is visible via a CSS custom property
+  // on :root so the fixed Navbar can offset itself without prop-drilling.
+  useEffect(() => {
+    const visible = enabled && mounted && !dismissed
+    document.documentElement.style.setProperty(
+      '--ticker-h',
+      visible ? `${TICKER_HEIGHT}px` : '0px'
+    )
+  }, [enabled, mounted, dismissed])
 
   if (!enabled || dismissed || !mounted) return null
 
@@ -37,104 +50,87 @@ export default function TickerBanner({
   const repeated = `${text}  •  ${text}  •  ${text}  •  `
 
   return (
-    <div
-      role="marquee"
-      aria-label="News and promotions ticker"
-      style={{
-        backgroundColor: bg,
-        borderBottom: `1px solid ${color}30`,
-        display: 'flex',
-        alignItems: 'center',
-        height: 36,
-        overflow: 'hidden',
-        position: 'relative',
-        zIndex: 51, // above everything including navbar
-        flexShrink: 0,
-      }}
-    >
-      {/* Fading left edge */}
+    <>
+      {/* Fixed ticker at the very top — z-index 52 (above navbar z-50) */}
       <div
-        aria-hidden
+        role="marquee"
+        aria-label="News and promotions ticker"
         style={{
-          position: 'absolute',
-          left: 0,
+          position: 'fixed',
           top: 0,
-          bottom: 0,
-          width: 60,
-          background: `linear-gradient(to right, ${bg}, transparent)`,
-          zIndex: 2,
-          pointerEvents: 'none',
-        }}
-      />
-
-      {/* Scrolling track */}
-      <div
-        className="ticker-track"
-        style={{
+          left: 0,
+          right: 0,
+          height: TICKER_HEIGHT,
+          backgroundColor: bg,
+          borderBottom: `1px solid ${color}30`,
           display: 'flex',
           alignItems: 'center',
-          whiteSpace: 'nowrap',
-          animation: 'ticker-scroll 35s linear infinite',
-          willChange: 'transform',
-          paddingLeft: '100%',
+          overflow: 'hidden',
+          zIndex: 52,
+          flexShrink: 0,
         }}
       >
-        <span
+        {/* Fading left edge */}
+        <div
+          aria-hidden
           style={{
-            fontSize: 12,
-            fontWeight: 600,
-            color,
-            fontFamily: 'var(--font-inter, "Inter", sans-serif)',
-            letterSpacing: '0.01em',
+            position: 'absolute', left: 0, top: 0, bottom: 0, width: 60,
+            background: `linear-gradient(to right, ${bg}, transparent)`,
+            zIndex: 2, pointerEvents: 'none',
+          }}
+        />
+
+        {/* Scrolling track */}
+        <div
+          className="ticker-track"
+          style={{
+            display: 'flex', alignItems: 'center',
+            whiteSpace: 'nowrap',
+            animation: 'ticker-scroll 35s linear infinite',
+            willChange: 'transform',
+            paddingLeft: '100%',
           }}
         >
-          {repeated}
-        </span>
+          <span style={{
+            fontSize: 12, fontWeight: 600, color,
+            fontFamily: 'var(--font-inter, "Inter", sans-serif)',
+            letterSpacing: '0.01em',
+          }}>
+            {repeated}
+          </span>
+        </div>
+
+        {/* Fading right edge */}
+        <div
+          aria-hidden
+          style={{
+            position: 'absolute', right: 36, top: 0, bottom: 0, width: 60,
+            background: `linear-gradient(to left, ${bg}, transparent)`,
+            zIndex: 2, pointerEvents: 'none',
+          }}
+        />
+
+        {/* Dismiss button */}
+        <button
+          onClick={handleDismiss}
+          aria-label="Dismiss ticker"
+          style={{
+            position: 'absolute', right: 0, top: 0, bottom: 0, width: 36,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            backgroundColor: bg, border: 'none',
+            borderLeft: `1px solid ${color}25`,
+            cursor: 'pointer', color, fontSize: 13, zIndex: 3,
+            transition: 'background-color 0.15s',
+          }}
+          onMouseEnter={e => (e.currentTarget.style.backgroundColor = `${color}18`)}
+          onMouseLeave={e => (e.currentTarget.style.backgroundColor = bg)}
+        >
+          ✕
+        </button>
       </div>
 
-      {/* Fading right edge */}
-      <div
-        aria-hidden
-        style={{
-          position: 'absolute',
-          right: 36, // leave space for close button
-          top: 0,
-          bottom: 0,
-          width: 60,
-          background: `linear-gradient(to left, ${bg}, transparent)`,
-          zIndex: 2,
-          pointerEvents: 'none',
-        }}
-      />
-
-      {/* Dismiss button */}
-      <button
-        onClick={handleDismiss}
-        aria-label="Dismiss ticker"
-        style={{
-          position: 'absolute',
-          right: 0,
-          top: 0,
-          bottom: 0,
-          width: 36,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          backgroundColor: bg,
-          border: 'none',
-          borderLeft: `1px solid ${color}25`,
-          cursor: 'pointer',
-          color,
-          fontSize: 13,
-          zIndex: 3,
-          flexShrink: 0,
-          transition: 'background-color 0.15s',
-        }}
-        onMouseEnter={e => (e.currentTarget.style.backgroundColor = `${color}18`)}
-        onMouseLeave={e => (e.currentTarget.style.backgroundColor = bg)}
-      >
-        ✕
-      </button>
+      {/* Spacer — pushes page content down so nothing is hidden behind fixed ticker */}
+      <div style={{ height: TICKER_HEIGHT, flexShrink: 0 }} aria-hidden />
 
       <style>{`
         @keyframes ticker-scroll {
@@ -142,7 +138,15 @@ export default function TickerBanner({
           to   { transform: translateX(-50%); }
         }
         .ticker-track:hover { animation-play-state: paused; }
+
+        /* Push the fixed Navbar below the fixed ticker.
+           The Navbar uses class "top-nav fixed top-0" from Tailwind.
+           We override top via CSS variable set by this component. */
+        .top-nav {
+          top: var(--ticker-h, 0px) !important;
+          transition: top 0.2s ease;
+        }
       `}</style>
-    </div>
+    </>
   )
 }
