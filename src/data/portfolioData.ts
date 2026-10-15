@@ -539,7 +539,7 @@ export const TEAM: TeamMember[] = [
     experience: "1.5 Years in Software Engineering, Front-End Development & Digital Marketing",
     expertise: ["Software Engineering", "Front-End Development", "Full-Stack Web Apps", "Next.js & React", "Digital Marketing"],
     education: "Software Engineering & Computer Applications",
-    email: "daminiy298@gmail.com",
+    email: "info@karyasaarthi.com",
     image: "/team/damini-yadav.jpg",
     social: {
       linkedin: "https://www.linkedin.com/in/daminiyadav23",
@@ -567,7 +567,7 @@ export const TEAM: TeamMember[] = [
     experience: "Performance Marketing & Digital Campaigns",
     expertise: ["Google Ads", "Social Media Growth", "SEO Strategy", "Campaign Management"],
     education: "Graduation in Economics Honours (3rd Year)",
-    email: "digitalmarketingkaryasaarthi@gmail.com",
+    email: "support@karyasaarthi.com",
     image: "/team/annu-priya.jpg",
     social: {
       linkedin: "https://www.linkedin.com/in/annu-priya-992285352",
@@ -581,7 +581,7 @@ export const TEAM: TeamMember[] = [
     experience: "Marketing Executive, Team Leadership, Marketing & Client Communication",
     expertise: ["Marketing Execution", "Team Leadership", "Client Communication", "Stakeholder Relations"],
     education: "M.A., B.Ed.",
-    email: "divyabhalla204@gmail.com",
+    email: "info@karyasaarthi.net",
     image: "/team/divya-bhalla.jpg",
     social: {
       linkedin: "https://www.linkedin.com/in/divya-bhalla-5885982b1",

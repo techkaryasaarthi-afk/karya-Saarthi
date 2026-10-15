@@ -119,6 +119,65 @@
   50% { border-color: rgba(13, 148, 136, 0.7); box-shadow: 0 0 25px rgba(13, 148, 136, 0.35); }
 }
 
+@keyframes teamPhotoRingSpin {
+  to { transform: rotate(360deg); }
+}
+
+.team-photo-ring {
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.team-photo-ring::before {
+  content: "";
+  position: absolute;
+  inset: -50%;
+  z-index: 0;
+  background: conic-gradient(#FF7A00, #FBBF24, #FF6B35, #C2410C, #FF7A00);
+  animation: teamPhotoRingSpin 8s linear infinite;
+}
+
+.leadership-card {
+  isolation: isolate;
+}
+
+.leadership-card::before {
+  content: "";
+  position: absolute;
+  top: -7rem;
+  right: -7rem;
+  width: 16rem;
+  height: 16rem;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(255, 122, 0, 0.13), transparent 68%);
+  opacity: 0.55;
+  transition: opacity 350ms ease, transform 500ms ease;
+  pointer-events: none;
+}
+
+.leadership-card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 12%;
+  right: 12%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 178, 71, 0.8), transparent);
+  transform: scaleX(0.35);
+  transform-origin: center;
+  transition: transform 350ms ease;
+  pointer-events: none;
+}
+
+.leadership-card:hover::before {
+  opacity: 1;
+  transform: scale(1.12);
+}
+
+.leadership-card:hover::after {
+  transform: scaleX(1);
+}
+
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -440,7 +499,8 @@
 @media (prefers-reduced-motion: reduce) {
   .animated-grid-pattern,
   .animated-grid-glow,
-  .dodeca-object {
+  .dodeca-object,
+  .team-photo-ring::before {
     animation: none !important;
     transform: none !important;
   }
