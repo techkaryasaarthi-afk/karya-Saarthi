@@ -7,7 +7,11 @@ import { ExternalLink, Mail, GraduationCap, Sparkles, CheckCircle2, TrendingUp, 
 
 export default function TeamSection() {
   const founder = TEAM[0]; // Saloni Kumari
-  const coreTeam = TEAM.slice(1); // Pawandeep, Damini, Rakhi, Annu, Divya
+  const coreTeam = TEAM.slice(1);
+  const orderedCoreTeam = [
+    ...coreTeam.filter((member) => member.name === "Damini Yadav"),
+    ...coreTeam.filter((member) => member.name !== "Damini Yadav"),
+  ];
 
   return (
     <section id="team" className="py-24 bg-[#121216] relative text-white border-t border-white/5">
@@ -152,32 +156,42 @@ export default function TeamSection() {
         )}
 
         {/* Section Subhead: Core Leadership Team */}
-        <div className="text-center max-w-xl mx-auto mb-10">
-          <h3 className="text-2xl sm:text-3xl font-extrabold text-white">
-            Core Leadership &amp; Domain Leads
+        <div className="text-center max-w-2xl mx-auto mb-12">
+          <div className="inline-flex items-center gap-2 rounded-full border border-[#FF7A00]/25 bg-[#FF7A00]/[0.06] px-3.5 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-[#FFB15C] shadow-[0_0_24px_rgba(255,122,0,0.08)]">
+            <Users className="h-3.5 w-3.5" />
+            The people behind the work
+          </div>
+          <h3 className="mt-4 text-3xl sm:text-4xl font-extrabold tracking-tight text-white">
+            Core Leadership <span className="text-zinc-600">&amp;</span>
+            <span className="block sm:inline text-transparent bg-clip-text bg-gradient-to-r from-[#FF7A00] via-[#FFB347] to-[#FFD28A] sm:ml-2">
+              Domain Leads
+            </span>
           </h3>
-          <p className="text-xs sm:text-sm text-zinc-400 mt-1">
+          <div className="mx-auto mt-4 mb-3 h-px w-24 bg-gradient-to-r from-transparent via-[#FF7A00]/80 to-transparent" />
+          <p className="text-sm sm:text-base text-zinc-400">
             The dedicated team executing operations, engineering, marketing, and client partnerships.
           </p>
         </div>
 
         {/* Core Leadership Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-          {coreTeam.map((member, idx) => (
+          {orderedCoreTeam.map((member, idx) => (
             <div
               key={idx}
-              className="glass-card card-interactive-lift rounded-3xl p-7 border border-white/10 flex flex-col justify-between group hover:border-[#FF7A00]/40 transition-all"
+              className="leadership-card glass-card card-interactive-lift relative overflow-hidden rounded-3xl p-7 border border-white/10 flex flex-col justify-between group hover:border-[#FF7A00]/40 transition-all"
             >
-              <div className="space-y-4">
+              <div className="relative z-10 space-y-4">
                 {/* Header Avatar Badge */}
                 <div className="flex items-start justify-between gap-4">
-                  <div className="relative w-20 h-20 rounded-2xl overflow-hidden border-2 border-[#FF7A00]/60 shadow-lg shadow-[#FF7A00]/20 shrink-0 group-hover:scale-105 transition-transform duration-300 bg-zinc-900">
-                    <Image
-                      src={member.image || "/logo.jpg"}
-                      alt={member.name}
-                      fill
-                      className="object-cover object-top"
-                    />
+                  <div className="team-photo-ring relative w-20 h-20 rounded-2xl p-[2px] shadow-lg shadow-[#FF7A00]/20 shrink-0 group-hover:scale-105 transition-transform duration-300">
+                    <div className="relative z-10 w-full h-full rounded-[14px] overflow-hidden bg-zinc-900">
+                      <Image
+                        src={member.image || "/logo.jpg"}
+                        alt={member.name}
+                        fill
+                        className="object-cover object-top"
+                      />
+                    </div>
                   </div>
                   <span className="text-[11px] font-mono font-bold px-3 py-1 rounded-full bg-[#FF7A00]/10 text-[#FF7A00] border border-[#FF7A00]/30 shrink-0">
                     {member.badge}
@@ -214,16 +228,25 @@ export default function TeamSection() {
                   {member.bio}
                 </p>
 
-                {/* Experience & Expertise Tags */}
-                <div className="pt-3 border-t border-white/10 space-y-2">
-                  <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider block">
+                {/* Experience & Skills */}
+                <div className="rounded-2xl border border-[#FF7A00]/15 bg-gradient-to-br from-[#FF7A00]/[0.07] via-white/[0.02] to-transparent p-3.5">
+                  <div className="mb-2.5 flex items-center justify-between gap-2">
+                    <span className="flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-[0.16em] text-[#FFB15C]">
+                      <Sparkles className="h-3.5 w-3.5" />
+                      Skills &amp; Expertise
+                    </span>
+                    <span className="text-[9px] font-mono text-zinc-500">
+                      {member.expertise.length} SPECIALTIES
+                    </span>
+                  </div>
+                  <span className="mb-2.5 block text-[10px] font-semibold leading-relaxed text-zinc-400">
                     {member.experience}
                   </span>
-                  <div className="flex flex-wrap gap-1.5">
+                  <div className="flex flex-wrap gap-2">
                     {member.expertise.map((exp, i) => (
                       <span
                         key={i}
-                        className="text-[10px] font-mono px-2 py-0.5 rounded bg-zinc-900 text-zinc-300 border border-white/5"
+                        className="rounded-full border border-[#FF7A00]/25 bg-[#17130F] px-2.5 py-1 text-[10px] font-semibold text-[#FFD08A] shadow-[0_0_12px_rgba(255,122,0,0.06)] transition-all duration-200 hover:border-[#FFB347]/60 hover:bg-[#FF7A00]/15 hover:text-white"
                       >
                         {exp}
                       </span>
@@ -233,7 +256,7 @@ export default function TeamSection() {
               </div>
 
               {/* Action & Social Links */}
-              <div className="pt-4 mt-6 border-t border-white/10 flex items-center justify-between gap-3">
+              <div className="relative z-10 pt-4 mt-6 border-t border-white/10 flex items-center justify-between gap-3">
                 <div className="flex items-center gap-2">
                   {member.social.linkedin && (
                     <a
