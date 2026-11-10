@@ -1,0 +1,632 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  :root {
+    --background: #FAFAFB;
+    --foreground: #0F172A;
+    --brand-orange: #FF6B35;
+    --brand-blue: #004E89;
+    --brand-green: #1BAC6E;
+    --brand-red: #E63946;
+    --brand-dark: #0F172A;
+    --brand-card: #FFFFFF;
+    --brand-card-hover: #F8FAFC;
+    --border-color: rgba(226, 232, 240, 0.85);
+  }
+
+  .dark {
+    --background: #0E0E11;
+    --foreground: #F7F7F7;
+    --brand-orange: #FF6B35;
+    --brand-blue: #004E89;
+    --brand-green: #1BAC6E;
+    --brand-red: #E63946;
+    --brand-dark: #1A1A1A;
+    --brand-card: #16161B;
+    --brand-card-hover: #1E1E26;
+    --border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  html {
+    overflow-x: hidden;
+    max-width: 100%;
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    overflow-x: hidden;
+    max-width: 100%;
+    position: relative;
+    width: 100%;
+    selection-background-color: #FF6B35;
+    selection-color: #ffffff;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  img, svg, video, canvas, audio, iframe, embed, object {
+    max-width: 100%;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #F1F5F9;
+}
+.dark ::-webkit-scrollbar-track {
+  background: #0E0E11;
+}
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 4px;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: #2D2D36;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #FF6B35;
+}
+
+/* Glowing Animations & Keyframes */
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-10px) rotate(1deg); }
+}
+
+@keyframes floatSlow {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-14px) rotate(-1deg); }
+}
+
+@keyframes floatReverse {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(10px) rotate(1.5deg); }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.35; filter: blur(55px); transform: scale(1); }
+  50% { opacity: 0.7; filter: blur(85px); transform: scale(1.12); }
+}
+
+@keyframes pulseSoft {
+  0%, 100% { transform: scale(1); opacity: 0.95; }
+  50% { transform: scale(1.04); opacity: 1; }
+}
+
+/* Logo Color Theme Keyframes: Orange (#FF7A00), Navy Blue (#004E89), Teal (#0D9488) */
+@keyframes logoOrbOrange {
+  0%, 100% { transform: translate(0px, 0px) scale(1); opacity: 0.45; }
+  33% { transform: translate(30px, -25px) scale(1.15); opacity: 0.7; }
+  66% { transform: translate(-20px, 20px) scale(0.95); opacity: 0.5; }
+}
+
+@keyframes logoOrbBlue {
+  0%, 100% { transform: translate(0px, 0px) scale(1); opacity: 0.4; }
+  33% { transform: translate(-35px, 25px) scale(1.1); opacity: 0.65; }
+  66% { transform: translate(25px, -30px) scale(0.9); opacity: 0.45; }
+}
+
+@keyframes logoOrbTeal {
+  0%, 100% { transform: translate(0px, 0px) scale(1); opacity: 0.35; }
+  33% { transform: translate(20px, 35px) scale(1.1); opacity: 0.6; }
+  66% { transform: translate(-25px, -15px) scale(0.95); opacity: 0.4; }
+}
+
+@keyframes logoGradientFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes logoRingSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes shine {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
+}
+
+@keyframes shineSweep {
+  0% { transform: translateX(-150%) skewX(-20deg); }
+  50%, 100% { transform: translateX(250%) skewX(-20deg); }
+}
+
+@keyframes floatDelayed {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-12px) rotate(-1.5deg); }
+}
+
+@keyframes cardGlowPulse {
+  0%, 100% { border-color: rgba(255, 122, 0, 0.35); box-shadow: 0 0 20px rgba(255, 122, 0, 0.18); }
+  50% { border-color: rgba(13, 148, 136, 0.65); box-shadow: 0 0 30px rgba(13, 148, 136, 0.28); }
+}
+
+@keyframes borderGlow {
+  0%, 100% { border-color: rgba(255, 122, 0, 0.3); box-shadow: 0 0 15px rgba(255, 122, 0, 0.2); }
+  50% { border-color: rgba(13, 148, 136, 0.7); box-shadow: 0 0 25px rgba(13, 148, 136, 0.35); }
+}
+
+@keyframes teamPhotoRingSpin {
+  to { transform: rotate(360deg); }
+}
+
+.team-photo-ring {
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.team-photo-ring::before {
+  content: "";
+  position: absolute;
+  inset: -50%;
+  z-index: 0;
+  background: conic-gradient(#FF7A00, #FBBF24, #FF6B35, #C2410C, #FF7A00);
+  animation: teamPhotoRingSpin 8s linear infinite;
+}
+
+.leadership-card {
+  isolation: isolate;
+}
+
+.leadership-card::before {
+  content: "";
+  position: absolute;
+  top: -7rem;
+  right: -7rem;
+  width: 16rem;
+  height: 16rem;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(255, 122, 0, 0.13), transparent 68%);
+  opacity: 0.55;
+  transition: opacity 350ms ease, transform 500ms ease;
+  pointer-events: none;
+}
+
+.leadership-card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 12%;
+  right: 12%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 178, 71, 0.8), transparent);
+  transform: scaleX(0.35);
+  transform-origin: center;
+  transition: transform 350ms ease;
+  pointer-events: none;
+}
+
+.leadership-card:hover::before {
+  opacity: 1;
+  transform: scale(1.12);
+}
+
+.leadership-card:hover::after {
+  transform: scaleX(1);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-float-slow {
+  animation: floatSlow 8s ease-in-out infinite;
+}
+
+.animate-float-reverse {
+  animation: floatReverse 7s ease-in-out infinite;
+}
+
+.animate-logo-orange {
+  animation: logoOrbOrange 8s ease-in-out infinite;
+}
+
+.animate-logo-blue {
+  animation: logoOrbBlue 10s ease-in-out infinite;
+}
+
+.animate-logo-teal {
+  animation: logoOrbTeal 9s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 5s ease-in-out infinite;
+}
+
+.animate-pulse-soft {
+  animation: pulseSoft 3s ease-in-out infinite;
+}
+
+.animate-shine {
+  animation: shine 3s infinite;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-shine-sweep {
+  animation: shineSweep 4.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.animate-float-delayed {
+  animation: floatDelayed 7s ease-in-out 1.5s infinite;
+}
+
+.animate-card-glow-pulse {
+  animation: cardGlowPulse 4s ease-in-out infinite;
+}
+
+/* Beautiful Logo Gradient Text: Dark Slate -> Saffron Orange -> Teal -> Royal Blue in Light Mode; White in Dark Mode */
+.logo-gradient-text {
+  background: linear-gradient(135deg, #0F172A 15%, #FF7A00 50%, #0D9488 85%, #004E89 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.dark .logo-gradient-text {
+  background: linear-gradient(135deg, #FFFFFF 15%, #FF7A00 50%, #0D9488 85%, #004E89 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.logo-gradient-animated {
+  background: linear-gradient(90deg, #FF7A00, #F59E0B, #0D9488, #004E89, #FF7A00);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: logoGradientFlow 8s linear infinite;
+}
+
+.orange-gradient-text {
+  background: linear-gradient(135deg, #0F172A 10%, #FF7A00 55%, #EA580C 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.dark .orange-gradient-text {
+  background: linear-gradient(135deg, #FFFFFF 15%, #FF7A00 55%, #FFA07A 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.logo-shadow-glow {
+  box-shadow: 0 0 30px -5px rgba(255, 122, 0, 0.25), 0 0 50px -10px rgba(0, 78, 137, 0.15);
+}
+.dark .logo-shadow-glow {
+  box-shadow: 0 0 30px -5px rgba(255, 122, 0, 0.35), 0 0 50px -10px rgba(0, 78, 137, 0.3);
+}
+
+.orange-border-glow {
+  box-shadow: 0 0 25px -5px rgba(255, 107, 53, 0.2);
+}
+.dark .orange-border-glow {
+  box-shadow: 0 0 25px -5px rgba(255, 107, 53, 0.3);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 1px 3px rgba(15, 23, 42, 0.03);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, border-color 0.35s ease, background 0.3s ease;
+}
+.dark .glass-card {
+  background: rgba(22, 22, 27, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: none;
+}
+
+.glass-card-hover {
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-card-hover:hover {
+  background: #FFFFFF;
+  border-color: rgba(255, 107, 53, 0.5);
+  transform: translateY(-6px);
+  box-shadow: 0 16px 35px -8px rgba(255, 107, 53, 0.18);
+}
+.dark .glass-card-hover:hover {
+  background: rgba(28, 28, 36, 0.9);
+  border-color: rgba(255, 107, 53, 0.5);
+  box-shadow: 0 16px 35px -10px rgba(255, 107, 53, 0.25);
+}
+
+.card-interactive-lift {
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, border-color 0.35s ease;
+}
+
+.card-interactive-lift:hover {
+  transform: translateY(-8px) scale(1.01);
+  border-color: rgba(255, 107, 53, 0.55);
+  box-shadow: 0 20px 40px -12px rgba(255, 107, 53, 0.2);
+}
+.dark .card-interactive-lift:hover {
+  box-shadow: 0 20px 40px -12px rgba(255, 107, 53, 0.28);
+}
+
+.font-code {
+  font-family: 'Space Mono', monospace, monospace;
+}
+
+/* ==========================================================================
+   Animated Subtle Grid Background (Small Squares with Seamless Fast Drift)
+   ========================================================================== */
+@keyframes animatedGridShift {
+  0% {
+    background-position: 0px 0px;
+  }
+  100% {
+    background-position: 32px 32px;
+  }
+}
+
+@keyframes animatedGridShiftMobile {
+  0% {
+    background-position: 0px 0px;
+  }
+  100% {
+    background-position: 24px 24px;
+  }
+}
+
+@keyframes animatedGridGlowDrift {
+  0%, 100% {
+    transform: translate(-3%, -3%) scale(1);
+    opacity: 0.35;
+  }
+  50% {
+    transform: translate(3%, 3%) scale(1.1);
+    opacity: 0.55;
+  }
+}
+
+.animated-grid-pattern {
+  background-image: 
+    linear-gradient(to right, rgba(15, 23, 42, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(15, 23, 42, 0.05) 1px, transparent 1px);
+  background-size: 32px 32px;
+  animation: animatedGridShift 8s linear infinite;
+  will-change: background-position;
+}
+.dark .animated-grid-pattern {
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+}
+
+@media (max-width: 640px) {
+  .animated-grid-pattern {
+    background-size: 24px 24px;
+    animation: animatedGridShiftMobile 7s linear infinite;
+  }
+}
+
+.animated-grid-glow {
+  animation: animatedGridGlowDrift 12s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+/* ==========================================================================
+   Smooth Vertical Floating Animations (Up & Down Only - NO Round Rotation)
+   ========================================================================== */
+@keyframes gridFloatUpDown {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes gridFloatUpDownReverse {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(20px);
+  }
+}
+
+.animate-grid-float {
+  animation: gridFloatUpDown 5s ease-in-out infinite;
+  will-change: transform;
+}
+
+.animate-grid-float-reverse {
+  animation: gridFloatUpDownReverse 5.8s ease-in-out infinite;
+  will-change: transform;
+}
+
+.animate-grid-float-delayed {
+  animation: gridFloatUpDown 5.2s ease-in-out 1.2s infinite;
+  will-change: transform;
+}
+
+/* ==========================================================================
+   3D Wireframe Dodecahedron Polyhedron (Nexeor-identical Pure CSS 3D Model)
+   ========================================================================== */
+@keyframes dodecaRotate {
+  0% {
+    transform: rotateX(0deg) rotateY(1turn) rotate(1turn);
+  }
+  100% {
+    transform: rotateX(1turn) rotateY(0deg) rotate(-1turn);
+  }
+}
+
+@keyframes dodecaRotateReverse {
+  0% {
+    transform: rotateX(1turn) rotateY(0deg) rotate(-1turn);
+  }
+  100% {
+    transform: rotateX(0deg) rotateY(1turn) rotate(1turn);
+  }
+}
+
+.dodeca-scene {
+  position: absolute;
+  pointer-events: none;
+  width: 300px;
+  height: 300px;
+  perspective: 1200px;
+  transform-origin: center center;
+}
+
+.dodeca-object {
+  position: relative;
+  left: 100px;
+  top: 40px;
+  width: 100px;
+  height: 223px;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.dodeca-rotate-fast {
+  animation: dodecaRotate 18s linear infinite;
+}
+
+.dodeca-rotate-reverse-fast {
+  animation: dodecaRotateReverse 22s linear infinite;
+}
+
+.dodeca-rotate-normal {
+  animation: dodecaRotate 26s linear infinite;
+}
+
+.dodeca-rotate-reverse {
+  animation: dodecaRotateReverse 30s linear infinite;
+}
+
+.dodeca-pentagon {
+  position: absolute;
+  width: 100px;
+}
+
+.dodeca-pentagon:nth-child(1) { transform: rotateY(72deg) translateZ(69px) rotateX(26.5deg); }
+.dodeca-pentagon:nth-child(2) { transform: rotateY(.4turn) translateZ(69px) rotateX(26.5deg); }
+.dodeca-pentagon:nth-child(3) { transform: rotateY(.6turn) translateZ(69px) rotateX(26.5deg); }
+.dodeca-pentagon:nth-child(4) { transform: rotateY(.8turn) translateZ(69px) rotateX(26.5deg); }
+.dodeca-pentagon:nth-child(5) { transform: rotateY(1turn) translateZ(69px) rotateX(26.5deg); }
+
+.dodeca-pentagon:nth-child(6) { bottom: 0; transform: rotateY(72deg) translateZ(-69px) rotateX(206.5deg); }
+.dodeca-pentagon:nth-child(7) { bottom: 0; transform: rotateY(.4turn) translateZ(-69px) rotateX(206.5deg); }
+.dodeca-pentagon:nth-child(8) { bottom: 0; transform: rotateY(.6turn) translateZ(-69px) rotateX(206.5deg); }
+.dodeca-pentagon:nth-child(9) { bottom: 0; transform: rotateY(.8turn) translateZ(-69px) rotateX(206.5deg); }
+.dodeca-pentagon:nth-child(10) { bottom: 0; transform: rotateY(1turn) translateZ(-69px) rotateX(206.5deg); }
+
+.dodeca-pentagon:nth-child(11) { transform: translateZ(69px) rotateX(-90deg); }
+.dodeca-pentagon:nth-child(12) { bottom: 0; transform: translateZ(-69px) rotateX(90deg); }
+
+.dodeca-pentagon div {
+  position: absolute;
+  width: 100px;
+  height: 69px;
+  transform-origin: bottom;
+  border-top: 1px solid rgba(15, 23, 42, 0.18);
+}
+.dark .dodeca-pentagon div {
+  border-top: 1px solid rgba(255, 255, 255, 0.45);
+}
+
+.dodeca-pentagon div:nth-child(1) { transform: rotate(72deg); }
+.dodeca-pentagon div:nth-child(2) { transform: rotate(.4turn); }
+.dodeca-pentagon div:nth-child(3) { transform: rotate(.6turn); }
+.dodeca-pentagon div:nth-child(4) { transform: rotate(.8turn); }
+.dodeca-pentagon div:nth-child(5) { transform: rotate(1turn); }
+
+/* Accent brand styling variants */
+.dodeca-brand .dodeca-pentagon div {
+  border-top: 1px solid rgba(255, 255, 255, 0.42);
+}
+.dodeca-brand .dodeca-pentagon:nth-child(2) div,
+.dodeca-brand .dodeca-pentagon:nth-child(8) div {
+  border-top-color: rgba(255, 122, 0, 0.65);
+}
+.dodeca-brand .dodeca-pentagon:nth-child(4) div,
+.dodeca-brand .dodeca-pentagon:nth-child(11) div {
+  border-top-color: rgba(0, 78, 137, 0.6);
+}
+
+/* Accessibility: Strict Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .animated-grid-pattern,
+  .animated-grid-glow,
+  .dodeca-object,
+  .team-photo-ring::before {
+    animation: none !important;
+    transform: none !important;
+  }
+}
+
+/* Print Specific CSS */
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  body > *:not(#printable-modal-wrapper) {
+    display: none !important;
+  }
+
+  #printable-modal-wrapper {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+  }
+
+  #printable-pdf-document {
+    background: #ffffff !important;
+    color: #111827 !important;
+    border: none !important;
+    box-shadow: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .print-text-dark {
+    color: #111827 !important;
+  }
+
+  .print-bg-white {
+    background-color: #ffffff !important;
+    border-color: #e5e7eb !important;
+  }
+}
