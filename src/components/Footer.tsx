@@ -1,5 +1,18 @@
 "use client";
 
+/**
+ * Footer Component
+ * 
+ * Comprehensive 5-column footer matching the Karya Saarthi platform standards:
+ * - Column 1: Solutions & Services links
+ * - Column 2: Learning & Resources documentation links
+ * - Column 3: About Us, Core Team, Career, & Official Social Channels
+ * - Column 4: Trust, Security & Interactive Legal Modals (Privacy, Terms, Disclaimer, Refund, NDA)
+ * - Column 5: Direct contact info (Phone, Email, Working hours, Global service status)
+ * - Corporate office registry (CIN, GSTIN, Registered Office Burari Delhi)
+ * - Admin portal discreet link & Copyright legal notice
+ */
+
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";

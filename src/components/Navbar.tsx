@@ -1,5 +1,16 @@
 "use client";
 
+/**
+ * Navbar Component
+ * 
+ * Header navigation bar providing:
+ * - Brand logo & company identity with circular favicon badge
+ * - Desktop nav links with smooth scroll anchors to sections
+ * - Light / Dark mode toggle button with persistent theme state
+ * - Action buttons: Download Portfolio PDF & Free Consultation modal trigger
+ * - Mobile responsive drawer menu with accessible touch targets
+ */
+
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
