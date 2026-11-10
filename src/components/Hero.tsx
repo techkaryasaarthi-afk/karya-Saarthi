@@ -12,7 +12,7 @@ interface HeroProps {
 
 export default function Hero({ onOpenConsultation, onOpenQuote }: HeroProps) {
   return (
-    <section className="relative pt-32 pb-20 md:pt-40 md:pb-28 overflow-hidden bg-slate-50 dark:bg-[#0E0E11] text-slate-900 dark:text-white transition-colors duration-300">
+    <section id="hero" className="relative pt-32 pb-20 md:pt-40 md:pb-28 overflow-hidden bg-slate-50 dark:bg-[#0E0E11] text-slate-900 dark:text-white transition-colors duration-300">
       {/* 1. Fast, Clearly Visible Animated Background Square Grid */}
       <div 
         className="absolute inset-0 animated-grid-pattern opacity-70 [mask-image:radial-gradient(ellipse_85%_75%_at_50%_40%,#000_50%,transparent_95%)] pointer-events-none z-0"
