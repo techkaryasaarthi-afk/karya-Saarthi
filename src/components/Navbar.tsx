@@ -40,6 +40,7 @@ export default function Navbar({ onOpenConsultation, onOpenPortfolioPdf }: Navba
   }, []);
 
   const navLinks = [
+    { name: "Home", href: "#hero" },
     { name: "Services", href: "#services" },
     { name: "Case Studies", href: "#projects" },
     { name: "ROI Estimator", href: "#roi-calculator" },
