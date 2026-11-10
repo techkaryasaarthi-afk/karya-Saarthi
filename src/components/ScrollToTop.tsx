@@ -1,5 +1,15 @@
 "use client";
 
+/**
+ * ScrollToTop Component
+ * 
+ * Branded floating action button featuring:
+ * - Official Karya Saarthi circular logo emblem
+ * - Upward arrow badge indicator with animated bounce on hover
+ * - Smooth scroll behavior directly to page top (`window.scrollTo`)
+ * - Responsive position at bottom-left corner with glowing brand ring
+ */
+
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { ArrowUp } from "lucide-react";

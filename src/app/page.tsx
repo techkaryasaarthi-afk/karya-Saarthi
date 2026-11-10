@@ -1,5 +1,19 @@
 "use client";
 
+/**
+ * Karya Saarthi - Official Portfolio & Project Platform
+ * 
+ * Main landing page integrating:
+ * - Responsive navigation with light/dark theme switcher
+ * - Hero section with primary CTA and consulting highlights
+ * - Core services grid with interactive quote builder
+ * - Interactive ROI estimator calculator
+ * - Case study showcases with animated 3D device mockups
+ * - Team credentials, client reviews, and verifiable outcomes
+ * - Direct WhatsApp integration and branded Scroll-To-Top button
+ * - Executive Portfolio PDF generator modal and consultation scheduler
+ */
+
 import React, { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";

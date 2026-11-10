@@ -1,5 +1,17 @@
 "use client";
 
+/**
+ * ProjectBannerIllustration Component
+ * 
+ * Renders thematic 3D-styled animated device illustrations for all 6 case studies:
+ * 1. FitPro: Mobile fitness tracking device with glowing heartbeat pulse & calorie burn meter
+ * 2. LearnFlow: Mini code IDE window with syntax highlighting and compiler terminal status
+ * 3. HandMade Stories: E-commerce live storefront card with 5-star rating, pricing & instant checkout
+ * 4. QuickDeliver: AI Route HUD with interactive SVG vector path, route nodes & predictive ETA
+ * 5. Dr. Neha Kapoor: IEEE certified research document with peer-review stamp & Turnitin plagiarism score
+ * 6. TaskFlow: SaaS Series A MRR growth chart with dynamic gradient velocity bars & funding target
+ */
+
 import React from "react";
 import {
   Smartphone,
