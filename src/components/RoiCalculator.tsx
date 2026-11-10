@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Calculator, Sparkles, CheckCircle, ArrowRight, TrendingUp, Clock, DollarSign } from "lucide-react";
+import { Sparkles, ArrowRight, TrendingUp, Clock } from "lucide-react";
 
 interface RoiCalculatorProps {
   onSendEstimate: (service: string, estimate: string) => void;
@@ -58,20 +58,20 @@ export default function RoiCalculator({ onSendEstimate }: RoiCalculatorProps) {
         roi = "40% reduction in customer response handling time";
       } else if (complexity === "medium") {
         minBudget = 75000; maxBudget = 150000; timeline = "6-10 Weeks";
-        roi = "±15 min ETA delivery accuracy and 15% route efficiency";
+        roi = "Custom fine-tuned model deployed with 99.2% inference accuracy";
       } else {
-        minBudget = 150000; maxBudget = 300000; timeline = "10-16 Weeks";
-        roi = "₹20 Lakh+ annual cost recovery from predictive automation";
+        minBudget = 150000; maxBudget = 400000; timeline = "10-14 Weeks";
+        roi = "Autonomous enterprise AI workflow replacing 150+ human hours/mo";
       }
     } else if (selectedService === "academic") {
       if (complexity === "low") {
-        minBudget = 5000; maxBudget = 10000; timeline = "1-2 Weeks";
-        roi = "Annotated literature review of 50+ sources";
+        minBudget = 5000; maxBudget = 15000; timeline = "1-2 Weeks";
+        roi = "Turnitin verified zero AI plagiarism guarantee (<5%)";
       } else if (complexity === "medium") {
-        minBudget = 10000; maxBudget = 18000; timeline = "2-4 Weeks";
-        roi = "100% Turnitin verified paper with statistical testing";
+        minBudget = 15000; maxBudget = 35000; timeline = "2-4 Weeks";
+        roi = "UGC Care / Scopus indexed standard compliance";
       } else {
-        minBudget = 18000; maxBudget = 28000; timeline = "4-8 Weeks";
+        minBudget = 35000; maxBudget = 80000; timeline = "4-8 Weeks";
         roi = "Top-tier IEEE / ACM publication and journal acceptance";
       }
     } else if (selectedService === "consulting") {
@@ -103,34 +103,34 @@ export default function RoiCalculator({ onSendEstimate }: RoiCalculatorProps) {
   const estimate = getEstimate();
 
   return (
-    <section id="roi-calculator" className="py-24 bg-[#0E0E11] relative text-white">
+    <section id="roi-calculator" className="py-24 bg-slate-50 dark:bg-[#0E0E11] relative text-slate-900 dark:text-white transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#FF6B35]/10 border border-[#FF6B35]/30 text-[#FF6B35] text-xs font-semibold uppercase tracking-wider">
-            Interactive Cost & ROI Estimator
+            Interactive Cost &amp; ROI Estimator
           </div>
-          <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight">
-            Calculate Your <span className="text-[#FF6B35]">Project Investment</span> & ROI
+          <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+            Calculate Your <span className="text-[#FF6B35]">Project Investment</span> &amp; ROI
           </h2>
-          <p className="text-base sm:text-lg text-zinc-400">
+          <p className="text-base sm:text-lg text-slate-600 dark:text-zinc-400">
             Select your requirements below to instantly generate a transparent cost estimate, timeline projection, and expected growth metrics.
           </p>
         </div>
 
         {/* Estimator Card Widget */}
-        <div className="glass-card rounded-3xl p-6 sm:p-10 border border-white/10 shadow-2xl grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+        <div className="glass-card rounded-3xl p-5 sm:p-8 md:p-10 border border-slate-200/80 dark:border-white/10 shadow-xl grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
           
           {/* Controls Column */}
           <div className="lg:col-span-7 space-y-6">
             
             {/* Step 1: Select Service */}
             <div>
-              <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider block mb-3">
+              <label className="text-xs font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wider block mb-3">
                 1. Select Service Offering:
               </label>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-2.5">
                 {[
                   { id: "web", label: "Website Dev" },
                   { id: "mobile", label: "Mobile App" },
@@ -142,10 +142,10 @@ export default function RoiCalculator({ onSendEstimate }: RoiCalculatorProps) {
                   <button
                     key={s.id}
                     onClick={() => setSelectedService(s.id)}
-                    className={`p-3 rounded-xl text-xs font-semibold text-center border transition-all ${
+                    className={`p-2.5 sm:p-3 rounded-xl text-xs font-semibold text-center border transition-all cursor-pointer ${
                       selectedService === s.id
                         ? "bg-[#FF6B35] text-white border-[#FF6B35] shadow-lg shadow-[#FF6B35]/25"
-                        : "bg-zinc-900 text-zinc-300 border-white/10 hover:border-white/20"
+                        : "bg-slate-100 text-slate-700 border-slate-200 hover:border-slate-300 dark:bg-zinc-900 dark:text-zinc-300 dark:border-white/10 dark:hover:border-white/20"
                     }`}
                   >
                     {s.label}
@@ -156,10 +156,10 @@ export default function RoiCalculator({ onSendEstimate }: RoiCalculatorProps) {
 
             {/* Step 2: Project Scope / Complexity */}
             <div>
-              <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider block mb-3">
-                2. Project Scope & Complexity Level:
+              <label className="text-xs font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wider block mb-3">
+                2. Project Scope &amp; Complexity Level:
               </label>
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3">
                 {[
                   { id: "low", label: "Startup / Basic MVP", desc: "Essential features" },
                   { id: "medium", label: "Scale-Up / Growth", desc: "Custom integrations" },
@@ -168,14 +168,14 @@ export default function RoiCalculator({ onSendEstimate }: RoiCalculatorProps) {
                   <button
                     key={c.id}
                     onClick={() => setComplexity(c.id)}
-                    className={`p-3.5 rounded-xl text-left border transition-all ${
+                    className={`p-3 sm:p-3.5 rounded-xl text-left border transition-all cursor-pointer ${
                       complexity === c.id
-                        ? "bg-[#FF6B35]/15 border-[#FF6B35] text-white"
-                        : "bg-zinc-900 text-zinc-300 border-white/10 hover:border-white/20"
+                        ? "bg-[#FF6B35]/10 border-[#FF6B35] text-slate-900 dark:bg-[#FF6B35]/15 dark:text-white"
+                        : "bg-slate-100 text-slate-700 border-slate-200 hover:border-slate-300 dark:bg-zinc-900 dark:text-zinc-300 dark:border-white/10 dark:hover:border-white/20"
                     }`}
                   >
                     <div className="text-xs font-bold">{c.label}</div>
-                    <div className="text-[10px] text-zinc-400 mt-1">{c.desc}</div>
+                    <div className="text-[10px] text-slate-500 dark:text-zinc-400 mt-0.5 sm:mt-1">{c.desc}</div>
                   </button>
                 ))}
               </div>
@@ -183,10 +183,10 @@ export default function RoiCalculator({ onSendEstimate }: RoiCalculatorProps) {
 
             {/* Step 3: Urgency */}
             <div>
-              <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider block mb-3">
+              <label className="text-xs font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wider block mb-3">
                 3. Delivery Timeline Preference:
               </label>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
                 {[
                   { id: "standard", label: "Standard Delivery", desc: "Regular sprint pacing" },
                   { id: "fast", label: "Accelerated Sprint", desc: "Priority execution (+15%)" },
@@ -194,14 +194,14 @@ export default function RoiCalculator({ onSendEstimate }: RoiCalculatorProps) {
                   <button
                     key={u.id}
                     onClick={() => setUrgency(u.id)}
-                    className={`p-3.5 rounded-xl text-left border transition-all ${
+                    className={`p-3 sm:p-3.5 rounded-xl text-left border transition-all cursor-pointer ${
                       urgency === u.id
-                        ? "bg-[#FF6B35]/15 border-[#FF6B35] text-white"
-                        : "bg-zinc-900 text-zinc-300 border-white/10 hover:border-white/20"
+                        ? "bg-[#FF6B35]/10 border-[#FF6B35] text-slate-900 dark:bg-[#FF6B35]/15 dark:text-white"
+                        : "bg-slate-100 text-slate-700 border-slate-200 hover:border-slate-300 dark:bg-zinc-900 dark:text-zinc-300 dark:border-white/10 dark:hover:border-white/20"
                     }`}
                   >
                     <div className="text-xs font-bold">{u.label}</div>
-                    <div className="text-[10px] text-zinc-400 mt-1">{u.desc}</div>
+                    <div className="text-[10px] text-slate-500 dark:text-zinc-400 mt-0.5 sm:mt-1">{u.desc}</div>
                   </button>
                 ))}
               </div>
@@ -210,11 +210,11 @@ export default function RoiCalculator({ onSendEstimate }: RoiCalculatorProps) {
           </div>
 
           {/* Results Summary Column with Interactive Lift & Glow */}
-          <div className="lg:col-span-5 bg-gradient-to-br from-[#181820] to-[#121217] p-7 rounded-2xl border border-[#FF6B35]/40 space-y-6 relative overflow-hidden shadow-2xl card-interactive-lift group">
-            <div className="absolute top-0 right-0 w-36 h-36 bg-[#FF6B35]/20 rounded-full blur-3xl pointer-events-none group-hover:scale-150 transition-all duration-500" />
+          <div className="lg:col-span-5 bg-white dark:bg-gradient-to-br dark:from-[#181820] dark:to-[#121217] p-5 sm:p-7 rounded-2xl border border-[#FF6B35]/40 space-y-5 sm:space-y-6 relative overflow-hidden shadow-xl card-interactive-lift group">
+            <div className="absolute top-0 right-0 w-36 h-36 bg-[#FF6B35]/10 dark:bg-[#FF6B35]/20 rounded-full blur-3xl pointer-events-none group-hover:scale-150 transition-all duration-500" />
 
-            <div className="flex items-center justify-between border-b border-white/10 pb-4">
-              <span className="text-xs font-bold text-zinc-400 uppercase tracking-wider group-hover:text-zinc-200 transition-colors">
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 pb-4">
+              <span className="text-xs font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wider group-hover:text-slate-800 dark:group-hover:text-zinc-200 transition-colors">
                 Instant Estimate Summary
               </span>
               <Sparkles className="w-5 h-5 text-[#FF6B35] group-hover:rotate-12 transition-transform duration-300" />
@@ -222,24 +222,24 @@ export default function RoiCalculator({ onSendEstimate }: RoiCalculatorProps) {
 
             <div className="space-y-4">
               <div>
-                <span className="text-xs text-zinc-400 block">Estimated Price Range:</span>
-                <p className="text-3xl font-extrabold text-[#FF6B35]">{estimate.budgetStr}</p>
+                <span className="text-xs text-slate-500 dark:text-zinc-400 block">Estimated Price Range:</span>
+                <p className="text-2xl sm:text-3xl font-extrabold text-[#FF6B35] break-words">{estimate.budgetStr}</p>
               </div>
 
               <div>
-                <span className="text-xs text-zinc-400 block">Estimated Timeline:</span>
-                <p className="text-base font-bold text-white flex items-center gap-2 mt-0.5">
-                  <Clock className="w-4 h-4 text-blue-400" />
+                <span className="text-xs text-slate-500 dark:text-zinc-400 block">Estimated Timeline:</span>
+                <p className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2 mt-0.5">
+                  <Clock className="w-4 h-4 text-blue-500 dark:text-blue-400" />
                   {estimate.timeline}
                 </p>
               </div>
 
-              <div className="p-4 rounded-xl bg-[#1BAC6E]/10 border border-[#1BAC6E]/20 text-xs space-y-1">
-                <span className="font-bold text-[#1BAC6E] block flex items-center gap-1.5">
+              <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 dark:bg-[#1BAC6E]/10 dark:border-[#1BAC6E]/20 text-xs space-y-1">
+                <span className="font-bold text-[#1BAC6E] flex items-center gap-1.5">
                   <TrendingUp className="w-4 h-4" />
-                  Projected ROI & Impact:
+                  Projected ROI &amp; Impact:
                 </span>
-                <p className="text-zinc-200">{estimate.roi}</p>
+                <p className="text-slate-700 dark:text-zinc-200">{estimate.roi}</p>
               </div>
             </div>
 
@@ -248,9 +248,9 @@ export default function RoiCalculator({ onSendEstimate }: RoiCalculatorProps) {
                 const serviceLabel = selectedService.toUpperCase();
                 onSendEstimate(serviceLabel, `${estimate.budgetStr} (${estimate.timeline})`);
               }}
-              className="w-full py-3.5 rounded-xl text-xs font-bold text-white bg-[#FF6B35] hover:bg-[#FF8855] shadow-lg shadow-[#FF6B35]/25 transition-all flex items-center justify-center gap-2"
+              className="w-full py-3.5 rounded-xl text-xs font-bold text-white bg-[#FF6B35] hover:bg-[#FF8855] shadow-lg shadow-[#FF6B35]/25 transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
-              <span>Lock In This Estimate & Request Proposal</span>
+              <span>Lock In This Estimate &amp; Request Proposal</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>

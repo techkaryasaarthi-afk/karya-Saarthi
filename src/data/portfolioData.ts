@@ -520,17 +520,17 @@ export const TEAM: TeamMember[] = [
   },
   {
     name: "Pawandeep Kaur",
-    role: "Co-Founder, Operations & Partnerships",
-    badge: "Co-Founder",
-    experience: "Operations, Execution & Academic Partnerships",
-    expertise: ["Operations Management", "Process Optimization", "Client Relations", "Academic Coordination"],
+    role: "Project Coordinator",
+    badge: "Project Coordinator",
+    experience: "Project Coordination, Workflow Management & Delivery Quality",
+    expertise: ["Project Coordination", "Workflow Management", "Quality Assurance", "Client Communication"],
     education: "Pursuing B.Sc. (Hons.) Chemistry, Delhi University (5th Sem)",
     email: "info.karyasaarthi@gmail.com",
     image: "/team/pawandeep-kaur.jpg",
     social: {
       linkedin: "https://www.linkedin.com/in/pawandeep-kaur-715897345",
     },
-    bio: "Pawandeep co-founded Karya Saarthi and leads nationwide operations, academic partnerships, and delivery quality. Pursuing Chemistry (Hons.) at Delhi University, she ensures every project strictly adheres to deadlines and quality benchmarks.",
+    bio: "Pawandeep serves as Project Coordinator at Karya Saarthi, managing project schedules, milestone deliveries, and cross-functional team workflows. Pursuing Chemistry (Hons.) at Delhi University, she ensures every project strictly adheres to deadlines, client requirements, and quality benchmarks.",
   },
   {
     name: "Damini Yadav",

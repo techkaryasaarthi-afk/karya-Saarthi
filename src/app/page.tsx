@@ -14,7 +14,7 @@ import ContactSection from "@/components/ContactSection";
 import PortfolioPdfModal from "@/components/PortfolioPdfModal";
 import AppointmentModal from "@/components/AppointmentModal";
 import WhatsAppWidget from "@/components/WhatsAppWidget";
-import AdminFloatingWidget from "@/components/AdminFloatingWidget";
+import ScrollToTop from "@/components/ScrollToTop";
 import Footer from "@/components/Footer";
 
 export default function Home() {
@@ -49,7 +49,7 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-[#0E0E11] text-white selection:bg-[#FF6B35] selection:text-white relative">
+    <main className="min-h-screen w-full overflow-x-clip bg-slate-50 dark:bg-[#0E0E11] text-slate-900 dark:text-white selection:bg-[#FF6B35] selection:text-white relative transition-colors duration-300">
       {/* Fixed Glassmorphism Navbar */}
       <Navbar
         onOpenConsultation={() => handleOpenAppointmentModal()}
@@ -93,8 +93,8 @@ export default function Home() {
         <PortfolioPdfModal onClose={() => setIsPdfModalOpen(false)} />
       )}
 
-      {/* Left-Side Floating Admin Widget (Direct to /admin) */}
-      <AdminFloatingWidget />
+      {/* Floating Scroll To Top Button (Direct to Top) */}
+      <ScrollToTop />
 
       {/* Right-Side Floating WhatsApp Widget (Direct to 9153780968) */}
       <WhatsAppWidget />
