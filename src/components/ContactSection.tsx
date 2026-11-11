@@ -37,7 +37,7 @@ export default function ContactSection({ initialService = "", initialEstimate = 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await fetch("/api/appointments", {
+      await fetch("/api/portfolio/enquiry", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -46,8 +46,10 @@ export default function ContactSection({ initialService = "", initialEstimate = 
           phone: formData.phone,
           service: formData.service,
           budget: formData.budget,
+          message: formData.message,
           notes: formData.message,
           meetingType: activeTab === "consultation" ? "30-Min Call" : activeTab === "quote" ? "Custom Quote" : "Live Demo",
+          source: "Portfolio Website",
         }),
       });
     } catch (err) {

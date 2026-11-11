@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { CASE_STUDIES, CaseStudy } from "@/data/portfolioData";
 import ProjectBannerIllustration from "./ProjectBannerIllustration";
 import {
@@ -20,6 +20,67 @@ interface ProjectsSectionProps {
 export default function ProjectsSection({ onOpenConsultation }: ProjectsSectionProps) {
   const [activeCategory, setActiveCategory] = useState<string>("all");
   const [selectedProject, setSelectedProject] = useState<CaseStudy | null>(null);
+  const [projectsList, setProjectsList] = useState<CaseStudy[]>(CASE_STUDIES);
+  const [loadingProjects, setLoadingProjects] = useState<boolean>(false);
+
+  useEffect(() => {
+    let isMounted = true;
+    setLoadingProjects(true);
+
+    fetch("/api/portfolio")
+      .then((res) => res.json())
+      .then((json) => {
+        if (isMounted && json.success && Array.isArray(json.data) && json.data.length > 0) {
+          // Map dynamic Portfolio items from Supabase / CRM
+          const mapped: CaseStudy[] = json.data.map((item: any) => {
+            const existing = CASE_STUDIES.find(
+              (c) => c.id === item.id || c.title.toLowerCase() === item.title.toLowerCase()
+            );
+            return {
+              id: item.id,
+              title: item.title,
+              client: item.client_name || existing?.client || "Enterprise Client",
+              industry: item.industry || existing?.industry || "Technology & Services",
+              projectType: existing?.projectType || `${(item.category || "web").toUpperCase()} Development`,
+              timeline: existing?.timeline || "2-6 weeks",
+              budget: item.budget || existing?.budget || "₹50,000",
+              category: (item.category?.toLowerCase() || "web") as any,
+              challenge: item.description || existing?.challenge || "Comprehensive engineering and scalable architecture.",
+              solution: existing?.solution || [
+                item.description || "Delivered full-stack development and responsive design.",
+                "Integrated secure payment gateways and cloud infrastructure.",
+                "Configured CI/CD pipeline and automated analytics.",
+              ],
+              techStack: Array.isArray(item.tech_stack) && item.tech_stack.length > 0
+                ? item.tech_stack
+                : (existing?.techStack || ["React", "Next.js", "Node.js", "AWS"]),
+              results: existing?.results || [
+                "Successfully deployed to production with 99.9% uptime",
+                "High user engagement and positive feedback",
+                "Scalable microservices ready for enterprise growth",
+              ],
+              testimonial: existing?.testimonial || {
+                quote: "Karya Saarthi delivered the project with unmatched precision, speed, and dedication.",
+                author: item.client_name || "Enterprise Partner",
+                role: "Client Leader",
+              },
+              liveLinks: item.live_link
+                ? [{ label: "View Live Project", url: item.live_link }]
+                : (existing?.liveLinks || []),
+            };
+          });
+          setProjectsList(mapped);
+        }
+      })
+      .catch((err) => console.warn("[ProjectsSection] Live fetch notice:", err))
+      .finally(() => {
+        if (isMounted) setLoadingProjects(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const categories = [
     { id: "all", label: "All Projects" },
@@ -32,8 +93,8 @@ export default function ProjectsSection({ onOpenConsultation }: ProjectsSectionP
 
   const filteredProjects =
     activeCategory === "all"
-      ? CASE_STUDIES
-      : CASE_STUDIES.filter((p) => p.category === activeCategory);
+      ? projectsList
+      : projectsList.filter((p) => p.category === activeCategory);
 
   return (
     <section id="projects" className="py-24 bg-white dark:bg-[#121216] relative text-slate-900 dark:text-white border-t border-slate-200/80 dark:border-white/5 transition-colors duration-300">
