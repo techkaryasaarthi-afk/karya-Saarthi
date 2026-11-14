@@ -295,7 +295,7 @@ export default function TeamSection() {
         {/* Network Power Banner */}
         <div className="glass-card rounded-2xl p-8 border border-slate-200/80 dark:border-white/10 text-center grid grid-cols-1 sm:grid-cols-3 gap-6 shadow-sm">
           <div>
-            <div className="text-3xl font-extrabold text-slate-900 dark:text-white">7 Core Members</div>
+            <div className="text-3xl font-extrabold text-slate-900 dark:text-white">3 Core Members</div>
             <p className="text-xs text-slate-500 dark:text-zinc-400 mt-1">Full-Time Product &amp; Strategy Experts</p>
           </div>
           <div>
