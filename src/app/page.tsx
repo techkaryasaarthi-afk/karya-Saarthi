@@ -28,7 +28,6 @@ import ContactSection from "@/components/ContactSection";
 import PortfolioPdfModal from "@/components/PortfolioPdfModal";
 import AppointmentModal from "@/components/AppointmentModal";
 import WhatsAppWidget from "@/components/WhatsAppWidget";
-import ScrollToTop from "@/components/ScrollToTop";
 import Footer from "@/components/Footer";
 
 export default function Home() {
@@ -106,9 +105,6 @@ export default function Home() {
       {isPdfModalOpen && (
         <PortfolioPdfModal onClose={() => setIsPdfModalOpen(false)} />
       )}
-
-      {/* Floating Scroll To Top Button (Direct to Top) */}
-      <ScrollToTop />
 
       {/* Right-Side Floating WhatsApp Widget (Direct to 9153780968) */}
       <WhatsAppWidget />
