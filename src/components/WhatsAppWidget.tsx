@@ -5,8 +5,8 @@ import { MessageCircle, X, Send, Sparkles } from "lucide-react";
 
 export default function WhatsAppWidget() {
   const [isOpen, setIsOpen] = useState(false);
-  const phoneNumber = "919153780968"; // Country code 91 + 9153780968
-  const displayNumber = "+91 9153780968";
+  const phoneNumber = "918595025753"; // Country code 91 + 8595025753
+  const displayNumber = "+91 8595025753";
 
   const defaultMessage = "Hello Karya Saarthi, I would like to discuss a project and schedule a consultation.";
 

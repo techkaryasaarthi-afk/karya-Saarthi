@@ -29,6 +29,7 @@ import Countries195Section from "@/components/Countries195Section";
 import PortfolioPdfModal from "@/components/PortfolioPdfModal";
 import AppointmentModal from "@/components/AppointmentModal";
 import WhatsAppWidget from "@/components/WhatsAppWidget";
+import ScrollToTop from "@/components/ScrollToTop";
 import Footer from "@/components/Footer";
 
 export default function Home() {
@@ -115,8 +116,11 @@ export default function Home() {
         <PortfolioPdfModal onClose={() => setIsPdfModalOpen(false)} />
       )}
 
-      {/* Right-Side Floating WhatsApp Widget (Direct to 9153780968) */}
+      {/* Right-Side Floating WhatsApp Widget (Direct to 8595025753) */}
       <WhatsAppWidget />
+
+      {/* Floating Scroll-to-Top Button (Appears on scroll at bottom-right) */}
+      <ScrollToTop />
 
       {/* Global Reach: 195 Sovereign Countries Showcase & Interactive Directory */}
       <Countries195Section
