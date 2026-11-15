@@ -454,7 +454,7 @@ export default function Footer({ onOpenAppointment, onOpenCountriesModal }: Foot
         </div>
 
         {/* 4. Full Width Corporate Office & Identity Details */}
-        <div className="pt-6 border-t border-slate-200 dark:border-white/10 space-y-2 text-[11px] text-slate-500 dark:text-zinc-400 leading-relaxed">
+        <div className="pt-6 border-t border-slate-200 dark:border-white/10 space-y-2 text-[11px] text-slate-500 dark:text-zinc-400 leading-relaxed break-words">
           <p>
             <strong className="text-slate-800 dark:text-zinc-200">Karyanex Private Limited</strong> · Operating Brand: <strong className="text-[#FF7A00]">Karya Saarthi</strong> · CIN: <span className="font-mono">U85500BR2026PTC085054</span> · GSTIN: <span className="font-mono">10AAMCK8870B1ZN</span> · Corporate Office: Gali No 1, Block A, Uttarakhand Enclave, Nathupura, Burari, Delhi 110084, India
           </p>

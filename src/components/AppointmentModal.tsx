@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import confetti from "canvas-confetti";
 import { X, Calendar, Clock, CheckCircle2, Send, Mail } from "lucide-react";
+import { useCountry } from "@/context/CountryContext";
 
 interface AppointmentModalProps {
   isOpen: boolean;
@@ -11,6 +12,7 @@ interface AppointmentModalProps {
 }
 
 export default function AppointmentModal({ isOpen, onClose, preselectedService }: AppointmentModalProps) {
+  const { convertBudget } = useCountry();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -281,10 +283,10 @@ export default function AppointmentModal({ isOpen, onClose, preselectedService }
                   onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
                   className="w-full bg-slate-50 dark:bg-zinc-900 border border-slate-200 dark:border-white/10 focus:border-[#FF6B35] rounded-xl px-3.5 py-2.5 text-xs text-slate-900 dark:text-white focus:outline-none"
                 >
-                  <option value="₹10,000 - ₹30,000">₹10,000 - ₹30,000</option>
-                  <option value="₹30,000 - ₹85,000">₹30,000 - ₹85,000</option>
-                  <option value="₹1,00,000 - ₹2,50,000">₹1,00,000 - ₹2,50,000</option>
-                  <option value="₹2,50,000+">₹2,50,000+</option>
+                  <option value="₹10,000 - ₹30,000">{convertBudget("₹10,000 - ₹30,000")}</option>
+                  <option value="₹30,000 - ₹85,000">{convertBudget("₹30,000 - ₹85,000")}</option>
+                  <option value="₹1,00,000 - ₹2,50,000">{convertBudget("₹1,00,000 - ₹2,50,000")}</option>
+                  <option value="₹2,50,000+">{convertBudget("₹2,50,000")}+</option>
                 </select>
               </div>
             </div>

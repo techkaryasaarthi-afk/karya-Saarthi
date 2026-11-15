@@ -25,6 +25,7 @@ import {
   Copy,
   Check,
 } from "lucide-react";
+import { useCountry } from "@/context/CountryContext";
 
 interface ContactSectionProps {
   initialService?: string;
@@ -32,6 +33,7 @@ interface ContactSectionProps {
 }
 
 export default function ContactSection({ initialService = "", initialEstimate = "" }: ContactSectionProps) {
+  const { convertBudget, t } = useCountry();
   const [activeTab, setActiveTab] = useState<"consultation" | "quote" | "demo">("consultation");
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
 
@@ -289,10 +291,10 @@ export default function ContactSection({ initialService = "", initialEstimate = 
                     onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
                     className="w-full bg-white dark:bg-zinc-800/80 border border-gray-200 dark:border-zinc-700 rounded-xl px-4 py-3 sm:py-3.5 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#FF7A00]/20 focus:border-[#FF7A00] transition-all shadow-sm cursor-pointer"
                   >
-                    <option value="₹5,000 - ₹25,000">₹5,000 - ₹25,000 (Academic / Basic)</option>
-                    <option value="₹30,000 - ₹85,000">₹30,000 - ₹85,000 (Website / App MVP)</option>
-                    <option value="₹1,00,000 - ₹2,50,000">₹1,00,000 - ₹2,50,000 (Growth / Custom ML)</option>
-                    <option value="₹2,50,000+">₹2,50,000+ (Enterprise SaaS &amp; Full GTM)</option>
+                    <option value="₹5,000 - ₹25,000">{convertBudget("₹5,000 - ₹25,000")} (Academic / Basic)</option>
+                    <option value="₹30,000 - ₹85,000">{convertBudget("₹30,000 - ₹85,000")} (Website / App MVP)</option>
+                    <option value="₹1,00,000 - ₹2,50,000">{convertBudget("₹1,00,000 - ₹2,50,000")} (Growth / Custom ML)</option>
+                    <option value="₹2,50,000+">{convertBudget("₹2,50,000")}+ (Enterprise SaaS &amp; Full GTM)</option>
                   </select>
                 </div>
 

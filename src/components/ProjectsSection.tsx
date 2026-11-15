@@ -186,13 +186,13 @@ export default function ProjectsSection({ onOpenConsultation, onOpenPortfolioPdf
                   {/* Shimmer Light Sweep on Hover */}
                   <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out bg-gradient-to-r from-transparent via-white/15 to-transparent pointer-events-none z-10" />
 
-                  <div className="flex items-center justify-between z-10 gap-2">
-                    <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-white/95 dark:bg-zinc-900/90 text-slate-900 dark:text-white backdrop-blur-md border border-white/20 shadow-sm group-hover:scale-105 transition-transform duration-200">
+                  <div className="flex items-center justify-between z-10 gap-2 flex-wrap">
+                    <div className="flex items-center gap-1.5 flex-wrap min-w-0">
+                      <span className="text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-white/95 dark:bg-zinc-900/90 text-slate-900 dark:text-white backdrop-blur-md border border-white/20 shadow-sm group-hover:scale-105 transition-transform duration-200 shrink-0">
                         {project.industry}
                       </span>
                       {/* Karya Saarthi Official Circular Logo Badge with Pulsing Green Dot */}
-                      <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md border border-[#FF7A00]/40 shadow-sm group-hover:border-[#FF7A00] transition-colors" title="Verified by Karya Saarthi">
+                      <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md border border-[#FF7A00]/40 shadow-sm group-hover:border-[#FF7A00] transition-colors shrink-0" title="Verified by Karya Saarthi">
                         <span className="relative flex h-2 w-2 shrink-0">
                           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#1BAC6E] opacity-75" />
                           <span className="relative inline-flex rounded-full h-2 w-2 bg-[#1BAC6E]" />
@@ -206,12 +206,12 @@ export default function ProjectsSection({ onOpenConsultation, onOpenPortfolioPdf
                       </div>
                     </div>
 
-                    <span className="text-xs font-mono text-[#FF7A00] font-bold bg-white/95 dark:bg-zinc-900/95 px-2.5 py-1 rounded-full border border-white/20 backdrop-blur-md shadow-sm group-hover:scale-105 group-hover:border-[#FF7A00]/60 transition-all duration-200">
+                    <span className="text-xs font-mono text-[#FF7A00] font-bold bg-white/95 dark:bg-zinc-900/95 px-2.5 py-1 rounded-full border border-white/20 backdrop-blur-md shadow-sm group-hover:scale-105 group-hover:border-[#FF7A00]/60 transition-all duration-200 shrink-0 ml-auto">
                       {convertBudget(project.budget)}
                     </span>
                   </div>
 
-                  <div className="z-10 max-w-[85%]">
+                  <div className="z-10 max-w-full">
                     <p className="text-xs text-slate-300 font-medium truncate drop-shadow-sm">{project.client}</p>
                     <h3 className="text-lg sm:text-xl font-bold text-white group-hover:text-[#FF7A00] transition-colors duration-200 leading-tight line-clamp-2 drop-shadow-md">
                       {project.title}

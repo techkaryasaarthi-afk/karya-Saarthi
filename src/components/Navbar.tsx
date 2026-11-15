@@ -139,14 +139,14 @@ export default function Navbar({ onOpenConsultation, onOpenCountriesModal }: Nav
             </div>
           </a>
 
-          {/* Center Section: Navigation Links with gap-6/xl:gap-7 & subtle warm-orange hover */}
-          <nav className="hidden lg:flex items-center gap-6 xl:gap-7">
+          {/* Center Section: Navigation Links with responsive gap */}
+          <nav className="hidden lg:flex items-center gap-3.5 xl:gap-6 2xl:gap-7">
             {navLinks.map((link) => (
               <a
                 key={link.name}
                 href={link.href}
                 onClick={(e) => handleNavClick(e, link.href)}
-                className="text-sm font-medium text-gray-700 dark:text-zinc-200 hover:text-[#FF7A00] dark:hover:text-[#FF7A00] transition-colors whitespace-nowrap py-1 relative group"
+                className="text-xs xl:text-sm font-medium text-gray-700 dark:text-zinc-200 hover:text-[#FF7A00] dark:hover:text-[#FF7A00] transition-colors whitespace-nowrap py-1 relative group"
               >
                 <span>{link.name}</span>
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#FF7A00] rounded-full group-hover:w-full transition-all duration-200" />
@@ -154,12 +154,12 @@ export default function Navbar({ onOpenConsultation, onOpenCountriesModal }: Nav
             ))}
           </nav>
 
-          {/* Right Section: Quick Icons (Email, WhatsApp, Phone, 195 Countries) + Theme Toggle + Primary CTA */}
-          <div className="hidden lg:flex items-center gap-2 xl:gap-2.5 shrink-0">
+          {/* Right Section: Quick Icons (Email, WhatsApp, 195 Countries) + Theme Toggle + Primary CTA */}
+          <div className="hidden lg:flex items-center gap-1.5 xl:gap-2.5 shrink-0">
             {/* Small Email Icon Button */}
             <a
               href="mailto:support@karyasaarthi.com"
-              className="p-2.5 rounded-full text-slate-700 dark:text-zinc-200 hover:text-[#FF7A00] dark:hover:text-[#FF7A00] bg-slate-100 hover:bg-orange-50 dark:bg-zinc-800/90 dark:hover:bg-zinc-700/80 border border-slate-200 dark:border-zinc-700 transition-all duration-200 hover:scale-105 active:scale-95 shadow-2xs"
+              className="p-2 xl:p-2.5 rounded-full text-slate-700 dark:text-zinc-200 hover:text-[#FF7A00] dark:hover:text-[#FF7A00] bg-slate-100 hover:bg-orange-50 dark:bg-zinc-800/90 dark:hover:bg-zinc-700/80 border border-slate-200 dark:border-zinc-700 transition-all duration-200 hover:scale-105 active:scale-95 shadow-2xs"
               title="Email: support@karyasaarthi.com"
               aria-label="Email support@karyasaarthi.com"
             >
@@ -171,29 +171,29 @@ export default function Navbar({ onOpenConsultation, onOpenCountriesModal }: Nav
               href="https://wa.me/918595025753?text=Hi%20Karya%20Saarthi%2C%20I%20would%20like%20to%20inquire%20about%20your%20services."
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2.5 rounded-full text-slate-700 dark:text-zinc-200 hover:text-emerald-500 bg-slate-100 hover:bg-emerald-50 dark:bg-zinc-800/90 dark:hover:bg-zinc-700/80 border border-slate-200 dark:border-zinc-700 transition-all duration-200 hover:scale-105 active:scale-95 shadow-2xs group/wa"
+              className="p-2 xl:p-2.5 rounded-full text-slate-700 dark:text-zinc-200 hover:text-emerald-500 bg-slate-100 hover:bg-emerald-50 dark:bg-zinc-800/90 dark:hover:bg-zinc-700/80 border border-slate-200 dark:border-zinc-700 transition-all duration-200 hover:scale-105 active:scale-95 shadow-2xs group/wa"
               title="WhatsApp: +91 8595025753"
               aria-label="WhatsApp +91 8595025753"
             >
               <MessageCircle className="w-4 h-4 text-[#25D366] group-hover/wa:scale-110 transition-transform" />
             </a>
 
-            {/* 195 Countries Pill Button (Matches Screenshot 2 style) */}
+            {/* 195 Countries Pill Button (Responsive across all laptops and tablets) */}
             {onOpenCountriesModal && (
               <button
                 type="button"
                 onClick={onOpenCountriesModal}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-slate-700 dark:text-zinc-200 hover:text-[#FF7A00] bg-slate-100 hover:bg-orange-50 dark:bg-zinc-800/90 dark:hover:bg-zinc-700/80 border border-slate-200 dark:border-zinc-700 transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer shadow-2xs"
+                className="inline-flex items-center gap-1 xl:gap-1.5 px-2.5 xl:px-3 py-1.5 rounded-full text-xs font-bold text-slate-700 dark:text-zinc-200 hover:text-[#FF7A00] bg-slate-100 hover:bg-orange-50 dark:bg-zinc-800/90 dark:hover:bg-zinc-700/80 border border-slate-200 dark:border-zinc-700 transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer shadow-2xs"
                 title={`${selectedCountry.englishName} (${selectedCountry.currency} ${selectedCountry.symbol}) • 195 Countries Supported`}
               >
                 <span className="text-sm">{selectedCountry.flag}</span>
                 <span className="font-bold text-slate-800 dark:text-zinc-100">{selectedCountry.code}</span>
-                <span className="hidden xl:inline text-slate-600 dark:text-zinc-400 font-normal">
+                <span className="hidden 2xl:inline text-slate-600 dark:text-zinc-400 font-normal">
                   {selectedCountry.englishName}
                 </span>
-                <span className="font-mono text-[#FF7A00]">({selectedCountry.symbol} {selectedCountry.currency})</span>
-                <span className="text-slate-300 dark:text-zinc-600">|</span>
-                <span className="text-slate-600 dark:text-zinc-300">195 Countries</span>
+                <span className="font-mono text-[#FF7A00] font-bold">({selectedCountry.symbol} {selectedCountry.currency})</span>
+                <span className="text-slate-300 dark:text-zinc-600 hidden xl:inline">|</span>
+                <span className="text-slate-600 dark:text-zinc-300 hidden xl:inline">195 Countries</span>
                 <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
               </button>
             )}
@@ -202,7 +202,7 @@ export default function Navbar({ onOpenConsultation, onOpenCountriesModal }: Nav
             <button
               type="button"
               onClick={toggleTheme}
-              className="p-2.5 rounded-full text-slate-700 dark:text-zinc-200 hover:text-[#FF7A00] dark:hover:text-[#FF7A00] bg-slate-100 hover:bg-orange-50 dark:bg-zinc-800/90 dark:hover:bg-zinc-700/80 border border-slate-200 dark:border-zinc-700 transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer shadow-2xs"
+              className="p-2 xl:p-2.5 rounded-full text-slate-700 dark:text-zinc-200 hover:text-[#FF7A00] dark:hover:text-[#FF7A00] bg-slate-100 hover:bg-orange-50 dark:bg-zinc-800/90 dark:hover:bg-zinc-700/80 border border-slate-200 dark:border-zinc-700 transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer shadow-2xs"
               aria-label={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}
               title={theme === "dark" ? "Switch to Light Theme" : "Switch to Dark Theme"}
             >
@@ -217,10 +217,10 @@ export default function Navbar({ onOpenConsultation, onOpenCountriesModal }: Nav
             <button
               type="button"
               onClick={onOpenConsultation}
-              className="group text-xs sm:text-sm font-bold px-4 sm:px-5 py-2.5 rounded-full text-white bg-[#FF7A00] hover:bg-[#e66e00] active:scale-[0.98] transition-all duration-200 shadow-md shadow-[#FF7A00]/25 hover:shadow-lg hover:shadow-[#FF7A00]/35 hover:-translate-y-0.5 flex items-center gap-1.5 cursor-pointer whitespace-nowrap ml-1"
+              className="group text-xs xl:text-sm font-bold px-3.5 xl:px-5 py-2 xl:py-2.5 rounded-full text-white bg-[#FF7A00] hover:bg-[#e66e00] active:scale-[0.98] transition-all duration-200 shadow-md shadow-[#FF7A00]/25 hover:shadow-lg hover:shadow-[#FF7A00]/35 hover:-translate-y-0.5 flex items-center gap-1.5 cursor-pointer whitespace-nowrap ml-1 shrink-0"
             >
               <span>{t("nav.consultation", "Free Consultation")}</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />
+              <ArrowRight className="w-3.5 h-3.5 xl:w-4 xl:h-4 group-hover:translate-x-1 transition-transform duration-200" />
             </button>
           </div>
 
@@ -271,9 +271,9 @@ export default function Navbar({ onOpenConsultation, onOpenCountriesModal }: Nav
         </div>
       </div>
 
-      {/* Mobile Responsive Drawer Menu */}
+      {/* Mobile Responsive Drawer Menu with safe scrolling */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-white/95 dark:bg-[#0E0E11]/95 backdrop-blur-2xl border-b border-gray-200 dark:border-zinc-800 px-5 pt-3 pb-6 space-y-4 shadow-2xl animate-fadeIn">
+        <div className="lg:hidden bg-white/95 dark:bg-[#0E0E11]/95 backdrop-blur-2xl border-b border-gray-200 dark:border-zinc-800 px-4 sm:px-6 pt-3 pb-6 space-y-4 shadow-2xl animate-fadeIn max-h-[calc(100vh-4.5rem)] overflow-y-auto">
           <div className="space-y-1">
             {navLinks.map((link) => (
               <a

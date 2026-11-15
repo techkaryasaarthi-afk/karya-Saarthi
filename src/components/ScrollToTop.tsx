@@ -41,7 +41,7 @@ export default function ScrollToTop() {
 
   return (
     <div
-      className={`fixed bottom-[78px] right-[20px] sm:bottom-[94px] sm:right-[27px] z-40 transition-all duration-300 ease-out ${
+      className={`fixed bottom-[78px] right-[20px] sm:bottom-[94px] sm:right-[27px] z-40 mb-[env(safe-area-inset-bottom,0px)] mr-[env(safe-area-inset-right,0px)] transition-all duration-300 ease-out ${
         isVisible
           ? "opacity-100 scale-100 translate-y-0 pointer-events-auto"
           : "opacity-0 scale-75 translate-y-4 pointer-events-none"

@@ -318,11 +318,11 @@ export default function TeamSection() {
         {/* 4. Network Power Banner (Premium Metric Showcase Strip) */}
         <div className="bg-white dark:bg-zinc-900/90 rounded-3xl p-8 border border-gray-200 dark:border-zinc-800 shadow-xl shadow-slate-200/40 dark:shadow-none text-center grid grid-cols-1 sm:grid-cols-3 gap-6 divide-y sm:divide-y-0 sm:divide-x divide-gray-200/80 dark:divide-zinc-800">
           <div className="pt-4 first:pt-0 sm:pt-0">
-            <div className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">3 Core Members</div>
+            <div className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">3 Core Members</div>
             <p className="text-xs sm:text-sm text-slate-500 dark:text-zinc-400 mt-1.5 font-medium">Full-Time Product &amp; Strategy Experts</p>
           </div>
           <div className="pt-4 sm:pt-0">
-            <div className="text-3xl sm:text-4xl font-extrabold text-[#FF7A00] tracking-tight">500+ Expert Vendors &amp; Freelancers</div>
+            <div className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#FF7A00] tracking-tight">500+ Expert Vendors &amp; Freelancers</div>
             <p className="text-xs sm:text-sm text-slate-500 dark:text-zinc-400 mt-1.5 font-medium">Niche Developers, Marketers &amp; Freelance Consultants</p>
             {/* Small Icons Underneath Freelancers & Vendors */}
             <div className="flex items-center justify-center gap-1.5 sm:gap-2 mt-3 flex-wrap">
@@ -349,7 +349,7 @@ export default function TeamSection() {
             </div>
           </div>
           <div className="pt-4 sm:pt-0">
-            <div className="text-3xl sm:text-4xl font-extrabold text-[#1BAC6E] tracking-tight">2,000+ Clients Served</div>
+            <div className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#1BAC6E] tracking-tight">2,000+ Clients Served</div>
             <p className="text-xs sm:text-sm text-slate-500 dark:text-zinc-400 mt-1.5 font-medium">Students, Startups &amp; Businesses Across India</p>
           </div>
         </div>
