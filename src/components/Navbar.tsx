@@ -2,13 +2,14 @@
 
 /**
  * Navbar Component (Karya Saarthi)
+ * Pull Request Feature: FEAT-#3-Portfolio-2026
  * 
  * Optimized Navigation Header:
- * - Left: Clickable brand logo & "TEACH + COMPLETE SOLUTIONS" tagline with smooth scroll to top (#top)
- * - Center: Navigation links (Home, Services, Case Studies, ROI Estimator, About Us, Contact Us)
- * - Right: Theme Toggle (Light/Dark) + primary solid orange "Free Consultation →" CTA
- * - Fixed Glassmorphism: (fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md) stays visible on scroll
- * - Mobile: Responsive theme toggle + hamburger menu displaying all links + full-width CTA
+ * - Brand Logo: Clickable brand logo & "TEACH + COMPLETE SOLUTIONS" tagline with smooth scroll to top (#top)
+ * - Navigation Links: Spacious desktop links (Home, Services, About Us, Contact Us)
+ * - Quick Action Suite: Email, WhatsApp, compact 195 Countries currency & language switcher, Theme Toggle
+ * - Primary CTA: Solid warm orange "Free Consultation →" button with elevation
+ * - Fixed Glassmorphism: Sticky top-0 with backdrop blur and responsive mobile drawer
  */
 
 import React, { useState, useEffect } from "react";
