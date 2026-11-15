@@ -1,16 +1,15 @@
 "use client";
 
 import React from "react";
-import Image from "next/image";
-import { ArrowRight, Star, CheckCircle2, ShieldCheck, Zap } from "lucide-react";
+import { ArrowRight, Star, CheckCircle2, ShieldCheck } from "lucide-react";
 import { BRAND } from "@/data/portfolioData";
 
 interface HeroProps {
   onOpenConsultation: () => void;
-  onOpenQuote: () => void;
+  onOpenQuote?: () => void;
 }
 
-export default function Hero({ onOpenConsultation, onOpenQuote }: HeroProps) {
+export default function Hero({ onOpenConsultation }: HeroProps) {
   return (
     <section id="hero" className="relative pt-32 pb-20 md:pt-40 md:pb-28 overflow-hidden bg-slate-50 dark:bg-[#0E0E11] text-slate-900 dark:text-white transition-colors duration-300">
       {/* 1. Fast, Clearly Visible Animated Background Square Grid */}
@@ -22,17 +21,20 @@ export default function Hero({ onOpenConsultation, onOpenQuote }: HeroProps) {
       <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[500px] bg-[#FF7A00]/10 dark:bg-[#FF7A00]/12 rounded-full blur-[140px] pointer-events-none animate-pulse-glow" />
       <div className="absolute top-1/4 right-1/4 w-[450px] h-[450px] bg-[#004E89]/8 dark:bg-[#004E89]/15 rounded-full blur-[130px] pointer-events-none" />
 
+      {/* Subtle Radial Gradient Glow Behind Headline */}
+      <div className="absolute top-[34%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[540px] sm:w-[700px] h-[320px] bg-[radial-gradient(ellipse_at_center,rgba(255,122,0,0.12),rgba(27,172,110,0.06),transparent_70%)] dark:bg-[radial-gradient(ellipse_at_center,rgba(255,122,0,0.16),rgba(0,78,137,0.10),transparent_70%)] blur-2xl pointer-events-none z-0" />
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 animate-fade-in-up">
         <div className="text-center max-w-4xl mx-auto space-y-6">
           
-          {/* Logo Emblem Header styled with Logo Colors */}
-          <div className="max-w-full inline-flex items-center gap-2.5 sm:gap-3.5 bg-white/90 dark:bg-[#121216]/90 border border-slate-200 dark:border-[#004E89]/60 hover:border-[#FF7A00]/70 rounded-full px-3.5 sm:px-5 py-1.5 sm:py-2.5 backdrop-blur-md shadow-md shadow-slate-200/50 dark:shadow-xl dark:shadow-[#FF7A00]/15 animate-float transition-colors">
-            <div className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden border-2 border-[#FF7A00] shadow-md shadow-[#FF7A00]/40 shrink-0 bg-white p-0.5">
-              <Image src="/logo.jpg" alt="Karya Saarthi Emblem" fill className="object-contain rounded-full" />
-            </div>
-            <span className="text-[11px] sm:text-sm font-extrabold text-slate-800 dark:text-zinc-100 tracking-wider uppercase flex items-center gap-1.5 sm:gap-2 leading-tight text-left sm:text-center">
-              <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#0D9488] animate-ping shrink-0" />
-              <span>India&apos;s 1st &quot;Teach + Complete&quot; Project Platform</span>
+          {/* 1. Top Pill Badge: Clean subtle pulsing green dot */}
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/90 dark:bg-white/5 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-md hover:border-[#FF7A00]/40 transition-colors">
+            <span className="relative flex h-2.5 w-2.5 shrink-0">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#1BAC6E] opacity-75" />
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#1BAC6E]" />
+            </span>
+            <span className="text-[11px] sm:text-xs font-mono font-bold tracking-wider uppercase text-slate-700 dark:text-zinc-200">
+              India&apos;s 1st &quot;Teach + Complete&quot; Project Platform
             </span>
           </div>
 
@@ -42,36 +44,29 @@ export default function Hero({ onOpenConsultation, onOpenQuote }: HeroProps) {
             <span className="logo-gradient-animated">Real Learning. Real Growth.</span>
           </h1>
 
-          {/* Description */}
+          {/* 2. Tightened Subheadline Copy (30-35 words, crisp 3-line value proposition) */}
           <p className="text-sm sm:text-lg md:text-xl text-slate-600 dark:text-zinc-300 max-w-2xl mx-auto font-normal leading-relaxed">
-            {BRAND.mission} We bridge the gap between learning and doing through rapid startup MVPs, scalable web &amp; mobile solutions, AI data models, and research support.
+            Empowering students, startups, and enterprises with end-to-end execution. We bridge the gap between learning and doing through rapid MVPs, full-stack software development, AI solutions, and specialized research support.
           </p>
 
-          {/* Action CTAs with Light Sweep Animation */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+          {/* 3. Simplified 2 High-Impact CTA Buttons */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-3">
+            {/* Primary CTA: Solid warm orange with subtle shadow and hover lift */}
             <button
               onClick={onOpenConsultation}
-              className="relative overflow-hidden w-full sm:w-auto px-8 py-4 rounded-xl text-base font-bold text-white bg-gradient-to-r from-[#FF7A00] via-[#FF8A00] to-[#FFA000] hover:opacity-95 shadow-xl shadow-[#FF7A00]/30 transition-all flex items-center justify-center gap-2 group cursor-pointer"
+              className="w-full sm:w-auto px-8 py-4 rounded-xl text-base font-bold text-white bg-gradient-to-r from-[#FF7A00] to-[#FF9000] hover:from-[#FF6A00] hover:to-[#FF8000] shadow-lg shadow-[#FF7A00]/25 hover:shadow-xl hover:shadow-[#FF7A00]/35 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 flex items-center justify-center gap-2 group cursor-pointer"
             >
-              {/* Animated Light Sweep Effect */}
-              <span className="absolute inset-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/35 to-transparent animate-shine-sweep pointer-events-none" />
-              <span className="relative z-10">Schedule Free Consultation</span>
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1.5 transition-transform relative z-10" />
+              <span>Schedule Free Consultation</span>
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </button>
 
-            <button
-              onClick={onOpenQuote}
-              className="w-full sm:w-auto px-7 py-4 rounded-xl text-base font-semibold text-slate-700 dark:text-zinc-200 hover:text-slate-900 dark:hover:text-white bg-white dark:bg-zinc-900/80 hover:bg-slate-100 dark:hover:bg-zinc-800 border border-slate-200 dark:border-white/15 shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer"
-            >
-              <Zap className="w-4 h-4 text-[#FF6B35]" />
-              <span>Get Custom Quote</span>
-            </button>
-
+            {/* Secondary CTA: Clean bordered outline with subtle hover background tint */}
             <a
               href="#roi-calculator"
-              className="w-full sm:w-auto px-6 py-4 rounded-xl text-base font-medium text-slate-600 hover:text-[#FF6B35] dark:text-zinc-400 dark:hover:text-[#FF6B35] transition-colors text-center"
+              className="w-full sm:w-auto px-7 py-4 rounded-xl text-base font-semibold text-slate-800 dark:text-zinc-100 hover:text-[#FF7A00] dark:hover:text-[#FF9000] bg-white/80 dark:bg-white/[0.04] hover:bg-slate-100 dark:hover:bg-white/[0.08] border border-slate-300 dark:border-white/15 shadow-sm hover:border-[#FF7A00]/50 dark:hover:border-[#FF7A00]/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 flex items-center justify-center gap-2 group text-center cursor-pointer"
             >
-              Calculate Project ROI →
+              <span>Calculate Project ROI</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform text-[#FF7A00]" />
             </a>
           </div>
 
