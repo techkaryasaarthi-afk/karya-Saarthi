@@ -52,7 +52,7 @@ export async function GET() {
     id: c.id,
     title: c.title,
     category: c.category,
-    image_url: `/projects/${c.id}.png`,
+    image_url: c.image || `/projects/${c.id}.jpg`,
     description: c.challenge,
     tech_stack: c.techStack,
     live_link: c.liveLinks?.[0]?.url || null,
