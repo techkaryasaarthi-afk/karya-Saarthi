@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Image from "next/image";
 import { CASE_STUDIES, CaseStudy } from "@/data/portfolioData";
 import ProjectBannerIllustration from "./ProjectBannerIllustration";
 import {
@@ -39,6 +40,7 @@ export default function ProjectsSection({ onOpenConsultation }: ProjectsSectionP
             return {
               id: item.id,
               title: item.title,
+              image: item.image_url || existing?.image || `/projects/${item.id}.jpg`,
               client: item.client_name || existing?.client || "Enterprise Client",
               industry: item.industry || existing?.industry || "Technology & Services",
               projectType: existing?.projectType || `${(item.category || "web").toUpperCase()} Development`,
@@ -138,23 +140,49 @@ export default function ProjectsSection({ onOpenConsultation }: ProjectsSectionP
               className="glass-card card-interactive-lift rounded-3xl overflow-hidden border border-slate-200/80 dark:border-white/10 group flex flex-col justify-between"
             >
               <div>
-                {/* Visual Header Banner with Dynamic Animation & Device Illustration */}
-                <div className="relative h-52 sm:h-56 bg-gradient-to-br from-slate-100 to-slate-200/80 dark:from-[#1E1E26] dark:to-[#0E0E11] p-5 sm:p-6 flex flex-col justify-between border-b border-slate-200 dark:border-white/10 overflow-hidden">
-                  {/* Thematic Animated Project Illustration (Phone mockup, Code IDE, Storefront, AI Radar, Research Sheet, Rocket Chart) */}
-                  <ProjectBannerIllustration projectId={project.id} />
+                {/* Visual Header Banner with Dynamic Image & Karya Saarthi Logo Emblem */}
+                <div className="relative h-52 sm:h-56 bg-slate-900 p-5 sm:p-6 flex flex-col justify-between border-b border-slate-200 dark:border-white/10 overflow-hidden group/banner">
+                  {/* Project Showcase Image */}
+                  {project.image ? (
+                    <div className="absolute inset-0 z-0">
+                      <Image
+                        src={project.image}
+                        alt={project.title}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out brightness-[0.85] group-hover:brightness-95"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      />
+                      {/* High-Contrast Gradient Scrim for perfect text readability */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/45 to-slate-950/20 pointer-events-none" />
+                    </div>
+                  ) : (
+                    <ProjectBannerIllustration projectId={project.id} />
+                  )}
 
-                  <div className="flex items-center justify-between z-10">
-                    <span className="text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-white/95 dark:bg-white/10 text-slate-800 dark:text-white backdrop-blur-md border border-slate-200 dark:border-white/15 shadow-sm">
-                      {project.industry}
-                    </span>
-                    <span className="text-xs font-mono text-[#FF6B35] font-bold bg-white/90 dark:bg-zinc-900/80 px-2.5 py-1 rounded-full border border-slate-200 dark:border-white/10 backdrop-blur-md shadow-sm">
+                  <div className="flex items-center justify-between z-10 gap-2">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-white/95 dark:bg-zinc-900/90 text-slate-900 dark:text-white backdrop-blur-md border border-white/20 shadow-sm">
+                        {project.industry}
+                      </span>
+                      {/* Karya Saarthi Official Circular Logo Badge */}
+                      <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md border border-[#FF7A00]/40 shadow-sm" title="Verified by Karya Saarthi">
+                        <div className="relative w-3.5 h-3.5 rounded-full overflow-hidden shrink-0">
+                          <Image src="/logo.jpg" alt="Karya Saarthi" fill className="object-contain" />
+                        </div>
+                        <span className="text-[9px] font-extrabold text-[#FF7A00] font-mono tracking-tight hidden sm:inline">
+                          Karya Saarthi
+                        </span>
+                      </div>
+                    </div>
+
+                    <span className="text-xs font-mono text-[#FF7A00] font-bold bg-white/95 dark:bg-zinc-900/95 px-2.5 py-1 rounded-full border border-white/20 backdrop-blur-md shadow-sm">
                       {project.budget}
                     </span>
                   </div>
 
-                  <div className="z-10 max-w-[65%] sm:max-w-[60%]">
-                    <p className="text-xs text-slate-500 dark:text-zinc-400 font-medium truncate">{project.client}</p>
-                    <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white group-hover:text-[#FF6B35] transition-colors leading-tight line-clamp-2">
+                  <div className="z-10 max-w-[85%]">
+                    <p className="text-xs text-slate-300 font-medium truncate drop-shadow-sm">{project.client}</p>
+                    <h3 className="text-lg sm:text-xl font-bold text-white group-hover:text-[#FF7A00] transition-colors leading-tight line-clamp-2 drop-shadow-md">
                       {project.title}
                     </h3>
                   </div>
@@ -227,22 +255,41 @@ export default function ProjectsSection({ onOpenConsultation }: ProjectsSectionP
               <X className="w-5 h-5" />
             </button>
 
-            {/* Modal Header with Dynamic Visual Banner */}
-            <div className="relative rounded-2xl overflow-hidden p-5 sm:p-6 bg-gradient-to-br from-slate-100 to-slate-200/80 dark:from-[#1E1E26] dark:to-[#0E0E11] border border-slate-200 dark:border-white/10 mb-2 pr-10 sm:pr-12">
-              <ProjectBannerIllustration projectId={selectedProject.id} />
+            {/* Modal Header with Dynamic Visual Banner & Karya Saarthi Badge */}
+            <div className="relative rounded-2xl overflow-hidden p-5 sm:p-6 bg-slate-900 border border-slate-200 dark:border-white/10 mb-2 pr-10 sm:pr-12 min-h-[160px] flex flex-col justify-end">
+              {selectedProject.image ? (
+                <div className="absolute inset-0 z-0">
+                  <Image
+                    src={selectedProject.image}
+                    alt={selectedProject.title}
+                    fill
+                    className="object-cover brightness-[0.7]"
+                    sizes="(max-width: 768px) 100vw, 800px"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent pointer-events-none" />
+                </div>
+              ) : (
+                <ProjectBannerIllustration projectId={selectedProject.id} />
+              )}
 
-              <div className="relative z-10 max-w-[65%] sm:max-w-[60%] space-y-1.5">
-                <div className="flex items-center gap-2 text-xs font-semibold text-[#FF6B35] uppercase tracking-wider mb-1">
+              <div className="relative z-10 max-w-[85%] space-y-1.5">
+                <div className="flex items-center gap-2 text-xs font-semibold text-[#FF7A00] uppercase tracking-wider mb-1 flex-wrap">
                   <span>{selectedProject.industry}</span>
                   <span>•</span>
                   <span>{selectedProject.projectType}</span>
+                  <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/20 backdrop-blur-md text-white text-[10px]">
+                    <div className="relative w-3.5 h-3.5 rounded-full overflow-hidden shrink-0">
+                      <Image src="/logo.jpg" alt="KS" fill className="object-contain" />
+                    </div>
+                    Verified by Karya Saarthi
+                  </span>
                 </div>
-                <h3 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white leading-tight break-words">
+                <h3 className="text-xl sm:text-2xl font-bold text-white leading-tight break-words drop-shadow-md">
                   {selectedProject.title}
                 </h3>
-                <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs text-slate-600 dark:text-zinc-300 font-mono pt-1">
-                  <span>Client: <strong className="text-slate-900 dark:text-white">{selectedProject.client}</strong></span>
-                  <span>Timeline: <strong className="text-[#FF6B35]">{selectedProject.timeline}</strong></span>
+                <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs text-slate-200 font-mono pt-1">
+                  <span>Client: <strong className="text-white">{selectedProject.client}</strong></span>
+                  <span>Timeline: <strong className="text-[#FF7A00]">{selectedProject.timeline}</strong></span>
                   <span>Budget: <strong className="text-[#1BAC6E]">{selectedProject.budget}</strong></span>
                 </div>
               </div>

@@ -32,6 +32,7 @@ export interface CaseStudy {
     label: string;
     url: string;
   }[];
+  image?: string;
 }
 
 export interface TeamMember {
@@ -218,6 +219,7 @@ export const SERVICES: ServiceItem[] = [
 export const CASE_STUDIES: CaseStudy[] = [
   {
     id: "fitpro",
+    image: "/projects/fitpro.png",
     title: "FitPro - Fitness App for Trainers",
     client: "FitPro (Personal Training Platform)",
     industry: "Health & Fitness",
@@ -257,6 +259,7 @@ export const CASE_STUDIES: CaseStudy[] = [
   },
   {
     id: "learnflow",
+    image: "/projects/learnflow.jpg",
     title: "EduTech Startup - Complete Go-To-Market",
     client: "LearnFlow (EdTech Startup)",
     industry: "Online Education",
@@ -295,6 +298,7 @@ export const CASE_STUDIES: CaseStudy[] = [
   },
   {
     id: "handmade-stories",
+    image: "/projects/handmade.jpg",
     title: "E-Commerce Platform - Handmade Crafts Brand",
     client: "HandMade Stories (E-commerce Brand)",
     industry: "E-commerce / Handmade Goods",
@@ -333,6 +337,7 @@ export const CASE_STUDIES: CaseStudy[] = [
   },
   {
     id: "quickdeliver",
+    image: "/projects/quickdeliver.jpg",
     title: "Predictive AI/ML System for Logistics",
     client: "QuickDeliver (Logistics Startup)",
     industry: "Logistics / Supply Chain",
@@ -368,6 +373,7 @@ export const CASE_STUDIES: CaseStudy[] = [
   },
   {
     id: "dr-neha-kapoor",
+    image: "/projects/research.jpg",
     title: "IEEE Research Paper & Publication",
     client: "Dr. Neha Kapoor (PhD Scholar, IIT Delhi)",
     industry: "Academic / Research",
@@ -402,6 +408,7 @@ export const CASE_STUDIES: CaseStudy[] = [
   },
   {
     id: "taskflow",
+    image: "/projects/taskflow.jpg",
     title: "TaskFlow SaaS - MVP to ₹5Cr Series A",
     client: "TaskFlow (Project Management SaaS)",
     industry: "SaaS / Enterprise Software",
