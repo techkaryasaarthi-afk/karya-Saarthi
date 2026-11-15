@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { ThemeProvider } from "@/context/ThemeContext";
+import { CountryProvider } from "@/context/CountryContext";
 import "./globals.css";
 
 export const viewport: Viewport = {
@@ -63,9 +64,11 @@ export default function RootLayout({
         />
       </head>
       <body className="bg-slate-50 dark:bg-[#0E0E11] text-slate-900 dark:text-[#F7F7F7] font-sans antialiased min-h-screen flex flex-col selection:bg-[#FF6B35] selection:text-white transition-colors duration-300">
-        <ThemeProvider>
-          {children}
-        </ThemeProvider>
+        <CountryProvider>
+          <ThemeProvider>
+            {children}
+          </ThemeProvider>
+        </CountryProvider>
       </body>
     </html>
   );

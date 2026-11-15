@@ -18,14 +18,15 @@ import {
   X,
   ArrowRight,
   ChevronRight,
+  ChevronDown,
   Sun,
   Moon,
   Mail,
-  Phone,
   MessageCircle,
   Globe,
 } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
+import { useCountry } from "@/context/CountryContext";
 
 interface NavbarProps {
   onOpenConsultation: () => void;
@@ -35,6 +36,7 @@ interface NavbarProps {
 
 export default function Navbar({ onOpenConsultation, onOpenCountriesModal }: NavbarProps) {
   const { theme, toggleTheme } = useTheme();
+  const { selectedCountry, t } = useCountry();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -50,14 +52,14 @@ export default function Navbar({ onOpenConsultation, onOpenCountriesModal }: Nav
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Navigation links: Home, Services, Case Studies, ROI Estimator, About Us, Contact Us
+  // Navigation links localized to active country's language (English for India)
   const navLinks = [
-    { name: "Home", href: "#top" },
-    { name: "Services", href: "#services" },
-    { name: "Case Studies", href: "#case-studies" },
-    { name: "ROI Estimator", href: "#roi-estimator" },
-    { name: "About Us", href: "#about" },
-    { name: "Contact Us", href: "#contact" },
+    { name: t("nav.home", "Home"), href: "#top" },
+    { name: t("nav.services", "Services"), href: "#services" },
+    { name: t("nav.caseStudies", "Case Studies"), href: "#case-studies" },
+    { name: t("nav.roiEstimator", "ROI Estimator"), href: "#roi-estimator" },
+    { name: t("nav.aboutUs", "About Us"), href: "#about" },
+    { name: t("nav.contactUs", "Contact Us"), href: "#contact" },
   ];
 
   // Smooth scroll handler for links with header offset
@@ -176,26 +178,23 @@ export default function Navbar({ onOpenConsultation, onOpenCountriesModal }: Nav
               <MessageCircle className="w-4 h-4 text-[#25D366] group-hover/wa:scale-110 transition-transform" />
             </a>
 
-            {/* Small Phone Call Icon Button */}
-            <a
-              href="tel:+918595025753"
-              className="p-2.5 rounded-full text-slate-700 dark:text-zinc-200 hover:text-blue-500 bg-slate-100 hover:bg-blue-50 dark:bg-zinc-800/90 dark:hover:bg-zinc-700/80 border border-slate-200 dark:border-zinc-700 transition-all duration-200 hover:scale-105 active:scale-95 shadow-2xs"
-              title="Call: +91 8595025753"
-              aria-label="Call +91 8595025753"
-            >
-              <Phone className="w-4 h-4 text-blue-500" />
-            </a>
-
-            {/* Small 195 Countries Pill Button */}
+            {/* 195 Countries Pill Button (Matches Screenshot 2 style) */}
             {onOpenCountriesModal && (
               <button
                 type="button"
                 onClick={onOpenCountriesModal}
-                className="hidden xl:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-slate-700 dark:text-zinc-200 hover:text-[#FF7A00] bg-slate-100 hover:bg-orange-50 dark:bg-zinc-800/90 dark:hover:bg-zinc-700/80 border border-slate-200 dark:border-zinc-700 transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer shadow-2xs"
-                title="195 Countries Supported Worldwide"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-slate-700 dark:text-zinc-200 hover:text-[#FF7A00] bg-slate-100 hover:bg-orange-50 dark:bg-zinc-800/90 dark:hover:bg-zinc-700/80 border border-slate-200 dark:border-zinc-700 transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer shadow-2xs"
+                title={`${selectedCountry.englishName} (${selectedCountry.currency} ${selectedCountry.symbol}) • 195 Countries Supported`}
               >
-                <Globe className="w-3.5 h-3.5 text-[#FF7A00]" />
-                <span>195 Countries</span>
+                <span className="text-sm">{selectedCountry.flag}</span>
+                <span className="font-bold text-slate-800 dark:text-zinc-100">{selectedCountry.code}</span>
+                <span className="hidden xl:inline text-slate-600 dark:text-zinc-400 font-normal">
+                  {selectedCountry.englishName}
+                </span>
+                <span className="font-mono text-[#FF7A00]">({selectedCountry.symbol} {selectedCountry.currency})</span>
+                <span className="text-slate-300 dark:text-zinc-600">|</span>
+                <span className="text-slate-600 dark:text-zinc-300">195 Countries</span>
+                <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
               </button>
             )}
 
@@ -220,7 +219,7 @@ export default function Navbar({ onOpenConsultation, onOpenCountriesModal }: Nav
               onClick={onOpenConsultation}
               className="group text-xs sm:text-sm font-bold px-4 sm:px-5 py-2.5 rounded-full text-white bg-[#FF7A00] hover:bg-[#e66e00] active:scale-[0.98] transition-all duration-200 shadow-md shadow-[#FF7A00]/25 hover:shadow-lg hover:shadow-[#FF7A00]/35 hover:-translate-y-0.5 flex items-center gap-1.5 cursor-pointer whitespace-nowrap ml-1"
             >
-              <span>Free Consultation</span>
+              <span>{t("nav.consultation", "Free Consultation")}</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />
             </button>
           </div>
@@ -320,11 +319,11 @@ export default function Navbar({ onOpenConsultation, onOpenCountriesModal }: Nav
               className="w-full py-2.5 px-3 rounded-xl bg-slate-100 dark:bg-zinc-800/80 text-slate-800 dark:text-zinc-200 border border-slate-200 dark:border-zinc-700 text-xs font-bold flex items-center justify-between cursor-pointer"
             >
               <span className="flex items-center gap-2">
-                <Globe className="w-4 h-4 text-[#FF7A00]" />
-                <span>195 Sovereign Countries Directory</span>
+                <span>{selectedCountry.flag}</span>
+                <span>{selectedCountry.englishName} ({selectedCountry.symbol} {selectedCountry.currency})</span>
               </span>
               <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#FF7A00]/20 text-[#FF7A00]">
-                195
+                195 Countries ▾
               </span>
             </button>
           )}
@@ -354,7 +353,7 @@ export default function Navbar({ onOpenConsultation, onOpenCountriesModal }: Nav
               }}
               className="w-full py-3.5 rounded-full text-sm font-bold text-white bg-[#FF7A00] hover:bg-[#e66e00] shadow-md shadow-[#FF7A00]/25 flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.98]"
             >
-              <span>Free Consultation</span>
+              <span>{t("nav.consultation", "Free Consultation")}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>

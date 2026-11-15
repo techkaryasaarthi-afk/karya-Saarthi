@@ -14,6 +14,7 @@ import {
   TrendingUp,
   FileDown,
 } from "lucide-react";
+import { useCountry } from "@/context/CountryContext";
 
 interface ProjectsSectionProps {
   onOpenConsultation: () => void;
@@ -21,6 +22,7 @@ interface ProjectsSectionProps {
 }
 
 export default function ProjectsSection({ onOpenConsultation, onOpenPortfolioPdf }: ProjectsSectionProps) {
+  const { t, convertBudget } = useCountry();
   const [activeCategory, setActiveCategory] = useState<string>("all");
   const [selectedProject, setSelectedProject] = useState<CaseStudy | null>(null);
   const [projectsList, setProjectsList] = useState<CaseStudy[]>(CASE_STUDIES);
@@ -205,7 +207,7 @@ export default function ProjectsSection({ onOpenConsultation, onOpenPortfolioPdf
                     </div>
 
                     <span className="text-xs font-mono text-[#FF7A00] font-bold bg-white/95 dark:bg-zinc-900/95 px-2.5 py-1 rounded-full border border-white/20 backdrop-blur-md shadow-sm group-hover:scale-105 group-hover:border-[#FF7A00]/60 transition-all duration-200">
-                      {project.budget}
+                      {convertBudget(project.budget)}
                     </span>
                   </div>
 
@@ -222,7 +224,7 @@ export default function ProjectsSection({ onOpenConsultation, onOpenPortfolioPdf
                   {/* Challenge Summary */}
                   <div>
                     <span className="text-xs font-semibold text-slate-500 dark:text-zinc-400 uppercase tracking-wider block mb-1">
-                      The Challenge:
+                      {t("projects.challenge", "The Challenge:")}
                     </span>
                     <p className="text-xs text-slate-600 dark:text-zinc-300 line-clamp-3 leading-relaxed">
                       {project.challenge}
@@ -263,7 +265,7 @@ export default function ProjectsSection({ onOpenConsultation, onOpenPortfolioPdf
                 >
                   {/* Shimmer Light Sweep */}
                   <span className="absolute inset-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-[250%] transition-transform duration-700 ease-in-out pointer-events-none" />
-                  <span>Read Full Case Study</span>
+                  <span>{t("projects.readCaseStudy", "Read Full Case Study")}</span>
                   <ArrowUpRight className="w-4 h-4 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-200" />
                 </button>
               </div>

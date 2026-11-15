@@ -2,12 +2,14 @@
 
 import React, { useState } from "react";
 import { Sparkles, ArrowRight, TrendingUp, Clock } from "lucide-react";
+import { useCountry } from "@/context/CountryContext";
 
 interface RoiCalculatorProps {
   onSendEstimate: (service: string, estimate: string) => void;
 }
 
 export default function RoiCalculator({ onSendEstimate }: RoiCalculatorProps) {
+  const { formatPrice, t } = useCountry();
   const [selectedService, setSelectedService] = useState<string>("web");
   const [complexity, setComplexity] = useState<string>("medium");
   const [urgency, setUrgency] = useState<string>("standard");
@@ -94,7 +96,7 @@ export default function RoiCalculator({ onSendEstimate }: RoiCalculatorProps) {
     }
 
     return {
-      budgetStr: `₹${minBudget.toLocaleString()} - ₹${maxBudget.toLocaleString()}`,
+      budgetStr: `${formatPrice(minBudget)} - ${formatPrice(maxBudget)}`,
       timeline,
       roi,
     };

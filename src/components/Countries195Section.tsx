@@ -2,16 +2,16 @@
 
 import React, { useState, useMemo } from "react";
 import { COUNTRIES_195, CountryItem } from "@/data/countries195";
+import { useCountry } from "@/context/CountryContext";
 import {
   Globe,
   Search,
   X,
   ExternalLink,
-  Phone,
-  MessageCircle,
-  MapPin,
   CheckCircle2,
   Sparkles,
+  Maximize2,
+  Minimize2,
 } from "lucide-react";
 
 interface Countries195SectionProps {
@@ -25,42 +25,87 @@ export default function Countries195Section({
   onCloseModal,
   onOpenConsultation,
 }: Countries195SectionProps) {
-  const [internalModalOpen, setInternalModalOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedRegion, setSelectedRegion] = useState<string>("All");
+  const {
+    selectedCountry,
+    setSelectedCountry,
+    selectQuickCurrency,
+    isCountriesModalOpen: contextModalOpen,
+    openCountriesModal,
+    closeCountriesModal,
+    t,
+  } = useCountry();
 
-  const isModalOpen = isOpenModal || internalModalOpen;
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeTab, setActiveTab] = useState<string>("All 195");
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const isModalOpen = isOpenModal || contextModalOpen;
+
   const handleClose = () => {
-    setInternalModalOpen(false);
+    closeCountriesModal();
     if (onCloseModal) onCloseModal();
   };
 
-  const regions = ["All", "Asia", "Middle East", "Europe", "Americas", "Africa", "Oceania"];
+  const handleSelectCountry = (country: CountryItem) => {
+    setSelectedCountry(country);
+  };
 
-  // Filtered countries based on search and region
+  // Quick Currency options matching Screenshot 2
+  const quickCurrencies = [
+    { label: "IN INR (₹)", code: "INR", symbol: "₹" },
+    { label: "US USD ($)", code: "USD", symbol: "$" },
+    { label: "GB GBP (£)", code: "GBP", symbol: "£" },
+    { label: "EU EUR (€)", code: "EUR", symbol: "€" },
+    { label: "CA CAD (C$)", code: "CAD", symbol: "C$" },
+    { label: "AU AUD (A$)", code: "AUD", symbol: "A$" },
+    { label: "AE AED (AED)", code: "AED", symbol: "AED" },
+  ];
+
+  // Category Tabs matching Screenshot 2
+  const categoryTabs = ["All 195", "⭐ Popular", "Asia", "Europe", "Americas", "MEA"];
+
+  // Filtered countries based on search and active tab
   const filteredCountries = useMemo(() => {
     return COUNTRIES_195.filter((c) => {
-      const matchesRegion = selectedRegion === "All" || c.region === selectedRegion;
+      // Tab filter
+      let matchesTab = true;
+      if (activeTab === "⭐ Popular") {
+        matchesTab = !!c.isPopular;
+      } else if (activeTab === "Asia") {
+        matchesTab = c.region === "Asia";
+      } else if (activeTab === "Europe") {
+        matchesTab = c.region === "Europe";
+      } else if (activeTab === "Americas") {
+        matchesTab = c.region === "Americas";
+      } else if (activeTab === "MEA") {
+        matchesTab = c.region === "MEA";
+      }
+
+      // Search query filter
       const query = searchQuery.trim().toLowerCase();
-      if (!query) return matchesRegion;
+      if (!query) return matchesTab;
+
       const matchesSearch =
         c.englishName.toLowerCase().includes(query) ||
         c.nativeName.toLowerCase().includes(query) ||
-        c.code.toLowerCase().includes(query);
-      return matchesRegion && matchesSearch;
-    });
-  }, [searchQuery, selectedRegion]);
+        c.code.toLowerCase().includes(query) ||
+        c.currency.toLowerCase().includes(query) ||
+        c.symbol.toLowerCase().includes(query);
 
-  // First 40 countries for the continuous marquee
+      return matchesTab && matchesSearch;
+    });
+  }, [searchQuery, activeTab]);
+
+  // First 48 countries for continuous running marquee ticker
   const marqueeCountries = useMemo(() => {
     return COUNTRIES_195.slice(0, 48);
   }, []);
 
   return (
     <>
-      {/* 1. Global Reach 195 Countries Interactive Strip / Marquee */}
-      <section className="py-10 bg-slate-100/90 dark:bg-[#0E0E11] border-y border-slate-200 dark:border-white/10 overflow-hidden relative">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-6">
+      {/* 1. Global Reach 195 Countries Interactive Running Ticker Strip */}
+      <section className="py-8 bg-slate-100/90 dark:bg-[#0E0E11] border-y border-slate-200 dark:border-white/10 overflow-hidden relative">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-5">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-2xl bg-[#FF7A00]/10 border border-[#FF7A00]/30 flex items-center justify-center text-[#FF7A00] shrink-0">
@@ -68,7 +113,7 @@ export default function Countries195Section({
               </div>
               <div>
                 <div className="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-widest text-[#FF7A00]">
-                  <span>Global Operations · 195 Countries</span>
+                  <span>Global Currency & Real-Time Language · 195 Countries</span>
                   <span className="w-1.5 h-1.5 rounded-full bg-[#1BAC6E] animate-ping" />
                 </div>
                 <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">
@@ -79,188 +124,278 @@ export default function Countries195Section({
 
             <button
               type="button"
-              onClick={() => setInternalModalOpen(true)}
+              onClick={openCountriesModal}
               className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold text-slate-800 dark:text-white bg-white dark:bg-zinc-800 border border-slate-300 dark:border-zinc-700 hover:border-[#FF7A00] hover:text-[#FF7A00] shadow-xs hover:shadow-md transition-all cursor-pointer hover:scale-105 active:scale-95"
             >
-              <span>Explore All 195 Countries</span>
+              <span>{selectedCountry.flag} Active: {selectedCountry.englishName} ({selectedCountry.symbol} {selectedCountry.currency})</span>
               <span className="text-[10px] font-mono px-1.5 py-0.5 rounded-md bg-[#FF7A00]/15 text-[#FF7A00] font-extrabold">
-                195
+                195 Countries ▾
               </span>
             </button>
           </div>
         </div>
 
-        {/* Marquee Row 1 */}
+        {/* Marquee Row */}
         <div className="relative w-full overflow-hidden flex items-center">
-          <div className="flex gap-3 whitespace-nowrap animate-marquee hover:[animation-play-state:paused] py-1 cursor-pointer" onClick={() => setInternalModalOpen(true)}>
-            {[...marqueeCountries, ...marqueeCountries].map((country, idx) => (
-              <div
-                key={`${country.code}-${idx}`}
-                className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold backdrop-blur-md transition-all duration-200 hover:scale-105 ${
-                  country.isHQ
-                    ? "bg-[#FF7A00] text-white shadow-md shadow-[#FF7A00]/30 ring-2 ring-[#FF7A00]/40"
-                    : "bg-white/90 dark:bg-zinc-900/90 text-slate-800 dark:text-zinc-200 border border-slate-200/80 dark:border-zinc-800 hover:border-[#FF7A00]/50 shadow-2xs"
-                }`}
-              >
-                <span className="text-base">{country.flag}</span>
-                <span className="font-bold">{country.nativeName}</span>
-                {!country.isHQ && (
+          <div
+            className="flex gap-3 whitespace-nowrap animate-marquee hover:[animation-play-state:paused] py-1 cursor-pointer"
+            onClick={openCountriesModal}
+          >
+            {[...marqueeCountries, ...marqueeCountries].map((country, idx) => {
+              const isCurrent = selectedCountry.code === country.code;
+              return (
+                <div
+                  key={`${country.code}-${idx}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleSelectCountry(country);
+                  }}
+                  className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold backdrop-blur-md transition-all duration-200 hover:scale-105 ${
+                    isCurrent
+                      ? "bg-[#FF7A00] text-white shadow-md shadow-[#FF7A00]/30 ring-2 ring-[#FF7A00]/40"
+                      : "bg-white/95 dark:bg-zinc-900/95 text-slate-800 dark:text-zinc-200 border border-slate-200/90 dark:border-zinc-800 hover:border-[#FF7A00]/60 shadow-2xs"
+                  }`}
+                >
+                  <span className="text-base">{country.flag}</span>
+                  <span className="font-bold">{country.nativeName}</span>
                   <span className="text-[10px] text-slate-500 dark:text-zinc-400 font-normal">
                     ({country.englishName})
                   </span>
-                )}
-                {country.isHQ && (
-                  <span className="text-[9px] uppercase tracking-wider bg-white/20 px-1.5 py-0.2 rounded font-extrabold">
-                    HQ
+                  <span className="text-[10px] font-mono px-1 rounded bg-black/10 dark:bg-white/10 text-emerald-600 dark:text-emerald-400 font-bold">
+                    {country.symbol} {country.currency}
                   </span>
-                )}
-              </div>
-            ))}
+                  {country.isHQ && (
+                    <span className="text-[9px] uppercase tracking-wider bg-white/20 px-1.5 py-0.2 rounded font-extrabold">
+                      HQ
+                    </span>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
 
-      {/* 2. Full Searchable 195 Countries Modal */}
+      {/* 2. Full 195 Countries Modal (Exact UI matching Screenshot 2) */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/70 dark:bg-black/90 backdrop-blur-md animate-fadeIn">
-          <div className="bg-white dark:bg-[#121216] border border-slate-200 dark:border-zinc-800 rounded-3xl max-w-4xl w-full p-5 sm:p-7 relative max-h-[90vh] flex flex-col shadow-2xl text-slate-900 dark:text-white animate-modal-pop">
-            
-            {/* Modal Header */}
-            <div className="flex items-start justify-between gap-4 pb-4 border-b border-slate-200 dark:border-zinc-800">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-slate-950/75 backdrop-blur-md animate-fadeIn">
+          <div
+            className={`bg-white dark:bg-[#121216] border border-slate-200 dark:border-zinc-800 rounded-3xl w-full p-4 sm:p-6 relative max-h-[92vh] flex flex-col shadow-2xl text-slate-900 dark:text-white transition-all duration-300 animate-modal-pop ${
+              isExpanded ? "max-w-6xl h-[92vh]" : "max-w-4xl"
+            }`}
+          >
+            {/* Header: Exact text from Screenshot 2 */}
+            <div className="flex items-start justify-between gap-4 pb-3.5 border-b border-slate-200 dark:border-zinc-800">
               <div className="space-y-1">
-                <div className="inline-flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wider text-[#FF7A00]">
-                  <Globe className="w-4 h-4 text-[#FF7A00]" />
-                  <span>195 Sovereign Countries Worldwide</span>
+                <div className="flex items-center gap-2">
+                  <Globe className="w-5 h-5 text-[#0084FF] shrink-0" />
+                  <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
+                    Select Your Country (195 Countries Supported)
+                  </h3>
                 </div>
-                <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">
-                  Global Project Delivery Directory
-                </h3>
-                <p className="text-xs text-slate-600 dark:text-zinc-400">
-                  Every country shown in its authentic mother tongue script (India kept in English). 24/7 delivery across all timezones.
+                <p className="text-xs text-slate-500 dark:text-zinc-400 pl-7">
+                  Prices and language automatically convert in real time across the website.
                 </p>
               </div>
 
-              <button
-                type="button"
-                onClick={handleClose}
-                className="p-2 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-600 dark:text-zinc-300 transition-transform duration-200 hover:rotate-90 hover:scale-110 cursor-pointer shrink-0"
-                aria-label="Close Countries Directory"
-              >
-                <X className="w-5 h-5" />
-              </button>
+              <div className="flex items-center gap-2 shrink-0">
+                <div className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  <span>195 / 195</span>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleClose}
+                  className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+                  aria-label="Close modal"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
             </div>
 
-            {/* Search Bar & Region Filter Tabs */}
-            <div className="py-4 space-y-3 shrink-0">
+            {/* Quick Currency Bar: Exact style from Screenshot 2 */}
+            <div className="py-3 border-b border-slate-100 dark:border-zinc-800/80">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+                <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-600 dark:text-zinc-400">
+                  ⚡ QUICK CURRENCY:
+                </span>
+                <span className="text-[11px] font-semibold text-slate-700 dark:text-zinc-300">
+                  Active: <strong className="text-emerald-600 dark:text-emerald-400 font-mono">{selectedCountry.symbol} {selectedCountry.currency}</strong>
+                </span>
+              </div>
+
+              {/* Currency Pills */}
+              <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                {quickCurrencies.map((qc) => {
+                  const isActive = selectedCountry.currency === qc.code;
+                  return (
+                    <button
+                      key={qc.code}
+                      type="button"
+                      onClick={() => selectQuickCurrency(qc.code)}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer ${
+                        isActive
+                          ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-md ring-2 ring-slate-900/20 dark:ring-white/30 scale-105"
+                          : "bg-slate-50 dark:bg-zinc-800/70 text-slate-700 dark:text-zinc-300 border border-slate-200 dark:border-zinc-700/80 hover:border-slate-400 dark:hover:border-zinc-500 hover:bg-slate-100 dark:hover:bg-zinc-800"
+                      }`}
+                    >
+                      {qc.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Search Input Bar: Exact placeholder from Screenshot 2 */}
+            <div className="pt-3 pb-2.5">
               <div className="relative">
-                <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <Search className="w-4 h-4 text-[#0084FF] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search by country name (e.g. India, Japan, 日本, France, Deutschland, مصر)..."
-                  className="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-zinc-900/90 border border-slate-200 dark:border-zinc-700 text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#FF7A00]/40 focus:border-[#FF7A00] transition-all"
+                  placeholder="Search 195 countries or cities (e.g. India, USA, China, Pakistan, London, Tokyo)..."
+                  className="w-full pl-10 pr-9 py-2.5 rounded-xl bg-slate-50/80 dark:bg-zinc-900/90 border border-slate-200 dark:border-zinc-700 text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0084FF]/40 focus:border-[#0084FF] transition-all"
                 />
                 {searchQuery && (
                   <button
                     type="button"
                     onClick={() => setSearchQuery("")}
-                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs text-slate-400 hover:text-slate-600 dark:hover:text-zinc-200"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400 hover:text-slate-600 dark:hover:text-zinc-200 p-1"
                   >
-                    Clear
+                    <X className="w-3.5 h-3.5" />
                   </button>
                 )}
               </div>
+            </div>
 
-              {/* Region Tabs */}
-              <div className="flex flex-wrap items-center gap-1.5">
-                {regions.map((reg) => (
+            {/* Category Filter Tabs: Exact list from Screenshot 2 */}
+            <div className="flex flex-wrap items-center gap-1 pb-3 shrink-0">
+              {categoryTabs.map((tab) => {
+                const isActive = activeTab === tab;
+                return (
                   <button
-                    key={reg}
+                    key={tab}
                     type="button"
-                    onClick={() => setSelectedRegion(reg)}
-                    className={`px-3 py-1 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-                      selectedRegion === reg
-                        ? "bg-[#FF7A00] text-white shadow-sm shadow-[#FF7A00]/25"
-                        : "bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
+                    onClick={() => setActiveTab(tab)}
+                    className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                      isActive
+                        ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-xs"
+                        : "bg-slate-100/80 text-slate-600 hover:bg-slate-200/80 dark:bg-zinc-800/60 dark:text-zinc-400 dark:hover:bg-zinc-800"
                     }`}
                   >
-                    {reg}
+                    {tab}
                   </button>
-                ))}
-                <span className="ml-auto text-xs font-mono text-slate-500 dark:text-zinc-400">
-                  Showing {filteredCountries.length} of 195
-                </span>
-              </div>
+                );
+              })}
+              <span className="ml-auto text-[11px] font-mono text-slate-400 dark:text-zinc-500">
+                {filteredCountries.length} available
+              </span>
             </div>
 
-            {/* Countries Grid */}
-            <div className="overflow-y-auto flex-1 pr-1 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 py-2">
-              {filteredCountries.map((c) => (
-                <div
-                  key={c.code}
-                  className={`p-3 rounded-2xl border transition-all duration-200 hover:-translate-y-0.5 flex flex-col justify-between ${
-                    c.isHQ
-                      ? "bg-gradient-to-br from-orange-500/10 via-amber-500/10 to-transparent border-[#FF7A00] shadow-md shadow-[#FF7A00]/15"
-                      : "bg-slate-50 dark:bg-zinc-900/60 border-slate-200/90 dark:border-zinc-800/80 hover:border-[#FF7A00]/40"
-                  }`}
-                >
-                  <div>
-                    <div className="flex items-center justify-between gap-1 mb-1">
-                      <span className="text-2xl">{c.flag}</span>
-                      <span className="text-[10px] font-mono text-slate-400 dark:text-zinc-500 uppercase">
+            {/* Country List: Exact 2-Column Grid Layout matching Screenshot 2 */}
+            <div className="overflow-y-auto flex-1 pr-1.5 py-1 grid grid-cols-1 md:grid-cols-2 gap-2 border-y border-slate-100 dark:border-zinc-800/80">
+              {filteredCountries.map((c) => {
+                const isSelected = selectedCountry.code === c.code;
+                return (
+                  <button
+                    key={c.code}
+                    type="button"
+                    onClick={() => handleSelectCountry(c)}
+                    className={`flex items-center justify-between p-2.5 rounded-xl border text-left transition-all duration-150 cursor-pointer group ${
+                      isSelected
+                        ? "bg-emerald-50/70 dark:bg-emerald-950/30 border-emerald-500 text-slate-900 dark:text-white shadow-xs ring-1 ring-emerald-500/30"
+                        : "bg-white dark:bg-zinc-900/60 border-slate-100 dark:border-zinc-800/90 hover:border-slate-300 dark:hover:border-zinc-700 hover:bg-slate-50 dark:hover:bg-zinc-800/50 text-slate-800 dark:text-zinc-200"
+                    }`}
+                  >
+                    {/* Left: Code + Flag + Name */}
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <span className="text-xs font-mono font-bold text-slate-500 dark:text-zinc-400 w-5 text-center">
                         {c.code}
                       </span>
+                      <span className="text-base shrink-0">{c.flag}</span>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-xs font-bold truncate text-slate-900 dark:text-white">
+                            {c.englishName}
+                          </span>
+                          <span className="text-[11px] text-slate-400 dark:text-zinc-500 truncate">
+                            ({c.code})
+                          </span>
+                        </div>
+                        {/* Native mother-tongue script display */}
+                        <div className="text-[10px] text-slate-500 dark:text-zinc-400 truncate">
+                          {c.nativeName}
+                        </div>
+                      </div>
                     </div>
 
-                    {/* Native Name (Mother Tongue) */}
-                    <h4 className="text-sm font-extrabold text-slate-900 dark:text-white truncate" title={c.nativeName}>
-                      {c.nativeName}
-                    </h4>
-
-                    {/* English Name */}
-                    <p className="text-[11px] text-slate-500 dark:text-zinc-400 truncate mt-0.5">
-                      {c.englishName}
-                    </p>
-                  </div>
-
-                  <div className="mt-2.5 pt-2 border-t border-slate-200/60 dark:border-zinc-800/60 flex items-center justify-between text-[10px]">
-                    <span className="text-slate-400 dark:text-zinc-500">{c.region}</span>
-                    {c.isHQ ? (
-                      <span className="font-extrabold text-[#FF7A00] flex items-center gap-0.5">
-                        <CheckCircle2 className="w-3 h-3 text-[#FF7A00]" />
-                        <span>HQ</span>
+                    {/* Right: Currency Symbol and Code */}
+                    <div className="flex items-center gap-2 shrink-0 ml-2">
+                      <span className="font-mono text-xs font-semibold text-slate-600 dark:text-zinc-400">
+                        {c.currency} ({c.symbol})
                       </span>
-                    ) : (
-                      <span className="text-emerald-500 font-medium">Supported</span>
-                    )}
-                  </div>
+                      {isSelected ? (
+                        <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                      ) : (
+                        <span className="w-4 h-4 rounded-full border border-slate-200 dark:border-zinc-700 group-hover:border-[#FF7A00] shrink-0" />
+                      )}
+                    </div>
+                  </button>
+                );
+              })}
+
+              {filteredCountries.length === 0 && (
+                <div className="col-span-full py-8 text-center text-xs text-slate-500 dark:text-zinc-400">
+                  No country found matching &quot;{searchQuery}&quot;. Try searching by country name, city, or currency.
                 </div>
-              ))}
+              )}
             </div>
 
-            {/* Modal Bottom CTA Bar */}
-            <div className="pt-4 mt-2 border-t border-slate-200 dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
-              <div className="text-slate-600 dark:text-zinc-400 flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                <span>Direct 24/7 Global Delivery Support in English &amp; Native Formats</span>
+            {/* Footer: Exact style from Screenshot 2 */}
+            <div className="pt-3.5 flex items-center justify-between text-xs text-slate-600 dark:text-zinc-400">
+              <div className="flex items-center gap-2">
+                <span>Selected:</span>
+                <span className="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span>{selectedCountry.flag}</span>
+                  <span className="underline decoration-emerald-500 underline-offset-2">
+                    {selectedCountry.code} {selectedCountry.englishName}
+                  </span>
+                  <span className="font-mono text-emerald-600 dark:text-emerald-400 font-bold">
+                    ({selectedCountry.symbol} {selectedCountry.currency})
+                  </span>
+                </span>
               </div>
-              <div className="flex items-center gap-2 w-full sm:w-auto">
-                <a
-                  href="https://wa.me/918595025753?text=Hi%20Karya%20Saarthi%2C%20I%20am%20inquiring%20about%20your%20services%20from%20international%20delivery."
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold transition-all shadow-xs"
+
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => setIsExpanded(!isExpanded)}
+                  className="hidden sm:inline-flex items-center gap-1 text-slate-700 dark:text-zinc-300 hover:text-[#0084FF] transition-colors cursor-pointer font-semibold"
                 >
-                  <MessageCircle className="w-3.5 h-3.5" />
-                  <span>WhatsApp (+91 8595025753)</span>
-                </a>
-                <a
-                  href="mailto:support@karyasaarthi.com"
-                  className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#FF7A00] hover:bg-[#e66e00] text-white font-bold transition-all shadow-xs"
+                  {isExpanded ? (
+                    <>
+                      <Minimize2 className="w-3.5 h-3.5" />
+                      <span>Compact View</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>Expand View</span>
+                      <ExternalLink className="w-3.5 h-3.5 text-[#0084FF]" />
+                    </>
+                  )}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleClose}
+                  className="px-4 py-1.5 rounded-xl bg-[#FF7A00] hover:bg-[#e66e00] text-white font-bold text-xs shadow-md shadow-[#FF7A00]/25 transition-all cursor-pointer"
                 >
-                  <span>support@karyasaarthi.com</span>
-                </a>
+                  Apply &amp; Done
+                </button>
               </div>
             </div>
 

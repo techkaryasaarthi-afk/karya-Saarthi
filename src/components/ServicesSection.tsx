@@ -15,12 +15,14 @@ import {
   X,
   Sparkles,
 } from "lucide-react";
+import { useCountry } from "@/context/CountryContext";
 
 interface ServicesSectionProps {
   onSelectServiceForQuote: (serviceTitle: string) => void;
 }
 
 export default function ServicesSection({ onSelectServiceForQuote }: ServicesSectionProps) {
+  const { t, convertBudget } = useCountry();
   const [selectedService, setSelectedService] = useState<ServiceItem | null>(null);
 
   const getIcon = (iconName: string) => {
@@ -73,7 +75,7 @@ export default function ServicesSection({ onSelectServiceForQuote }: ServicesSec
                     {getIcon(service.icon)}
                   </div>
                   <span className="text-[11px] sm:text-xs font-mono font-semibold px-2.5 py-1 rounded-full bg-[#FF6B35]/10 text-[#FF6B35] border border-[#FF6B35]/30 text-right">
-                    {service.priceRange}
+                    {convertBudget(service.priceRange)}
                   </span>
                 </div>
 
@@ -170,7 +172,7 @@ export default function ServicesSection({ onSelectServiceForQuote }: ServicesSec
               <div className="min-w-0">
                 <h3 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white break-words">{selectedService.title}</h3>
                 <div className="flex flex-wrap items-center gap-3 text-xs text-slate-500 dark:text-zinc-400 mt-1 font-mono">
-                  <span className="text-[#FF6B35] font-semibold">{selectedService.priceRange}</span>
+                  <span className="text-[#FF6B35] font-semibold">{convertBudget(selectedService.priceRange)}</span>
                   <span>•</span>
                   <span className="flex items-center gap-1">
                     <Clock className="w-3.5 h-3.5" />

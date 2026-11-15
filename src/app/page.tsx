@@ -31,11 +31,12 @@ import AppointmentModal from "@/components/AppointmentModal";
 import WhatsAppWidget from "@/components/WhatsAppWidget";
 import ScrollToTop from "@/components/ScrollToTop";
 import Footer from "@/components/Footer";
+import { useCountry } from "@/context/CountryContext";
 
 export default function Home() {
+  const { isCountriesModalOpen, openCountriesModal, closeCountriesModal } = useCountry();
   const [isPdfModalOpen, setIsPdfModalOpen] = useState(false);
   const [isAppointmentModalOpen, setIsAppointmentModalOpen] = useState(false);
-  const [isCountriesModalOpen, setIsCountriesModalOpen] = useState(false);
   const [selectedServiceForQuote, setSelectedServiceForQuote] = useState("");
   const [estimateForQuote, setEstimateForQuote] = useState("");
 
@@ -70,7 +71,7 @@ export default function Home() {
       <Navbar
         onOpenConsultation={() => handleOpenAppointmentModal()}
         onOpenPortfolioPdf={() => setIsPdfModalOpen(true)}
-        onOpenCountriesModal={() => setIsCountriesModalOpen(true)}
+        onOpenCountriesModal={openCountriesModal}
       />
 
       {/* Spacer to prevent layout shift with fixed navbar */}
@@ -125,14 +126,14 @@ export default function Home() {
       {/* Global Reach: 195 Sovereign Countries Showcase & Interactive Directory */}
       <Countries195Section
         isOpenModal={isCountriesModalOpen}
-        onCloseModal={() => setIsCountriesModalOpen(false)}
+        onCloseModal={closeCountriesModal}
         onOpenConsultation={() => handleOpenAppointmentModal()}
       />
 
       {/* Footer */}
       <Footer
         onOpenAppointment={() => handleOpenAppointmentModal()}
-        onOpenCountriesModal={() => setIsCountriesModalOpen(true)}
+        onOpenCountriesModal={openCountriesModal}
       />
     </main>
   );
