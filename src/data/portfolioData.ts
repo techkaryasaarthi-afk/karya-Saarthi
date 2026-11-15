@@ -520,11 +520,11 @@ export const TEAM: TeamMember[] = [
   },
   {
     name: "Damini Yadav",
-    role: "Software Engineer",
+    role: "Co-founder and Software Engineer",
     badge: "Co-Founder & Tech Lead",
     experience: "Co-Founder, Software Engineering, Full Stack Web Apps & Generative AI",
     expertise: ["Software Engineer", "Frontend Developer", "Full Stack Web App", "Next.js", "React.js", "Generative AI"],
-    education: "B.Tech in Computer Science & Engineering",
+    education: "Engineering",
     email: "info@karyasaarthi.com",
     image: "/team/damini-yadav.jpg",
     social: {
