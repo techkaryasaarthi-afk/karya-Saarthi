@@ -6,14 +6,15 @@
  * Optimized Navigation Header:
  * - Left: Clickable brand logo & "TEACH + COMPLETE SOLUTIONS" tagline with smooth scroll to top (#top)
  * - Center: Navigation links (Home, Services, Case Studies, ROI Estimator, About Us, Contact Us)
- * - Right: ONLY primary solid orange "Free Consultation →" CTA with pill styling & hover elevation
- * - Sticky Glassmorphism: (sticky top-0 z-50 bg-white/90 backdrop-blur-md) with subtle bottom border
- * - Mobile: Responsive hamburger menu displaying all links + full-width CTA
+ * - Right: Theme Toggle (Light/Dark) + primary solid orange "Free Consultation →" CTA
+ * - Fixed Glassmorphism: (fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md) stays visible on scroll
+ * - Mobile: Responsive theme toggle + hamburger menu displaying all links + full-width CTA
  */
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { Menu, X, ArrowRight, ChevronRight } from "lucide-react";
+import { Menu, X, ArrowRight, ChevronRight, Sun, Moon } from "lucide-react";
+import { useTheme } from "@/context/ThemeContext";
 
 interface NavbarProps {
   onOpenConsultation: () => void;
@@ -21,6 +22,7 @@ interface NavbarProps {
 }
 
 export default function Navbar({ onOpenConsultation }: NavbarProps) {
+  const { theme, toggleTheme } = useTheme();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -46,7 +48,7 @@ export default function Navbar({ onOpenConsultation }: NavbarProps) {
     { name: "Contact Us", href: "#contact" },
   ];
 
-  // Smooth scroll handler for links
+  // Smooth scroll handler for links with header offset
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
     if (href === "#top" || href === "#hero") {
@@ -63,7 +65,13 @@ export default function Navbar({ onOpenConsultation }: NavbarProps) {
       (targetId === "roi-estimator" ? document.getElementById("roi-calculator") : null);
 
     if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
+      const headerOffset = 76;
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth"
+      });
     }
     if (mobileMenuOpen) {
       setMobileMenuOpen(false);
@@ -82,10 +90,10 @@ export default function Navbar({ onOpenConsultation }: NavbarProps) {
   return (
     <header
       id="top"
-      className={`sticky top-0 z-50 transition-all duration-300 backdrop-blur-md ${
+      className={`fixed top-0 left-0 right-0 w-full z-50 transition-all duration-300 backdrop-blur-md ${
         scrolled
-          ? "bg-white/90 dark:bg-[#0E0E11]/90 border-b border-gray-200/90 dark:border-zinc-800 shadow-sm"
-          : "bg-white/80 dark:bg-[#0E0E11]/80 border-b border-gray-200/60 dark:border-zinc-800/60"
+          ? "bg-white/95 dark:bg-[#0E0E11]/95 border-b border-gray-200/90 dark:border-zinc-800 shadow-md py-0"
+          : "bg-white/90 dark:bg-[#0E0E11]/90 border-b border-gray-200/60 dark:border-zinc-800/60"
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -132,8 +140,24 @@ export default function Navbar({ onOpenConsultation }: NavbarProps) {
             ))}
           </nav>
 
-          {/* Right Section: Primary CTA Only (Solid Orange Button with Pill Styling & Elevation Effect) */}
-          <div className="hidden lg:flex items-center shrink-0">
+          {/* Right Section: Theme Toggle Button + Primary CTA */}
+          <div className="hidden lg:flex items-center gap-3 shrink-0">
+            {/* Theme Toggle Button (Light / Dark) */}
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className="p-2.5 rounded-full text-slate-700 dark:text-zinc-200 hover:text-[#FF7A00] dark:hover:text-[#FF7A00] bg-slate-100 hover:bg-orange-50 dark:bg-zinc-800/90 dark:hover:bg-zinc-700/80 border border-slate-200 dark:border-zinc-700 transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer shadow-xs"
+              aria-label={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}
+              title={theme === "dark" ? "Switch to Light Theme" : "Switch to Dark Theme"}
+            >
+              {theme === "dark" ? (
+                <Sun className="w-4 h-4 text-amber-400" />
+              ) : (
+                <Moon className="w-4 h-4 text-slate-700" />
+              )}
+            </button>
+
+            {/* Primary CTA (Solid Orange Button with Pill Styling & Elevation Effect) */}
             <button
               type="button"
               onClick={onOpenConsultation}
@@ -144,8 +168,22 @@ export default function Navbar({ onOpenConsultation }: NavbarProps) {
             </button>
           </div>
 
-          {/* Responsive Hamburger Toggle for Mobile & Tablet */}
-          <div className="lg:hidden flex items-center">
+          {/* Responsive Mobile Controls: Theme Toggle + Hamburger Toggle */}
+          <div className="lg:hidden flex items-center gap-2">
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className="p-2 rounded-xl text-slate-700 dark:text-zinc-200 hover:text-[#FF7A00] hover:bg-gray-100 dark:hover:bg-zinc-800 border border-gray-200 dark:border-zinc-700 transition-colors cursor-pointer"
+              aria-label={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}
+              title={theme === "dark" ? "Switch to Light Theme" : "Switch to Dark Theme"}
+            >
+              {theme === "dark" ? (
+                <Sun className="w-5 h-5 text-amber-400" />
+              ) : (
+                <Moon className="w-5 h-5 text-slate-700" />
+              )}
+            </button>
+
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -175,8 +213,23 @@ export default function Navbar({ onOpenConsultation }: NavbarProps) {
             ))}
           </div>
 
+          {/* Mobile Drawer Theme Toggle Row */}
+          <div className="flex items-center justify-between py-2.5 px-3 rounded-xl bg-gray-50 dark:bg-zinc-800/60 border border-gray-100 dark:border-zinc-700/60">
+            <span className="text-sm font-medium text-gray-700 dark:text-zinc-200 flex items-center gap-2">
+              {theme === "dark" ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-700" />}
+              <span>{theme === "dark" ? "Dark Mode" : "Light Mode"}</span>
+            </span>
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className="px-3 py-1 rounded-full text-xs font-semibold bg-white dark:bg-zinc-700 text-slate-800 dark:text-white border border-gray-200 dark:border-zinc-600 shadow-xs cursor-pointer active:scale-95 transition-transform"
+            >
+              Switch to {theme === "dark" ? "Light" : "Dark"}
+            </button>
+          </div>
+
           {/* Mobile Full-Width Solid Orange CTA Button */}
-          <div className="pt-2">
+          <div className="pt-1">
             <button
               type="button"
               onClick={() => {

@@ -69,6 +69,9 @@ export default function Home() {
         onOpenPortfolioPdf={() => setIsPdfModalOpen(true)}
       />
 
+      {/* Spacer to prevent layout shift with fixed navbar */}
+      <div className="w-full h-16 sm:h-20 shrink-0 pointer-events-none" aria-hidden="true" />
+
       {/* Main Sections */}
       <Hero
         onOpenConsultation={() => handleOpenAppointmentModal()}
