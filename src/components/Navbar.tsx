@@ -1,12 +1,12 @@
 "use client";
 
 /**
- * Navbar Component
+ * Navbar Component (FEAT-#3-Portfolio-2026)
  * 
  * Clean, modern header navigation:
  * - Sticky glassmorphism header (backdrop-blur-md bg-white/80) with subtle bottom border
  * - Brand logo & company identity with warm orange accents
- * - 5 centered navigation links with generous spacing (gap-8) and crisp medium-weight typography
+ * - 5 centered navigation links (Home, Services, Case Studies, ROI Estimator, About Us) with gap-8 spacing
  * - Clean right-side actions: Subtle bordered 'Portfolio PDF' button + solid orange 'Free Consultation ->' CTA
  * - Smooth responsive collapse into mobile drawer menu
  */

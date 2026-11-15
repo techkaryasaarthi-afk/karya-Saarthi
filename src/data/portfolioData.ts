@@ -518,6 +518,11 @@ export const TEAM: TeamMember[] = [
     ],
     bio: "Saloni Kumari is the Founder and Director of Karya Saarthi – India's first project solutions company where education meets execution. Growing up in a small town in Bihar, she studied at Divine Light Public School for Class 10 and secured admission to Jawahar Navodaya Vidyalaya (JNV) for Class 12. Currently pursuing BBA LLB, Saloni started Karya Saarthi in August 2025 with zero investment. In less than a year, she built a company that has completed 500+ projects, served 2,000+ clients, and generated ₹25 Lakh in revenue with ₹5 Lakh net profit - all while still being a student herself. Today, Karya Saarthi operates pan-India online, serving students, professionals, businesses, and institutions.",
   },
+  /**
+   * Co-Founder & Technical Leadership: Damini Yadav
+   * Oversees technical architecture, full-stack web applications, frontend engineering,
+   * Generative AI integration, and core development operations at Karya Saarthi.
+   */
   {
     name: "Damini Yadav",
     role: "Co-founder and Software Engineer",

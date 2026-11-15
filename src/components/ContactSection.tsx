@@ -1,5 +1,14 @@
 "use client";
 
+/**
+ * ContactSection Component (FEAT-#3-Portfolio-2026)
+ * 
+ * Interactive consultation booking and inquiry form:
+ * - Segmented toggle control for Consultation, Quote, and Live Demo
+ * - High-conversion SaaS form styling with clear focus rings and responsive layouts
+ * - Scannable department email and telephone support cards with 1-click clipboard copy
+ */
+
 import React, { useState, useEffect } from "react";
 import confetti from "canvas-confetti";
 import { CONTACT_INFO } from "@/data/portfolioData";
