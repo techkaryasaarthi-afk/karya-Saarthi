@@ -520,7 +520,7 @@ export const TEAM: TeamMember[] = [
   },
   {
     name: "Damini Yadav",
-    role: "Co-founder & Software Engineer",
+    role: "Software Engineer",
     badge: "Co-Founder & Tech Lead",
     experience: "Co-Founder, Software Engineering, Full Stack Web Apps & Generative AI",
     expertise: ["Software Engineer", "Frontend Developer", "Full Stack Web App", "Next.js", "React.js", "Generative AI"],
