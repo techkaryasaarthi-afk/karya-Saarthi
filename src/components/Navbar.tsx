@@ -3,19 +3,18 @@
 /**
  * Navbar Component
  * 
- * Header navigation bar providing:
- * - Brand logo & company identity with circular favicon badge
- * - Desktop nav links with smooth scroll anchors to sections
- * - Light / Dark mode toggle button with persistent theme state
- * - Action buttons: Download Portfolio PDF & Free Consultation modal trigger
- * - Mobile responsive drawer menu with accessible touch targets
+ * Clean, modern header navigation:
+ * - Sticky glassmorphism header (backdrop-blur-md bg-white/80) with subtle bottom border
+ * - Brand logo & company identity with warm orange accents
+ * - 5 centered navigation links with generous spacing (gap-8) and crisp medium-weight typography
+ * - Clean right-side actions: Subtle bordered 'Portfolio PDF' button + solid orange 'Free Consultation ->' CTA
+ * - Smooth responsive collapse into mobile drawer menu
  */
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Menu, X, Sparkles, ArrowRight, ChevronRight, Sun, Moon } from "lucide-react";
-import { useTheme } from "@/context/ThemeContext";
+import { Menu, X, ArrowRight, ChevronRight, FileDown } from "lucide-react";
 
 interface NavbarProps {
   onOpenConsultation: () => void;
@@ -23,169 +22,132 @@ interface NavbarProps {
 }
 
 export default function Navbar({ onOpenConsultation, onOpenPortfolioPdf }: NavbarProps) {
-  const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { theme, toggleTheme } = useTheme();
 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 20) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
-      }
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
+  // 1. Simplified 5 main navigation links in the center
   const navLinks = [
     { name: "Home", href: "#hero" },
     { name: "Services", href: "#services" },
     { name: "Case Studies", href: "#projects" },
     { name: "ROI Estimator", href: "#roi-calculator" },
-    { name: "Outcomes", href: "#outcomes" },
     { name: "About Us", href: "#about" },
-    { name: "Team", href: "#team" },
-    { name: "Contact", href: "#contact" },
   ];
 
   return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? "bg-white/90 dark:bg-[#0E0E11]/90 backdrop-blur-md border-b border-slate-200/80 dark:border-white/10 py-2.5 sm:py-3 shadow-md dark:shadow-2xl"
-          : "bg-transparent py-4 sm:py-5"
-      }`}
-    >
+    <header className="sticky top-0 z-50 backdrop-blur-md bg-white/80 dark:bg-[#0E0E11]/80 border-b border-gray-200/80 dark:border-zinc-800/80 transition-all duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between h-16 sm:h-20">
           
-          {/* Logo & Brand Name */}
-          <Link href="/" className="flex items-center gap-2 sm:gap-3 xl:gap-4 group mr-2 xl:mr-8 shrink-0">
-            <div className="relative w-10 h-10 sm:w-12 sm:h-12 xl:w-14 xl:h-14 rounded-full overflow-hidden border-2 border-[#FF6B35] shadow-xl shadow-[#FF6B35]/30 group-hover:scale-105 transition-transform shrink-0 bg-white p-0.5">
+          {/* Logo & Brand Identity */}
+          <Link href="/" className="flex items-center gap-2.5 sm:gap-3 group shrink-0">
+            <div className="relative w-10 h-10 sm:w-11 sm:h-11 rounded-full overflow-hidden border-2 border-[#FF7A00] shadow-md shadow-[#FF7A00]/20 group-hover:scale-105 transition-transform shrink-0 bg-white p-0.5">
               <Image
                 src="/logo.jpg"
                 alt="Karya Saarthi Logo"
                 fill
                 className="object-contain rounded-full"
-                sizes="(max-width: 640px) 40px, (max-width: 1280px) 48px, 56px"
+                priority
               />
             </div>
             <div className="flex flex-col justify-center">
-              <span className="text-sm sm:text-xl xl:text-2xl font-black tracking-normal text-slate-900 dark:text-white flex items-center gap-1 sm:gap-1.5 leading-none">
-                KARYA <span className="text-[#FF6B35]">SAARTHI</span>
+              <span className="text-base sm:text-lg font-black tracking-normal text-slate-900 dark:text-white flex items-center gap-1 leading-none">
+                KARYA <span className="text-[#FF7A00]">SAARTHI</span>
               </span>
-              <p className="text-[8px] sm:text-[10px] xl:text-xs text-[#FF6B35] font-extrabold tracking-widest uppercase mt-0.5">
+              <p className="text-[9px] sm:text-[10px] text-[#FF7A00] font-extrabold tracking-wider uppercase mt-0.5">
                 Teach + Complete Solutions
               </p>
             </div>
           </Link>
 
-          {/* Desktop & Laptop Navigation Links */}
-          <nav className="hidden lg:flex items-center space-x-2 xl:space-x-5 shrink-0">
+          {/* 1. Desktop Center Navigation Links (5 links, gap-8 spacing, medium-weight typography) */}
+          <nav className="hidden lg:flex items-center gap-8">
             {navLinks.map((link) => (
               <a
                 key={link.name}
                 href={link.href}
-                className="text-[11px] xl:text-sm font-semibold text-slate-600 hover:text-[#FF6B35] dark:text-zinc-300 dark:hover:text-[#FF6B35] transition-colors whitespace-nowrap px-1 py-1"
+                className="text-sm font-medium text-gray-700 dark:text-zinc-200 hover:text-orange-600 dark:hover:text-[#FF7A00] transition-colors whitespace-nowrap"
               >
                 {link.name}
               </a>
             ))}
           </nav>
 
-          {/* Desktop & Laptop Action Buttons */}
-          <div className="hidden lg:flex items-center gap-1.5 xl:gap-3 shrink-0">
-            {/* Theme Toggle Button */}
+          {/* 2. Desktop Right-Side Action Buttons (Minimal, No Dark Mode Toggle) */}
+          <div className="hidden lg:flex items-center gap-3 shrink-0">
+            {/* Subtle bordered secondary button with document/download icon */}
             <button
-              onClick={toggleTheme}
-              className="p-2 rounded-xl text-slate-700 dark:text-zinc-200 hover:bg-slate-100 dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 transition-all shadow-sm flex items-center justify-center cursor-pointer shrink-0"
-              aria-label="Toggle Light / Dark Theme"
-              title={theme === "light" ? "Switch to Dark Mode" : "Switch to Light Mode"}
-            >
-              {theme === "light" ? (
-                <Moon className="w-4 h-4 text-slate-700 hover:text-[#FF6B35] transition-colors" />
-              ) : (
-                <Sun className="w-4 h-4 text-amber-400 hover:text-amber-300 transition-colors" />
-              )}
-            </button>
-
-            <button
+              type="button"
               onClick={onOpenPortfolioPdf}
-              className="text-[11px] xl:text-xs font-bold px-2.5 xl:px-3 py-2 rounded-xl text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 border border-slate-200 dark:text-zinc-200 dark:hover:text-white dark:bg-white/5 dark:hover:bg-white/10 dark:border-white/15 transition-all flex items-center gap-1.5 shadow-sm whitespace-nowrap"
+              className="text-xs sm:text-sm font-semibold px-4 py-2 sm:py-2.5 rounded-xl text-gray-700 dark:text-zinc-200 hover:text-orange-600 dark:hover:text-white bg-white/60 dark:bg-zinc-800/60 hover:bg-gray-50 dark:hover:bg-zinc-800 border border-gray-200 dark:border-zinc-700/80 transition-all flex items-center gap-2 shadow-sm hover:shadow cursor-pointer"
             >
-              <Sparkles className="w-3.5 h-3.5 text-[#FF6B35]" />
-              <span className="hidden xl:inline">Portfolio PDF</span>
-              <span className="xl:hidden">PDF</span>
+              <FileDown className="w-4 h-4 text-[#FF7A00]" />
+              <span>Portfolio PDF</span>
             </button>
             
+            {/* Primary solid orange CTA button with rounded corners and smooth hover effect */}
             <button
+              type="button"
               onClick={onOpenConsultation}
-              className="relative group text-xs xl:text-sm font-bold px-3 xl:px-4 py-2 xl:py-2.5 rounded-xl text-white bg-gradient-to-r from-[#FF7A00] to-[#FFA000] hover:opacity-95 transition-all shadow-lg shadow-[#FF7A00]/25 flex items-center gap-1.5 xl:gap-2 whitespace-nowrap"
+              className="group text-xs sm:text-sm font-bold px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-white bg-[#FF7A00] hover:bg-[#e66e00] active:scale-[0.98] transition-all shadow-md shadow-[#FF7A00]/25 hover:shadow-lg hover:shadow-[#FF7A00]/35 flex items-center gap-2 cursor-pointer whitespace-nowrap"
             >
               <span>Free Consultation</span>
-              <ArrowRight className="w-3.5 h-3.5 xl:w-4 xl:h-4 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </button>
           </div>
 
-          {/* Mobile & Tablet Hamburger Button + Quick Theme Toggle */}
-          <div className="lg:hidden flex items-center gap-2">
+          {/* Responsive Hamburger Toggle for Mobile & Tablet */}
+          <div className="lg:hidden flex items-center">
             <button
-              onClick={toggleTheme}
-              className="p-2 rounded-xl text-slate-700 dark:text-zinc-200 bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 transition-colors"
-              aria-label="Toggle Theme"
-            >
-              {theme === "light" ? <Moon className="w-5 h-5 text-slate-700" /> : <Sun className="w-5 h-5 text-amber-400" />}
-            </button>
-            <button
+              type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2.5 rounded-xl text-slate-700 dark:text-zinc-200 hover:text-slate-900 dark:hover:text-white bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 transition-colors"
-              aria-label="Toggle Responsive Navigation Menu"
+              className="p-2 rounded-xl text-gray-700 dark:text-zinc-200 hover:text-orange-600 hover:bg-gray-100 dark:hover:bg-zinc-800 border border-gray-200 dark:border-zinc-700 transition-colors cursor-pointer"
+              aria-label="Toggle Navigation Menu"
             >
-              {mobileMenuOpen ? <X className="w-6 h-6 text-[#FF6B35]" /> : <Menu className="w-6 h-6" />}
+              {mobileMenuOpen ? <X className="w-6 h-6 text-[#FF7A00]" /> : <Menu className="w-6 h-6" />}
             </button>
           </div>
         </div>
       </div>
 
-      {/* Responsive Mobile Drawer */}
+      {/* 3. Responsive Mobile Menu Drawer */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-white/95 dark:bg-[#0E0E11]/95 backdrop-blur-2xl border-b border-slate-200 dark:border-white/15 px-5 pt-4 pb-6 space-y-3 shadow-2xl animate-fadeIn max-h-[calc(100vh-5rem)] overflow-y-auto">
+        <div className="lg:hidden bg-white/95 dark:bg-[#0E0E11]/95 backdrop-blur-2xl border-b border-gray-200 dark:border-zinc-800 px-5 pt-3 pb-6 space-y-4 shadow-2xl animate-fadeIn">
           <div className="space-y-1">
             {navLinks.map((link) => (
               <a
                 key={link.name}
                 href={link.href}
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-between py-3 px-3 rounded-xl text-sm font-semibold text-slate-700 hover:text-[#FF6B35] hover:bg-slate-100 dark:text-zinc-200 dark:hover:text-[#FF6B35] dark:hover:bg-white/5 transition-all border-b border-slate-100 dark:border-white/5"
+                className="flex items-center justify-between py-3 px-3 rounded-xl text-sm font-medium text-gray-700 hover:text-orange-600 hover:bg-orange-50/50 dark:text-zinc-200 dark:hover:text-[#FF7A00] dark:hover:bg-zinc-800/50 transition-colors border-b border-gray-100 dark:border-zinc-800/50 last:border-b-0"
               >
                 <span>{link.name}</span>
-                <ChevronRight className="w-4 h-4 text-slate-400 dark:text-zinc-500" />
+                <ChevronRight className="w-4 h-4 text-gray-400 dark:text-zinc-500" />
               </a>
             ))}
           </div>
 
-          <div className="pt-3 flex flex-col gap-2.5">
+          <div className="pt-2 flex flex-col gap-2.5">
             <button
+              type="button"
               onClick={() => {
                 setMobileMenuOpen(false);
                 onOpenPortfolioPdf();
               }}
-              className="w-full py-3 rounded-xl text-xs font-bold text-center bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-800 dark:bg-white/5 dark:hover:bg-white/10 dark:border-white/15 dark:text-white flex items-center justify-center gap-2"
+              className="w-full py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-gray-700 dark:text-zinc-200 bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 hover:bg-gray-50 flex items-center justify-center gap-2 shadow-sm cursor-pointer"
             >
-              <Sparkles className="w-4 h-4 text-[#FF6B35]" />
-              <span>Download Portfolio PDF</span>
+              <FileDown className="w-4 h-4 text-[#FF7A00]" />
+              <span>Portfolio PDF</span>
             </button>
 
             <button
+              type="button"
               onClick={() => {
                 setMobileMenuOpen(false);
                 onOpenConsultation();
               }}
-              className="w-full py-3.5 rounded-xl text-sm font-bold text-center bg-[#FF6B35] text-white shadow-xl shadow-[#FF6B35]/25 flex items-center justify-center gap-2"
+              className="w-full py-3 rounded-xl text-xs sm:text-sm font-bold text-white bg-[#FF7A00] hover:bg-[#e66e00] shadow-md shadow-[#FF7A00]/25 flex items-center justify-center gap-2 cursor-pointer"
             >
-              <span>Schedule Free Consultation</span>
+              <span>Free Consultation</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>
