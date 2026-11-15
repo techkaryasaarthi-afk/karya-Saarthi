@@ -139,9 +139,9 @@ export default function ProjectsSection({ onOpenConsultation, onOpenPortfolioPdf
             <button
               key={cat.id}
               onClick={() => setActiveCategory(cat.id)}
-              className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
+              className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 cursor-pointer hover:-translate-y-0.5 active:scale-95 ${
                 activeCategory === cat.id
-                  ? "bg-[#FF6B35] text-white shadow-lg shadow-[#FF6B35]/25"
+                  ? "bg-[#FF6B35] text-white shadow-lg shadow-[#FF6B35]/30 ring-2 ring-[#FF6B35]/25"
                   : "bg-slate-100 text-slate-700 hover:bg-slate-200 hover:text-slate-900 border border-slate-200 dark:bg-white/5 dark:text-zinc-300 dark:hover:bg-white/10 dark:hover:text-white dark:border-white/10"
               }`}
             >
@@ -152,11 +152,15 @@ export default function ProjectsSection({ onOpenConsultation, onOpenPortfolioPdf
 
         {/* Projects Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredProjects.map((project) => (
+          {filteredProjects.map((project, idx) => (
             <div
-              key={project.id}
-              className="glass-card card-interactive-lift rounded-3xl overflow-hidden border border-slate-200/80 dark:border-white/10 group flex flex-col justify-between"
+              key={`${project.id}-${activeCategory}`}
+              className="relative glass-card rounded-3xl overflow-hidden border border-slate-200/90 dark:border-white/10 group flex flex-col justify-between transition-all duration-300 ease-out hover:-translate-y-2.5 hover:shadow-2xl hover:shadow-[#FF7A00]/15 dark:hover:shadow-[#FF7A00]/25 hover:border-[#FF7A00]/50 animate-fadeIn"
+              style={{ animationDelay: `${idx * 60}ms` }}
             >
+              {/* Top Animated Light Beam on Card Hover */}
+              <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#FF7A00] to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out z-20 pointer-events-none" />
+
               <div>
                 {/* Visual Header Banner with Dynamic Image & Karya Saarthi Logo Emblem */}
                 <div className="relative h-52 sm:h-56 bg-slate-900 p-5 sm:p-6 flex flex-col justify-between border-b border-slate-200 dark:border-white/10 overflow-hidden group/banner">
@@ -167,24 +171,31 @@ export default function ProjectsSection({ onOpenConsultation, onOpenPortfolioPdf
                         src={project.image}
                         alt={project.title}
                         fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out brightness-[0.85] group-hover:brightness-95"
+                        className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out brightness-[0.92] group-hover:brightness-100"
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       />
                       {/* High-Contrast Gradient Scrim for perfect text readability */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/45 to-slate-950/20 pointer-events-none" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/35 to-slate-950/15 pointer-events-none" />
                     </div>
                   ) : (
                     <ProjectBannerIllustration projectId={project.id} />
                   )}
 
+                  {/* Shimmer Light Sweep on Hover */}
+                  <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out bg-gradient-to-r from-transparent via-white/15 to-transparent pointer-events-none z-10" />
+
                   <div className="flex items-center justify-between z-10 gap-2">
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-white/95 dark:bg-zinc-900/90 text-slate-900 dark:text-white backdrop-blur-md border border-white/20 shadow-sm">
+                      <span className="text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-white/95 dark:bg-zinc-900/90 text-slate-900 dark:text-white backdrop-blur-md border border-white/20 shadow-sm group-hover:scale-105 transition-transform duration-200">
                         {project.industry}
                       </span>
-                      {/* Karya Saarthi Official Circular Logo Badge */}
-                      <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md border border-[#FF7A00]/40 shadow-sm" title="Verified by Karya Saarthi">
-                        <div className="relative w-3.5 h-3.5 rounded-full overflow-hidden shrink-0">
+                      {/* Karya Saarthi Official Circular Logo Badge with Pulsing Green Dot */}
+                      <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md border border-[#FF7A00]/40 shadow-sm group-hover:border-[#FF7A00] transition-colors" title="Verified by Karya Saarthi">
+                        <span className="relative flex h-2 w-2 shrink-0">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#1BAC6E] opacity-75" />
+                          <span className="relative inline-flex rounded-full h-2 w-2 bg-[#1BAC6E]" />
+                        </span>
+                        <div className="relative w-3.5 h-3.5 rounded-full overflow-hidden shrink-0 group-hover:rotate-12 transition-transform duration-300">
                           <Image src="/logo.jpg" alt="Karya Saarthi" fill className="object-contain" />
                         </div>
                         <span className="text-[9px] font-extrabold text-[#FF7A00] font-mono tracking-tight hidden sm:inline">
@@ -193,14 +204,14 @@ export default function ProjectsSection({ onOpenConsultation, onOpenPortfolioPdf
                       </div>
                     </div>
 
-                    <span className="text-xs font-mono text-[#FF7A00] font-bold bg-white/95 dark:bg-zinc-900/95 px-2.5 py-1 rounded-full border border-white/20 backdrop-blur-md shadow-sm">
+                    <span className="text-xs font-mono text-[#FF7A00] font-bold bg-white/95 dark:bg-zinc-900/95 px-2.5 py-1 rounded-full border border-white/20 backdrop-blur-md shadow-sm group-hover:scale-105 group-hover:border-[#FF7A00]/60 transition-all duration-200">
                       {project.budget}
                     </span>
                   </div>
 
                   <div className="z-10 max-w-[85%]">
                     <p className="text-xs text-slate-300 font-medium truncate drop-shadow-sm">{project.client}</p>
-                    <h3 className="text-lg sm:text-xl font-bold text-white group-hover:text-[#FF7A00] transition-colors leading-tight line-clamp-2 drop-shadow-md">
+                    <h3 className="text-lg sm:text-xl font-bold text-white group-hover:text-[#FF7A00] transition-colors duration-200 leading-tight line-clamp-2 drop-shadow-md">
                       {project.title}
                     </h3>
                   </div>
@@ -218,18 +229,18 @@ export default function ProjectsSection({ onOpenConsultation, onOpenPortfolioPdf
                     </p>
                   </div>
 
-                  {/* Top Result Highlight */}
-                  <div className="p-3 rounded-xl bg-[#1BAC6E]/10 border border-[#1BAC6E]/20 text-[#1BAC6E] text-xs font-semibold flex items-center gap-2">
-                    <TrendingUp className="w-4 h-4 shrink-0" />
+                  {/* Top Result Highlight with Micro-Bounce on Hover */}
+                  <div className="p-3 rounded-xl bg-gradient-to-r from-[#1BAC6E]/10 via-[#1BAC6E]/15 to-[#1BAC6E]/5 border border-[#1BAC6E]/20 text-[#1BAC6E] text-xs font-semibold flex items-center gap-2 group-hover:border-[#1BAC6E]/40 group-hover:bg-[#1BAC6E]/20 transition-all duration-300">
+                    <TrendingUp className="w-4 h-4 shrink-0 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-transform duration-300" />
                     <span className="line-clamp-1">{project.results[0]}</span>
                   </div>
 
-                  {/* Tech Pills */}
+                  {/* Tech Pills with Micro-Interaction */}
                   <div className="flex flex-wrap gap-1.5 pt-2">
                     {project.techStack.slice(0, 4).map((tech, idx) => (
                       <span
                         key={idx}
-                        className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200 dark:bg-zinc-900 dark:text-zinc-300 dark:border-white/5"
+                        className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200 dark:bg-zinc-900 dark:text-zinc-300 dark:border-white/5 hover:border-[#FF7A00]/50 hover:text-[#FF7A00] dark:hover:text-[#FF7A00] hover:scale-105 transition-all duration-200 cursor-default select-none"
                       >
                         {tech}
                       </span>
@@ -243,14 +254,17 @@ export default function ProjectsSection({ onOpenConsultation, onOpenPortfolioPdf
                 </div>
               </div>
 
-              {/* Card Footer */}
+              {/* Card Footer with Interactive Shimmer Button */}
               <div className="p-6 pt-0">
                 <button
+                  type="button"
                   onClick={() => setSelectedProject(project)}
-                  className="w-full py-2.5 rounded-xl text-xs font-bold text-slate-800 dark:text-white bg-slate-100 hover:bg-[#FF6B35] hover:text-white dark:bg-white/5 dark:hover:bg-[#FF6B35] border border-slate-200 hover:border-[#FF6B35] dark:border-white/10 dark:hover:border-[#FF6B35] transition-all flex items-center justify-center gap-2 group-hover:shadow-md cursor-pointer"
+                  className="relative overflow-hidden w-full py-2.5 rounded-xl text-xs font-bold text-slate-800 dark:text-white bg-slate-100 hover:bg-[#FF6B35] hover:text-white dark:bg-white/5 dark:hover:bg-[#FF6B35] border border-slate-200 hover:border-[#FF6B35] dark:border-white/10 dark:hover:border-[#FF6B35] group-hover:bg-[#FF6B35] group-hover:text-white group-hover:border-[#FF6B35] group-hover:shadow-lg group-hover:shadow-[#FF6B35]/25 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer group/btn"
                 >
+                  {/* Shimmer Light Sweep */}
+                  <span className="absolute inset-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-[250%] transition-transform duration-700 ease-in-out pointer-events-none" />
                   <span>Read Full Case Study</span>
-                  <ArrowUpRight className="w-4 h-4" />
+                  <ArrowUpRight className="w-4 h-4 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-200" />
                 </button>
               </div>
             </div>
@@ -261,13 +275,13 @@ export default function ProjectsSection({ onOpenConsultation, onOpenPortfolioPdf
 
       {/* Case Study Full Modal */}
       {selectedProject && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/50 dark:bg-black/85 backdrop-blur-md animate-fadeIn">
-          <div className="bg-white dark:bg-[#16161B] border border-slate-200 dark:border-white/15 rounded-3xl max-w-3xl w-full p-5 sm:p-8 relative max-h-[85vh] sm:max-h-[90vh] overflow-y-auto space-y-6 shadow-2xl text-slate-900 dark:text-white">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 dark:bg-black/85 backdrop-blur-md animate-fadeIn">
+          <div className="bg-white dark:bg-[#16161B] border border-slate-200 dark:border-white/15 rounded-3xl max-w-3xl w-full p-5 sm:p-8 relative max-h-[85vh] sm:max-h-[90vh] overflow-y-auto space-y-6 shadow-2xl text-slate-900 dark:text-white animate-modal-pop">
             
-            {/* Close Button */}
+            {/* Close Button with Rotation on Hover */}
             <button
               onClick={() => setSelectedProject(null)}
-              className="absolute top-4 sm:top-5 right-4 sm:right-5 p-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 dark:bg-white/5 dark:hover:bg-white/10 dark:text-zinc-400 dark:hover:text-white cursor-pointer z-10"
+              className="absolute top-4 sm:top-5 right-4 sm:right-5 p-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 dark:bg-white/5 dark:hover:bg-white/10 dark:text-zinc-400 dark:hover:text-white cursor-pointer z-10 transition-transform duration-200 hover:rotate-90 hover:scale-110"
               aria-label="Close Case Study"
             >
               <X className="w-5 h-5" />
