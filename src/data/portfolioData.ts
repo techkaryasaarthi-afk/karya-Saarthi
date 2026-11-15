@@ -520,17 +520,17 @@ export const TEAM: TeamMember[] = [
   },
   {
     name: "Damini Yadav",
-    role: "Co-founder & Software Engineer & Content",
+    role: "Co-founder & Software Engineer",
     badge: "Co-Founder & Tech Lead",
-    experience: "Co-Founder, Software Engineering, Front-End Architecture & Content Strategy",
-    expertise: ["Software Engineering", "Front-End Development", "Full-Stack Web Apps", "Content Strategy", "Next.js & React", "Digital Marketing"],
+    experience: "Co-Founder, Software Engineering, Full Stack Web Apps & Generative AI",
+    expertise: ["Software Engineer", "Frontend Developer", "Full Stack Web App", "Next.js", "React.js", "Generative AI"],
     education: "Software Engineering & Computer Applications",
     email: "info@karyasaarthi.com",
     image: "/team/damini-yadav.jpg",
     social: {
       linkedin: "https://www.linkedin.com/in/daminiyadav23",
     },
-    bio: "Damini is the Co-founder at Karya Saarthi, driving technical architecture, frontend engineering, and content strategy. With 1.5+ years of hands-on expertise across software development, digital marketing, and content execution, she builds intuitive, high-performance platforms that scale operations and accelerate business growth.",
+    bio: "Damini is the Co-founder at Karya Saarthi, driving technical architecture, frontend engineering, and modern web solutions. With hands-on expertise across full-stack development, Next.js, React.js, and Generative AI, she builds intuitive, high-performance platforms that scale operations and accelerate business growth.",
   },
   {
     name: "Annu Priya",
