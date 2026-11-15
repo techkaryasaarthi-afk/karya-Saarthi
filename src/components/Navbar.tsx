@@ -3,13 +3,12 @@
 /**
  * Navbar Component (Karya Saarthi)
  * 
- * Optimized & Decluttered Header Navigation:
+ * Optimized Navigation Header:
  * - Left: Clickable brand logo & "TEACH + COMPLETE SOLUTIONS" tagline with smooth scroll to top (#top)
- * - Center: Exactly 5 clean navigation links in specified order:
- *          Services, Case Studies, ROI Estimator, About Us, Contact Us
+ * - Center: Navigation links (Home, Services, Case Studies, ROI Estimator, About Us, Contact Us)
  * - Right: ONLY primary solid orange "Free Consultation →" CTA with pill styling & hover elevation
  * - Sticky Glassmorphism: (sticky top-0 z-50 bg-white/90 backdrop-blur-md) with subtle bottom border
- * - Mobile: Responsive hamburger menu displaying the 5 links + full-width CTA
+ * - Mobile: Responsive hamburger menu displaying all links + full-width CTA
  */
 
 import React, { useState, useEffect } from "react";
@@ -37,8 +36,9 @@ export default function Navbar({ onOpenConsultation }: NavbarProps) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Exactly 5 clean navigation links in specified order
+  // Navigation links: Home, Services, Case Studies, ROI Estimator, About Us, Contact Us
   const navLinks = [
+    { name: "Home", href: "#top" },
     { name: "Services", href: "#services" },
     { name: "Case Studies", href: "#case-studies" },
     { name: "ROI Estimator", href: "#roi-estimator" },
@@ -49,6 +49,13 @@ export default function Navbar({ onOpenConsultation }: NavbarProps) {
   // Smooth scroll handler for links
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
+    if (href === "#top" || href === "#hero") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      if (mobileMenuOpen) {
+        setMobileMenuOpen(false);
+      }
+      return;
+    }
     const targetId = href.replace("#", "");
     const element =
       document.getElementById(targetId) ||
@@ -110,8 +117,8 @@ export default function Navbar({ onOpenConsultation }: NavbarProps) {
             </div>
           </a>
 
-          {/* Center Section: Exactly 5 Navigation Links with gap-7/8 & subtle warm-orange hover */}
-          <nav className="hidden lg:flex items-center gap-7 xl:gap-8">
+          {/* Center Section: Navigation Links with gap-6/xl:gap-7 & subtle warm-orange hover */}
+          <nav className="hidden lg:flex items-center gap-6 xl:gap-7">
             {navLinks.map((link) => (
               <a
                 key={link.name}
