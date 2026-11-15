@@ -293,6 +293,17 @@
   animation: modalPopIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 35s linear infinite;
+}
+
 /* Beautiful Logo Gradient Text: Dark Slate -> Saffron Orange -> Teal -> Royal Blue in Light Mode; White in Dark Mode */
 .logo-gradient-text {
   background: linear-gradient(135deg, #0F172A 15%, #FF7A00 50%, #0D9488 85%, #004E89 100%);

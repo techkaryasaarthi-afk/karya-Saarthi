@@ -25,6 +25,7 @@ import OutcomesSection from "@/components/OutcomesSection";
 import TestimonialsSection from "@/components/TestimonialsSection";
 import TeamSection from "@/components/TeamSection";
 import ContactSection from "@/components/ContactSection";
+import Countries195Section from "@/components/Countries195Section";
 import PortfolioPdfModal from "@/components/PortfolioPdfModal";
 import AppointmentModal from "@/components/AppointmentModal";
 import WhatsAppWidget from "@/components/WhatsAppWidget";
@@ -33,6 +34,7 @@ import Footer from "@/components/Footer";
 export default function Home() {
   const [isPdfModalOpen, setIsPdfModalOpen] = useState(false);
   const [isAppointmentModalOpen, setIsAppointmentModalOpen] = useState(false);
+  const [isCountriesModalOpen, setIsCountriesModalOpen] = useState(false);
   const [selectedServiceForQuote, setSelectedServiceForQuote] = useState("");
   const [estimateForQuote, setEstimateForQuote] = useState("");
 
@@ -67,6 +69,7 @@ export default function Home() {
       <Navbar
         onOpenConsultation={() => handleOpenAppointmentModal()}
         onOpenPortfolioPdf={() => setIsPdfModalOpen(true)}
+        onOpenCountriesModal={() => setIsCountriesModalOpen(true)}
       />
 
       {/* Spacer to prevent layout shift with fixed navbar */}
@@ -115,8 +118,18 @@ export default function Home() {
       {/* Right-Side Floating WhatsApp Widget (Direct to 9153780968) */}
       <WhatsAppWidget />
 
+      {/* Global Reach: 195 Sovereign Countries Showcase & Interactive Directory */}
+      <Countries195Section
+        isOpenModal={isCountriesModalOpen}
+        onCloseModal={() => setIsCountriesModalOpen(false)}
+        onOpenConsultation={() => handleOpenAppointmentModal()}
+      />
+
       {/* Footer */}
-      <Footer onOpenAppointment={() => handleOpenAppointmentModal()} />
+      <Footer
+        onOpenAppointment={() => handleOpenAppointmentModal()}
+        onOpenCountriesModal={() => setIsCountriesModalOpen(true)}
+      />
     </main>
   );
 }

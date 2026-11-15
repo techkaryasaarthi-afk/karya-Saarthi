@@ -28,9 +28,10 @@ import {
 
 interface FooterProps {
   onOpenAppointment?: () => void;
+  onOpenCountriesModal?: () => void;
 }
 
-export default function Footer({ onOpenAppointment }: FooterProps) {
+export default function Footer({ onOpenAppointment, onOpenCountriesModal }: FooterProps) {
   const [activeModal, setActiveModal] = useState<
     "privacy" | "disclaimer" | "terms" | "refund" | "confidentiality" | null
   >(null);
@@ -194,10 +195,21 @@ export default function Footer({ onOpenAppointment }: FooterProps) {
                 <Globe className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400 shrink-0" />
                 <span>Globally Providing Services</span>
               </span>
-              <p className="flex items-center gap-1 text-[11px] text-[#1BAC6E] font-medium">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#1BAC6E]" />
-                <span>195 Countries Supported</span>
-              </p>
+              {onOpenCountriesModal ? (
+                <button
+                  type="button"
+                  onClick={onOpenCountriesModal}
+                  className="flex items-center gap-1.5 text-[11px] text-[#1BAC6E] font-medium hover:underline cursor-pointer group text-left"
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#1BAC6E] group-hover:animate-ping" />
+                  <span>195 Countries Supported (Explore Directory)</span>
+                </button>
+              ) : (
+                <p className="flex items-center gap-1 text-[11px] text-[#1BAC6E] font-medium">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#1BAC6E]" />
+                  <span>195 Countries Supported</span>
+                </p>
+              )}
               <p className="text-[11px]">Worldwide Remote Delivery</p>
               <p className="text-[11px]">24/7 Multi-Timezone Technical Support</p>
               <p className="text-[11px]">Structured Milestone Execution</p>
@@ -447,7 +459,11 @@ export default function Footer({ onOpenAppointment }: FooterProps) {
             <strong className="text-slate-800 dark:text-zinc-200">Karyanex Private Limited</strong> · Operating Brand: <strong className="text-[#FF7A00]">Karya Saarthi</strong> · CIN: <span className="font-mono">U85500BR2026PTC085054</span> · GSTIN: <span className="font-mono">10AAMCK8870B1ZN</span> · Corporate Office: Gali No 1, Block A, Uttarakhand Enclave, Nathupura, Burari, Delhi 110084, India
           </p>
           <p>
-            More ways to connect: Call <a href="tel:+918595025753" className="text-[#FF7A00] font-semibold hover:underline">+91-8595025753</a> or <a href="mailto:support@karyasaarthi.com" className="text-[#FF7A00] font-semibold hover:underline">email our solutions desk</a>. Globally Providing Services across 195 countries with 24/7 dedicated support.
+            More ways to connect: Call <a href="tel:+918595025753" className="text-[#FF7A00] font-semibold hover:underline">+91-8595025753</a> or <a href="mailto:support@karyasaarthi.com" className="text-[#FF7A00] font-semibold hover:underline">email our solutions desk</a>. Globally Providing Services across {onOpenCountriesModal ? (
+              <button type="button" onClick={onOpenCountriesModal} className="text-[#FF7A00] font-semibold hover:underline cursor-pointer">195 countries</button>
+            ) : (
+              <span className="text-[#FF7A00] font-semibold">195 countries</span>
+            )} with 24/7 dedicated support.
           </p>
         </div>
 

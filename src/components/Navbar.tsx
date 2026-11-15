@@ -13,15 +13,27 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { Menu, X, ArrowRight, ChevronRight, Sun, Moon } from "lucide-react";
+import {
+  Menu,
+  X,
+  ArrowRight,
+  ChevronRight,
+  Sun,
+  Moon,
+  Mail,
+  Phone,
+  MessageCircle,
+  Globe,
+} from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
 
 interface NavbarProps {
   onOpenConsultation: () => void;
   onOpenPortfolioPdf?: () => void;
+  onOpenCountriesModal?: () => void;
 }
 
-export default function Navbar({ onOpenConsultation }: NavbarProps) {
+export default function Navbar({ onOpenConsultation, onOpenCountriesModal }: NavbarProps) {
   const { theme, toggleTheme } = useTheme();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -140,13 +152,58 @@ export default function Navbar({ onOpenConsultation }: NavbarProps) {
             ))}
           </nav>
 
-          {/* Right Section: Theme Toggle Button + Primary CTA */}
-          <div className="hidden lg:flex items-center gap-3 shrink-0">
+          {/* Right Section: Quick Icons (Email, WhatsApp, Phone, 195 Countries) + Theme Toggle + Primary CTA */}
+          <div className="hidden lg:flex items-center gap-2 xl:gap-2.5 shrink-0">
+            {/* Small Email Icon Button */}
+            <a
+              href="mailto:support@karyasaarthi.com"
+              className="p-2.5 rounded-full text-slate-700 dark:text-zinc-200 hover:text-[#FF7A00] dark:hover:text-[#FF7A00] bg-slate-100 hover:bg-orange-50 dark:bg-zinc-800/90 dark:hover:bg-zinc-700/80 border border-slate-200 dark:border-zinc-700 transition-all duration-200 hover:scale-105 active:scale-95 shadow-2xs"
+              title="Email: support@karyasaarthi.com"
+              aria-label="Email support@karyasaarthi.com"
+            >
+              <Mail className="w-4 h-4 text-slate-700 dark:text-zinc-200" />
+            </a>
+
+            {/* Small WhatsApp Icon Button */}
+            <a
+              href="https://wa.me/918595025753?text=Hi%20Karya%20Saarthi%2C%20I%20would%20like%20to%20inquire%20about%20your%20services."
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2.5 rounded-full text-slate-700 dark:text-zinc-200 hover:text-emerald-500 bg-slate-100 hover:bg-emerald-50 dark:bg-zinc-800/90 dark:hover:bg-zinc-700/80 border border-slate-200 dark:border-zinc-700 transition-all duration-200 hover:scale-105 active:scale-95 shadow-2xs group/wa"
+              title="WhatsApp: +91 8595025753"
+              aria-label="WhatsApp +91 8595025753"
+            >
+              <MessageCircle className="w-4 h-4 text-[#25D366] group-hover/wa:scale-110 transition-transform" />
+            </a>
+
+            {/* Small Phone Call Icon Button */}
+            <a
+              href="tel:+918595025753"
+              className="p-2.5 rounded-full text-slate-700 dark:text-zinc-200 hover:text-blue-500 bg-slate-100 hover:bg-blue-50 dark:bg-zinc-800/90 dark:hover:bg-zinc-700/80 border border-slate-200 dark:border-zinc-700 transition-all duration-200 hover:scale-105 active:scale-95 shadow-2xs"
+              title="Call: +91 8595025753"
+              aria-label="Call +91 8595025753"
+            >
+              <Phone className="w-4 h-4 text-blue-500" />
+            </a>
+
+            {/* Small 195 Countries Pill Button */}
+            {onOpenCountriesModal && (
+              <button
+                type="button"
+                onClick={onOpenCountriesModal}
+                className="hidden xl:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-slate-700 dark:text-zinc-200 hover:text-[#FF7A00] bg-slate-100 hover:bg-orange-50 dark:bg-zinc-800/90 dark:hover:bg-zinc-700/80 border border-slate-200 dark:border-zinc-700 transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer shadow-2xs"
+                title="195 Countries Supported Worldwide"
+              >
+                <Globe className="w-3.5 h-3.5 text-[#FF7A00]" />
+                <span>195 Countries</span>
+              </button>
+            )}
+
             {/* Theme Toggle Button (Light / Dark) */}
             <button
               type="button"
               onClick={toggleTheme}
-              className="p-2.5 rounded-full text-slate-700 dark:text-zinc-200 hover:text-[#FF7A00] dark:hover:text-[#FF7A00] bg-slate-100 hover:bg-orange-50 dark:bg-zinc-800/90 dark:hover:bg-zinc-700/80 border border-slate-200 dark:border-zinc-700 transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer shadow-xs"
+              className="p-2.5 rounded-full text-slate-700 dark:text-zinc-200 hover:text-[#FF7A00] dark:hover:text-[#FF7A00] bg-slate-100 hover:bg-orange-50 dark:bg-zinc-800/90 dark:hover:bg-zinc-700/80 border border-slate-200 dark:border-zinc-700 transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer shadow-2xs"
               aria-label={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}
               title={theme === "dark" ? "Switch to Light Theme" : "Switch to Dark Theme"}
             >
@@ -161,26 +218,45 @@ export default function Navbar({ onOpenConsultation }: NavbarProps) {
             <button
               type="button"
               onClick={onOpenConsultation}
-              className="group text-xs sm:text-sm font-bold px-5 sm:px-6 py-2.5 rounded-full text-white bg-[#FF7A00] hover:bg-[#e66e00] active:scale-[0.98] transition-all duration-200 shadow-md shadow-[#FF7A00]/25 hover:shadow-lg hover:shadow-[#FF7A00]/35 hover:-translate-y-0.5 flex items-center gap-2 cursor-pointer whitespace-nowrap"
+              className="group text-xs sm:text-sm font-bold px-4 sm:px-5 py-2.5 rounded-full text-white bg-[#FF7A00] hover:bg-[#e66e00] active:scale-[0.98] transition-all duration-200 shadow-md shadow-[#FF7A00]/25 hover:shadow-lg hover:shadow-[#FF7A00]/35 hover:-translate-y-0.5 flex items-center gap-1.5 cursor-pointer whitespace-nowrap ml-1"
             >
               <span>Free Consultation</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />
             </button>
           </div>
 
-          {/* Responsive Mobile Controls: Theme Toggle + Hamburger Toggle */}
-          <div className="lg:hidden flex items-center gap-2">
+          {/* Responsive Mobile Controls: WhatsApp, Email, Theme, Hamburger */}
+          <div className="lg:hidden flex items-center gap-1.5">
+            <a
+              href="https://wa.me/918595025753?text=Hi%20Karya%20Saarthi%2C%20I%20would%20like%20to%20inquire%20about%20your%20services."
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 rounded-xl text-slate-700 dark:text-zinc-200 hover:bg-gray-100 dark:hover:bg-zinc-800 border border-gray-200 dark:border-zinc-700 transition-colors"
+              title="WhatsApp +91 8595025753"
+              aria-label="WhatsApp"
+            >
+              <MessageCircle className="w-4.5 h-4.5 text-[#25D366]" />
+            </a>
+
+            <a
+              href="mailto:support@karyasaarthi.com"
+              className="p-2 rounded-xl text-slate-700 dark:text-zinc-200 hover:bg-gray-100 dark:hover:bg-zinc-800 border border-gray-200 dark:border-zinc-700 transition-colors"
+              title="Email support@karyasaarthi.com"
+              aria-label="Email"
+            >
+              <Mail className="w-4.5 h-4.5" />
+            </a>
+
             <button
               type="button"
               onClick={toggleTheme}
               className="p-2 rounded-xl text-slate-700 dark:text-zinc-200 hover:text-[#FF7A00] hover:bg-gray-100 dark:hover:bg-zinc-800 border border-gray-200 dark:border-zinc-700 transition-colors cursor-pointer"
               aria-label={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}
-              title={theme === "dark" ? "Switch to Light Theme" : "Switch to Dark Theme"}
             >
               {theme === "dark" ? (
-                <Sun className="w-5 h-5 text-amber-400" />
+                <Sun className="w-4.5 h-4.5 text-amber-400" />
               ) : (
-                <Moon className="w-5 h-5 text-slate-700" />
+                <Moon className="w-4.5 h-4.5 text-slate-700" />
               )}
             </button>
 
@@ -190,7 +266,7 @@ export default function Navbar({ onOpenConsultation }: NavbarProps) {
               className="p-2 rounded-xl text-gray-700 dark:text-zinc-200 hover:text-[#FF7A00] hover:bg-gray-100 dark:hover:bg-zinc-800 border border-gray-200 dark:border-zinc-700 transition-colors cursor-pointer"
               aria-label="Toggle Navigation Menu"
             >
-              {mobileMenuOpen ? <X className="w-6 h-6 text-[#FF7A00]" /> : <Menu className="w-6 h-6" />}
+              {mobileMenuOpen ? <X className="w-5 h-5 text-[#FF7A00]" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>
@@ -212,6 +288,46 @@ export default function Navbar({ onOpenConsultation }: NavbarProps) {
               </a>
             ))}
           </div>
+
+          {/* Mobile Direct Contact Quick Bar */}
+          <div className="grid grid-cols-2 gap-2 pt-1">
+            <a
+              href="https://wa.me/918595025753?text=Hi%20Karya%20Saarthi%2C%20I%20would%20like%20to%20inquire%20about%20your%20services."
+              target="_blank"
+              rel="noopener noreferrer"
+              className="py-2.5 px-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 text-xs font-bold flex items-center justify-center gap-1.5"
+            >
+              <MessageCircle className="w-3.5 h-3.5" />
+              <span>WhatsApp</span>
+            </a>
+            <a
+              href="mailto:support@karyasaarthi.com"
+              className="py-2.5 px-3 rounded-xl bg-orange-50 dark:bg-orange-950/30 text-[#FF7A00] border border-orange-200 dark:border-orange-800 text-xs font-bold flex items-center justify-center gap-1.5"
+            >
+              <Mail className="w-3.5 h-3.5" />
+              <span>Email</span>
+            </a>
+          </div>
+
+          {/* 195 Countries Button in Mobile Drawer */}
+          {onOpenCountriesModal && (
+            <button
+              type="button"
+              onClick={() => {
+                setMobileMenuOpen(false);
+                onOpenCountriesModal();
+              }}
+              className="w-full py-2.5 px-3 rounded-xl bg-slate-100 dark:bg-zinc-800/80 text-slate-800 dark:text-zinc-200 border border-slate-200 dark:border-zinc-700 text-xs font-bold flex items-center justify-between cursor-pointer"
+            >
+              <span className="flex items-center gap-2">
+                <Globe className="w-4 h-4 text-[#FF7A00]" />
+                <span>195 Sovereign Countries Directory</span>
+              </span>
+              <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#FF7A00]/20 text-[#FF7A00]">
+                195
+              </span>
+            </button>
+          )}
 
           {/* Mobile Drawer Theme Toggle Row */}
           <div className="flex items-center justify-between py-2.5 px-3 rounded-xl bg-gray-50 dark:bg-zinc-800/60 border border-gray-100 dark:border-zinc-700/60">

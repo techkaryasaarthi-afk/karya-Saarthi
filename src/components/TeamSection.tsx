@@ -13,6 +13,11 @@ import {
   Users,
   Award,
   ShieldCheck,
+  Code,
+  PenTool,
+  Cpu,
+  Briefcase,
+  Laptop,
 } from "lucide-react";
 
 export default function TeamSection() {
@@ -317,8 +322,31 @@ export default function TeamSection() {
             <p className="text-xs sm:text-sm text-slate-500 dark:text-zinc-400 mt-1.5 font-medium">Full-Time Product &amp; Strategy Experts</p>
           </div>
           <div className="pt-4 sm:pt-0">
-            <div className="text-3xl sm:text-4xl font-extrabold text-[#FF7A00] tracking-tight">500+ Expert Vendors</div>
-            <p className="text-xs sm:text-sm text-slate-500 dark:text-zinc-400 mt-1.5 font-medium">Niche Developers, Marketers &amp; PhD Consultants</p>
+            <div className="text-3xl sm:text-4xl font-extrabold text-[#FF7A00] tracking-tight">500+ Expert Vendors &amp; Freelancers</div>
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-zinc-400 mt-1.5 font-medium">Niche Developers, Marketers &amp; Freelance Consultants</p>
+            {/* Small Icons Underneath Freelancers & Vendors */}
+            <div className="flex items-center justify-center gap-1.5 sm:gap-2 mt-3 flex-wrap">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-orange-500/10 text-[#FF7A00] text-[10px] font-semibold border border-[#FF7A00]/25 shadow-2xs hover:scale-105 transition-transform" title="Full-Stack Developers">
+                <Code className="w-3 h-3" />
+                <span>Devs</span>
+              </span>
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-500 text-[10px] font-semibold border border-blue-500/25 shadow-2xs hover:scale-105 transition-transform" title="UI/UX Designers & Freelancers">
+                <PenTool className="w-3 h-3" />
+                <span>Design</span>
+              </span>
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 text-[10px] font-semibold border border-emerald-500/25 shadow-2xs hover:scale-105 transition-transform" title="PhD Academic Scholars">
+                <GraduationCap className="w-3 h-3" />
+                <span>Scholars</span>
+              </span>
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-500 text-[10px] font-semibold border border-purple-500/25 shadow-2xs hover:scale-105 transition-transform" title="AI & ML Engineers">
+                <Cpu className="w-3 h-3" />
+                <span>AI/ML</span>
+              </span>
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-500 text-[10px] font-semibold border border-amber-500/25 shadow-2xs hover:scale-105 transition-transform" title="Growth Marketers">
+                <Briefcase className="w-3 h-3" />
+                <span>Marketing</span>
+              </span>
+            </div>
           </div>
           <div className="pt-4 sm:pt-0">
             <div className="text-3xl sm:text-4xl font-extrabold text-[#1BAC6E] tracking-tight">2,000+ Clients Served</div>
