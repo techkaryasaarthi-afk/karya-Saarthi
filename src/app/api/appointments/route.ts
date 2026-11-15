@@ -71,7 +71,30 @@ export async function POST(req: Request) {
     appointments.unshift(newAppointment);
     saveAppointments(appointments);
 
-    // Simulated email dispatch log to info@karyasaarthi.com
+    // Sync directly to Karya Saarthi Unified CRM backend Leads pipeline (Source: Portfolio)
+    try {
+      const CRM_API_URL = process.env.NEXT_PUBLIC_CRM_API_URL || "https://crm.karyasaarthi.com";
+      fetch(`${CRM_API_URL}/api/portfolio/enquiry`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: name.trim(),
+          email: email.trim(),
+          phone: phone.trim(),
+          service: service || "General Consultation",
+          budget: budget || "Custom Quote",
+          notes: notes || "Appointment booking",
+          meetingType: meetingType || "Google Meet",
+          date,
+          timeSlot,
+          source: "Portfolio Website",
+        }),
+      }).catch((e) => console.warn("[Appointments] CRM sync notice:", e));
+    } catch {
+      // ignore
+    }
+
+    // Email dispatch log to info@karyasaarthi.com
     console.log(`[EMAIL NOTIFICATION SENT] To: info@karyasaarthi.com | Subject: New Appointment Booked by ${name} | Phone: ${phone} | Service: ${service}`);
 
     return NextResponse.json({
