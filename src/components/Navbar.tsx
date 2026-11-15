@@ -1,45 +1,96 @@
 "use client";
 
 /**
- * Navbar Component (FEAT-#3-Portfolio-2026)
+ * Navbar Component (Karya Saarthi)
  * 
- * Clean, modern header navigation:
- * - Sticky glassmorphism header (backdrop-blur-md bg-white/80) with subtle bottom border
- * - Brand logo & company identity with warm orange accents
- * - 5 centered navigation links (Home, Services, Case Studies, ROI Estimator, About Us) with gap-8 spacing
- * - Clean right-side actions: Subtle bordered 'Portfolio PDF' button + solid orange 'Free Consultation ->' CTA
- * - Smooth responsive collapse into mobile drawer menu
+ * Optimized & Decluttered Header Navigation:
+ * - Left: Clickable brand logo & "TEACH + COMPLETE SOLUTIONS" tagline with smooth scroll to top (#top)
+ * - Center: Exactly 5 clean navigation links in specified order:
+ *          Services, Case Studies, ROI Estimator, About Us, Contact Us
+ * - Right: ONLY primary solid orange "Free Consultation →" CTA with pill styling & hover elevation
+ * - Sticky Glassmorphism: (sticky top-0 z-50 bg-white/90 backdrop-blur-md) with subtle bottom border
+ * - Mobile: Responsive hamburger menu displaying the 5 links + full-width CTA
  */
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import Link from "next/link";
-import { Menu, X, ArrowRight, ChevronRight, FileDown } from "lucide-react";
+import { Menu, X, ArrowRight, ChevronRight } from "lucide-react";
 
 interface NavbarProps {
   onOpenConsultation: () => void;
-  onOpenPortfolioPdf: () => void;
+  onOpenPortfolioPdf?: () => void;
 }
 
-export default function Navbar({ onOpenConsultation, onOpenPortfolioPdf }: NavbarProps) {
+export default function Navbar({ onOpenConsultation }: NavbarProps) {
+  const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // 1. Simplified 5 main navigation links in the center
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 15) {
+        setScrolled(true);
+      } else {
+        setScrolled(false);
+      }
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Exactly 5 clean navigation links in specified order
   const navLinks = [
-    { name: "Home", href: "#hero" },
     { name: "Services", href: "#services" },
-    { name: "Case Studies", href: "#projects" },
-    { name: "ROI Estimator", href: "#roi-calculator" },
+    { name: "Case Studies", href: "#case-studies" },
+    { name: "ROI Estimator", href: "#roi-estimator" },
     { name: "About Us", href: "#about" },
+    { name: "Contact Us", href: "#contact" },
   ];
 
+  // Smooth scroll handler for links
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    const targetId = href.replace("#", "");
+    const element =
+      document.getElementById(targetId) ||
+      (targetId === "case-studies" ? document.getElementById("projects") : null) ||
+      (targetId === "roi-estimator" ? document.getElementById("roi-calculator") : null);
+
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    }
+    if (mobileMenuOpen) {
+      setMobileMenuOpen(false);
+    }
+  };
+
+  // Logo scroll to top handler
+  const handleScrollToTop = (e: React.MouseEvent) => {
+    e.preventDefault();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    if (mobileMenuOpen) {
+      setMobileMenuOpen(false);
+    }
+  };
+
   return (
-    <header className="sticky top-0 z-50 backdrop-blur-md bg-white/80 dark:bg-[#0E0E11]/80 border-b border-gray-200/80 dark:border-zinc-800/80 transition-all duration-300">
+    <header
+      id="top"
+      className={`sticky top-0 z-50 transition-all duration-300 backdrop-blur-md ${
+        scrolled
+          ? "bg-white/90 dark:bg-[#0E0E11]/90 border-b border-gray-200/90 dark:border-zinc-800 shadow-sm"
+          : "bg-white/80 dark:bg-[#0E0E11]/80 border-b border-gray-200/60 dark:border-zinc-800/60"
+      }`}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-20">
           
-          {/* Logo & Brand Identity */}
-          <Link href="/" className="flex items-center gap-2.5 sm:gap-3 group shrink-0">
+          {/* Left Section: Brand Logo (Clickable to scroll smoothly to top) */}
+          <a
+            href="#top"
+            onClick={handleScrollToTop}
+            className="flex items-center gap-2.5 sm:gap-3 group shrink-0 cursor-pointer select-none"
+            aria-label="Karya Saarthi - Scroll to top"
+          >
             <div className="relative w-10 h-10 sm:w-11 sm:h-11 rounded-full overflow-hidden border-2 border-[#FF7A00] shadow-md shadow-[#FF7A00]/20 group-hover:scale-105 transition-transform shrink-0 bg-white p-0.5">
               <Image
                 src="/logo.jpg"
@@ -54,44 +105,35 @@ export default function Navbar({ onOpenConsultation, onOpenPortfolioPdf }: Navba
                 KARYA <span className="text-[#FF7A00]">SAARTHI</span>
               </span>
               <p className="text-[9px] sm:text-[10px] text-[#FF7A00] font-extrabold tracking-wider uppercase mt-0.5">
-                Teach + Complete Solutions
+                TEACH + COMPLETE SOLUTIONS
               </p>
             </div>
-          </Link>
+          </a>
 
-          {/* 1. Desktop Center Navigation Links (5 links, gap-8 spacing, medium-weight typography) */}
-          <nav className="hidden lg:flex items-center gap-8">
+          {/* Center Section: Exactly 5 Navigation Links with gap-7/8 & subtle warm-orange hover */}
+          <nav className="hidden lg:flex items-center gap-7 xl:gap-8">
             {navLinks.map((link) => (
               <a
                 key={link.name}
                 href={link.href}
-                className="text-sm font-medium text-gray-700 dark:text-zinc-200 hover:text-orange-600 dark:hover:text-[#FF7A00] transition-colors whitespace-nowrap"
+                onClick={(e) => handleNavClick(e, link.href)}
+                className="text-sm font-medium text-gray-700 dark:text-zinc-200 hover:text-[#FF7A00] dark:hover:text-[#FF7A00] transition-colors whitespace-nowrap py-1 relative group"
               >
-                {link.name}
+                <span>{link.name}</span>
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#FF7A00] rounded-full group-hover:w-full transition-all duration-200" />
               </a>
             ))}
           </nav>
 
-          {/* 2. Desktop Right-Side Action Buttons (Minimal, No Dark Mode Toggle) */}
-          <div className="hidden lg:flex items-center gap-3 shrink-0">
-            {/* Subtle bordered secondary button with document/download icon */}
-            <button
-              type="button"
-              onClick={onOpenPortfolioPdf}
-              className="text-xs sm:text-sm font-semibold px-4 py-2 sm:py-2.5 rounded-xl text-gray-700 dark:text-zinc-200 hover:text-orange-600 dark:hover:text-white bg-white/60 dark:bg-zinc-800/60 hover:bg-gray-50 dark:hover:bg-zinc-800 border border-gray-200 dark:border-zinc-700/80 transition-all flex items-center gap-2 shadow-sm hover:shadow cursor-pointer"
-            >
-              <FileDown className="w-4 h-4 text-[#FF7A00]" />
-              <span>Portfolio PDF</span>
-            </button>
-            
-            {/* Primary solid orange CTA button with rounded corners and smooth hover effect */}
+          {/* Right Section: Primary CTA Only (Solid Orange Button with Pill Styling & Elevation Effect) */}
+          <div className="hidden lg:flex items-center shrink-0">
             <button
               type="button"
               onClick={onOpenConsultation}
-              className="group text-xs sm:text-sm font-bold px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-white bg-[#FF7A00] hover:bg-[#e66e00] active:scale-[0.98] transition-all shadow-md shadow-[#FF7A00]/25 hover:shadow-lg hover:shadow-[#FF7A00]/35 flex items-center gap-2 cursor-pointer whitespace-nowrap"
+              className="group text-xs sm:text-sm font-bold px-5 sm:px-6 py-2.5 rounded-full text-white bg-[#FF7A00] hover:bg-[#e66e00] active:scale-[0.98] transition-all duration-200 shadow-md shadow-[#FF7A00]/25 hover:shadow-lg hover:shadow-[#FF7A00]/35 hover:-translate-y-0.5 flex items-center gap-2 cursor-pointer whitespace-nowrap"
             >
               <span>Free Consultation</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />
             </button>
           </div>
 
@@ -100,7 +142,7 @@ export default function Navbar({ onOpenConsultation, onOpenPortfolioPdf }: Navba
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-xl text-gray-700 dark:text-zinc-200 hover:text-orange-600 hover:bg-gray-100 dark:hover:bg-zinc-800 border border-gray-200 dark:border-zinc-700 transition-colors cursor-pointer"
+              className="p-2 rounded-xl text-gray-700 dark:text-zinc-200 hover:text-[#FF7A00] hover:bg-gray-100 dark:hover:bg-zinc-800 border border-gray-200 dark:border-zinc-700 transition-colors cursor-pointer"
               aria-label="Toggle Navigation Menu"
             >
               {mobileMenuOpen ? <X className="w-6 h-6 text-[#FF7A00]" /> : <Menu className="w-6 h-6" />}
@@ -109,7 +151,7 @@ export default function Navbar({ onOpenConsultation, onOpenPortfolioPdf }: Navba
         </div>
       </div>
 
-      {/* 3. Responsive Mobile Menu Drawer */}
+      {/* Mobile Responsive Drawer Menu */}
       {mobileMenuOpen && (
         <div className="lg:hidden bg-white/95 dark:bg-[#0E0E11]/95 backdrop-blur-2xl border-b border-gray-200 dark:border-zinc-800 px-5 pt-3 pb-6 space-y-4 shadow-2xl animate-fadeIn">
           <div className="space-y-1">
@@ -117,8 +159,8 @@ export default function Navbar({ onOpenConsultation, onOpenPortfolioPdf }: Navba
               <a
                 key={link.name}
                 href={link.href}
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-between py-3 px-3 rounded-xl text-sm font-medium text-gray-700 hover:text-orange-600 hover:bg-orange-50/50 dark:text-zinc-200 dark:hover:text-[#FF7A00] dark:hover:bg-zinc-800/50 transition-colors border-b border-gray-100 dark:border-zinc-800/50 last:border-b-0"
+                onClick={(e) => handleNavClick(e, link.href)}
+                className="flex items-center justify-between py-3 px-3 rounded-xl text-sm font-medium text-gray-700 hover:text-[#FF7A00] hover:bg-orange-50/50 dark:text-zinc-200 dark:hover:text-[#FF7A00] dark:hover:bg-zinc-800/50 transition-colors border-b border-gray-100 dark:border-zinc-800/50 last:border-b-0"
               >
                 <span>{link.name}</span>
                 <ChevronRight className="w-4 h-4 text-gray-400 dark:text-zinc-500" />
@@ -126,26 +168,15 @@ export default function Navbar({ onOpenConsultation, onOpenPortfolioPdf }: Navba
             ))}
           </div>
 
-          <div className="pt-2 flex flex-col gap-2.5">
-            <button
-              type="button"
-              onClick={() => {
-                setMobileMenuOpen(false);
-                onOpenPortfolioPdf();
-              }}
-              className="w-full py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-gray-700 dark:text-zinc-200 bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 hover:bg-gray-50 flex items-center justify-center gap-2 shadow-sm cursor-pointer"
-            >
-              <FileDown className="w-4 h-4 text-[#FF7A00]" />
-              <span>Portfolio PDF</span>
-            </button>
-
+          {/* Mobile Full-Width Solid Orange CTA Button */}
+          <div className="pt-2">
             <button
               type="button"
               onClick={() => {
                 setMobileMenuOpen(false);
                 onOpenConsultation();
               }}
-              className="w-full py-3 rounded-xl text-xs sm:text-sm font-bold text-white bg-[#FF7A00] hover:bg-[#e66e00] shadow-md shadow-[#FF7A00]/25 flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full py-3.5 rounded-full text-sm font-bold text-white bg-[#FF7A00] hover:bg-[#e66e00] shadow-md shadow-[#FF7A00]/25 flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.98]"
             >
               <span>Free Consultation</span>
               <ArrowRight className="w-4 h-4" />

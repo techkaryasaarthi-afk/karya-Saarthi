@@ -79,7 +79,10 @@ export default function Home() {
 
       <ServicesSection onSelectServiceForQuote={handleSelectServiceForQuote} />
 
-      <ProjectsSection onOpenConsultation={() => handleOpenAppointmentModal()} />
+      <ProjectsSection
+        onOpenConsultation={() => handleOpenAppointmentModal()}
+        onOpenPortfolioPdf={() => setIsPdfModalOpen(true)}
+      />
 
       <RoiCalculator onSendEstimate={handleSendEstimate} />
 

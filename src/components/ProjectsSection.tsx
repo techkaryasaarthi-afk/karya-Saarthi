@@ -12,13 +12,15 @@ import {
   X,
   ArrowUpRight,
   TrendingUp,
+  FileDown,
 } from "lucide-react";
 
 interface ProjectsSectionProps {
   onOpenConsultation: () => void;
+  onOpenPortfolioPdf?: () => void;
 }
 
-export default function ProjectsSection({ onOpenConsultation }: ProjectsSectionProps) {
+export default function ProjectsSection({ onOpenConsultation, onOpenPortfolioPdf }: ProjectsSectionProps) {
   const [activeCategory, setActiveCategory] = useState<string>("all");
   const [selectedProject, setSelectedProject] = useState<CaseStudy | null>(null);
   const [projectsList, setProjectsList] = useState<CaseStudy[]>(CASE_STUDIES);
@@ -99,20 +101,36 @@ export default function ProjectsSection({ onOpenConsultation }: ProjectsSectionP
       : projectsList.filter((p) => p.category === activeCategory);
 
   return (
-    <section id="projects" className="py-24 bg-white dark:bg-[#121216] relative text-slate-900 dark:text-white border-t border-slate-200/80 dark:border-white/5 transition-colors duration-300">
+    <section id="case-studies" className="py-24 bg-white dark:bg-[#121216] relative text-slate-900 dark:text-white border-t border-slate-200/80 dark:border-white/5 transition-colors duration-300">
+      {/* Anchor for backward compatibility with #projects */}
+      <div id="projects" className="absolute -top-20" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-12 space-y-4">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#FF6B35]/10 border border-[#FF6B35]/30 text-[#FF6B35] text-xs font-semibold uppercase tracking-wider">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#FF7A00]/10 border border-[#FF7A00]/30 text-[#FF7A00] text-xs font-semibold uppercase tracking-wider">
             Featured Projects &amp; Case Studies
           </div>
           <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white">
-            Proven <span className="text-[#FF6B35]">Results</span> Across 500+ Projects
+            Proven <span className="text-[#FF7A00]">Results</span> Across 500+ Projects
           </h2>
           <p className="text-base sm:text-lg text-slate-600 dark:text-zinc-400">
             Explore how Karya Saarthi helped startups, PhD scholars, e-commerce brands, and logistics enterprises achieve 10x ROI, raise capital, and scale seamlessly.
           </p>
+
+          {/* Secondary Portfolio PDF Trigger moved inside Case Studies section */}
+          {onOpenPortfolioPdf && (
+            <div className="pt-2">
+              <button
+                type="button"
+                onClick={onOpenPortfolioPdf}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold text-slate-700 dark:text-zinc-200 hover:text-[#FF7A00] bg-slate-50 dark:bg-zinc-800/80 border border-slate-200 dark:border-zinc-700 hover:border-[#FF7A00]/50 shadow-xs transition-all cursor-pointer"
+              >
+                <FileDown className="w-4 h-4 text-[#FF7A00]" />
+                <span>Download Executive Portfolio PDF</span>
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Filter Tabs */}

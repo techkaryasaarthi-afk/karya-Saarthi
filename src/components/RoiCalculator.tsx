@@ -103,7 +103,9 @@ export default function RoiCalculator({ onSendEstimate }: RoiCalculatorProps) {
   const estimate = getEstimate();
 
   return (
-    <section id="roi-calculator" className="py-24 bg-slate-50 dark:bg-[#0E0E11] relative text-slate-900 dark:text-white transition-colors duration-300">
+    <section id="roi-estimator" className="py-24 bg-slate-50 dark:bg-[#0E0E11] relative text-slate-900 dark:text-white transition-colors duration-300">
+      {/* Anchor for backward compatibility with #roi-calculator */}
+      <div id="roi-calculator" className="absolute -top-20" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header */}
