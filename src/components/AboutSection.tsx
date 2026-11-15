@@ -4,8 +4,11 @@ import React from "react";
 import Image from "next/image";
 import { BRAND } from "@/data/portfolioData";
 import { GraduationCap, Rocket, Building2, Target, Eye } from "lucide-react";
+import { useCountry } from "@/context/CountryContext";
 
 export default function AboutSection() {
+  const { t } = useCountry();
+
   return (
     <section id="about" className="py-24 bg-white dark:bg-[#121216] relative border-t border-slate-200/80 dark:border-white/5 text-slate-900 dark:text-white transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -13,13 +16,13 @@ export default function AboutSection() {
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FF6B35]/10 border border-[#FF6B35]/30 text-[#FF6B35] text-xs font-semibold uppercase tracking-wider">
-            About Karya Saarthi
+            {t("about.badge", "About Karya Saarthi")}
           </div>
           <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white">
-            Bridging the Gap Between <span className="text-[#FF6B35]">Learning</span> &amp; <span className="text-[#004E89]">Doing</span>
+            {t("about.title", "Bridging the Gap Between Learning & Doing")}
           </h2>
           <p className="text-base sm:text-lg text-slate-600 dark:text-zinc-300">
-            Started on 15 August 2025 and incorporated on 18 May 2026 as Karyanex Private Limited, Karya Saarthi (Hindi: &quot;Work Partner&quot;) is India&apos;s first &quot;Teach + Complete&quot; project solutions company.
+            {t("about.subtitle", "Started on 15 August 2025 and incorporated on 18 May 2026 as Karyanex Private Limited, Karya Saarthi (Hindi: \"Work Partner\") is India's first \"Teach + Complete\" project solutions company.")}
           </p>
         </div>
 
@@ -47,12 +50,12 @@ export default function AboutSection() {
 
               <div className="grid grid-cols-2 gap-4 pt-4 border-t border-slate-200 dark:border-white/10 text-xs">
                 <div>
-                  <p className="text-slate-500 dark:text-zinc-400">Team Size</p>
-                  <p className="text-base font-bold text-slate-900 dark:text-white">7 Core + 500+ Vendors</p>
+                  <p className="text-slate-500 dark:text-zinc-400">{t("about.teamSize", "Team Size")}</p>
+                  <p className="text-base font-bold text-slate-900 dark:text-white">{t("about.teamSizeVal", "7 Core + 500+ Vendors")}</p>
                 </div>
                 <div>
-                  <p className="text-slate-500 dark:text-zinc-400">Global Reach</p>
-                  <p className="text-base font-bold text-slate-900 dark:text-white">50+ Cities | 15+ Countries</p>
+                  <p className="text-slate-500 dark:text-zinc-400">{t("about.globalReach", "Global Reach")}</p>
+                  <p className="text-base font-bold text-slate-900 dark:text-white">{t("about.globalReachVal", "50+ Cities | 15+ Countries")}</p>
                 </div>
               </div>
             </div>
@@ -60,7 +63,9 @@ export default function AboutSection() {
 
           {/* Right Column: 3 Primary Target Segments */}
           <div className="lg:col-span-7 space-y-6">
-            <h3 className="text-2xl font-bold text-slate-900 dark:text-white">Three Primary Segments We Serve</h3>
+            <h3 className="text-2xl font-bold text-slate-900 dark:text-white">
+              {t("about.threeSegments", "Three Primary Segments We Serve")}
+            </h3>
             
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
               
@@ -69,9 +74,11 @@ export default function AboutSection() {
                 <div className="w-12 h-12 rounded-xl bg-[#FF6B35]/15 flex items-center justify-center text-[#FF6B35] group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
                   <GraduationCap className="w-6 h-6" />
                 </div>
-                <h4 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-[#FF6B35] transition-colors">Students &amp; Interns</h4>
+                <h4 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-[#FF6B35] transition-colors">
+                  {t("about.students", "Students & Interns")}
+                </h4>
                 <p className="text-xs text-slate-600 dark:text-zinc-300 leading-relaxed">
-                  Skill-building internships and hands-on production experience on real client projects.
+                  {t("about.studentsDesc", "Skill-building internships and hands-on production experience on real client projects.")}
                 </p>
               </div>
 
@@ -80,9 +87,11 @@ export default function AboutSection() {
                 <div className="w-12 h-12 rounded-xl bg-[#004E89]/15 dark:bg-[#004E89]/20 flex items-center justify-center text-blue-600 dark:text-blue-400 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
                   <Rocket className="w-6 h-6" />
                 </div>
-                <h4 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">Early Startups</h4>
+                <h4 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                  {t("about.startups", "Early Startups")}
+                </h4>
                 <p className="text-xs text-slate-600 dark:text-zinc-300 leading-relaxed">
-                  Rapid MVP engineering, product strategy, GTM execution, and investor pitch deck readiness.
+                  {t("about.startupsDesc", "Rapid MVP engineering, product strategy, GTM execution, and investor pitch deck readiness.")}
                 </p>
               </div>
 
@@ -91,9 +100,11 @@ export default function AboutSection() {
                 <div className="w-12 h-12 rounded-xl bg-[#1BAC6E]/15 dark:bg-[#1BAC6E]/20 flex items-center justify-center text-[#1BAC6E] group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
                   <Building2 className="w-6 h-6" />
                 </div>
-                <h4 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-[#1BAC6E] transition-colors">SMBs &amp; Enterprises</h4>
+                <h4 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-[#1BAC6E] transition-colors">
+                  {t("about.smbs", "SMBs & Enterprises")}
+                </h4>
                 <p className="text-xs text-slate-600 dark:text-zinc-300 leading-relaxed">
-                  Affordable business solutions, modern websites, automated digital marketing, and AI tools.
+                  {t("about.smbsDesc", "Affordable business solutions, modern websites, automated digital marketing, and AI tools.")}
                 </p>
               </div>
 
@@ -108,10 +119,12 @@ export default function AboutSection() {
               <div className="p-3 rounded-xl bg-[#FF6B35]/15 text-[#FF6B35] group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
                 <Target className="w-6 h-6" />
               </div>
-              <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white group-hover:text-[#FF6B35] transition-colors">Our Mission</h3>
+              <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white group-hover:text-[#FF6B35] transition-colors">
+                {t("about.mission", "Our Mission")}
+              </h3>
             </div>
             <p className="text-xs sm:text-sm text-slate-600 dark:text-zinc-300 leading-relaxed">
-              &quot;{BRAND.mission}&quot;
+              &quot;{t("about.missionDesc", BRAND.mission)}&quot;
             </p>
           </div>
 
@@ -120,10 +133,12 @@ export default function AboutSection() {
               <div className="p-3 rounded-xl bg-blue-500/15 text-blue-600 dark:text-blue-400 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
                 <Eye className="w-6 h-6" />
               </div>
-              <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">Our Vision (2030 Goal)</h3>
+              <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                {t("about.vision", "Our Vision (2030 Goal)")}
+              </h3>
             </div>
             <p className="text-xs sm:text-sm text-slate-600 dark:text-zinc-300 leading-relaxed">
-              &quot;{BRAND.vision}&quot;
+              &quot;{t("about.visionDesc", BRAND.vision)}&quot;
             </p>
           </div>
         </div>

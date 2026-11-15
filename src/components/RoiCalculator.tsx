@@ -113,13 +113,13 @@ export default function RoiCalculator({ onSendEstimate }: RoiCalculatorProps) {
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#FF6B35]/10 border border-[#FF6B35]/30 text-[#FF6B35] text-xs font-semibold uppercase tracking-wider">
-            Interactive Cost &amp; ROI Estimator
+            {t("roi.badge", "Interactive Cost & ROI Estimator")}
           </div>
           <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white">
-            Calculate Your <span className="text-[#FF6B35]">Project Investment</span> &amp; ROI
+            {t("roi.heading", "Interactive ROI & Project Estimator")}
           </h2>
           <p className="text-base sm:text-lg text-slate-600 dark:text-zinc-400">
-            Select your requirements below to instantly generate a transparent cost estimate, timeline projection, and expected growth metrics.
+            {t("roi.subheading", "Select your requirements below to instantly generate a transparent cost estimate, timeline projection, and expected growth metrics.")}
           </p>
         </div>
 
@@ -132,7 +132,7 @@ export default function RoiCalculator({ onSendEstimate }: RoiCalculatorProps) {
             {/* Step 1: Select Service */}
             <div>
               <label className="text-xs font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wider block mb-3">
-                1. Select Service Offering:
+                {t("roi.serviceType", "1. Select Service Offering:")}
               </label>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-2.5">
                 {[
@@ -161,7 +161,7 @@ export default function RoiCalculator({ onSendEstimate }: RoiCalculatorProps) {
             {/* Step 2: Project Scope / Complexity */}
             <div>
               <label className="text-xs font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wider block mb-3">
-                2. Project Scope &amp; Complexity Level:
+                {t("roi.projectScope", "2. Project Scope & Complexity Level:")}
               </label>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3">
                 {[
@@ -188,7 +188,7 @@ export default function RoiCalculator({ onSendEstimate }: RoiCalculatorProps) {
             {/* Step 3: Urgency */}
             <div>
               <label className="text-xs font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wider block mb-3">
-                3. Delivery Timeline Preference:
+                {t("roi.urgency", "3. Delivery Timeline Preference:")}
               </label>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
                 {[
@@ -226,12 +226,12 @@ export default function RoiCalculator({ onSendEstimate }: RoiCalculatorProps) {
 
             <div className="space-y-4">
               <div>
-                <span className="text-xs text-slate-500 dark:text-zinc-400 block">Estimated Price Range:</span>
+                <span className="text-xs text-slate-500 dark:text-zinc-400 block">{t("roi.estimatedCost", "Estimated Price Range:")}</span>
                 <p className="text-2xl sm:text-3xl font-extrabold text-[#FF6B35] break-words">{estimate.budgetStr}</p>
               </div>
 
               <div>
-                <span className="text-xs text-slate-500 dark:text-zinc-400 block">Estimated Timeline:</span>
+                <span className="text-xs text-slate-500 dark:text-zinc-400 block">{t("roi.estimatedTimeline", "Estimated Timeline:")}</span>
                 <p className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2 mt-0.5">
                   <Clock className="w-4 h-4 text-blue-500 dark:text-blue-400" />
                   {estimate.timeline}
@@ -241,7 +241,7 @@ export default function RoiCalculator({ onSendEstimate }: RoiCalculatorProps) {
               <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 dark:bg-[#1BAC6E]/10 dark:border-[#1BAC6E]/20 text-xs space-y-1">
                 <span className="font-bold text-[#1BAC6E] flex items-center gap-1.5">
                   <TrendingUp className="w-4 h-4" />
-                  Projected ROI &amp; Impact:
+                  {t("roi.projectedReturn", "Projected ROI & Impact:")}
                 </span>
                 <p className="text-slate-700 dark:text-zinc-200">{estimate.roi}</p>
               </div>
@@ -254,7 +254,7 @@ export default function RoiCalculator({ onSendEstimate }: RoiCalculatorProps) {
               }}
               className="w-full py-3.5 rounded-xl text-xs font-bold text-white bg-[#FF6B35] hover:bg-[#FF8855] shadow-lg shadow-[#FF6B35]/25 transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
-              <span>Lock In This Estimate &amp; Request Proposal</span>
+              <span>{t("roi.sendEstimate", "Lock In This Estimate & Request Proposal")}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>

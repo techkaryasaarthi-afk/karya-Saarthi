@@ -127,13 +127,13 @@ export default function ContactSection({ initialService = "", initialEstimate = 
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-12 space-y-4">
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#FF7A00]/10 border border-[#FF7A00]/30 text-[#FF7A00] text-xs font-semibold uppercase tracking-wider">
-            Call To Action &amp; Contact
+            {t("contact.badge", "Call To Action & Contact")}
           </div>
           <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white">
-            Ready to <span className="text-[#FF7A00]">Transform</span> Your Idea?
+            {t("contact.heading", "Ready to Transform Your Idea?")}
           </h2>
           <p className="text-base sm:text-lg text-slate-600 dark:text-zinc-400">
-            Reach out to our engineering and strategy team today. Guaranteed response within 24 hours.
+            {t("contact.subheading", "Reach out to our engineering and strategy team today. Guaranteed response within 24 hours.")}
           </p>
         </div>
 
@@ -150,7 +150,7 @@ export default function ContactSection({ initialService = "", initialEstimate = 
               }`}
             >
               <Calendar className="w-4 h-4" />
-              <span>Schedule Free Consultation</span>
+              <span>{t("contact.scheduleCall", "Schedule Free Consultation")}</span>
             </button>
 
             <button
@@ -163,7 +163,7 @@ export default function ContactSection({ initialService = "", initialEstimate = 
               }`}
             >
               <FileText className="w-4 h-4" />
-              <span>Get Custom Scope Quote</span>
+              <span>{t("contact.instantEstimate", "Get Custom Scope Quote")}</span>
             </button>
 
             <button
@@ -176,7 +176,7 @@ export default function ContactSection({ initialService = "", initialEstimate = 
               }`}
             >
               <Video className="w-4 h-4" />
-              <span>Book Live Work Demo</span>
+              <span>{t("contact.liveDemo", "Book Live Work Demo")}</span>
             </button>
           </div>
         </div>
@@ -221,7 +221,7 @@ export default function ContactSection({ initialService = "", initialEstimate = 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="text-xs font-semibold text-slate-700 dark:text-zinc-300 block mb-1.5">
-                      Your Full Name *
+                      {t("contact.name", "Your Full Name")} *
                     </label>
                     <input
                       type="text"
@@ -235,7 +235,7 @@ export default function ContactSection({ initialService = "", initialEstimate = 
 
                   <div>
                     <label className="text-xs font-semibold text-slate-700 dark:text-zinc-300 block mb-1.5">
-                      Email Address *
+                      {t("contact.email", "Email Address")} *
                     </label>
                     <input
                       type="email"
@@ -251,7 +251,7 @@ export default function ContactSection({ initialService = "", initialEstimate = 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="text-xs font-semibold text-slate-700 dark:text-zinc-300 block mb-1.5">
-                      Phone Number *
+                      {t("contact.phone", "Phone Number")} *
                     </label>
                     <input
                       type="tel"
@@ -265,7 +265,7 @@ export default function ContactSection({ initialService = "", initialEstimate = 
 
                   <div>
                     <label className="text-xs font-semibold text-slate-700 dark:text-zinc-300 block mb-1.5">
-                      Interested Service
+                      {t("contact.service", "Interested Service")}
                     </label>
                     <select
                       value={formData.service}
@@ -284,7 +284,7 @@ export default function ContactSection({ initialService = "", initialEstimate = 
 
                 <div>
                   <label className="text-xs font-semibold text-slate-700 dark:text-zinc-300 block mb-1.5">
-                    Project Budget Target
+                    {t("contact.budget", "Project Budget Target")}
                   </label>
                   <select
                     value={formData.budget}
@@ -300,7 +300,7 @@ export default function ContactSection({ initialService = "", initialEstimate = 
 
                 <div>
                   <label className="text-xs font-semibold text-slate-700 dark:text-zinc-300 block mb-1.5">
-                    Brief Project Details or Requirements
+                    {t("contact.message", "Brief Project Details or Requirements")}
                   </label>
                   <textarea
                     rows={4}
@@ -317,7 +317,7 @@ export default function ContactSection({ initialService = "", initialEstimate = 
                 >
                   <span className="absolute inset-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shine-sweep pointer-events-none" />
                   <Send className="w-4 h-4 group-hover:translate-x-1 transition-transform relative z-10" />
-                  <span className="relative z-10">Submit Inquiry &amp; Request Proposal</span>
+                  <span className="relative z-10">{t("contact.submit", "Submit Inquiry & Request Proposal")}</span>
                 </button>
               </form>
             )}

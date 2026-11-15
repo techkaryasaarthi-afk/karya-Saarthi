@@ -48,6 +48,16 @@ export default function Countries195Section({
 
   const handleSelectCountry = (country: CountryItem) => {
     setSelectedCountry(country);
+    setTimeout(() => {
+      handleClose();
+    }, 200);
+  };
+
+  const handleSelectQuickCurrency = (currencyCode: string) => {
+    selectQuickCurrency(currencyCode);
+    setTimeout(() => {
+      handleClose();
+    }, 200);
   };
 
   // Quick Currency options matching Screenshot 2
@@ -178,8 +188,12 @@ export default function Countries195Section({
 
       {/* 2. Full 195 Countries Modal (Exact UI matching Screenshot 2) */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-slate-950/75 backdrop-blur-md animate-fadeIn">
+        <div
+          onClick={handleClose}
+          className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-slate-950/75 backdrop-blur-md animate-fadeIn"
+        >
           <div
+            onClick={(e) => e.stopPropagation()}
             className={`bg-white dark:bg-[#121216] border border-slate-200 dark:border-zinc-800 rounded-3xl w-full p-4 sm:p-6 relative max-h-[92vh] flex flex-col shadow-2xl text-slate-900 dark:text-white transition-all duration-300 animate-modal-pop ${
               isExpanded ? "max-w-6xl h-[92vh]" : "max-w-4xl"
             }`}
@@ -234,7 +248,7 @@ export default function Countries195Section({
                     <button
                       key={qc.code}
                       type="button"
-                      onClick={() => selectQuickCurrency(qc.code)}
+                      onClick={() => handleSelectQuickCurrency(qc.code)}
                       className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer ${
                         isActive
                           ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-md ring-2 ring-slate-900/20 dark:ring-white/30 scale-105"

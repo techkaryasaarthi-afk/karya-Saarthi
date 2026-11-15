@@ -98,7 +98,7 @@ export default function Hero({ onOpenConsultation }: HeroProps) {
               {convertBudget(BRAND.keyStats.revenueFirst3Months)}
             </div>
             <div className="text-[11px] sm:text-sm text-slate-500 dark:text-zinc-400 mt-1 font-medium group-hover:text-slate-800 dark:group-hover:text-zinc-200 transition-colors">
-              Revenue in First 3 Months
+              {t("hero.statRevenue", "Revenue in First 3 Months")}
             </div>
           </div>
 
@@ -107,7 +107,7 @@ export default function Hero({ onOpenConsultation }: HeroProps) {
               {BRAND.keyStats.totalProjects}
             </div>
             <div className="text-[11px] sm:text-sm text-slate-500 dark:text-zinc-400 mt-1 font-medium group-hover:text-slate-800 dark:group-hover:text-zinc-200 transition-colors">
-              Successful Projects Delivered
+              {t("hero.statProjects", "Successful Projects Delivered")}
             </div>
           </div>
 
@@ -116,7 +116,7 @@ export default function Hero({ onOpenConsultation }: HeroProps) {
               {BRAND.keyStats.rating}
             </div>
             <div className="text-[11px] sm:text-sm text-slate-500 dark:text-zinc-400 mt-1 font-medium group-hover:text-slate-800 dark:group-hover:text-zinc-200 transition-colors">
-              Client Satisfaction Rating
+              {t("hero.statRating", "Client Satisfaction Rating")}
             </div>
           </div>
 
@@ -125,7 +125,7 @@ export default function Hero({ onOpenConsultation }: HeroProps) {
               {BRAND.keyStats.satisfaction}
             </div>
             <div className="text-[11px] sm:text-sm text-slate-500 dark:text-zinc-400 mt-1 font-medium group-hover:text-slate-800 dark:group-hover:text-zinc-200 transition-colors">
-              Client Retention &amp; Happiness
+              {t("hero.statRetention", "Client Retention & Happiness")}
             </div>
           </div>
         </div>

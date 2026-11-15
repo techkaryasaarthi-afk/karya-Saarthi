@@ -51,13 +51,13 @@ export default function ServicesSection({ onSelectServiceForQuote }: ServicesSec
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#FF6B35]/10 border border-[#FF6B35]/30 text-[#FF6B35] text-xs font-semibold uppercase tracking-wider">
-            Our Core Services &amp; Offerings
+            {t("services.badge", "Our Core Services & Offerings")}
           </div>
           <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white">
-            High-Performance <span className="text-[#FF6B35]">Solutions</span> Tailored to Scale
+            {t("services.heading", "Our Core Execution Capabilities")}
           </h2>
           <p className="text-base sm:text-lg text-slate-600 dark:text-zinc-400">
-            From modern web applications to complex AI models and GTM strategies, explore our full spectrum of offerings with transparent pricing and guaranteed timelines.
+            {t("services.subheading", "From high-converting web apps to AI models and academic research papers, we deliver production-grade work with complete knowledge transfer.")}
           </p>
         </div>
 
