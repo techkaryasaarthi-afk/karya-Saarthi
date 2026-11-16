@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * AboutSection Component
+ * Feature Branch: FEAT-#3-Portfolio-2026 (feat/three-port-folio-2026)
+ * PR Track: Real-world practical solutions, verified metrics, and global multi-language readiness.
+ */
+
 import React from "react";
 import Image from "next/image";
 import { BRAND } from "@/data/portfolioData";
