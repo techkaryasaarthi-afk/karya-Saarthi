@@ -432,7 +432,7 @@ export const TRANSLATIONS: Record<string, Record<string, string>> = {
     "hero.statRetention": "Коэффициент удержания клиентов",
     "about.badge": "О компании Karya Saarthi",
     "about.title": "Соединяем теорию с реальной практикой",
-    "about.subtitle": "Основана 15 августа 2025 года. Karya Saarthi — первая в Индии компания, объединяющая обучение и полную сдачу IT-проектов под ключ.",
+    "about.subtitle": "Основана 15 августа 2025 года. Karya Saarthi, первая в Индии компания, объединяющая обучение и полную сдачу IT-проектов под ключ.",
     "about.teamSize": "Команда",
     "about.teamSizeVal": "7 ключевых специалистов + 500+ экспертов",
     "about.globalReach": "География",

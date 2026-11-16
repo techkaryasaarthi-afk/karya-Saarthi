@@ -76,7 +76,7 @@ export const BRAND = {
   startedDate: "15 August 2025",
   registrationDate: "18 May 2026",
   aboutSummary:
-    "Karya Saarthi was started in August 2025 by Saloni Kumari with zero investment from a small town in Bihar, and was officially incorporated on 18 May 2026 as Karyanex Private Limited (CIN: U85500BR2026PTC085054). As India's premier 'Teach + Complete' project solutions company where education meets execution, Karya Saarthi has completed 500+ projects, served 2,000+ clients, and achieved ₹25 Lakh revenue with ₹5 Lakh net profit—backed by a 7-member core team and 500+ expert vendors pan-India.",
+    "Karya Saarthi was started in August 2025 by Saloni Kumari with zero investment from a small town in Bihar, and was officially incorporated on 18 May 2026 as Karyanex Private Limited (CIN: U85500BR2026PTC085054). As India's premier 'Teach + Complete' project solutions company where education meets execution, Karya Saarthi has completed 500+ projects, served 2,000+ clients, and achieved ₹25 Lakh revenue with ₹5 Lakh net profit, backed by a 7-member core team and 500+ expert vendors pan-India.",
   keyStats: {
     revenueFirst3Months: "₹25 Lakh",
     netProfit: "₹5 Lakh",
@@ -400,7 +400,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     ],
     testimonial: {
       quote:
-        "Karya Saarthi made the impossible possible. They not just helped me write—they taught me academic rigor. My paper is now published in a top journal, and my PhD journey is complete. I wouldn't have made it without them.",
+        "Karya Saarthi made the impossible possible. They not just helped me write, they taught me academic rigor. My paper is now published in a top journal, and my PhD journey is complete. I wouldn't have made it without them.",
       author: "Dr. Neha Kapoor",
       role: "PhD Scholar, IIT Delhi",
     },
@@ -434,7 +434,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     ],
     testimonial: {
       quote:
-        "Karya Saarthi wasn't just a development vendor—they were our co-founders in spirit. They built the product, shaped the strategy, and prepared us for Series A. Without them, TaskFlow wouldn't exist. We're now raising ₹5Cr and growing 25% MoM.",
+        "Karya Saarthi wasn't just a development vendor, they were our co-founders in spirit. They built the product, shaped the strategy, and prepared us for Series A. Without them, TaskFlow wouldn't exist. We're now raising ₹5Cr and growing 25% MoM.",
       author: "Arjun & Zara",
       role: "Co-founders, TaskFlow",
     },
@@ -488,7 +488,7 @@ export const TESTIMONIALS: Testimonial[] = [
     company: "IIT Delhi",
     role: "PhD Scholar",
     rating: 5,
-    text: "Karya Saarthi made the impossible possible. They not just helped me write—they taught me academic rigor. My paper is now published in a top journal, and my PhD journey is complete.",
+    text: "Karya Saarthi made the impossible possible. They not just helped me write, they taught me academic rigor. My paper is now published in a top journal, and my PhD journey is complete.",
     serviceUsed: "Research & Publication",
   },
   {
@@ -497,7 +497,7 @@ export const TESTIMONIALS: Testimonial[] = [
     company: "TaskFlow",
     role: "Co-founders",
     rating: 5,
-    text: "Karya Saarthi wasn't just a development vendor—they were our co-founders in spirit. They built the product, shaped the strategy, and prepared us for Series A.",
+    text: "Karya Saarthi wasn't just a development vendor, they were our co-founders in spirit. They built the product, shaped the strategy, and prepared us for Series A.",
     serviceUsed: "SaaS MVP Development",
   },
 ];

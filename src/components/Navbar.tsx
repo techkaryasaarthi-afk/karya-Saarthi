@@ -156,10 +156,9 @@ export default function Navbar({ onOpenConsultation, onOpenCountriesModal }: Nav
                 key={link.name}
                 href={link.href}
                 onClick={(e) => handleNavClick(e, link.href)}
-                className="text-xs xl:text-sm font-semibold text-gray-700 dark:text-zinc-200 hover:text-[#FF7A00] dark:hover:text-[#FF7A00] transition-colors whitespace-nowrap py-1 relative group tracking-wide"
+                className="text-xs xl:text-sm font-semibold text-gray-700 dark:text-zinc-200 hover:text-[#FF7A00] dark:hover:text-[#FF7A00] transition-colors whitespace-nowrap py-1 tracking-wide"
               >
                 <span>{link.name}</span>
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#FF7A00] rounded-full group-hover:w-full transition-all duration-200" />
               </a>
             ))}
           </nav>

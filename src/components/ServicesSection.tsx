@@ -131,7 +131,7 @@ export default function ServicesSection({ onSelectServiceForQuote }: ServicesSec
               <div className="pt-4 border-t border-slate-200 dark:border-white/10 flex items-center justify-between gap-3">
                 <button
                   onClick={() => setSelectedService(service)}
-                  className="text-xs font-semibold text-slate-600 hover:text-slate-900 dark:text-zinc-300 dark:hover:text-white underline underline-offset-4 cursor-pointer"
+                  className="text-xs font-semibold text-slate-600 hover:text-[#FF6B35] dark:text-zinc-300 dark:hover:text-[#FF6B35] transition-colors cursor-pointer"
                 >
                   View Details
                 </button>

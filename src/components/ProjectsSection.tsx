@@ -398,7 +398,7 @@ export default function ProjectsSection({ onOpenConsultation, onOpenPortfolioPdf
                 &quot;{selectedProject.testimonial.quote}&quot;
               </p>
               <div className="text-xs font-semibold text-[#FF6B35]">
-                — {selectedProject.testimonial.author} ({selectedProject.testimonial.role})
+                {selectedProject.testimonial.author} ({selectedProject.testimonial.role})
               </div>
             </div>
 

@@ -18,7 +18,7 @@ export default function OutcomesSection() {
             Data-Driven <span className="text-[#1BAC6E]">Performance</span> &amp; Track Record
           </h2>
           <p className="text-base sm:text-lg text-slate-600 dark:text-zinc-400">
-            We focus on measurable business impact—revenue generated, hours saved, and cost efficiency—rather than vanity metrics.
+            We focus on measurable business impact (revenue generated, hours saved, and cost efficiency) rather than vanity metrics.
           </p>
         </div>
 

@@ -459,8 +459,8 @@ export default function Footer({ onOpenAppointment, onOpenCountriesModal }: Foot
             <strong className="text-slate-800 dark:text-zinc-200">Karyanex Private Limited</strong> · Operating Brand: <strong className="text-[#FF7A00]">Karya Saarthi</strong> · CIN: <span className="font-mono">U85500BR2026PTC085054</span> · GSTIN: <span className="font-mono">10AAMCK8870B1ZN</span> · Corporate Office: Gali No 1, Block A, Uttarakhand Enclave, Nathupura, Burari, Delhi 110084, India
           </p>
           <p>
-            More ways to connect: Call <a href="tel:+918595025753" className="text-[#FF7A00] font-semibold hover:underline">+91-8595025753</a> or <a href="mailto:support@karyasaarthi.com" className="text-[#FF7A00] font-semibold hover:underline">email our solutions desk</a>. Globally Providing Services across {onOpenCountriesModal ? (
-              <button type="button" onClick={onOpenCountriesModal} className="text-[#FF7A00] font-semibold hover:underline cursor-pointer">195 countries</button>
+            More ways to connect: Call <a href="tel:+918595025753" className="text-[#FF7A00] font-semibold hover:opacity-80">+91-8595025753</a> or <a href="mailto:support@karyasaarthi.com" className="text-[#FF7A00] font-semibold hover:opacity-80">email our solutions desk</a>. Globally Providing Services across {onOpenCountriesModal ? (
+              <button type="button" onClick={onOpenCountriesModal} className="text-[#FF7A00] font-semibold hover:opacity-80 cursor-pointer">195 countries</button>
             ) : (
               <span className="text-[#FF7A00] font-semibold">195 countries</span>
             )} with 24/7 dedicated support.
@@ -558,7 +558,7 @@ export default function Footer({ onOpenAppointment, onOpenCountriesModal }: Foot
                   </p>
                   <h4 className="font-semibold text-slate-900 dark:text-white pt-2">3. Data Security &amp; Contact</h4>
                   <p>
-                    All data is encrypted and handled in compliance with applicable Indian IT and Data Protection standards. For questions, contact us at <a href="mailto:support@karyasaarthi.com" className="text-[#FF7A00] underline">support@karyasaarthi.com</a>.
+                    All data is encrypted and handled in compliance with applicable Indian IT and Data Protection standards. For questions, contact us at <a href="mailto:support@karyasaarthi.com" className="text-[#FF7A00] font-semibold hover:opacity-80">support@karyasaarthi.com</a>.
                   </p>
                 </>
               )}

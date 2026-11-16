@@ -375,7 +375,7 @@ export default function Countries195Section({
                 <span className="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                   <span>{selectedCountry.flag}</span>
-                  <span className="underline decoration-emerald-500 underline-offset-2">
+                  <span className="font-semibold text-slate-900 dark:text-white">
                     {selectedCountry.code} {selectedCountry.englishName}
                   </span>
                   <span className="font-mono text-emerald-600 dark:text-emerald-400 font-bold">
