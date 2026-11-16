@@ -22,7 +22,7 @@ export default function AboutSection() {
             {t("about.title", "Bridging the Gap Between Learning & Doing")}
           </h2>
           <p className="text-base sm:text-lg text-slate-600 dark:text-zinc-300">
-            {t("about.subtitle", "Started on 15 August 2025 and incorporated on 18 May 2026 as Karyanex Private Limited, Karya Saarthi (Hindi: \"Work Partner\") is India's first \"Teach + Complete\" project solutions company.")}
+            {t("about.subtitle", "Started on 15 August 2025 and incorporated on 18 May 2026 as Karyanex Private Limited, Karya Saarthi is India's first \"Teach + Complete\" project solutions company.")}
           </p>
         </div>
 
@@ -40,7 +40,7 @@ export default function AboutSection() {
                 </div>
                 <div>
                   <h3 className="text-xl font-bold text-slate-900 dark:text-white">{BRAND.name}</h3>
-                  <p className="text-xs text-[#FF6B35] font-mono">{BRAND.meaning}</p>
+                  <p className="text-xs text-[#FF6B35] font-mono">{t("about.brandTagline", BRAND.meaning)}</p>
                 </div>
               </div>
 

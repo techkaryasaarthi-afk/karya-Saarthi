@@ -67,7 +67,7 @@ export interface Testimonial {
 export const BRAND = {
   name: "Karya Saarthi",
   legalName: "Karya Saarthi | Karyanex Private Limited",
-  meaning: 'Hindi: "Work Partner" / "Life Partner"',
+  meaning: "Teach + Complete Solutions",
   tagline: "Real Work. Real Learning. Real Growth.",
   mission:
     "No Indian student should fail because they lacked the right support. We empower students, startups, and businesses through real-world projects, expert solutions, and transparent partnerships where education meets execution.",
